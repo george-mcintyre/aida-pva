@@ -1,0 +1,131 @@
+#!/bin/tcsh -f
+#-*-csh-*-
+#==============================================================
+#
+#  Abs:   Runs sql scripts to update the given Aida schema 
+#         (aidadev or aidaprod) with names derived from those
+#         in the EPICS CA Record Names Database (PVU_REC).
+#
+#  Name:  aidaCaNames_update
+#
+#  Rem:   Runs a sql script to update the aida schema. 
+# 
+#  Usage: aidaCaNames_update {aidadev|aidaprod} <password> 
+#         
+#  Side:  Changes and commits aidadev or aidaprod
+#
+#  Auth:  10-Mar-2005, Greg White (greg): 
+#  Rev:   dd-mmm-yyyy, Whoever    (user):
+#
+#--------------------------------------------------------------
+# Mods: (Latest to oldest)
+#
+#        dd-mmm-yyyy, Whoever (user): 
+#            Whatever. 
+#
+#============================================================== 
+
+source /afs/slac/g/cd/soft/dev/script/ENVS.csh
+source $CD_SOFT/dev/script/oracle_env.csh
+
+#
+# Add release dirs for sql. This should really be in pathSetup, and removed
+# from oracle_env.csh. And oracle_env.csh should be integrated in ENVS.csh.
+caddpath ORACLE_PATH ${CD_SOFT}/tst/ora
+caddpath ORACLE_PATH ${CD_SOFT}/dev/ora
+
+# Set default instance and schema
+setenv TWO_TASK SLACPROD 
+setenv schema aidaprod
+
+echo '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+date
+echo "Updating $1 from pvudb"
+
+# Execute aida_caService_namesUpdate.sql inside sqlplus,
+# (redirecting input from this script) surrounding it by error 
+# trap and commit, and redirecting output to $CD_SOFT/log.
+#
+setenv aidaNetwork $1
+if ( x$aidaNetwork == x"aidadev" ) then
+   setenv TWO_TASK SLACPROD
+   setenv schema aidadev
+   setenv ORACLE_HOME /afs/slac/package/oracle/f/11.1.0/sun4x_59/11.1.0
+   setenv PATH $ORACLE_HOME/bin:${PATH}
+   setenv TNS_ADMIN /afs/slac/g/lcls/tools/oracle/wallets/aidadev
+#sqlplus ${schema}/$2 @<<EOF
+sqlplus /@$TWO_TASK <<EOF
+whenever sqlerror exit sql.sqlcode;
+@aida_caService_namesUpdate.sql
+commit;
+exit;
+EOF
+
+else if ( x$aidaNetwork == x"aidaprod" ) then
+   setenv TWO_TASK SLACPROD
+   setenv schema aidaprod
+   setenv ORACLE_HOME /afs/slac/package/oracle/f/11.1.0/sun4x_59/11.1.0
+   setenv PATH $ORACLE_HOME/bin:${PATH}
+   setenv TNS_ADMIN /afs/slac/g/lcls/tools/oracle/wallets/aidaprod
+#sqlplus ${schema}/$2 @<<EOF
+sqlplus /@$TWO_TASK <<EOF
+whenever sqlerror exit sql.sqlcode;
+@aida_caService_namesUpdate.sql
+commit;
+exit;
+EOF
+
+else if ( x$aidaNetwork == x"aidalcls" ) then
+   setenv TWO_TASK MCCQA
+   setenv schema aida
+   setenv ORACLE_HOME /afs/slac/package/oracle/f/11.1.0/sun4x_59/11.1.0
+   setenv PATH $ORACLE_HOME/bin:${PATH}
+   setenv TNS_ADMIN /afs/slac/g/lcls/tools/oracle/wallets/aida
+
+sqlplus /@$TWO_TASK <<EOF 
+#sqlplus ${schema}/$2 @<<EOF
+whenever sqlerror exit sql.sqlcode;
+@aida_caService_namesUpdate_qa.sql
+commit;
+exit;
+EOF
+
+endif
+
+set stat = $status
+if ( $stat ) then
+   echo "ERROR updating aida names for items from pvudb, sql exit status = $stat"
+   exit $stat
+endif
+date
+echo "Updating $1 from pvudb ENDS"
+echo '----------------------------------------------------------------'
+
+
+# If we're updating the AIDALCLS Network names, then additionally 
+# validate and sync the names to MCCO
+#
+if ( x$aidaNetwork == x"aidalcls" ) then
+date
+   setenv TWO_TASK MCCQA
+   setenv schema aida
+   setenv ORACLE_HOME /afs/slac/package/oracle/f/11.1.0/sun4x_59/11.1.0
+   setenv PATH $ORACLE_HOME/bin:${PATH}
+   setenv TNS_ADMIN /afs/slac/g/lcls/tools/oracle/wallets/aida
+
+echo "Synchronizing $1 names from MCCQA to MCCO BEGINS"
+#sqlplus ${schema}/$2 @<<EOF
+sqlplus /@$TWO_TASK <<EOF
+whenever sqlerror exit sql.sqlcode;
+@aida_qatoo_sync.sql 'ARD Test Facilities (eg NCLTA) and PEPII Names'
+commit;
+exit;
+EOF
+
+date
+echo "Synchronizing $1 names from MCCQA to MCCO ENDS"
+echo
+echo '----------------------------------------------------------------'
+endif
+
+exit 0

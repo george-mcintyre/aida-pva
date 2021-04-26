@@ -1,0 +1,23 @@
+/**
+ * IDL for AidaObjectRef structure
+ * @version 07-Jul-2002, George McIntyre. Initial release
+ */
+
+#include "OB/Types.idl"
+
+#pragma prefix "lib.aida.slac.stanford.edu"
+
+module dp
+{
+    struct AidaObjectRef
+    {
+        string inst;                    // Instance
+        string attr;                    // Attribute
+        string data;                    // Data Provider specific hint
+        long   type;                    // Data type
+        long   count;                   // Data type
+        CORBA::LongSeq services;        // List of service IDs to be called in order for this target
+        CORBA::StringSeq sor;           // List of corresponding string object references
+        CORBA::StringSeq args;          // Parameter list for this target
+    };
+};

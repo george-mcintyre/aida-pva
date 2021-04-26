@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+  <!-- This is a template for JavaDoc package.html files, based on
+  Sun's template file linked from the link below. Such a file as this
+  one should be placed in each package directory of a Java source
+  tree, to serve as documentation for the package.
+
+       see http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+  -->
+  </head>
+
+  <body>
+    <!-- Start with a one sentence verb phrase summary. Eg -->
+    Defines Aida's Directory Service server.
+
+<p>This package defines the Aida peer <code>DaNameServerI</code>. 
+The "main" program of
+daNameServer is <code>NameServer</code>, which hosts a <code>DaNameServerI</code>.
+</p>
+<p>
+This is the
+special Aida peer which
+acts as Aida's Directory Service. The Aida API objects, <code>DaObject</code>
+and <code>Dareference</code>, call methods of <code>DaNameServerI_impl</code> to
+discover the Data Providers necessary to satisfy the Aida query they are
+processing. The Directory Service information is 
+stored in an external SQL database, which <code>DaNameServerI_impl</code>
+accesses to retrieve information about each entity/attribute "known" by Aida.
+</p>
+<p>In addition to its function as a Directory Service for data,
+<code>daNameServerI</code> acts as a Name Server for all Aida peers. That is,
+each peer in the Aida network; each Data Provider, and <code>DaServer</code>,
+tells <code>DaNameServerI</code> its CORBA IOR (Interoperable Object Reference)
+when it initializes. Each Aida peer, and each client program, discovers the IOR
+of any
+peer by asking <code>DaNameServer</code>. With the IOR of a peer, the program (peer or
+client) can 
+contact it directly. The most important example of this is when a client
+application program constructs a new Aida API object <code>DaObject</code>. At
+that time, <code>DaObject</code> contacts the NameServer
+(<code>NameServer</code> deploys a <code>DaNameServerI</code>) to find out the
+IOR of the DaServer - the Aida peer which processes queries for client programs.
+From that point on, <code>DaObject</code> uses <code>DaNameServerI</code> in 
+its capacity as a Directory Service to translate requests for entity/attribute
+pairs into specific queries against Aida Data Providers (see above).
+</p>
+<!-- Put @see and @since tags down here. -->
+
+<!-- Created: Sun May  2 18:22:04 PDT 2004 -->
+<!-- hhmts start -->
+Last modified: Fri May  7
+<!-- hhmts end -->
+  </body>
+</html>

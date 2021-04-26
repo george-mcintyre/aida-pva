@@ -1,0 +1,55 @@
+#
+# Abs: Geneic Makefile for aidaObjects package under solaris
+#
+# Usage: gmake -f Makefile.sun4 
+#         - or -
+#        gmake -f Makefile.sun4 clean
+#
+# Sys: solaris makefile, for use with gmake. See Help on GNU web pages
+#      for help with gmake.
+#
+# Auth: Ron MacKenzie, 10-Jun-2002.
+#
+# -----------------------------------------------------------------------------
+# Mod: 
+#	17-Sep-2002, George McIntyre
+#		Modify to make dpTest and copy to new directory
+#	17-Jun-2002, George McIntyre
+#		Simplify 
+# 	16-Jun-2002, George McIntyre
+#		Move conditional include code off to MakefileCommon.sun4
+#		Remove unsupported VPATH functionality
+#		Auto-determine intermediate javafile targets using jidl
+#		Safe clean (only delete project files)
+#		TODO: replace jidl --file-list with preprocessor only version
+#		  to avoid output going to file, and creation of java files in tmp
+#		TOTO: safe merge of environment IDLARGS with this
+#
+# =============================================================================
+#
+
+PACKAGEROOT	= dp
+PACKAGE		= dpTest
+MODULE		= dpTest
+INTERFACENAME	= DpTestI
+
+LOCALJAVAFILES := $(INTERFACENAME)_impl.java DpTestServer.java
+HAS_IDL=1
+
+# Append special processing here
+$(PACKAGE): $(AIDADEVROOT)/idl/$(PACKAGE).idl all
+	@rm -rf $(AIDADEVROOT)/idl/$(PACKAGE).idl
+	@echo $(PACKAGE) is up-to-date 
+
+$(AIDADEVROOT)/idl/$(PACKAGE).idl: $(AIDADEVROOT)/idl/aidaObject.idl
+	echo 'me first'
+	sed -e 's/THIS/$(MODULE)/g' -e 's/module dp/module $(MODULE)/g' -e 's/AidaObjectI/$(INTERFACENAME)/g' -e "s/lib\.aida\./$(PACKAGEROOT).aida./g"   $(AIDADEVROOT)/idl/aidaObject.idl > $(AIDADEVROOT)/idl/$(PACKAGE).idl
+	gmake -f Makefile.sun4 
+
+implfile:
+	@mv $(INTERFACENAME)_impl.java $(INTERFACENAME)_impl.java.bak
+	sed -e 's/THIS/$(MODULE)/g' -e 's/module dp/module $(MODULE)/g' -e 's/AidaObjectI/$(INTERFACENAME)/g' -e "s/lib\.aida\./$(PACKAGEROOT).aida./g"   $(AIDADEVROOT)/idl/aidaObject.idl > $(AIDADEVROOT)/idl/$(PACKAGE).idl
+	gmake -f Makefile.sun4 impl
+
+-include $(AIDADEVROOT)/common/script/MakefileCommon.sun4
+include $(AIDA)/common/script/MakefileCommon.sun4

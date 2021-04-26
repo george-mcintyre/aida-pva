@@ -1,0 +1,49 @@
+$!
+$!===============================================================================
+$!
+$!
+$! Name:  STARTDPSLCHIST.VMS
+$!
+$! Abs:   Starts the SLC History data provider on VMS. The slcimage:dpslc.jar file 
+$!        has the server. You can redefine slc_image in the usual way to point
+$!        to your development version for testing.
+$!
+$! Auth:  14-Sep-2004, Bob Hall (rdh) Adapted from STARTDPSLC.VMS.
+$! Rev:   
+$!
+$!===============================================================================
+$!
+$! Mods: 
+$!
+$!===============================================================================
+$!
+$! Some of this stuff may be needed later so leave it for now.
+$!
+$ OOC_COSEVENT_HOST="opi00dev00.slac.stanford.edu"
+$ OOC_COSEVENT_PORT="4546"
+$! IMRHOST="cdntwks17.slac.stanford.edu"
+$!
+$ define aida_mode dev
+$!
+$! Make intermediate logicals to pass system properties 
+$! and avoid the VMS DCL 255 char limit. 
+$!
+$ uid = "-DAIDA_DATABASE_USERID=AIDA''F$trnlnm("AIDA_MODE")'"
+$ url = "-DAIDA_NAMESERVER_IOR_URL=http://www.slac.stanford.edu/grp/cd/soft/slaconly/aida/NameServer''f$trnlnm("AIDA_MODE")'.ior"
+$ file = "-DAIDA_NAMESERVER_IOR_FILE=/afs/slac.stanford.edu/package/aida/slaconly/NameServer''f$trnlnm("AIDA_MODE")'.ior"
+$!
+$! Bootclasspath needs prepended OB.JAR. This is needed when using
+$! Java 1.4 with Orbacus (at the the ver of Orbacus we're using).
+$! Note: On VMS, the -Xbootclasspath still has to be in Unix style pathnames.
+$ bootcp = "-Xbootclasspath/p:/DISK$SLCLIBRARY/JAVA/FOREIGN/OB.JAR"
+$!
+$ ORBInitRefarg = "-ORBInitRef EventService=corbaloc:iiop:''OOC_COSEVENT_HOST':''OOC_COSEVENT_PORT'/DefaultEventChannel" 
+$!
+$ write sys$output "java arguments"
+$ show symbol bootcp
+$ show symbol uid
+$ show symbol url
+$ show symbol file 
+$ show symbol ORBInitRefarg
+$ java $bootcp $uid $url $file "edu.stanford.slac.aida.dp.dpSlc.DpSlcHistServer" ''ORBInitRefarg'
+$ exit

@@ -1,0 +1,61 @@
+#!/bin/sh
+#-*-sh-*-
+#==============================================================
+#
+#  Abs:   Runs a java class with AIDA options, directly or via alias.
+#
+#  Name:  aidacmd
+#
+#  Rem:   This script can be invoked with the second argument naming the 
+#         subcommand, or it can be invoked via a symlink so that $0 is the 
+#         name of the subcommand prefixed by "aida".  For example, could be 
+#         invoked as "aidacmd <alias> ..." or "aida<alias> ...".  In either
+#         case, the effect is to invoke the class indicated by <alias>.  If
+#         there's a mapping from <alias> to a classname in the case statement
+#         below, then the mapped name is used, otherwise the unamapped name.
+#
+# 
+#  Usage: aidacmd <alias> [args ...]
+#
+#  Side:  
+#
+#  Auth:  30-oct-2006, Chris Larrieu (clarrieu): 
+#  Rev:   
+#
+#--------------------------------------------------------------
+# Mods: (Latest to oldest)
+#
+#        27-Oct-2007, Bob Hall (rdh)  
+#           Added AIDA_CLIENT_TIMEOUT Java system property to
+#           the Java command string.
+#
+#============================================================== 
+
+app=`basename $0`;
+
+if [ "$app" = "aidacmd" ]; then
+    cmd=$1;
+    shift;
+else
+    cmd=`echo $app | sed -e 's/aida//g'`;
+fi
+
+
+# assign a class to run based on the specified command
+case $cmd in
+
+"get")
+	class=edu.stanford.slac.aida.tool.command.AidaFetcher
+	;;
+"set")
+	class=edu.stanford.slac.aida.tool.command.AidaSetter
+	;;
+*)
+	# unknown command: assume it's a valid class name
+	class=$cmd
+	echo running java class $class
+	;;
+esac
+	
+
+java -client -Xms1G -Xmx1G $AIDABCSTRING -DAIDA_DATABASE_USERID=AIDA$AIDA_MODE -DAIDA_NAMESERVER_IOR_URL=$AIDA_NAMESERVER_IOR_URL -DAIDA_CLIENT_TIMEOUT=$AIDA_CLIENT_TIMEOUT $class "$@"

@@ -1,0 +1,29 @@
+#!/bin/tcsh -f 
+#! This is a utility script, used by other scripts that wish to execute a 
+#! SQL expression in an AIDA database. This executable script can be called
+#! giveing the SQL expression as a quoted argument.
+#! 
+#! Args: sql_script_name to be run.
+
+#source /afs/slac/g/cd/soft/dev/script/oracle_env11g.csh
+#setenv ORACLE_PATH .:${ORACLE_PATH}
+#setenv ORACLE_PATH ${ORACLE_PATH}:/afs/slac/g/cd/soft/tst/ora
+#setenv ORACLE_PATH ${ORACLE_PATH}:/afs/slac/g/cd/soft/dev/ora
+
+#set p=`getPwd $AIDA_DATABASE_USERID`
+#set DB="$AIDA_DATABASE_USERID/$p"
+
+source /afs/slac/g/cd/soft/dev/script/ENVS.csh
+source aidaSetEnv.csh $AIDA_MODE
+
+#! set cmd = "@${*}"
+set cmd = "@${argv:q}"
+echo Running \"$cmd\" on $AIDA_DATABASE_USERID
+
+# sqlplus -S "$DB" <<EOF
+sqlplus -S /@${TWO_TASK} <<EOF
+@$cmd
+quit;
+EOF
+
+exit $status

@@ -1,0 +1,46 @@
+#!/bin/tcsh -f
+#==============================================================
+#
+# Abs:   This script empties the Aida aida_slc_db_asts table and then
+#        loads it by invoking the Oracle SQLLDR.
+#
+#  Name: load_aida_slc_db_asts
+#
+#  Rem:  This script is invoked using the Aida dev or prod Oracle
+#        account.  The script first invokes the empty_aida_slc_db_asts.sql
+#        SQL script to truncate the aida_slc_db_asts Aida Oracle table.
+#        It then invokes the Oracle SQLLDR by loading the
+#        /mccdev/nfs_slcdb/aida_slc_db_asts.dat file using
+#        load_aida_slc_db_asts.ctl.
+#
+#  Facility:  SLAC
+#
+#  Auth: 24-Apr-2006, Bob Hall (RDH)
+#  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
+#
+#--------------------------------------------------------------
+#
+#  Mod:
+#
+#==============================================================
+#
+#
+# Empty the aida_slc_db_asts table
+#
+echo "emptying aida_slc_db_asts table in $1 $TWO_TASK $TNS_ADMIN"
+sqlplus /@$TWO_TASK @empty_aida_slc_db_asts
+if ( $status ) then
+   echo "ERROR return from emptying aida_slc_db_asts, sql exit status = $status"
+   exit 1
+endif
+
+#
+# Load the aida_slc_db_asts table
+#
+echo "loading aida_slc_db_asts table in $1 $TWO_TASK"
+sqlldr userid=/@$TWO_TASK control=load_aida_slc_db_asts.ctl, direct=true, log=/mccdev/nfs_slcdb/load_aida_slc_db_asts/load_aida_slc_db_asts.log, bad=/mccdev/nfs_slcdb/load_aida_slc_db_asts/load_aida_slc_db_asts.bad
+if ( $status ) then
+   echo "ERROR return from SQLLDR using load_aida_slc_db_asts.ctl, exit status = $status"
+   exit 1
+endif
+echo "exiting load_aida_slc_db_asts"

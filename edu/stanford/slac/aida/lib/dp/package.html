@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+  <!-- This is a template for JavaDoc package.html files, based on
+  Sun's template file linked from the link below. Such a file as this
+  one should be placed in each package directory of a Java source
+  tree, to serve as documentation for the package.
+
+       see http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+  -->
+  </head>
+
+  <body>
+    <!-- Start with a one sentence verb phrase summary. Eg -->
+Defines the abstract data types that define the callable interfaces of the peers in an 
+Aida network (most importantly the Data Provider peers).
+
+<p><code>AidaObjectI</code> is the abstract interface which defines the API of 
+an Aida Data Provider. Specifically, each data provider is no more than an 
+implementation of an
+AidaObjectI. Recall, in the Aida naming convention, the I sufix denotes
+an interface, either implemented by CORBA (as in this case), or a Java
+"interface".</p>
+<p>However, the mechanism in which this comes about is quite tricky:
+<code>AidaObjectI</code> is defined, using CORBA, as an IDL 
+interface in <code>/idl/aidaObject.idl</code>. The output of the jidl compile of
+that file, is used in two
+ways:
+<dl>
+<dt>To construct each Data Provider's basic CORBA interface code:<br>
+<dd>
+When gmake is run on the makefile <code>makefileAida.sun4</CODE> to build a 
+given Data Provider, it runs
+jidl on <code>aidaObject.idl</code>. That idl file contains a
+<CODE>module</CODE> definition named "dp", and interface "aidaObjectI". jidl
+creates the CORBA support files for the interface so defined, and the
+ template _impl file of a template data provider, calling it <code>aidaObjectI_*</code> 
+(constructing a template <code>aidaObjectI_impl</code> in particular). The next
+part of this build sequence, as implemented in the rules in the Makefile.sun4 of
+Data Provider, is to literally <code>sed</code> the output of jidl and change
+all instances of <code>aidaObjectI</code> to <code><i>dataprovdiernameI
+</i></code>. See, for instance, <code>/dp/dpCa/Makefile.sun4</code>. The "dp" is
+changed to the given Data Provider's package name, and the interface to the 
+Data Provider's name (these two may be the same). The output of the jidl is left
+in this directory (<code>util.dp</code>), whereas the output from teh subsequent
+sed is left in the Data Provider's package directory.
+<dt>Used by the Aida API objects to interact with Aida peers: <br>
+<dd>The Aida API objects, <code>DaObject</code> and <code>DaReference</code>, 
+through which DaServer or an application programs calls Data Providers, 
+ actually understand each 
+peer through private member data defined as <code>aidaObjectI</code> and 
+<code>aidaObjectRef</code>. In this way, the DaServer and client programs can
+call a Data Provider peer without actually having instantiated an instance
+of the interface object for that Data Provider by name. For instance, they can 
+call methods of Data Provider <code>dpCa</code> without having to construct a 
+an object of <code>dpCaI</code> by just calling methods on an
+<code>aidaObjectI</code>.  
+</dl>
+
+<p><code>AidaObjectRef</code> is used by the Aida API object
+<code>DaReference</code>, to hold the run-time information about the
+Data Providers needed to satisfy a query. Specifically, it contains the 
+infomation relating to servers, such as IORs and necessary output ordering, for 
+the compiled query encapsulated in a
+<code>DaReference</code>.</p>
+
+<h3>Makefiles for making Data Providers</h3>
+<dl>
+<dt>Makefile
+<dd>Makes each of Makefile1, Makefile2, Makefile3 in order.
+<dt>Makefile1
+<dd>Makes <code>lib/dp</code> itself.
+<dt>Makefile2
+<dd>Makes aidaObjectRef.
+<dt>Makefile3
+<dd>Makes aidaObject.
+</dl>
+
+<!-- Put @see and @since tags down here. -->
+
+<!-- Created: Sun May  2 18:22:04 PDT 2004 -->
+<!-- hhmts start -->
+Last modified: Sun May  4
+<!-- hhmts end -->
+  </body>
+</html>

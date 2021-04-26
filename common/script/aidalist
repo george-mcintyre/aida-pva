@@ -1,0 +1,107 @@
+#!/bin/tcsh -f
+#-*-csh-*-
+#==============================================================
+#
+#  Abs:   Lists "names" in the aida schema matching the given pattern.
+#
+#  Name:  aidalist
+#
+#  Rem:   This script returns the "instance" (and optionally "attributes"
+#         too) matching the sqlplus pattern given in the arguments. 
+#
+#         aidalist examines the value of AIDA_MODE to see which aida
+#         directory to look in. 
+# 
+#  Usage: aidalist [-help or -meta] <instance-pattern> [<attribute-pattern>]
+#         Egs:
+#            aidalist XCOR:PR10:9042     - Confirms XCOR:PR10:9042 is known
+#            aidalist XCOR:PR10:9%       - All "9 something" XCOR in PR10
+#            aidalist XCOR:PR10:9042 X%  - All X attributes of XCOR:PR10:9042
+#            aidalist XCOR:PR10:9042 %   - All attributes of XCOR:PR10:9042
+#            aidalist XCOR% %            - All XCOR with all their attributes
+#            aidalist XCOR:LI%:502 twiss - Which linac 502 units have twiss        
+#            aidalist -meta XCOR:LI27:502     - Lists what AIDA knows about SLC and model 
+#                                               aspects of this device(*)
+#            aidalist -meta XCOR:LI27:502%    - Lists everything AIDA knows about XCOR:LI27:502
+#            aidalist -meta XCOR:LI27:502 effective_length
+#                                             - Shows how AIDA gets the effective_length of
+#                                               this device specifically.
+#  Side:  
+#
+#  Auth:  03-Feb-2005, Greg White (greg)
+#  Rev:   dd-mmm-yyyy, Whoever    (user):
+#
+#--------------------------------------------------------------
+# Mods:
+#         12-Jun-2013, Greg White
+#            Call aidaSetEnv.csh passing AIDA_MODE if it has been set,
+#            since otherwise AIDA_MODE will be reset to DEV.
+#         10-Sep-2010, Greg White
+#            Use getPwd rather than hard coded password.
+#         23-Oct-2012, Greg White
+#           test for oracle wallet release
+#         20-Sep-2011, Bob Hall
+#            Changed Oracle password.
+#         04-Apr-2011, Bob Hall
+#            Changed Oracle password.
+#         15-Sep-2010, Bob Hall
+#            Changed Oracle password. 
+#         23-Mar-2010, Bob Hall
+#            Changed Oracle password. 
+#         04-Mar-2010, Greg White
+#            Added support for AIDALCLS, and fixed arg processing bu (-h -> -m)
+#         26-Aug-2009, Bob Hall
+#            Changed Oracle password. 
+#         09-Mar-2009, Bob Hall
+#
+#
+#============================================================== 
+
+# Check Arguments. Must be at least 1 (the instance name or -h for help)
+#
+if ($#argv == 1 && (x$1 == x"-h" || x$1 == x"-help")) then 
+        echo "Usage: aidalist [-h|-m] <instance-pattern> [<attribute-pattern>]"
+        exit 0
+endif
+if ($#argv > 1 && (x$1 == x"-m" || x$1 == x"-meta")) then
+        set meta = "true"
+else
+        set meta = "false"
+endif
+if ( $#argv == 0 || ($#argv > 2 && x$meta == x"false" )) then
+        echo "Bad Arguments, see aidalist -h or look in script header"
+        exit 1
+endif
+
+
+# Set the environment, paying attention to whether the called has
+# already specified which AIDA network they want to connect to.
+#
+source /afs/slac/g/cd/soft/dev/script/ENVS.csh
+if ! $?AIDA_MODE then
+    source /afs/slac/g/cd/soft/dev/script/aidaSetEnv.csh DEV
+else
+    source /afs/slac/g/cd/soft/dev/script/aidaSetEnv.csh $AIDA_MODE
+endif
+ 
+
+if ( $meta == "false" ) then
+    if ( x$2 != x"" ) then
+	set cmd = "@aidalistIA $*"
+    else
+	set cmd = "@aidalistI $*"
+    endif
+else 
+    if ( x$3 != x"") then
+        set cmd = "@aidalistIA_meta $2 $3"
+    else
+        set cmd = "@aidalistI_meta $2"
+    endif
+endif
+
+sqlplus -S /@${TWO_TASK} <<EOF | tr '\t' ' ' | sort
+$cmd
+quit;
+EOF
+
+exit $status

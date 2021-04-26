@@ -1,0 +1,232 @@
+## -*- Makefile -*-
+#
+# Abs: Makefile for whole Aida package for use under solaris.
+#
+# Usage: 
+#  see http://www.slac.stanford.edu/grp/cd/soft/aida/newLabourCheatsheet.html
+#
+#   This makefile is normally run by the alias aidamake, but it
+#        may also be run directly from the prompt:
+#
+#       gmake -f $AIDA/common/script/MakefileAida.sun4 
+#
+#   or to run local version:  
+#		gmake -f common/script/MakefileAida.sun4 [DEBUG=-g]
+#
+#   to make all of the code part (ignoring javadoc, jar files etc)
+#   this is the default:
+#       aidamake [DEBUG=-g]
+#
+#   to make everything (java, c++, javadoc, jar files etc)
+#       aidamake all [DEBUG=-g]
+#
+#   to make one data provider including recreating the _impl file (BE CAREFUL - OVERWRITES)
+#        aidamake dpSlcHist ACTION=impl
+#
+#   to make one part, eg the daServer (see targets below)
+#       aidamake daServer [DEBUG=-g]
+#
+#   to make the test suite
+#       aidamake testsuite [DEBUG=-g]
+#
+#   to clean up:  
+#       aidamake aida ACTION=clean
+#
+#   to make javadoc  
+#       aidamake javadoc
+#
+#   or to make the aida jar file,
+#       aidamake aida.jar
+#
+#   to make the TAGS file (used from emacs to search for symbols in source code)
+#       aidamake TAGS
+#
+# Sys: Solaris
+#
+# Rem: 
+#
+# Auth: Greg White, Ron MacKenzie, 10-Jun-2002
+#
+# Copyright: Stanford Linear Accelerator Center, 2001.
+#
+# -----------------------------------------------------------------------------
+# Mod: 
+#   13-Jan-2010, Greg White (greg)
+#      Add aidadp.jar target and change contexts of aida.jar target, so it only has the core.
+#   15-Jul-2008, Greg White (greg)
+#      Added dpModel
+#   20-Jun-2008, Greg White (greg)
+#      Added dpRdb
+#   02-Oct-2005, Greg White (greg)
+#      Added making TAGS file for emacs users (M-.)
+#   25-Mar-2005, greg White (greg)
+#      Removed dpChads from all build until compatible with g++3.1.1
+#   13-Sep-2004, Greg White (greg)
+#      Tidy up comments. Make "aida" the primary target.
+#   16-Aug-2004, Greg White (greg)
+#      Create aida.jar in lib subdir; and changed name of jdoc target 
+#      to javadoc. Make primary target "all"
+#   4-Aug-2004, Greg White (greg)
+#      Added aida.jar target
+#   24-Jun-2004, Greg White (greg)
+#      Added dpTestHist
+#   11-May-2004, Greg White (greg)
+#      Added -overview to javadoc cmd, and changed -sourcepath 
+#      to AIDADEVROOT.
+#   14-Mar-2003, Ron MacKenzie (RONM)
+#      Add dpChads, which makes both C++ and JAVA directories.  The server is
+#      in C++, but we need the java jidl compile done so that the java clients
+#      will get the interface classes and HistData structure class they need.
+#   21-Jan-2003, Ron MacKenzie (RONM)
+#      Change the make of dpTestHist to make C++ dpTestHist instead of java.
+#   13-Nov-2002, Ron MacKenzie(RONM)
+#      Remove libExcept from here.  The exceptions are in package EXCEPT now.
+#   16-Nov-2002, Greg White (GREG)
+#      Added dpCa. Also added emacs makefile designator at head of file
+#   06-Nov-2002, Greg White (GREG)
+#      Changed testsuite and jdoc targets' cd statements from AIDAROOT 
+#      to AIDADEVROOT
+#   ... prior mods removed
+# =============================================================================
+#
+
+aida : libDp daNameServer libCommon libDa daServer dpTest dpCa dpTestHist \
+       dpRdb dpModel dpKlys dpSlcHist dpSlcModel dpSlcBpm tools
+
+# Core is just the aida packages making up the aida infrastructure and client side tools.
+# That is, it does not include Data Provder side. 
+core : libCommon libDa daNameServer daServer  libDp   tools
+
+# Use this when making an aida.jar for shiping to VMS. Don't forget to compile with 
+# java 1.4.2 for shipping to VMS (or whatever VMS is at).
+vms : core  dpSlcHist dpSlcModel dpSlcBpm
+	cd $(AIDADEVROOT)
+	if [ ! -d lib ] ; then mkdir lib ; fi
+	jar -cvf lib/aidaforvms.jar `find edu/stanford/slac/aida/lib -name "*.class" -print`
+	jar -uvf lib/aidaforvms.jar `find edu/stanford/slac/aida/sys -name "*.class" -print`
+	jar -uvf lib/aidaforvms.jar `find edu/stanford/slac/aida/tool -name "*.class" -print`
+	jar -uvf lib/aidaforvms.jar `find edu/stanford/slac/aida/dp/dpSlcHist -name "*.class" -print`
+	jar -uvf lib/aidaforvms.jar `find edu/stanford/slac/aida/dp/dpSlcModel -name "*.class" -print`
+	jar -uvf lib/aidaforvms.jar `find edu/stanford/slac/aida/dp/dpSlcBpm -name "*.class" -print`
+
+
+all : aida testsuite prod javadoc TAGS 
+
+tools: command
+
+
+# Use development Aida Common make file only if it exists. 
+#
+-include common/script/MakefileCommon.sun4
+include $(AIDA)/common/script/MakefileCommon.sun4
+
+libDa :
+	cd $(AIDAPACKAGEDIR)/lib/da; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+libDp :
+	cd $(AIDAPACKAGEDIR)/lib/dp; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+libCommon : 
+	cd $(AIDAPACKAGEDIR)/lib/util/common; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+daNameServer : 
+	cd $(AIDAPACKAGEDIR)/sys/daNameServer; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+daServer : 
+	cd $(AIDAPACKAGEDIR)/sys/daServer; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpTest : 
+	cd $(AIDAPACKAGEDIR)/dp/dpTest; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpTestHist : 
+	cd $(AIDAPACKAGEDIR)/dp/dpTestHist; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpSlc : 
+	cd $(AIDAPACKAGEDIR)/dp/dpSlc; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpSlcHist : 
+	cd $(AIDAPACKAGEDIR)/dp/dpSlcHist; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpSlcModel : 
+	cd $(AIDAPACKAGEDIR)/dp/dpSlcModel; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpSlcBpm : 
+	cd $(AIDAPACKAGEDIR)/dp/dpSlcBpm; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpChads : 
+	cd $(AIDAEPICSEXTENDIR)/dp/dpChads; $(MAKE) -f Makefile $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(AIDAPACKAGEDIR)/dp/dpChads; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpCa : 
+	cd $(AIDAPACKAGEDIR)/dp/dpCa; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpKlys : 
+	cd $(AIDAPACKAGEDIR)/dp/dpKlys; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpRdb : 
+	cd $(AIDAPACKAGEDIR)/dp/dpRdb; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+dpModel : 
+	cd $(AIDAPACKAGEDIR)/dp/dpModel; $(MAKE) -f Makefile.sun4 $(IDLARGS) $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+command:
+	cd $(AIDAPACKAGEDIR)/tool/command; $(MAKE) -f Makefile.sun4 $(ACTION) DEBUG=$(DEBUG)
+	cd $(ROOT)
+
+testsuite :
+	cd $(AIDADEVROOT)/test/java; $(MAKE) -f Makefile.sun4 $(ACTION) DEBUG=$(DEBUG)
+	cd ../..
+
+javadoc: FORCE
+	cd $(AIDADEVROOT)
+	javadoc -sourcepath $(AIDADEVROOT) -subpackages edu.stanford.slac.aida test.java -d javadoc -overview overview.html -author -version
+	cd $(ROOT)
+
+TAGS: FORCE
+	cd $(AIDADEVROOT)
+	/afs/slac.stanford.edu/package/emacs/21/21.2/common/share/emacs/21.2/site-lisp/jde-2.3.5/lisp/jtags
+	cd $(ROOT)
+
+prod : aida.jar aidadp.jar aidasrc.zip aidatest.jar
+
+
+aida.jar : FORCE
+	cd $(AIDADEVROOT)
+	if [ ! -d lib ] ; then mkdir lib ; fi
+	jar -cvf lib/aida.jar `find edu/stanford/slac/aida/lib -name "*.class" -print`
+	jar -uvf lib/aida.jar `find edu/stanford/slac/aida/sys -name "*.class" -print`
+	jar -uvf lib/aida.jar `find edu/stanford/slac/aida/tool -name "*.class" -print`
+
+aidadp.jar : FORCE
+	cd $(AIDADEVROOT)
+	if [ ! -d lib ] ; then mkdir lib ; fi
+	jar -cvf lib/aidadp.jar `find edu/stanford/slac/aida/dp -name "*.class" -print`
+
+aidatest.jar : FORCE
+	cd $(AIDADEVROOT)
+	if [ ! -d lib ] ; then mkdir lib ; fi
+	jar -cvf lib/aidatest.jar `find test/java -name "*.class" -print`
+
+
+aidasrc.zip : FORCE
+	cd $(AIDADEVROOT)
+	if [ ! -d lib ] ; then mkdir lib ; fi
+	jar -cvf lib/aidasrc.zip `find . \( -name "*.java" -o -name "*.idl" \) -print`
+
+FORCE:

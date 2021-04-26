@@ -1,0 +1,115 @@
+#!/bin/tcsh -f
+#-*-csh-*-
+#==============================================================
+#
+#  Abs:   Startup file for AIDA Data Provider for EPICS Archive Data.
+#
+#  Name:  st.DpChadsServer 
+#
+#  Rem:    
+# 
+#  Usage: st.DpChadsServer (lcls | facet | nonlcls) [TEST_DATA n]
+#
+#         The first argument ("lcls", "facet", or "nonlcls") is required.
+#         The argument "nonlcls" should be changed at some point to
+#         another name, perhaps "native", to be more meaningful now that
+#         a FACET Channel Archiver server has been added.
+#         The purpose of this argument is to allow the UNIX "ps" command
+#         to distinguish between a LCLS Aida Channel Archiver data
+#         server, a FACET Aida Channel Archiver data server,  and a
+#         "native" Aida Channel Archiver data server (e.g., PEPII or
+#         NLCTA Aida Channel Archiver data server) running on the same machine.
+#
+#         TEST_DATA n specifies that on n items of history should be returned.
+#   
+#         	
+#  Side:  Starts dpChadsServer, so starts CORBA ORB on host
+#
+#  Auth:  01-Mar-2004, Greg White (greg)
+#  Rev:   dd-mmm-yyyy, Whoever    (user):
+#--------------------------------------------------------------
+# Mods: (Latest to oldest)
+#         02-Feb-2011, Bob Hall (rdh)
+#           Modified to support the new FACET Aida Channel
+#           Archiver data server.  This support involves allowing
+#           a new "facet" value for the required first argument
+#           to this script.
+#         10-Mar-2007, Bob Hall (rdh)
+#           Modified to support the new LCLS Aida Channel
+#           Archiver data server.  This support involves adding
+#           a required first argument ("lcls" or "nonlcls") to
+#           this script.
+#         05-May-2005, Bob Hall (rdh)
+#           Changed to set the aidamode to DEV only if
+#           the host is the DpChadsServer development host
+#           (AIDA_HST_HOST_DEV).
+#         30-Nov-2004, Greg White (greg)
+#           Default to AIDA_MODE PROD, source ENVS.csh, 
+#           source aidaSetEnvDev.csh in that order.
+#         21-May-2004, Bob Hall (rdh)
+#           Corrected sourcing of epicsSetup* files.
+#         06-May-2004, Bob Hall (rdh)
+#           Created st.DpChadsServer from st.DpHistServer.
+#
+#============================================================== 
+#
+echo `date` `basename $0` "executing"
+set host_ = `hostname`
+set aidamode = "PROD"
+
+set archiver_system = $1
+
+source /afs/slac.stanford.edu/g/cd/soft/dev/script/UENVS.csh
+source /afs/slac.stanford.edu/g/cd/soft/dev/script/ENVS.csh
+if ( ${ENVS_EXIT} != 0 ) then
+   echo `date` "ENVS failed to complete, exiting"
+   exit 1
+endif
+
+if ($host_ == $AIDA_HST_HOST_DEV) then
+    set aidamode = "DEV"
+endif
+
+#
+# Source the epicsSetup file associated with the subsystem of
+# the Channel Archiver history server.  The epicsSetup file
+# will set the environment variables ARCHIVER_SUBSYSTEM and
+# and ORACLE_CONFIG_FILE_PATH appropriately.  The environment
+# variable ARCHIVER_SUBSYSTEM will be used by the history server
+# to form the name that will be registered with the name server.
+# The environment variable ORACLE_CONFIG_FILE_PATH will be
+# used by the history server to determine the name of the encrypted
+# file which contains the appropriate Oracle username, password,
+# and instance.
+#
+
+if ( $host_ == $AIDA_HST_HOST_DEV) then
+    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPepii
+    setenv ARCHIVER_SUBSYSTEM dev
+else if ($host_ == $AIDA_HST_HOST_PEPII) then 
+    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPepii
+else if ($host_ == $AIDA_HST_HOST_NLCDEV) then 
+    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupNlcta
+else if ($host_ == $AIDA_HST_HOST_PACK) then 
+    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPack
+endif
+
+if ($archiver_system == "lcls") then
+    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPepii
+    setenv ARCHIVER_SUBSYSTEM lcls
+else if ($archiver_system == "facet") then 
+    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPepii
+    setenv ARCHIVER_SUBSYSTEM facet
+endif
+
+# Specialize for dev or "prod on dev". If running a dev version of AIDA
+# aidaSetEnv.csh should be called with DEV, otherwise (prod) then give no 
+# arg.
+source ${CD_SCRIPT}/aidaSetEnv.csh $aidamode
+
+rehash
+
+dpChadsServer $archiver_system -ORBInitRef EventService=corbaloc:iiop:${OOC_COSEVENT_HOST}:${OOC_COSEVENT_PORT}/DefaultEventChannel $2-$ &
+
+exit
+# End of script

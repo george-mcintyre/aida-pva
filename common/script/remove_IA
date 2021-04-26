@@ -1,0 +1,49 @@
+#!/bin/csh
+
+# Check Arguments. Must be at least 1 (the instance name or -h for help)
+#
+if ($#argv == 1 && ($1 == "-h" || $1 == "-help")) then 
+        echo "Usage: remove_IA  <instance> <attribute>"
+	echo '   Eg: remove_IA '\''BPMS:IN20'\'' '\''BSA.X1H.NAMES'\'' '
+	echo
+	echo "   This example tells Aida to remove the instance attribute given"
+        echo "   from one AIDA NETWORK. The default AIDA network is PROD."
+        echo "    - check the value of AIDA_MODE".
+        echo 
+        echo "   You must run remove_IA in each Aida network in which you want to"
+        echo "   remove the name. Eg"
+ 	echo "   $ setenv AIDA_MODE DEV"
+	echo '   $ remove_IA '\''BPMS:IN20'\'' '\''BSA.X1H.NAMES'\'' '
+ 	echo "   $ setenv AIDA_MODE PROD"
+        echo '   $ remove_IA '\''BPMS:IN20'\'' '\''BSA.X1H.NAMES'\'' '
+	echo
+        echo "   Aida will no longer be able to retrive this value". 
+        exit 0
+endif
+if ( $#argv < 2 || $#argv > 2 ) then
+        echo "Bad Arguments, see remove_IA -h or look in script header"
+        exit 1
+endif
+
+#source /afs/slac/g/cd/soft/dev/script/oracle_env.csh
+#setenv ORACLE_PATH ${ORACLE_PATH}:/afs/slac/g/cd/soft/tst/ora
+#setenv ORACLE_PATH ${ORACLE_PATH}:/afs/slac/g/cd/soft/dev/ora
+#
+#setenv TWO_TASK SLACPROD
+#set schema = aidaprod
+#if ( ${?AIDA_MODE} ) then 
+#   if ( ${AIDA_MODE} == "DEV" ) set schema = aidadev
+#endif
+#set DB = $schema/gve3r_di
+
+
+set DB = $AIDA_DATABASE_USERID/`ssh -llaci mccas0.slac.stanford.edu ./gimmePwd $AIDA_DATABASE_USERID`
+
+set cmd = "@remove_IA ${*}"
+
+sqlplus -S $DB <<EOF
+@$cmd
+quit;
+EOF
+
+exit $status

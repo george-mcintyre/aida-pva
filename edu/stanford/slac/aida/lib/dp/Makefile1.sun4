@@ -1,0 +1,30 @@
+#
+# Abs: Makefile for lib/dp package under solaris
+#
+# Usage: gmake -f Makefile.sun4 
+#         - or -
+#        gmake -f Makefile.sun4 clean
+#
+# Sys: solaris makefile, for use with gmake. See Help on GNU web pages
+#      for help with gmake.
+#
+# Auth: 17-Jun-2002, George McIntyre
+#
+# -----------------------------------------------------------------------------
+# Mod: 
+#
+# =============================================================================
+#
+
+PACKAGEROOT	= lib
+PACKAGE		= dp
+MODULE		= dp
+LOCALJAVAFILES := $(wildcard *.java)
+
+# Append special processing here
+$(PACKAGE): all
+	@echo $(PACKAGE) is up-to-date
+
+-include $(AIDADEVROOT)/common/script/MakefileCommon.sun4
+include $(AIDA)/common/script/MakefileCommon.sun4
+

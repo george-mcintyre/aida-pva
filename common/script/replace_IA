@@ -1,0 +1,28 @@
+#!/bin/csh
+# Replaces the transform of a given AIDA Instance Attribute with another.
+ 
+# Check Arguments. Must be at least 1 (the instance name or -h for help)
+#
+if ($#argv == 1 && ($1 == "-h" || $1 == "-help")) then 
+        echo "Usage: replace_IA  <service-id> <instance> <attribute> <new-transform>"
+	echo '   Eg: replace_IA 5 '\''BPMS:IN20'\'' '\''BSA.X1H.NAMES'\'' "select unique instance from aida_names where instance like '\''BPMS:IN20:%:X1H'\''"'
+	echo
+	echo "   This example tells Aida to replace the existing transform of the instance"
+        echo "    attribute given, to be processed"
+	echo "   by the Oracle Aida data provider, with the new-transform given."
+        exit 0
+endif
+if ( $#argv < 3 || $#argv > 4 ) then
+        echo "Bad Arguments, see replace_IA -h or look in script header"
+        exit 1
+endif
+
+echo service: "'$1'" instance: "'$2'" attribute: "'$3'" transform: "'$4'"
+
+echo Removing:
+remove_IA $2 $3
+
+echo Adding new IA and transform:
+add_IA $1 $2 $3 "$4"
+
+exit $status

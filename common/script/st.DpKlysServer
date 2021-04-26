@@ -1,0 +1,117 @@
+#!/bin/tcsh -fx
+#-*-csh-*-
+#==============================================================
+#
+#  Abs:   Startup file for AIDA EPICS Klystron Control server. 
+#
+#  Name:  st.DpKlysServer
+#
+#  Args:  DEV	Whether this instance of the server should be 
+#               a development instance (if given), or a production instance
+#               (the default). development instances connect to the development
+#               Aida db, and hence connect to the development Aida 
+#               server group.
+#  Rem:   
+# 
+#  Usage: st.DpKlysServer (lcls | nonlcls) [DEV]
+#
+#         The first argument ("lcls" or "nonlcls") is required.
+#         	
+#  Side:  Starts Aida DpKlysServer, so starts CORBA ORB on host
+#
+#  Auth:  15-Nov-2010, Greg White (greg)
+#  Rev:   dd-mmm-yyyy, Whoever    (user):
+#--------------------------------------------------------------
+# Mods:  
+#
+#============================================================== 
+
+#
+set STAT_CANTDETRREALM=1
+set STAT_BADARG=2
+set REALMLIST = ( DEV PEPII )
+
+set hostname_ = `hostname`
+set realm = ""
+
+# For testing the server, an argument saying which realm to set up for may 
+# be given. This avoids having to log onto the production server before 
+# running the st. command file from a prompt - which would otherwise be
+# necessary because this script determines what realm it is in, and therefore
+# what setup to do, depending on the hostname. 
+#     Remember, we are not supposed to put more than
+# one realm on the same server, in order to isolate realms. For this reason
+# it's sensible to map hosts to realms in a 1:1 mapping. 
+#
+if ( $#argv > 1 ) then
+    set realm = `(echo $2|tr '[[:lower:]]' '[[:upper:]]')`
+    set validRealm = `(echo ${REALMLIST}|tr " " ":"|egrep -ic "$realm")`
+    if ( $validRealm == 0 ) then
+      	echo "Invalid realm: " $realm
+       	exit $STAT_BADARG
+    endif	
+else
+    if ( $hostname_ == $AIDA_KLYS_HOST_DEV ) then
+        set realm = DEV
+    else if ( $hostname_ == $AIDA_KLYS_HOST_PROD ) then
+       	set realm = PROD
+    endif
+endif
+
+if ( $realm == "" ) then
+	echo "Not known which realm to run under"
+	exit $STAT_CANTDETRREALM
+endif
+
+# The basic setup. 
+source /afs/slac.stanford.edu/g/cd/soft/dev/script/ENVS.csh
+source /afs/slac.stanford.edu/g/cd/soft/ref/package/aida/common/script/R13toR14.csh
+
+# Specialize the setup for realm (dev, nlcdev, pepii etc). The same 
+# specialization setup may, if it's sensible, be used for more than one realm.
+# NOTE: dpCa uses jca to get CA data. JCA gets its EPICS CA address list not from the
+# environment variable, but the addr_list property defined in the 
+# ~/.JCALibrary/JCALibrary.properties of the account from which it's run. So the
+# specialization section of the st file does not have anything to do.
+#
+# if ( $realm == "DEV" || $realm == "PEPII" ) then
+#    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPepii
+# endif
+
+# The Aida mode basically specifies which Aida names db to use.
+# At present, only the Aida DEV mode is used, so all realms imply
+# the AIDA dev mode. In future, PEPII, PROD and NLCDEV realms will use the 
+# PROD Aida mode.
+# 
+set aidamode = "PROD"
+if ( $realm == "DEV" ) set aidamode = "DEV"
+source ${CD_SCRIPT}/aidaSetEnv.csh $aidamode
+
+rehash
+
+env | sort
+
+echo
+echo Starting Executable dpKlys server
+echo 
+
+if ( $realm == "DEV" ) then
+#! On the AIDADEV netowrk, set the EPICS_CA_ADDR_LIST directly for LI18 and Li18 & softioc tests
+
+java -server ${AIDABCSTRING} \
+-Dgov.aps.jca.jni.JNIContext.repeater_port=5067 \
+-Dgov.aps.jca.jni.JNIContext.server_port=5066 \
+-Dgov.aps.jca.jni.JNIContext.addr_list="ioc-li17-cv01.slac.stanford.edu ioc-li18-cv01.slac.stanford.edu lcls-dev2" \
+-Dooc.config=${CD_CONFSYS}/${AIDA_KLYS_NAME}.conf \
+-DAIDA_DATABASE_USERID=AIDA${AIDA_MODE} \
+-DAIDA_NAMESERVER_IOR_URL=${AIDA_NAMESERVER_IOR_URL} \
+-DAIDA_NAMESERVER_IOR_FILE=${AIDA_NAMESERVER_IOR_FILE} \
+-Xms256m -Xmx1G \
+edu.stanford.slac.aida.dp.dpKlys.DpKlysServer 
+    else
+        eval aidarun $AIDA_KLYS_NAME dp.dpKlys.DpKlysServer
+    endif
+endif
+
+exit
+# End of script

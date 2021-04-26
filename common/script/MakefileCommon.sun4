@@ -1,0 +1,102 @@
+ifneq ($(_makefileCommon_sun4_),1)
+_makefileCommon_sun4_=1
+#
+# Abs: Common definitions for Aida package .sun4 Makefiles.
+#
+# Usage: MakefileCommon is not exected directly, it is executed by 
+#        a package Makefile instead. Package Makefiles should include lines
+#        of the form:
+#        -include $(AIDADEVROOT)/common/script/MakefileCommon.sun4
+#        include $(AIDA)/common/script/MakefileCommon.sun4
+# 
+# Rem: This makefile doesn't make anything on its own, it just defines 
+#      macros and rules for use in Makefile.sun4 makefiles. 
+#
+#      In particular, these macros include those for creating the list of
+#      files created by the IDL compiler.
+#
+#      This file was copied from Greg White's .win32 version and modified.
+#
+# Auth:Greg White, George McIntyre, Ron MacKenzie, 10-Jun-2002.
+#
+# Copyright: Stanford Linear Accelerator Center, 2002.
+#
+# -----------------------------------------------------------------------------
+# Mod: 
+#      25-Jan-2005, Greg White (greg)
+#        Use Orbacus 4.2 rather than 4.1.
+#      16-Jan-2004, greg White (greg)
+#        Compile everything with -g by default.
+#      21-Jan-2002, Ron MacKenzie (RONM)
+#        Add AIDAEPICSEXTENDIR which is the Aida Epics Extension Dir.
+#      13-Nov-2002, Ron MacKenzie (RONM)
+#        Add EXCEPT to IDLARGS because Exceptions are now kept there, not in
+#        AIDA tree any more.  This used so .idl files can include except.idl
+#      15-Aug-2002, Greg White
+#        TODO: BUG in use of clean rule:
+#        For packages derived from aidaObject.idl clean does not work. Its 
+#        because IDLJAVAFILES is normally defined by running jidl on 
+#        /idl/$(PACKAGE).idl, but for those derived from aidaObject.idl that
+#        idl file does not exist and is not created by the path taken for clean
+#        (which is just to execute clean commands - specifically doesn't include
+#        creating $(PACKAGE).idl.
+#      17-Jun-2002, George McIntyre
+#	Add IDL Setup here controlled by the HAS_IDL MACRO
+#      16-Jun-2002, George McIntyre
+#	Re-include Protection added
+# =============================================================================
+
+.SUFFIXES : .class .java
+
+JAVAC = javac 
+
+# Add -Xlint to lint check
+DEBUG = -g
+
+# The root java package name of the Aida package suite, 
+# and the equivalent code root. 
+AIDAPACKAGENAME = edu.stanford.slac.aida
+AIDAPACKAGEDIR = edu/stanford/slac/aida
+AIDAEPICSEXTENDIR = src/epics/extensions/src
+
+PACKAGEDIR = $(AIDAPACKAGEDIR)/$(PACKAGEROOT)/$(MODULE)
+ROOT = $(AIDADEVROOT)
+
+# The Production IDL file directory, unless AIDA is overridden.
+IDLDIR = $(AIDADEV)/idl
+
+
+ifeq ($(HAS_IDL),1)
+ORBACUSJAVA = $(ORBACUS)/JOB-4.2.2
+IDLJAVAFILES := $(shell mkdir tmp; jidl  -I$(ORBACUSJAVA)/ob/idl -I$(EXCEPT)/idl --output-dir tmp --file-list JAVAFILES $(ROOT)/idl/$(PACKAGE).idl ; cat JAVAFILES ; rm -rf tmp JAVAFILES )
+IDLJAVAFILES := $(subst tmp/$(MODULE)/,,$(IDLJAVAFILES))
+IDLCLASSFILES := $(subst .java,.class,$(IDLJAVAFILES)) 
+
+IDLARGS +=  --output-dir $(ROOT) --auto-package -I$(ORBACUSJAVA)/ob/idl -I$(EXCEPT)/idl
+vpath %.idl $(ROOT)/idl $(AIDAROOT)/idl
+endif
+
+JAVAFILES := $(IDLJAVAFILES) $(LOCALJAVAFILES)
+CLASSFILES := $(subst .java,.class,$(JAVAFILES)) 
+
+all : $(CLASSFILES)
+
+impl : $(PACKAGE).idl
+	jidl --impl $(IDLARGS) $?
+
+.java.class: 
+	$(JAVAC) -classpath $(ROOT):$(CLASSPATH) $(DEBUG) $?
+
+clean : 
+	rm -f $(CLASSFILES)
+
+ifeq ($(HAS_IDL),1)
+#Do not remove this to to try to include all class files, you'll be sorry
+$(IDLCLASSFILES) : $(IDLJAVAFILES)
+
+$(IDLJAVAFILES) : $(PACKAGE).idl 
+	jidl $(IDLARGS) $?
+endif
+
+endif
+

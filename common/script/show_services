@@ -1,0 +1,8 @@
+#/bin/csh
+#! -*- csh -*-
+#! Prints table of al the AIDA services in the AIDA network set up in the environment
+
+source /afs/slac.stanford.edu/g/cd/soft/dev/script/ENVS.csh
+
+aida_sql_runner show_services
+exit $status

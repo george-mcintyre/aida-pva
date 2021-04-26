@@ -1,0 +1,102 @@
+$!
+$!===============================================================================
+$!
+$!
+$! Name:  MAKEFILE.VMS
+$!
+$! Abs:   Builds (comples and links) the Java code and the the shareable image
+$!        that defines the native methods used by the Aida SLC data source to 
+$!        access the SLC database.
+$!
+$! Auth:  dd-Nov-2002, Robert C. Sass
+$! Rev:   
+$!
+$!===============================================================================
+$!
+$! Mods:
+$!       29-Sep-2004, Bob Hall (rdh)
+$!            Added compilation of the new SLC History files.
+$!        3-Jun-2004, Ron MacKenzie (ronm)
+$!            Add 'set noon'  in case class and obj files we try to delete
+$!            don't exist (we bombed out with a naked directory before).
+$!            Add some echo statements to keep track of where we are.
+$!        8-Jan-2003, Robert C. Sass
+$!            Use java$classpath and add build of .jar file
+$!===============================================================================
+$!
+$! If this file is meant to be run ONLY from the development node, then include
+$! the following code in the beginning:
+$!
+$       if f$trnlnm("SLC$EXECUTION_MODE") .eqs. "PRODUCTION" then -
+         @slccom:never_on_prod  'f$environment("PROCEDURE")
+$!
+$! dynamically generate symbol vector options file
+$!
+$ GLB_OPT:= aidashr_xfr_alpha
+$!
+$! delete previous versions of dynamically created files
+$!
+$ write sys$output "***Deleting old target files"
+$set noon
+$ delete *.class;*,*.obj;*,*.lis;*,tst_*.*;*
+$ delete edu*.h;*
+$ delete 'GLB_OPT'.opt;*
+$ delete aidashr*.olb;*
+$ delete dpslc.jar;*
+$set on
+$!
+$ write sys$output "***javac and javah are now being done"
+$ javac -g *.java
+$ define/user java$classpath [------],javalib:[foreign]ob.jar
+$ javah -jni "edu.stanford.slac.aida.dp.dpSlc.DpSlcI_impl"
+$ define/user java$classpath [------],javalib:[foreign]ob.jar
+$ javah -jni "edu.stanford.slac.aida.dp.dpSlc.DpSlcHistI_impl"
+$!
+$! Build shareable C library for Java interface
+$!
+$ write sys$output "***Building JNI code into VMS sharable"
+$ libr/crea aidashr_devlib.olb
+$ cinc *.c
+$!
+$ libr/extract=dpslc_jni/output=dpslc_jni aidashr_devlib
+$ libr/extract=dpslchist_jni/output=dpslchist_jni aidashr_devlib
+$ @java$jni_example:scan_globals_for_option *.obj 'GLB_OPT'.opt
+$
+$! link native shareable
+$!
+$ buildtest aidashr /def
+$!
+$! Make dpslc.jar file and refdefine slc_image to point here for it.
+$!
+$ write sys$output "***Creating JAR files"
+$ set def [------]
+$ jar cvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcI.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcIHelper.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcIHolder.class"
+$ jar uvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcIOperations.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcIPOA.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcI_impl.class"
+$ jar uvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcServer.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistServer.class" -
+"edu/stanford/slac/aida/dp/dpSlc/_DpSlcIStub.class"
+$!
+$ jar uvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistI.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistIHelper.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistIHolder.class"
+$ jar uvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistIOperations.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistIPOA.class" -
+"edu/stanford/slac/aida/dp/dpSlc/DpSlcHistI_impl.class"
+$ jar uvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/histData.class" -
+"edu/stanford/slac/aida/dp/dpSlc/histDataHelper.class"
+$ jar uvf [.edu.stanford.slac.aida.dp.dpslc]dpslc.jar -
+"edu/stanford/slac/aida/dp/dpSlc/_DpSlcHistIStub.class"
+$!
+$ write sys$output "***Defining slcimage so we run from the right place"
+$ set def [.edu.stanford.slac.aida.dp.dpslc]
+$ define slc_image []

@@ -1,0 +1,207 @@
+#-*-makefile-*-
+#==============================================================
+#
+#  Abs:  AIDA package release support
+#
+#  Name: Makefile.Host
+#
+#  Side: Moves AIDA releasables from $AIDA to standard
+#        release framework.
+#
+#  Rem:  Not releasing dpTestHistServer until builds
+#        with new build and release framework using EPICS
+#        R3.13.6 libs.
+#
+#  Auth: 11-Jan-2004, Greg White (greg)
+#  Rev:  dd-mmm-yyyy, First Last (username)
+#
+#--------------------------------------------------------------
+#  Mod:
+#        12-Jun-2013, Greg White (greg)
+#           Add aidaSetEnv.sh
+#        03-Mar-2010, Greg White (greg)
+#           Add show_services
+#           Add aidaClientSetup.bash
+#           aidaPmuNames_update_qa.sql
+#           aida_caService_namesUpdate_qa.sql
+#           aida_qatoo_sync.sql
+#           aida_slcService_namesUpdate_qa.sql
+#           aida_validate_and_sync_instances.sh
+#           aidalistIA_meta.sql
+#           aidalistI_meta.sql
+#           makeSwitcher.awk
+#        11-Jan-2009, Greg White (greg)
+#           Added  aida_Symbols_namesUpdate.sql
+#        16-Oct-2008, Greg White (greg)
+#           Added:
+#           File: add_IA
+#           File: aida_sql_runner
+#           File: remove_IA
+#           File: replace_IA
+#           File: show_IA
+#           File: show_IA.sql
+#           File: show_all
+#        09-Jul-2008, Greg White (greg)
+#           Added DpModelServer.conf
+#        08-Jul-2008, Greg White (greg)
+#           Added add_service.sql
+#        23-Jun-2008, Greg White (greg)
+#           Added st.DpRdbServer
+#        20_jun-2008, Greg White (greg)
+#           Added DpRdbServer.conf
+#        26-Feb-2008, Bob Hall (rdh)
+#           Added st.aidaDpServerStatus.
+#        06-Feb-2008, Bob Hall (rdh)
+#           Added aidaDpServerStatus.bash.
+#        24-Oct-2007, Bob Hall (rdh)
+#           Added DpChadsLclsServer.conf.
+#        01-Aug-2007, Bob Hall (rdh)
+#           Added slc_utility_populate_aida_database.sh,
+#           create_aida_utility_load_file.pl and
+#           set_aida_slc_utility.sql.
+#        16-May-2007, Bob Hall (rdh)
+#           Added slc_klystron_populate_aida_database.sh,
+#           create_aida_klystron_load_file.pl and
+#           set_aida_slc_klystron.sql.
+#        18-Apr-2007, Bob Hall (rdh)
+#           Added lcls_ca_populate_aida_database.sh,
+#           set_aida_lcls_ca.sql, archiver_populate_aida_database.sh,
+#           convert_archiver_config_files.pl, and
+#           set_archiver_config_files.sql. 
+#        05-Apr-2007, Bob Hall (rdh)
+#           Added DpCaLclsServer.conf.
+#        12-Oct-2006, Bob Hall (rdh)
+#           Added slc_magnet_populate_aida_database.sh,
+#           create_aida_magnet_load_file.pl, and set_aida_slc_magnet.sql. 
+#        04-May-2006, Bob Hall (rdh)
+#           Added create_aida_slc_db_asts_file.pl, load_aida_slc_db_asts,
+#           empty_aida_slc_db_asts.sql, and load_aida_slc_db_asts.ctl. 
+#        16-Apr-2006, Bob Hall (rdh)
+#           Added slc_hist_populate_aida_database.sh,
+#           convert_hist_buf_file.pl and set_aida_slc_hist.sql. 
+#        25-Jul-2005, Greg White (greg)
+#           Added Orbacus config files (for port specification)
+#        15-May-2005, Greg White (greg)
+#           Added aidalist.m
+#        07-Apr-2005, Greg White (greg)
+#           Added aidainit.m
+#        04-Feb-2005, Greg White (greg)
+#           Added aidasetup.m
+#        03-Feb-2005, Greg White (greg)
+#           Added aidalist executable, and replaced show_IA_givenPartial_*.sql
+#           with aidalist*.sql
+#
+#==============================================================
+#
+TOP = ../../../../..
+INCMK=$(CD_COM_MAKE)
+include $(INCMK)/CONFIG_BASE
+
+#----------------------------------------
+#  ADD MACRO DEFINITIONS AFTER THIS LINE
+#
+# Non-Executable (sourced csh) scripts. 
+#vpath % $(TOP)/package/aida/common/script/
+SCRPTS +=  aidaSetEnv.csh
+SCRPTS +=  aidaSetEnvDev.csh
+SCRPTS +=  aidaClientSetup.bash
+SCRPTS +=  aidaSetEnv.sh
+
+# Executable scripts (in PATH). 
+SCRIPTS += aidamanager
+SCRIPTS += aidaPmuNames_update
+SCRIPTS += aidaCaNames_update
+SCRIPTS += aidalist
+SCRIPTS += aidacmd aidaget aidaset
+SCRIPTS += slc_hist_populate_aida_database.sh
+SCRIPTS += slc_magnet_populate_aida_database.sh
+SCRIPTS += slc_klystron_populate_aida_database.sh
+SCRIPTS += slc_utility_populate_aida_database.sh
+SCRIPTS += lcls_ca_populate_aida_database.sh
+SCRIPTS += archiver_populate_aida_database.sh
+SCRIPTS += convert_hist_buf_file.pl
+SCRIPTS += create_aida_magnet_load_file.pl
+SCRIPTS += create_aida_klystron_load_file.pl
+SCRIPTS += create_aida_utility_load_file.pl
+SCRIPTS += create_aida_slc_db_asts_file.pl
+SCRIPTS += convert_archiver_config_files.pl
+SCRIPTS += load_aida_slc_db_asts
+SCRIPTS += aidaDpServerStatus.bash
+SCRIPTS += add_IA
+SCRIPTS += aida_sql_runner
+SCRIPTS += remove_IA
+SCRIPTS += replace_IA
+SCRIPTS += show_IA
+SCRIPTS += show_all
+SCRIPTS += aida_validate_and_sync_instances.sh
+SCRIPTS += show_services
+
+# Startup files
+STARTUP += st.DaNameServer
+STARTUP += st.DaServer
+STARTUP += st.DpCaServer
+STARTUP += st.DpChadsServer
+STARTUP += st.DpTestServer
+STARTUP += st.DpTestHistServer
+STARTUP += st.DpRdbServer
+STARTUP += st.DpModelServer
+STARTUP += st.aidaDpServerStatus
+STARTUP += st.DpKlysServer
+
+#STARTUP += script/sys/st.aidaNameServer
+#vpath dpTestHistServer $(TOP)/package/aida/bin/@sys
+#PROD = dpTestHistServer
+
+ORAS = show_service_id.sql
+ORAS += show_services.sql
+ORAS += add_service.sql
+ORAS += add_IA.sql
+ORAS += add_IAT.sql
+ORAS += remove_IA.sql
+ORAS += update_IAT.sql
+ORAS += aidalistIA.sql
+ORAS += aidalistI.sql
+ORAS += add_service.sql
+ORAS += show_all_given_IA.sql
+ORAS += aidaPmuNames_update.sql
+ORAS += aida_slcService_namesUpdate.sql
+ORAS += aida_slcModelService_namesUpdate.sql
+ORAS += aida_caService_namesUpdate.sql
+ORAS += aida_xalModelService_namesUpdate.sql
+ORAS += aida_Symbols_namesUpdate.sql
+ORAS += set_aida_slc_hist.sql
+ORAS += set_aida_slc_magnet.sql
+ORAS += set_aida_slc_klystron.sql
+ORAS += set_aida_slc_utility.sql
+ORAS += set_aida_lcls_ca.sql
+ORAS += set_aida_channel_archiver.sql
+ORAS += empty_aida_slc_db_asts.sql
+ORAS += load_aida_slc_db_asts.ctl
+ORAS += show_IA.sql
+ORAS += aidaPmuNames_update_qa.sql
+ORAS += aida_caService_namesUpdate_qa.sql
+ORAS += aida_qatoo_sync.sql
+ORAS += aida_slcService_namesUpdate_qa.sql
+ORAS += aidalistIA_meta.sql
+ORAS += aidalistI_meta.sql
+
+MATS += aidasetup.m
+MATS += aidainit.m
+MATS += aidalist.m
+
+# Orbacus config files.
+CONFSYS += DaNameServer.conf
+CONFSYS += DaServer.conf
+CONFSYS += DpCaServer.conf
+CONFSYS += DpCaLclsServer.conf
+CONFSYS += DpChadsServer.conf
+CONFSYS += DpChadsLclsServer.conf
+CONFSYS += DpTestHistServer.conf
+CONFSYS += DpTestServer.conf
+CONFSYS += DpRdbServer.conf
+CONFSYS += DpModelServer.conf
+CONFSYS += DpKlysServer.conf
+
+include $(INCMK)/RULES.Host
+#----------------------------------------
+#  ADD RULES AFTER THIS LINE

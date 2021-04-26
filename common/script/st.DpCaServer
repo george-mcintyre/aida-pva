@@ -1,0 +1,157 @@
+#!/bin/tcsh -f
+#-*-csh-*-
+#==============================================================
+#
+#  Abs:   Startup file for AIDA Channel Access Data Provider. 
+#
+#  Name:  st.DpCaServer
+#
+#  Args:  DEV	Whether this instance of DaTestServer should be 
+#               a development instance (if given), or a production instance
+#               (the default). development instances connect to the development
+#               Aida db, and hence connect to the development Aida 
+#               server group.
+#  Rem:   
+# 
+#  Usage: st.DpCaServer (lcls | nonlcls) [DEV]
+#
+#         The first argument ("lcls" or "nonlcls") is required.
+#         	
+#  Side:  Starts Aida DpCaServer, so starts CORBA ORB on host
+#
+#  Auth:  01-Mar-2004, Greg White (greg)
+#  Rev:   dd-mmm-yyyy, Whoever    (user):
+#--------------------------------------------------------------
+# Mods:  
+#         10-Mar-2007, Bob Hall (rdh)
+#           Modified to support the new LCLS Aida Channel
+#           Access data server.  This support involves adding
+#           a required first argument ("lcls" or "nonlcls") to
+#           this script.
+#         19-Jul-2006, Greg White (greg)
+#         eval aidarun/aidaproc, rather than exec, since exec requires immediate command.
+#         17-Jul-2006, Greg White (greg)
+#         Add "exec" to server process executable start, so this process is replaced
+#         by that, so not leaving parent process twiddling its thumbs until child exits.
+#         Also, use aidarun for production servers, so no attached debugger.
+#         25-Jul-2005, Greg White (greg)
+#         Add servername arg to aidaproc, used for finding config file. 
+#         27-Feb-2005, Greg White (greg)
+#         Changes for DEV and PEPII realms only, using JCA 2.5.1, and 
+#         optionally CAJ too. 
+#         18-Jan-2005, Greg White (greg)
+#         Change aidarun to aidaproc for running in attachable mode
+#         03-May-2004, Greg White (greg)
+#         Use epicsSetupPepii EPICS setup for all realms. epicsSetupPepii
+#         includes CA_ADDR_LIST entries for all realms, so 
+#         a single DpCaServer can retrieve all CA data. 
+#         28-Apr-2004, Greg White (greg)
+#         Added realms and changed env var for host names.
+#         21-Apr-2004, Greg White (greg)
+#         Changed epicsSetup, and added optional argument handling.
+#
+#============================================================== 
+#
+set STAT_CANTDETRREALM=1
+set STAT_BADARG=2
+set REALMLIST = ( DEV PEPII )
+
+set lcls_arg = $1
+
+set hostname_ = `hostname`
+set realm = ""
+
+# For testing the server, an argument saying which realm to set up for may 
+# be given. This avoids having to log onto the production server before 
+# running the st. command file from a prompt - which would otherwise be
+# necessary because this script determines what realm it is in, and therefore
+# what setup to do, depending on the hostname. 
+#     Remember, we are not supposed to put more than
+# one realm on the same server, in order to isolate realms. For this reason
+# it's sensible to map hosts to realms in a 1:1 mapping. 
+#
+if ( $#argv > 1 ) then
+    set realm = `(echo $2|tr '[[:lower:]]' '[[:upper:]]')`
+    set validRealm = `(echo ${REALMLIST}|tr " " ":"|egrep -ic "$realm")`
+    if ( $validRealm == 0 ) then
+      	echo "Invalid realm: " $realm
+       	exit $STAT_BADARG
+    endif	
+else
+    if ( $lcls_arg == "lcls") then
+        if ( $hostname_ == $AIDA_LCA_HOST_DEV ) then
+            set realm = DEV
+        else if ( $hostname_ == $AIDA_LCA_HOST_PROD ) then
+       	    set realm = PROD
+        endif
+    else
+        if ( $hostname_ == $AIDA_CA_HOST_DEV ) then
+            set realm = DEV
+        else if ( $hostname_ == $AIDA_CA_HOST_PEPII ) then
+       	    set realm = PEPII
+#       else if ( $hostname_ == $AIDA_CA_HOST_NLCDEV ) then
+#            set realm = NLCDEV
+        endif
+    endif
+endif
+
+if ( $realm == "" ) then
+	echo "Not known which realm to run under"
+	exit $STAT_CANTDETRREALM
+endif
+
+# The basic setup. 
+source /afs/slac.stanford.edu/g/cd/soft/dev/script/ENVS.csh
+source /afs/slac.stanford.edu/g/cd/soft/ref/package/aida/common/script/R13toR14.csh
+
+# Specialize the setup for realm (dev, nlcdev, pepii etc). The same 
+# specialization setup may, if it's sensible, be used for more than one realm.
+# NOTE: dpCa uses jca to get CA data. JCA gets its EPICS CA address list not from the
+# environment variable, but the addr_list property defined in the 
+# ~/.JCALibrary/JCALibrary.properties of the account from which it's run. So the
+# specialization section of the st file does not have anything to do.
+#
+# if ( $realm == "DEV" || $realm == "PEPII" ) then
+#    source /afs/slac/g/pepii/ctrl/prod/bin/solaris/epicsSetupPepii
+# endif
+
+# The Aida mode basically specifies which Aida names db to use.
+# At present, only the Aida DEV mode is used, so all realms imply
+# the AIDA dev mode. In future, PEPII, PROD and NLCDEV realms will use the 
+# PROD Aida mode.
+# 
+set aidamode = "PROD"
+if ( $realm == "DEV" ) set aidamode = "DEV"
+source ${CD_SCRIPT}/aidaSetEnv.csh $aidamode
+
+# When using CAJ, we'll need teh following too:
+# At runtime need at least jca.jar (JCA). If additionally using the new 
+# Channel Access for Java (CAJ), then need that as well. I think the relationship
+# between these is that JCA may use CAJ to do the Channel Access communications, 
+# rather than its own JNI interface to libca.so. See the 
+# JCALibrary.createContext() method in DpCaI_impl.init() to identify which 
+# Channel Access method is being used. JCALibrary.JNI_THREAD_SAFE = JCA's JNI method
+# CHANNEL_ACCESS_JAVA = CAJ.
+#caddpath CLASSPATH /u/cd/greg/tmp/caj-1.0.2/caj-1.0.2.jar
+#caddpath CLASSPATH /u/cd/greg/tmp/concurrent-1.3.4/lib/concurrent.jar
+
+rehash
+
+env
+
+if ( $lcls_arg == "lcls") then
+    if ( $realm == "DEV" ) then
+        eval aidaprocrealm $AIDA_LCA_NAME $AIDA_LCA_DBGADDR dp.dpCa.DpCaServer lcls
+    else
+        eval aidarunrealm $AIDA_LCA_NAME dp.dpCa.DpCaServer lcls
+    endif
+else
+    if ( $realm == "DEV" ) then
+        eval aidaproc $AIDA_CA_NAME $AIDA_CA_DBGADDR dp.dpCa.DpCaServer
+    else
+        eval aidarun $AIDA_CA_NAME dp.dpCa.DpCaServer
+    endif
+endif
+
+exit
+# End of script

@@ -1,0 +1,11 @@
+dpslc_jni.obj, dpslc_jni_helper.obj, -
+SLCLIBS:SLCLIB.OLB/inc=(STANDALONE_INIT), -
+SLCLIBS:SLCLIB.OLB/inc=(STND_HELP), -
+SLCLIBS:SLCLIB.OLB/inc=(STNDINIT_EXIT_HANDLER)
+!
+  JAVA$JAVA_G_SHR/SHARE
+  DBSSHR/shareable
+  IOBSIC/shareable
+  CRRUTIL/shareable
+  SYSUTIL/shareable
+  UTILSHR/shareable

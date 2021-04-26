@@ -1,0 +1,63 @@
+#ifndef DPCHADS_idl
+#define DPCHADS_idl
+/**
+ * IDL for the C++ AIDA Channel Archiver Data Provider. It is based on 
+ * dpTestHist, which was George/Greg's test history data provider.
+ *
+ * dpTestHist doesn't have all the methods defined that other data 
+ * providers do.  All that's really supported it the get of an any.
+ *
+ * Here is some history written by George/Greg for dpTestHist.
+ * It is anticipated that normally the get() method of an AIDA data provider, 
+ * such as DpTest, would return a CORBA Any that has been constructed by the 
+ * AIDA utility routine DaValue.toAny() from the aggregate that has been built 
+ * by adding objects to a DaValue object. However, AIDA data providers can also
+ * choose to return a "raw" Any, for instance, one that has been populated 
+ * by streaming data into an Any from a IDL defined struct via the insert() 
+ * Helper routine of that struct. An example case is 
+ * if the Data Provider is returning data that is already available through
+ * CORBA as struct. Another example (as right now) is when the c++ 
+ * implementation
+ * of DaValue is not yet available, so the utility routines for populating it, 
+ * and for converting it to an Any (toAny) are not yet available, but we still 
+ * need to return a structure.
+ *
+ * For these reasons the dpTestHist Aida Data Provider was been written to 
+ * test the raw CORBA any handling of Aida, and illustrates the use of an IDL 
+ * defined  structure, histData, see bwlow.
+ * 
+ * @author 10-Mar-2003, Ron MacKenzie.
+ * @version 12-Jul-2006, Bob Hall. Added unixtime.
+ * @version 16-Aug-2007, Bob Hall. Added pulseid.
+ * @version 29-Aug-2007, Bob Hall. Added count.
+ * @version 02-Aug-2008, Bob Hall. Added isdst.
+ */
+#include "OB/Types.idl"
+#include "except.idl"
+
+#pragma prefix "dp.aida.slac.stanford.edu"
+
+module dpChads
+{
+    struct histData
+    {
+        CORBA::DoubleSeq d;
+        CORBA::StringSeq s;
+        CORBA::LongSeq repCnt_l;
+        CORBA::LongSeq unixtime;
+        CORBA::LongSeq pulseid;
+        CORBA::LongSeq count;
+        CORBA::LongSeq isdst;
+    };
+
+    interface DpChadsI
+    {
+
+        any get(in string target, in CORBA::StringSeq args) raises (except::UnableToGetDataException) ;
+
+        long status();      // Get server's status
+
+        void shutdown();    // Shutdown server
+    };
+};
+#endif
