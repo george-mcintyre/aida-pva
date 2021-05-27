@@ -1,0 +1,10 @@
+# Channels definition file for aida-pva
+#
+# This file defines the available channels for the sample aida service
+id: 142
+name: SLCMosc
+description: Master Oscillator Server
+channels:
+  - instance: MASTEROSC
+    attribute: VAL
+

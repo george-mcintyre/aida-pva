@@ -5,9 +5,43 @@ id: 0
 name: Sample
 description: Aida Sample Data Provide
 channels:
-  - instance: AIDA:SAMPLE:DEVICE1
+  - instance: AIDA:SAMPLE:DEVICE
+    attribute: attribute
+  - instance: AIDA:SAMPLE:DEVICE01
     attribute: attribute1
-  - instance: AIDA:SAMPLE:DEVICE2
+    type: Boolean
+  - instance: AIDA:SAMPLE:DEVICE02
     attribute: attribute1
+    type: Byte
+  - instance: AIDA:SAMPLE:DEVICE03
+    attribute: attribute1
+    type: Short
+  - instance: AIDA:SAMPLE:DEVICE04
+    attribute: attribute1
+    type: Int
+  - instance: AIDA:SAMPLE:DEVICE05
+    attribute: attribute1
+    type: Long
+  - instance: AIDA:SAMPLE:DEVICE06
+    attribute: attribute1
+    type: UByte
+  - instance: AIDA:SAMPLE:DEVICE07
+    attribute: attribute1
+    type: UShort
+  - instance: AIDA:SAMPLE:DEVICE08
+    attribute: attribute1
+    type: UInt
+  - instance: AIDA:SAMPLE:DEVICE09
+    attribute: attribute1
+    type: ULong
+  - instance: AIDA:SAMPLE:DEVICE10
+    attribute: attribute1
+    type: Float
+  - instance: AIDA:SAMPLE:DEVICE11
+    attribute: attribute1
+    type: Double
+  - instance: AIDA:SAMPLE:DEVICE12
+    attribute: attribute1
+    type: String
 
 

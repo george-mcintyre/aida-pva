@@ -1,0 +1,26 @@
+# Channels definition file for aida-pva
+#
+# This file defines the available channels for the sample aida service
+id: 262
+name: SLCBuffacq
+description: SLC BPM Buffered acquisition
+channels:
+- instance: SCAVSPPS
+  attribute: BUFFACQ
+- instance: SDRFACET
+  attribute: BUFFACQ
+- instance: INJ_ELEC
+  attribute: BUFFACQ
+- instance: ELECEP01
+  attribute: BUFFACQ
+- instance: SCAVPOSI
+  attribute: BUFFACQ
+- instance: INJ_POSI
+  attribute: BUFFACQ
+- instance: TAXXALL
+  attribute: BUFFACQ
+- instance: E163BMLN
+  attribute: BUFFACQ
+- instance: NDRFACET
+  attribute: BUFFACQ
+
