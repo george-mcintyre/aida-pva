@@ -1,8 +1,0 @@
-# Make Aida jar file Put it in current directory for now
-#
-#setenv AIDAJARPATH /afs/slac/g/cd/soft/ref/package/aida/common/misc
-setenv AIDASAVEPATH /afs/slac/g/cd/soft/ref/package
-#
-jar cvf aida.jar -C $AIDASAVEPATH/aida   edu/
-jar uvf aida.jar -C $AIDASAVEPATH/err    edu/
-jar uvf aida.jar -C $AIDASAVEPATH/except edu/

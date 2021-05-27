@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.stanford.slac.aida</groupId>
+    <artifactId>aida-parent</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Aida PVA</name>
+    <url>https://github.com/george-mcintyre/aida-pva</url>
+    <description>Parent project for AIDA PVA.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    </properties>
+
+    <modules>
+        <module>dpServer</module>
+    </modules>
+
+    <organization>
+        <name>SLAC</name>
+        <url>https://www.slac.stanford.edu/grp/cd/soft/aida</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>George McIntyre</name>
+            <email>sly@slac.stanford.edu</email>
+            <organization>SLAC</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Gregory White</name>
+            <email>greg@slac.stanford.edu</email>
+            <organization>SLAC</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <!-- Common dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.epics</groupId>
+            <artifactId>epics-pvaccess</artifactId>
+            <version>5.1.7-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.epics</groupId>
+            <artifactId>epics-pvdata</artifactId>
+            <version>6.1.7-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- Set compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+            </plugin>
+
+        </plugins>
+    </build>
+
+
+</project>

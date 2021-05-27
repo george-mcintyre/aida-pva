@@ -1,0 +1,29 @@
+# Channels definition file for aida-pva
+#
+# This file defines the available channels for the sample aida service
+id: 102
+name: SLCBpm
+description: SLC BPM orbit acquisition
+channels:
+  - instance: PEP2INJF
+    attribute: BPMS
+  - instance: P2BPMLER
+    attribute: BPMS
+  - instance: P2BPMHER
+    attribute: BPMS
+  - instance: LCLS_SL2
+    attribute: BPMS
+  - instance: E163BMLN
+    attribute: BPMS
+  - instance: NDRFACET
+    attribute: BPMS
+  - instance: SDRFACET
+    attribute: BPMS
+  - instance: INJ_ELEC
+    attribute: BPMS
+  - instance: ELECEP01
+    attribute: BPMS
+  - instance: SCAVPOSI
+    attribute: BPMS
+  - instance: INJ_POSI
+    attribute: BPMS

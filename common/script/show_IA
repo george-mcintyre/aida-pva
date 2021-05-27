@@ -1,9 +1,0 @@
-#/bin/csh
-#! Display everything in aida_names for a given AIDA instance attribute
-#! 
-#! Usage:
-#!      show_IA <instance> <attribute>
-#!
-#! E.g. show_IA XCOR:IN20:121 R
-#!
-aida_sql_runner `basename $0` ${*}
