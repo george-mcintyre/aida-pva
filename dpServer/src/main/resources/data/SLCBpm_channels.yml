@@ -4,28 +4,23 @@
 id: 102
 name: SLCBpm
 description: SLC BPM orbit acquisition
+config:
+  type: TABLE
+  layout: ROW_MAJOR
+  fields:
+    - label: foo
+      name: bar
+      description: Lorem ipsum
 channels:
-  - instance: E163BMLN
-    attribute: BPMS
-  - instance: PEP2INJF
-    attribute: BPMS
-  - instance: TAXXALL
-    attribute: BPMS
-  - instance: LCLS_SL2
-    attribute: BPMS
-  - instance: P2BPMLER
-    attribute: BPMS
-  - instance: P2BPMHER
-    attribute: BPMS
-  - instance: NDRFACET
-    attribute: BPMS
-  - instance: SDRFACET
-    attribute: BPMS
-  - instance: INJ_ELEC
-    attribute: BPMS
-  - instance: ELECEP01
-    attribute: BPMS
-  - instance: SCAVPOSI
-    attribute: BPMS
-  - instance: INJ_POSI
-    attribute: BPMS
+  - channel: E163BMLN:BPMS
+  - channel: ELECEP01:BPMS
+  - channel: INJ_ELEC:BPMS
+  - channel: INJ_POSI:BPMS
+  - channel: LCLS_SL2:BPMS
+  - channel: NDRFACET:BPMS
+  - channel: P2BPMHER:BPMS
+  - channel: P2BPMLER:BPMS
+  - channel: PEP2INJF:BPMS
+  - channel: SCAVPOSI:BPMS
+  - channel: SDRFACET:BPMS
+  - channel: TAXXALL:BPMS

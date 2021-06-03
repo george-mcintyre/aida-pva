@@ -1,63 +1,23 @@
 package edu.stanford.slac.aida.lib.model;
 
-import edu.stanford.slac.aida.lib.PVTopStructure;
+import edu.stanford.slac.aida.lib.AidaChannelProvider;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import java.util.*;
 
+@Data
+@NoArgsConstructor
 public class AidaProvider {
-    private static final Logger logger = Logger.getLogger(AidaProvider.class.getName());
-
-    private Long id;
-    private String name = "";
+    private @NonNull Long id;
+    private @NonNull String name;
     private String description;
-    private Set<AidaChannel> channels = new HashSet<AidaChannel>();
+    private @NonNull Set<AidaChannel> channels = new HashSet<AidaChannel>();
+    private @NonNull AidaChannelConfig config;
+    private AidaChannelProvider channelProvider;
+
     private final Map<String, AidaChannel> channelMap = new HashMap<String, AidaChannel>();
-
-    public AidaProvider() {
-    }
-
-    public AidaProvider(Long id, String name, String description, Set<AidaChannel> channels) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.channels = channels;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<AidaChannel> getChannelSet() {
-        return channels;
-    }
-
-    public void setChannels(Set<AidaChannel> channels) {
-        this.channels = channels;
-    }
 
     /**
      * Get the set of supported channels.  Aida providers
@@ -73,49 +33,12 @@ public class AidaProvider {
     }
 
     /**
-     * The total number of instance//attribute pairs.
-     * This method does not count pairs in their EPICS PV form so
-     * Aida instance attribute, {@code PEP2INJF//BPMS} and EPICS PV name
-     * {@code PEP2INJF:BPMS} are counted only once even though they are both supported
+     * Get the channel based on the channel name
+     * Make sure that all config is fully specified
      *
-     * @return count
+     * @param channelName the channel name
+     * @return the fully configured AIDA channel
      */
-    public Integer getInstanceAttributeCount() {
-        return this.channels.size();
-    }
-
-    /**
-     * Set structure for a channel
-     *
-     * @param channelName channel to set structure
-     * @param structure   structure to set
-     */
-    public void setStructure(String channelName, PVTopStructure structure) {
-        AidaChannel channel = getAidaChannel(channelName);
-        if (channel == null) {
-            logger.severe("Channel not supported: " + channelName);
-            return;
-        }
-
-        channel.setStructure(structure);
-    }
-
-    /**
-     * Retrieve the channel structure
-     *
-     * @param channelName channel name to retrieve structure for
-     * @return the structure
-     */
-    public PVTopStructure getStructure(String channelName) {
-        AidaChannel channel = getAidaChannel(channelName);
-        if (channel == null) {
-            logger.severe("Channel not supported: " + channelName);
-            return null;
-        }
-
-        return channel.getStructure();
-    }
-
     private AidaChannel getAidaChannel(String channelName) {
         if (this.channelMap.isEmpty()) {
             setChannelNames();
@@ -128,18 +51,67 @@ public class AidaProvider {
      */
     private void setChannelNames() {
         synchronized (this.channelMap) {
-            for (AidaChannel aidaChannel : getChannelSet()) {
-                String instance = aidaChannel.getInstance();
-                String attribute = aidaChannel.getAttribute();
-                if (attribute == null || attribute.equals("")) {
-                    this.channelMap.put(instance, aidaChannel);
-                } else {
-                    // Add EPICS style name
-                    this.channelMap.put(instance + ":" + attribute, aidaChannel);
+            for (AidaChannel aidaChannel : getChannels()) {
+                String channel = aidaChannel.getChannel();
 
-                    // Add AIDA style name
-                    this.channelMap.put(instance + "//" + attribute, aidaChannel);
+                copyConfig(aidaChannel);
+
+                this.channelMap.put(channel, aidaChannel);
+
+                // Add legacy style channel name
+                int indexOfLastSeparator = channel.lastIndexOf(":");
+                if (indexOfLastSeparator != -1) {
+                    this.channelMap.put(channel.substring(0, indexOfLastSeparator) + "//" + channel.substring(indexOfLastSeparator + 1), aidaChannel);
                 }
+            }
+        }
+    }
+
+    private AidaChannelConfig mergeConfig(AidaChannelConfig defaultConfig, AidaChannelConfig overrides) {
+        AidaChannelConfig channelConfig = new AidaChannelConfig();
+
+        // If nothing to override then return the default
+        if ( overrides == null ) {
+            return defaultConfig;
+        }
+
+        // Partially copy when not specified for channel
+        channelConfig.setType(((overrides.getType() == null) ? defaultConfig : overrides).getType());
+        channelConfig.setLayout(((overrides.getLayout() == null) ? defaultConfig : overrides).getLayout());
+        channelConfig.setDescription(((overrides.getDescription() == null || overrides.getDescription().length() == 0) ? defaultConfig : overrides).getDescription());
+        channelConfig.setFields(((overrides.getFields() == null) ? defaultConfig : overrides).getFields());
+        return channelConfig;
+    }
+
+    /**
+     * Add default channel configuration if not specified directly with the channel
+     *
+     * @param aidaChannel the channel to add the default configuration to
+     */
+    private void copyConfig(AidaChannel aidaChannel) {
+        // Highest priority from provider itself
+        AidaChannelConfig providerConfig = this.channelProvider.getChannelConfig(aidaChannel.getChannel());
+        // Next from yaml channel
+        AidaChannelConfig channelConfig = aidaChannel.getConfig();
+        // Finally from yaml global section
+        AidaChannelConfig defaultConfig = getConfig();
+
+        // Merge all together with these priorities
+        aidaChannel.setConfig(mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig));
+
+        // Set default labels
+        setDefaultLabels(aidaChannel.getConfig().getFields());
+    }
+
+    /**
+     * Set the label to be the name if it is not specified
+     *
+     * @param fields the fields to update
+     */
+    private void setDefaultLabels(List<AidaField> fields) {
+        for (AidaField field : fields) {
+            if (field.getLabel() == null) {
+                field.setLabel(field.getName());
             }
         }
     }
@@ -150,7 +122,8 @@ public class AidaProvider {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ((channels.size() > 100) ? "channels=[large set omitted!]" : ", channels=" + channels) +
+                ", config=" + config +
+                ((channels.size() > 100) ? ", channels=[large set omitted!]" : ", channels=" + channels) +
                 '}';
     }
 }

@@ -4,1005 +4,510 @@
 id: 162
 name: SLCKlys
 description: Klystron Server
+config:
+  description: Kylstron Value
+  type: DOUBLE
+  fields:
+    - name: value
 channels:
-- instance: KLYS:LI00:1
-  attribute: PCON
-- instance: KLYS:LI00:1
-  attribute: ACON
-- instance: KLYS:LI00:2
-  attribute: PCON
-- instance: KLYS:LI00:2
-  attribute: ACON
-- instance: KLYS:LI00:11
-  attribute: PCON
-- instance: KLYS:LI00:11
-  attribute: ACON
-- instance: KLYS:LI00:12
-  attribute: PCON
-- instance: KLYS:LI00:12
-  attribute: ACON
-- instance: KLYS:LI00:13
-  attribute: PCON
-- instance: KLYS:LI00:13
-  attribute: ACON
-- instance: KLYS:LI00:20
-  attribute: PCON
-- instance: KLYS:LI00:20
-  attribute: ACON
-- instance: KLYS:LI00:59
-  attribute: PCON
-- instance: KLYS:LI00:59
-  attribute: ACON
-- instance: KLYS:LI00:96
-  attribute: PCON
-- instance: KLYS:LI00:96
-  attribute: ACON
-- instance: KLYS:LI00:97
-  attribute: PCON
-- instance: KLYS:LI00:97
-  attribute: ACON
-- instance: KLYS:LI00:98
-  attribute: PCON
-- instance: KLYS:LI00:98
-  attribute: ACON
-- instance: KLYS:LI00:99
-  attribute: PCON
-- instance: KLYS:LI00:99
-  attribute: ACON
-- instance: KLYS:LI01:21
-  attribute: PCON
-- instance: KLYS:LI01:21
-  attribute: ACON
-- instance: KLYS:LI01:31
-  attribute: PCON
-- instance: KLYS:LI01:31
-  attribute: ACON
-- instance: KLYS:LI01:41
-  attribute: PCON
-- instance: KLYS:LI01:41
-  attribute: ACON
-- instance: KLYS:LI01:51
-  attribute: PCON
-- instance: KLYS:LI01:51
-  attribute: ACON
-- instance: KLYS:LI01:61
-  attribute: PCON
-- instance: KLYS:LI01:61
-  attribute: ACON
-- instance: KLYS:LI02:11
-  attribute: PCON
-- instance: KLYS:LI02:11
-  attribute: ACON
-- instance: KLYS:LI02:21
-  attribute: PCON
-- instance: KLYS:LI02:21
-  attribute: ACON
-- instance: KLYS:LI02:31
-  attribute: PCON
-- instance: KLYS:LI02:31
-  attribute: ACON
-- instance: KLYS:LI02:41
-  attribute: PCON
-- instance: KLYS:LI02:41
-  attribute: ACON
-- instance: KLYS:LI02:51
-  attribute: PCON
-- instance: KLYS:LI00:1
-  attribute: KPHR
-- instance: KLYS:LI00:2
-  attribute: KPHR
-- instance: KLYS:LI00:11
-  attribute: KPHR
-- instance: KLYS:LI00:12
-  attribute: KPHR
-- instance: KLYS:LI00:13
-  attribute: KPHR
-- instance: KLYS:LI00:20
-  attribute: KPHR
-- instance: KLYS:LI00:59
-  attribute: KPHR
-- instance: KLYS:LI00:96
-  attribute: KPHR
-- instance: KLYS:LI00:97
-  attribute: KPHR
-- instance: KLYS:LI00:98
-  attribute: KPHR
-- instance: KLYS:LI00:99
-  attribute: KPHR
-- instance: KLYS:LI01:21
-  attribute: KPHR
-- instance: KLYS:LI01:31
-  attribute: KPHR
-- instance: KLYS:LI01:41
-  attribute: KPHR
-- instance: KLYS:LI01:51
-  attribute: KPHR
-- instance: KLYS:LI01:61
-  attribute: KPHR
-- instance: KLYS:LI02:11
-  attribute: KPHR
-- instance: KLYS:LI02:21
-  attribute: KPHR
-- instance: KLYS:LI02:31
-  attribute: KPHR
-- instance: KLYS:LI02:41
-  attribute: KPHR
-- instance: KLYS:LI02:51
-  attribute: KPHR
-- instance: KLYS:LI02:61
-  attribute: KPHR
-- instance: KLYS:LI02:71
-  attribute: KPHR
-- instance: KLYS:LI02:81
-  attribute: KPHR
-- instance: KLYS:LI02:91
-  attribute: KPHR
-- instance: KLYS:LI03:11
-  attribute: KPHR
-- instance: KLYS:LI03:21
-  attribute: KPHR
-- instance: KLYS:LI03:31
-  attribute: KPHR
-- instance: KLYS:LI03:41
-  attribute: KPHR
-- instance: KLYS:LI03:51
-  attribute: KPHR
-- instance: KLYS:LI03:61
-  attribute: KPHR
-- instance: KLYS:LI03:71
-  attribute: KPHR
-- instance: KLYS:LI03:81
-  attribute: KPHR
-- instance: KLYS:LI04:11
-  attribute: KPHR
-- instance: KLYS:LI04:21
-  attribute: KPHR
-- instance: KLYS:LI04:31
-  attribute: KPHR
-- instance: KLYS:LI04:41
-  attribute: KPHR
-- instance: KLYS:LI04:51
-  attribute: KPHR
-- instance: KLYS:LI04:61
-  attribute: KPHR
-- instance: KLYS:LI04:71
-  attribute: KPHR
-- instance: KLYS:LI04:81
-  attribute: KPHR
-- instance: KLYS:LI05:11
-  attribute: KPHR
-- instance: KLYS:LI05:21
-  attribute: KPHR
-- instance: KLYS:LI05:31
-  attribute: KPHR
-- instance: KLYS:LI05:41
-  attribute: KPHR
-- instance: KLYS:LI05:51
-  attribute: KPHR
-- instance: KLYS:LI05:61
-  attribute: KPHR
-- instance: KLYS:LI05:71
-  attribute: KPHR
-- instance: KLYS:LI05:81
-  attribute: KPHR
-- instance: KLYS:LI06:11
-  attribute: KPHR
-- instance: KLYS:LI06:21
-  attribute: KPHR
-- instance: KLYS:LI06:31
-  attribute: KPHR
-- instance: KLYS:LI06:41
-  attribute: KPHR
-- instance: KLYS:LI06:51
-  attribute: KPHR
-- instance: KLYS:LI06:61
-  attribute: KPHR
-- instance: KLYS:LI06:71
-  attribute: KPHR
-- instance: KLYS:LI06:81
-  attribute: KPHR
-- instance: KLYS:LI07:11
-  attribute: KPHR
-- instance: KLYS:LI07:21
-  attribute: KPHR
-- instance: KLYS:LI07:31
-  attribute: KPHR
-- instance: KLYS:LI07:41
-  attribute: KPHR
-- instance: KLYS:LI07:51
-  attribute: KPHR
-- instance: KLYS:LI07:61
-  attribute: KPHR
-- instance: KLYS:LI07:71
-  attribute: KPHR
-- instance: KLYS:LI07:81
-  attribute: KPHR
-- instance: KLYS:LI08:11
-  attribute: KPHR
-- instance: KLYS:LI08:21
-  attribute: KPHR
-- instance: KLYS:LI08:31
-  attribute: KPHR
-- instance: KLYS:LI08:41
-  attribute: KPHR
-- instance: KLYS:LI08:51
-  attribute: KPHR
-- instance: KLYS:LI08:61
-  attribute: KPHR
-- instance: KLYS:LI08:71
-  attribute: KPHR
-- instance: KLYS:LI08:81
-  attribute: KPHR
-- instance: KLYS:LI09:11
-  attribute: KPHR
-- instance: KLYS:LI09:21
-  attribute: KPHR
-- instance: KLYS:LI09:31
-  attribute: KPHR
-- instance: KLYS:LI09:41
-  attribute: KPHR
-- instance: KLYS:LI09:51
-  attribute: KPHR
-- instance: KLYS:LI02:51
-  attribute: ACON
-- instance: KLYS:LI07:71
-  attribute: PCON
-- instance: KLYS:LI07:71
-  attribute: ACON
-- instance: KLYS:LI07:81
-  attribute: PCON
-- instance: KLYS:LI07:81
-  attribute: ACON
-- instance: KLYS:LI08:11
-  attribute: PCON
-- instance: KLYS:LI08:11
-  attribute: ACON
-- instance: KLYS:LI08:21
-  attribute: PCON
-- instance: KLYS:LI08:21
-  attribute: ACON
-- instance: KLYS:LI08:31
-  attribute: PCON
-- instance: KLYS:LI08:31
-  attribute: ACON
-- instance: KLYS:LI08:41
-  attribute: PCON
-- instance: KLYS:LI08:41
-  attribute: ACON
-- instance: KLYS:LI08:51
-  attribute: PCON
-- instance: KLYS:LI08:51
-  attribute: ACON
-- instance: KLYS:LI08:61
-  attribute: PCON
-- instance: KLYS:LI08:61
-  attribute: ACON
-- instance: KLYS:LI08:71
-  attribute: PCON
-- instance: KLYS:LI08:71
-  attribute: ACON
-- instance: KLYS:LI08:81
-  attribute: PCON
-- instance: KLYS:LI08:81
-  attribute: ACON
-- instance: KLYS:LI09:11
-  attribute: PCON
-- instance: KLYS:LI09:11
-  attribute: ACON
-- instance: KLYS:LI09:21
-  attribute: PCON
-- instance: KLYS:LI09:21
-  attribute: ACON
-- instance: KLYS:LI09:31
-  attribute: PCON
-- instance: KLYS:LI09:31
-  attribute: ACON
-- instance: KLYS:LI09:41
-  attribute: PCON
-- instance: KLYS:LI09:41
-  attribute: ACON
-- instance: KLYS:LI09:51
-  attribute: PCON
-- instance: KLYS:LI09:51
-  attribute: ACON
-- instance: KLYS:LI09:61
-  attribute: PCON
-- instance: KLYS:LI09:61
-  attribute: ACON
-- instance: KLYS:LI09:71
-  attribute: PCON
-- instance: KLYS:LI09:71
-  attribute: ACON
-- instance: KLYS:LI09:81
-  attribute: PCON
-- instance: KLYS:LI09:81
-  attribute: ACON
-- instance: KLYS:LI09:91
-  attribute: PCON
-- instance: KLYS:LI09:91
-  attribute: ACON
-- instance: KLYS:LI10:11
-  attribute: PCON
-- instance: KLYS:LI10:11
-  attribute: ACON
-- instance: KLYS:LI10:21
-  attribute: PCON
-- instance: KLYS:LI10:21
-  attribute: ACON
-- instance: KLYS:LI10:31
-  attribute: PCON
-- instance: KLYS:LI10:31
-  attribute: ACON
-- instance: KLYS:LI10:41
-  attribute: PCON
-- instance: KLYS:LI10:41
-  attribute: ACON
-- instance: KLYS:LI10:51
-  attribute: PCON
-- instance: KLYS:LI10:51
-  attribute: ACON
-- instance: KLYS:LI10:61
-  attribute: PCON
-- instance: KLYS:LI10:61
-  attribute: ACON
-- instance: KLYS:LI10:71
-  attribute: PCON
-- instance: KLYS:LI10:71
-  attribute: ACON
-- instance: KLYS:LI10:81
-  attribute: PCON
-- instance: KLYS:LI10:81
-  attribute: ACON
-- instance: KLYS:LI11:11
-  attribute: PCON
-- instance: KLYS:LI11:11
-  attribute: ACON
-- instance: KLYS:LI11:21
-  attribute: PCON
-- instance: KLYS:LI11:21
-  attribute: ACON
-- instance: KLYS:LI11:22
-  attribute: PCON
-- instance: KLYS:LI11:22
-  attribute: ACON
-- instance: KLYS:LI11:31
-  attribute: PCON
-- instance: KLYS:LI11:31
-  attribute: ACON
-- instance: KLYS:LI11:41
-  attribute: PCON
-- instance: KLYS:LI11:41
-  attribute: ACON
-- instance: KLYS:LI11:51
-  attribute: PCON
-- instance: KLYS:LI11:51
-  attribute: ACON
-- instance: KLYS:LI11:61
-  attribute: PCON
-- instance: KLYS:LI11:61
-  attribute: ACON
-- instance: KLYS:LI11:71
-  attribute: PCON
-- instance: KLYS:LI11:71
-  attribute: ACON
-- instance: KLYS:LI11:81
-  attribute: PCON
-- instance: KLYS:LI11:81
-  attribute: ACON
-- instance: KLYS:LI12:11
-  attribute: PCON
-- instance: KLYS:LI12:11
-  attribute: ACON
-- instance: KLYS:LI12:21
-  attribute: PCON
-- instance: KLYS:LI12:21
-  attribute: ACON
-- instance: KLYS:LI12:31
-  attribute: PCON
-- instance: KLYS:LI12:31
-  attribute: ACON
-- instance: KLYS:LI12:41
-  attribute: PCON
-- instance: KLYS:LI12:41
-  attribute: ACON
-- instance: KLYS:LI12:51
-  attribute: PCON
-- instance: KLYS:LI12:51
-  attribute: ACON
-- instance: KLYS:LI12:61
-  attribute: PCON
-- instance: KLYS:LI12:61
-  attribute: ACON
-- instance: KLYS:LI12:71
-  attribute: PCON
-- instance: KLYS:LI12:71
-  attribute: ACON
-- instance: KLYS:LI12:81
-  attribute: PCON
-- instance: KLYS:LI12:81
-  attribute: ACON
-- instance: KLYS:LI13:11
-  attribute: PCON
-- instance: KLYS:LI13:11
-  attribute: ACON
-- instance: KLYS:LI13:21
-  attribute: PCON
-- instance: KLYS:LI13:21
-  attribute: ACON
-- instance: KLYS:LI13:31
-  attribute: PCON
-- instance: KLYS:LI13:31
-  attribute: ACON
-- instance: KLYS:LI13:41
-  attribute: PCON
-- instance: KLYS:LI13:41
-  attribute: ACON
-- instance: KLYS:LI13:51
-  attribute: PCON
-- instance: KLYS:LI13:51
-  attribute: ACON
-- instance: KLYS:LI13:61
-  attribute: PCON
-- instance: KLYS:LI13:61
-  attribute: ACON
-- instance: KLYS:LI13:71
-  attribute: PCON
-- instance: KLYS:LI13:71
-  attribute: ACON
-- instance: KLYS:LI13:81
-  attribute: PCON
-- instance: KLYS:LI13:81
-  attribute: ACON
-- instance: KLYS:LI14:11
-  attribute: PCON
-- instance: KLYS:LI14:11
-  attribute: ACON
-- instance: KLYS:LI14:21
-  attribute: PCON
-- instance: KLYS:LI14:21
-  attribute: ACON
-- instance: KLYS:LI14:31
-  attribute: PCON
-- instance: KLYS:LI14:31
-  attribute: ACON
-- instance: KLYS:LI14:41
-  attribute: PCON
-- instance: KLYS:LI14:41
-  attribute: ACON
-- instance: KLYS:LI14:51
-  attribute: PCON
-- instance: KLYS:LI14:51
-  attribute: ACON
-- instance: KLYS:LI14:61
-  attribute: PCON
-- instance: KLYS:LI14:61
-  attribute: ACON
-- instance: KLYS:LI14:71
-  attribute: PCON
-- instance: KLYS:LI14:71
-  attribute: ACON
-- instance: KLYS:LI14:81
-  attribute: PCON
-- instance: KLYS:LI14:81
-  attribute: ACON
-- instance: KLYS:LI15:11
-  attribute: PCON
-- instance: KLYS:LI15:11
-  attribute: ACON
-- instance: KLYS:LI15:21
-  attribute: PCON
-- instance: KLYS:LI15:21
-  attribute: ACON
-- instance: KLYS:LI15:31
-  attribute: PCON
-- instance: KLYS:LI15:31
-  attribute: ACON
-- instance: KLYS:LI15:41
-  attribute: PCON
-- instance: KLYS:LI15:41
-  attribute: ACON
-- instance: KLYS:LI15:51
-  attribute: PCON
-- instance: KLYS:LI15:51
-  attribute: ACON
-- instance: KLYS:LI15:61
-  attribute: PCON
-- instance: KLYS:LI15:61
-  attribute: ACON
-- instance: KLYS:LI15:71
-  attribute: PCON
-- instance: KLYS:LI15:71
-  attribute: ACON
-- instance: KLYS:LI15:81
-  attribute: PCON
-- instance: KLYS:LI15:81
-  attribute: ACON
-- instance: KLYS:LI16:11
-  attribute: PCON
-- instance: KLYS:LI16:11
-  attribute: ACON
-- instance: KLYS:LI16:21
-  attribute: PCON
-- instance: KLYS:LI16:21
-  attribute: ACON
-- instance: KLYS:LI16:31
-  attribute: PCON
-- instance: KLYS:LI16:31
-  attribute: ACON
-- instance: KLYS:LI16:41
-  attribute: PCON
-- instance: KLYS:LI16:41
-  attribute: ACON
-- instance: KLYS:LI16:51
-  attribute: PCON
-- instance: KLYS:LI16:51
-  attribute: ACON
-- instance: KLYS:LI16:61
-  attribute: PCON
-- instance: KLYS:LI16:61
-  attribute: ACON
-- instance: KLYS:LI16:71
-  attribute: PCON
-- instance: KLYS:LI16:71
-  attribute: ACON
-- instance: KLYS:LI16:81
-  attribute: PCON
-- instance: KLYS:LI16:81
-  attribute: ACON
-- instance: KLYS:LI17:11
-  attribute: PCON
-- instance: KLYS:LI17:11
-  attribute: ACON
-- instance: KLYS:LI17:21
-  attribute: PCON
-- instance: KLYS:LI17:21
-  attribute: ACON
-- instance: KLYS:LI17:31
-  attribute: PCON
-- instance: KLYS:LI17:31
-  attribute: ACON
-- instance: KLYS:LI17:41
-  attribute: PCON
-- instance: KLYS:LI17:41
-  attribute: ACON
-- instance: KLYS:LI17:51
-  attribute: PCON
-- instance: KLYS:LI17:51
-  attribute: ACON
-- instance: KLYS:LI17:61
-  attribute: PCON
-- instance: KLYS:LI17:61
-  attribute: ACON
-- instance: KLYS:LI17:71
-  attribute: PCON
-- instance: KLYS:LI17:71
-  attribute: ACON
-- instance: KLYS:LI17:81
-  attribute: PCON
-- instance: KLYS:LI17:81
-  attribute: ACON
-- instance: KLYS:LI18:11
-  attribute: PCON
-- instance: KLYS:LI18:11
-  attribute: ACON
-- instance: KLYS:LI18:21
-  attribute: PCON
-- instance: KLYS:LI18:21
-  attribute: ACON
-- instance: KLYS:LI18:31
-  attribute: PCON
-- instance: KLYS:LI18:31
-  attribute: ACON
-- instance: KLYS:LI18:41
-  attribute: PCON
-- instance: KLYS:LI18:41
-  attribute: ACON
-- instance: KLYS:LI18:51
-  attribute: PCON
-- instance: KLYS:LI18:51
-  attribute: ACON
-- instance: KLYS:LI18:61
-  attribute: PCON
-- instance: KLYS:LI18:61
-  attribute: ACON
-- instance: KLYS:LI18:71
-  attribute: PCON
-- instance: KLYS:LI18:71
-  attribute: ACON
-- instance: KLYS:LI18:81
-  attribute: PCON
-- instance: KLYS:LI18:81
-  attribute: ACON
-- instance: KLYS:LI18:91
-  attribute: PCON
-- instance: KLYS:LI18:91
-  attribute: ACON
-- instance: KLYS:LI19:11
-  attribute: PCON
-- instance: KLYS:LI19:11
-  attribute: ACON
-- instance: KLYS:LI19:21
-  attribute: PCON
-- instance: KLYS:LI19:21
-  attribute: ACON
-- instance: KLYS:LI19:31
-  attribute: PCON
-- instance: KLYS:LI19:31
-  attribute: ACON
-- instance: KLYS:LI19:41
-  attribute: PCON
-- instance: KLYS:LI19:41
-  attribute: ACON
-- instance: KLYS:LI19:51
-  attribute: PCON
-- instance: KLYS:LI19:51
-  attribute: ACON
-- instance: KLYS:LI19:61
-  attribute: PCON
-- instance: KLYS:LI19:61
-  attribute: ACON
-- instance: KLYS:LI19:81
-  attribute: PCON
-- instance: KLYS:LI19:81
-  attribute: ACON
-- instance: KLYS:LI19:97
-  attribute: PCON
-- instance: KLYS:LI19:97
-  attribute: ACON
-- instance: KLYS:LI20:21
-  attribute: PCON
-- instance: KLYS:LI20:21
-  attribute: ACON
-- instance: KLYS:LI20:31
-  attribute: PCON
-- instance: KLYS:LI20:31
-  attribute: ACON
-- instance: KLYS:LI20:41
-  attribute: PCON
-- instance: KLYS:LI20:41
-  attribute: ACON
-- instance: KLYS:LI20:93
-  attribute: PCON
-- instance: KLYS:LI20:93
-  attribute: ACON
-- instance: KLYS:LI20:94
-  attribute: PCON
-- instance: KLYS:LI20:94
-  attribute: ACON
-- instance: KLYS:LI20:95
-  attribute: PCON
-- instance: KLYS:LI20:95
-  attribute: ACON
-- instance: KLYS:DR01:1
-  attribute: PCON
-- instance: KLYS:DR01:1
-  attribute: ACON
-- instance: KLYS:DR03:1
-  attribute: PCON
-- instance: KLYS:DR03:1
-  attribute: ACON
-- instance: KLYS:DR03:2
-  attribute: PCON
-- instance: KLYS:DR03:2
-  attribute: ACON
-- instance: KLYS:DR13:1
-  attribute: PCON
-- instance: KLYS:DR13:1
-  attribute: ACON
-- instance: KLYS:DR13:2
-  attribute: PCON
-- instance: KLYS:DR13:2
-  attribute: ACON
-- instance: KLYS:LI31:11
-  attribute: PCON
-- instance: KLYS:LI31:11
-  attribute: ACON
-- instance: KLYS:LI31:21
-  attribute: PCON
-- instance: KLYS:LI31:21
-  attribute: ACON
-- instance: KLYS:LI31:31
-  attribute: PCON
-- instance: KLYS:LI31:31
-  attribute: ACON
-- instance: KLYS:LI32:22
-  attribute: PCON
-- instance: KLYS:LI32:22
-  attribute: ACON
-- instance: KLYS:LI32:32
-  attribute: PCON
-- instance: KLYS:LI32:32
-  attribute: ACON
-- instance: KLYS:AM00:1
-  attribute: PCON
-- instance: KLYS:AM00:1
-  attribute: ACON
-- instance: KLYS:AM00:2
-  attribute: PCON
-- instance: KLYS:AM00:2
-  attribute: ACON
-- instance: KLYS:AM00:3
-  attribute: PCON
-- instance: KLYS:AM00:3
-  attribute: ACON
-- instance: KLYS:AM00:4
-  attribute: PCON
-- instance: KLYS:AM00:4
-  attribute: ACON
-- instance: KLYS:CB02:91
-  attribute: PCON
-- instance: KLYS:CB02:91
-  attribute: ACON
-- instance: KLYS:RF00:1
-  attribute: PCON
-- instance: KLYS:RF00:1
-  attribute: ACON
-- instance: KLYS:RF00:2
-  attribute: PCON
-- instance: KLYS:RF00:2
-  attribute: ACON
-- instance: KLYS:RF00:3
-  attribute: PCON
-- instance: KLYS:RF00:3
-  attribute: ACON
-- instance: KLYS:RF00:4
-  attribute: PCON
-- instance: KLYS:RF00:4
-  attribute: ACON
-- instance: SBST:LI00:1
-  attribute: PCON
-- instance: SBST:LI00:1
-  attribute: ACON
-- instance: SBST:LI01:1
-  attribute: PCON
-- instance: SBST:LI01:1
-  attribute: ACON
-- instance: SBST:LI02:1
-  attribute: PCON
-- instance: SBST:LI02:1
-  attribute: ACON
-- instance: SBST:LI03:1
-  attribute: PCON
-- instance: SBST:LI03:1
-  attribute: ACON
-- instance: SBST:LI04:1
-  attribute: PCON
-- instance: SBST:LI04:1
-  attribute: ACON
-- instance: SBST:LI05:1
-  attribute: PCON
-- instance: SBST:LI05:1
-  attribute: ACON
-- instance: SBST:LI06:1
-  attribute: PCON
-- instance: SBST:LI06:1
-  attribute: ACON
-- instance: SBST:LI07:1
-  attribute: PCON
-- instance: SBST:LI07:1
-  attribute: ACON
-- instance: SBST:LI08:1
-  attribute: PCON
-- instance: SBST:LI08:1
-  attribute: ACON
-- instance: SBST:LI09:1
-  attribute: PCON
-- instance: SBST:LI09:1
-  attribute: ACON
-- instance: SBST:LI10:1
-  attribute: PCON
-- instance: SBST:LI10:1
-  attribute: ACON
-- instance: SBST:LI11:1
-  attribute: PCON
-- instance: SBST:LI11:1
-  attribute: ACON
-- instance: SBST:LI12:1
-  attribute: PCON
-- instance: SBST:LI12:1
-  attribute: ACON
-- instance: SBST:LI13:1
-  attribute: PCON
-- instance: SBST:LI13:1
-  attribute: ACON
-- instance: SBST:LI14:1
-  attribute: PCON
-- instance: SBST:LI14:1
-  attribute: ACON
-- instance: SBST:LI15:1
-  attribute: PCON
-- instance: SBST:LI15:1
-  attribute: ACON
-- instance: SBST:LI16:1
-  attribute: PCON
-- instance: SBST:LI16:1
-  attribute: ACON
-- instance: SBST:LI17:1
-  attribute: PCON
-- instance: SBST:LI17:1
-  attribute: ACON
-- instance: SBST:LI18:1
-  attribute: PCON
-- instance: SBST:LI18:1
-  attribute: ACON
-- instance: SBST:LI19:1
-  attribute: PCON
-- instance: SBST:LI19:1
-  attribute: ACON
-- instance: SBST:LI20:1
-  attribute: PCON
-- instance: SBST:LI20:1
-  attribute: ACON
-- instance: SBST:LI31:1
-  attribute: PCON
-- instance: SBST:LI31:1
-  attribute: ACON
-- instance: SBST:LI32:1
-  attribute: PCON
-- instance: SBST:LI32:1
-  attribute: ACON
-- instance: SBST:AM00:1
-  attribute: PCON
-- instance: SBST:AM00:1
-  attribute: ACON
-- instance: SBST:RF00:1
-  attribute: PCON
-- instance: SBST:RF00:1
-  attribute: ACON
-- instance: KLYS:LI02:61
-  attribute: PCON
-- instance: KLYS:LI02:61
-  attribute: ACON
-- instance: KLYS:LI02:71
-  attribute: PCON
-- instance: KLYS:LI02:71
-  attribute: ACON
-- instance: KLYS:LI02:81
-  attribute: PCON
-- instance: KLYS:LI02:81
-  attribute: ACON
-- instance: KLYS:LI02:91
-  attribute: PCON
-- instance: KLYS:LI02:91
-  attribute: ACON
-- instance: KLYS:LI03:11
-  attribute: PCON
-- instance: KLYS:LI03:11
-  attribute: ACON
-- instance: KLYS:LI03:21
-  attribute: PCON
-- instance: KLYS:LI03:21
-  attribute: ACON
-- instance: KLYS:LI03:31
-  attribute: PCON
-- instance: KLYS:LI03:31
-  attribute: ACON
-- instance: KLYS:LI03:41
-  attribute: PCON
-- instance: KLYS:LI03:41
-  attribute: ACON
-- instance: KLYS:LI03:51
-  attribute: PCON
-- instance: KLYS:LI03:51
-  attribute: ACON
-- instance: KLYS:LI03:61
-  attribute: PCON
-- instance: KLYS:LI03:61
-  attribute: ACON
-- instance: KLYS:LI03:71
-  attribute: PCON
-- instance: KLYS:LI03:71
-  attribute: ACON
-- instance: KLYS:LI03:81
-  attribute: PCON
-- instance: KLYS:LI03:81
-  attribute: ACON
-- instance: KLYS:LI04:11
-  attribute: PCON
-- instance: KLYS:LI04:11
-  attribute: ACON
-- instance: KLYS:LI04:21
-  attribute: PCON
-- instance: KLYS:LI04:21
-  attribute: ACON
-- instance: KLYS:LI04:31
-  attribute: PCON
-- instance: KLYS:LI04:31
-  attribute: ACON
-- instance: KLYS:LI04:41
-  attribute: PCON
-- instance: KLYS:LI04:41
-  attribute: ACON
-- instance: KLYS:LI04:51
-  attribute: PCON
-- instance: KLYS:LI04:51
-  attribute: ACON
-- instance: KLYS:LI04:61
-  attribute: PCON
-- instance: KLYS:LI04:61
-  attribute: ACON
-- instance: KLYS:LI04:71
-  attribute: PCON
-- instance: KLYS:LI04:71
-  attribute: ACON
-- instance: KLYS:LI04:81
-  attribute: PCON
-- instance: KLYS:LI04:81
-  attribute: ACON
-- instance: KLYS:LI05:11
-  attribute: PCON
-- instance: KLYS:LI05:11
-  attribute: ACON
-- instance: KLYS:LI05:21
-  attribute: PCON
-- instance: KLYS:LI05:21
-  attribute: ACON
-- instance: KLYS:LI05:31
-  attribute: PCON
-- instance: KLYS:LI05:31
-  attribute: ACON
-- instance: KLYS:LI05:41
-  attribute: PCON
-- instance: KLYS:LI05:41
-  attribute: ACON
-- instance: KLYS:LI05:51
-  attribute: PCON
-- instance: KLYS:LI05:51
-  attribute: ACON
-- instance: KLYS:LI05:61
-  attribute: PCON
-- instance: KLYS:LI05:61
-  attribute: ACON
-- instance: KLYS:LI05:71
-  attribute: PCON
-- instance: KLYS:LI05:71
-  attribute: ACON
-- instance: KLYS:LI05:81
-  attribute: PCON
-- instance: KLYS:LI05:81
-  attribute: ACON
-- instance: KLYS:LI06:11
-  attribute: PCON
-- instance: KLYS:LI06:11
-  attribute: ACON
-- instance: KLYS:LI06:21
-  attribute: PCON
-- instance: KLYS:LI06:21
-  attribute: ACON
-- instance: KLYS:LI06:31
-  attribute: PCON
-- instance: KLYS:LI06:31
-  attribute: ACON
-- instance: KLYS:LI06:41
-  attribute: PCON
-- instance: KLYS:LI06:41
-  attribute: ACON
-- instance: KLYS:LI06:51
-  attribute: PCON
-- instance: KLYS:LI06:51
-  attribute: ACON
-- instance: KLYS:LI06:61
-  attribute: PCON
-- instance: KLYS:LI06:61
-  attribute: ACON
-- instance: KLYS:LI06:71
-  attribute: PCON
-- instance: KLYS:LI06:71
-  attribute: ACON
-- instance: KLYS:LI06:81
-  attribute: PCON
-- instance: KLYS:LI06:81
-  attribute: ACON
-- instance: KLYS:LI07:11
-  attribute: PCON
-- instance: KLYS:LI07:11
-  attribute: ACON
-- instance: KLYS:LI07:21
-  attribute: PCON
-- instance: KLYS:LI07:21
-  attribute: ACON
-- instance: KLYS:LI07:31
-  attribute: PCON
-- instance: KLYS:LI07:31
-  attribute: ACON
+  - channel: KLYS:AM00:1:ACON
+  - channel: KLYS:AM00:1:PCON
+  - channel: KLYS:AM00:2:ACON
+  - channel: KLYS:AM00:2:PCON
+  - channel: KLYS:AM00:3:ACON
+  - channel: KLYS:AM00:3:PCON
+  - channel: KLYS:AM00:4:ACON
+  - channel: KLYS:AM00:4:PCON
+  - channel: KLYS:CB02:91:ACON
+  - channel: KLYS:CB02:91:PCON
+  - channel: KLYS:DR01:1:ACON
+  - channel: KLYS:DR01:1:PCON
+  - channel: KLYS:DR03:1:ACON
+  - channel: KLYS:DR03:1:PCON
+  - channel: KLYS:DR03:2:ACON
+  - channel: KLYS:DR03:2:PCON
+  - channel: KLYS:DR13:1:ACON
+  - channel: KLYS:DR13:1:PCON
+  - channel: KLYS:DR13:2:ACON
+  - channel: KLYS:DR13:2:PCON
+  - channel: KLYS:LI00:11:ACON
+  - channel: KLYS:LI00:11:KPHR
+  - channel: KLYS:LI00:11:PCON
+  - channel: KLYS:LI00:12:ACON
+  - channel: KLYS:LI00:12:KPHR
+  - channel: KLYS:LI00:12:PCON
+  - channel: KLYS:LI00:13:ACON
+  - channel: KLYS:LI00:13:KPHR
+  - channel: KLYS:LI00:13:PCON
+  - channel: KLYS:LI00:1:ACON
+  - channel: KLYS:LI00:1:KPHR
+  - channel: KLYS:LI00:1:PCON
+  - channel: KLYS:LI00:20:ACON
+  - channel: KLYS:LI00:20:KPHR
+  - channel: KLYS:LI00:20:PCON
+  - channel: KLYS:LI00:2:ACON
+  - channel: KLYS:LI00:2:KPHR
+  - channel: KLYS:LI00:2:PCON
+  - channel: KLYS:LI00:59:ACON
+  - channel: KLYS:LI00:59:KPHR
+  - channel: KLYS:LI00:59:PCON
+  - channel: KLYS:LI00:96:ACON
+  - channel: KLYS:LI00:96:KPHR
+  - channel: KLYS:LI00:96:PCON
+  - channel: KLYS:LI00:97:ACON
+  - channel: KLYS:LI00:97:KPHR
+  - channel: KLYS:LI00:97:PCON
+  - channel: KLYS:LI00:98:ACON
+  - channel: KLYS:LI00:98:KPHR
+  - channel: KLYS:LI00:98:PCON
+  - channel: KLYS:LI00:99:ACON
+  - channel: KLYS:LI00:99:KPHR
+  - channel: KLYS:LI00:99:PCON
+  - channel: KLYS:LI01:21:ACON
+  - channel: KLYS:LI01:21:KPHR
+  - channel: KLYS:LI01:21:PCON
+  - channel: KLYS:LI01:31:ACON
+  - channel: KLYS:LI01:31:KPHR
+  - channel: KLYS:LI01:31:PCON
+  - channel: KLYS:LI01:41:ACON
+  - channel: KLYS:LI01:41:KPHR
+  - channel: KLYS:LI01:41:PCON
+  - channel: KLYS:LI01:51:ACON
+  - channel: KLYS:LI01:51:KPHR
+  - channel: KLYS:LI01:51:PCON
+  - channel: KLYS:LI01:61:ACON
+  - channel: KLYS:LI01:61:KPHR
+  - channel: KLYS:LI01:61:PCON
+  - channel: KLYS:LI02:11:ACON
+  - channel: KLYS:LI02:11:KPHR
+  - channel: KLYS:LI02:11:PCON
+  - channel: KLYS:LI02:21:ACON
+  - channel: KLYS:LI02:21:KPHR
+  - channel: KLYS:LI02:21:PCON
+  - channel: KLYS:LI02:31:ACON
+  - channel: KLYS:LI02:31:KPHR
+  - channel: KLYS:LI02:31:PCON
+  - channel: KLYS:LI02:41:ACON
+  - channel: KLYS:LI02:41:KPHR
+  - channel: KLYS:LI02:41:PCON
+  - channel: KLYS:LI02:51:ACON
+  - channel: KLYS:LI02:51:KPHR
+  - channel: KLYS:LI02:51:PCON
+  - channel: KLYS:LI02:61:ACON
+  - channel: KLYS:LI02:61:KPHR
+  - channel: KLYS:LI02:61:PCON
+  - channel: KLYS:LI02:71:ACON
+  - channel: KLYS:LI02:71:KPHR
+  - channel: KLYS:LI02:71:PCON
+  - channel: KLYS:LI02:81:ACON
+  - channel: KLYS:LI02:81:KPHR
+  - channel: KLYS:LI02:81:PCON
+  - channel: KLYS:LI02:91:ACON
+  - channel: KLYS:LI02:91:KPHR
+  - channel: KLYS:LI02:91:PCON
+  - channel: KLYS:LI03:11:ACON
+  - channel: KLYS:LI03:11:KPHR
+  - channel: KLYS:LI03:11:PCON
+  - channel: KLYS:LI03:21:ACON
+  - channel: KLYS:LI03:21:KPHR
+  - channel: KLYS:LI03:21:PCON
+  - channel: KLYS:LI03:31:ACON
+  - channel: KLYS:LI03:31:KPHR
+  - channel: KLYS:LI03:31:PCON
+  - channel: KLYS:LI03:41:ACON
+  - channel: KLYS:LI03:41:KPHR
+  - channel: KLYS:LI03:41:PCON
+  - channel: KLYS:LI03:51:ACON
+  - channel: KLYS:LI03:51:KPHR
+  - channel: KLYS:LI03:51:PCON
+  - channel: KLYS:LI03:61:ACON
+  - channel: KLYS:LI03:61:KPHR
+  - channel: KLYS:LI03:61:PCON
+  - channel: KLYS:LI03:71:ACON
+  - channel: KLYS:LI03:71:KPHR
+  - channel: KLYS:LI03:71:PCON
+  - channel: KLYS:LI03:81:ACON
+  - channel: KLYS:LI03:81:KPHR
+  - channel: KLYS:LI03:81:PCON
+  - channel: KLYS:LI04:11:ACON
+  - channel: KLYS:LI04:11:KPHR
+  - channel: KLYS:LI04:11:PCON
+  - channel: KLYS:LI04:21:ACON
+  - channel: KLYS:LI04:21:KPHR
+  - channel: KLYS:LI04:21:PCON
+  - channel: KLYS:LI04:31:ACON
+  - channel: KLYS:LI04:31:KPHR
+  - channel: KLYS:LI04:31:PCON
+  - channel: KLYS:LI04:41:ACON
+  - channel: KLYS:LI04:41:KPHR
+  - channel: KLYS:LI04:41:PCON
+  - channel: KLYS:LI04:51:ACON
+  - channel: KLYS:LI04:51:KPHR
+  - channel: KLYS:LI04:51:PCON
+  - channel: KLYS:LI04:61:ACON
+  - channel: KLYS:LI04:61:KPHR
+  - channel: KLYS:LI04:61:PCON
+  - channel: KLYS:LI04:71:ACON
+  - channel: KLYS:LI04:71:KPHR
+  - channel: KLYS:LI04:71:PCON
+  - channel: KLYS:LI04:81:ACON
+  - channel: KLYS:LI04:81:KPHR
+  - channel: KLYS:LI04:81:PCON
+  - channel: KLYS:LI05:11:ACON
+  - channel: KLYS:LI05:11:KPHR
+  - channel: KLYS:LI05:11:PCON
+  - channel: KLYS:LI05:21:ACON
+  - channel: KLYS:LI05:21:KPHR
+  - channel: KLYS:LI05:21:PCON
+  - channel: KLYS:LI05:31:ACON
+  - channel: KLYS:LI05:31:KPHR
+  - channel: KLYS:LI05:31:PCON
+  - channel: KLYS:LI05:41:ACON
+  - channel: KLYS:LI05:41:KPHR
+  - channel: KLYS:LI05:41:PCON
+  - channel: KLYS:LI05:51:ACON
+  - channel: KLYS:LI05:51:KPHR
+  - channel: KLYS:LI05:51:PCON
+  - channel: KLYS:LI05:61:ACON
+  - channel: KLYS:LI05:61:KPHR
+  - channel: KLYS:LI05:61:PCON
+  - channel: KLYS:LI05:71:ACON
+  - channel: KLYS:LI05:71:KPHR
+  - channel: KLYS:LI05:71:PCON
+  - channel: KLYS:LI05:81:ACON
+  - channel: KLYS:LI05:81:KPHR
+  - channel: KLYS:LI05:81:PCON
+  - channel: KLYS:LI06:11:ACON
+  - channel: KLYS:LI06:11:KPHR
+  - channel: KLYS:LI06:11:PCON
+  - channel: KLYS:LI06:21:ACON
+  - channel: KLYS:LI06:21:KPHR
+  - channel: KLYS:LI06:21:PCON
+  - channel: KLYS:LI06:31:ACON
+  - channel: KLYS:LI06:31:KPHR
+  - channel: KLYS:LI06:31:PCON
+  - channel: KLYS:LI06:41:ACON
+  - channel: KLYS:LI06:41:KPHR
+  - channel: KLYS:LI06:41:PCON
+  - channel: KLYS:LI06:51:ACON
+  - channel: KLYS:LI06:51:KPHR
+  - channel: KLYS:LI06:51:PCON
+  - channel: KLYS:LI06:61:ACON
+  - channel: KLYS:LI06:61:KPHR
+  - channel: KLYS:LI06:61:PCON
+  - channel: KLYS:LI06:71:ACON
+  - channel: KLYS:LI06:71:KPHR
+  - channel: KLYS:LI06:71:PCON
+  - channel: KLYS:LI06:81:ACON
+  - channel: KLYS:LI06:81:KPHR
+  - channel: KLYS:LI06:81:PCON
+  - channel: KLYS:LI07:11:ACON
+  - channel: KLYS:LI07:11:KPHR
+  - channel: KLYS:LI07:11:PCON
+  - channel: KLYS:LI07:21:ACON
+  - channel: KLYS:LI07:21:KPHR
+  - channel: KLYS:LI07:21:PCON
+  - channel: KLYS:LI07:31:ACON
+  - channel: KLYS:LI07:31:KPHR
+  - channel: KLYS:LI07:31:PCON
+  - channel: KLYS:LI07:41:KPHR
+  - channel: KLYS:LI07:51:KPHR
+  - channel: KLYS:LI07:61:KPHR
+  - channel: KLYS:LI07:71:ACON
+  - channel: KLYS:LI07:71:KPHR
+  - channel: KLYS:LI07:71:PCON
+  - channel: KLYS:LI07:81:ACON
+  - channel: KLYS:LI07:81:KPHR
+  - channel: KLYS:LI07:81:PCON
+  - channel: KLYS:LI08:11:ACON
+  - channel: KLYS:LI08:11:KPHR
+  - channel: KLYS:LI08:11:PCON
+  - channel: KLYS:LI08:21:ACON
+  - channel: KLYS:LI08:21:KPHR
+  - channel: KLYS:LI08:21:PCON
+  - channel: KLYS:LI08:31:ACON
+  - channel: KLYS:LI08:31:KPHR
+  - channel: KLYS:LI08:31:PCON
+  - channel: KLYS:LI08:41:ACON
+  - channel: KLYS:LI08:41:KPHR
+  - channel: KLYS:LI08:41:PCON
+  - channel: KLYS:LI08:51:ACON
+  - channel: KLYS:LI08:51:KPHR
+  - channel: KLYS:LI08:51:PCON
+  - channel: KLYS:LI08:61:ACON
+  - channel: KLYS:LI08:61:KPHR
+  - channel: KLYS:LI08:61:PCON
+  - channel: KLYS:LI08:71:ACON
+  - channel: KLYS:LI08:71:KPHR
+  - channel: KLYS:LI08:71:PCON
+  - channel: KLYS:LI08:81:ACON
+  - channel: KLYS:LI08:81:KPHR
+  - channel: KLYS:LI08:81:PCON
+  - channel: KLYS:LI09:11:ACON
+  - channel: KLYS:LI09:11:KPHR
+  - channel: KLYS:LI09:11:PCON
+  - channel: KLYS:LI09:21:ACON
+  - channel: KLYS:LI09:21:KPHR
+  - channel: KLYS:LI09:21:PCON
+  - channel: KLYS:LI09:31:ACON
+  - channel: KLYS:LI09:31:KPHR
+  - channel: KLYS:LI09:31:PCON
+  - channel: KLYS:LI09:41:ACON
+  - channel: KLYS:LI09:41:KPHR
+  - channel: KLYS:LI09:41:PCON
+  - channel: KLYS:LI09:51:ACON
+  - channel: KLYS:LI09:51:KPHR
+  - channel: KLYS:LI09:51:PCON
+  - channel: KLYS:LI09:61:ACON
+  - channel: KLYS:LI09:61:PCON
+  - channel: KLYS:LI09:71:ACON
+  - channel: KLYS:LI09:71:PCON
+  - channel: KLYS:LI09:81:ACON
+  - channel: KLYS:LI09:81:PCON
+  - channel: KLYS:LI09:91:ACON
+  - channel: KLYS:LI09:91:PCON
+  - channel: KLYS:LI10:11:ACON
+  - channel: KLYS:LI10:11:PCON
+  - channel: KLYS:LI10:21:ACON
+  - channel: KLYS:LI10:21:PCON
+  - channel: KLYS:LI10:31:ACON
+  - channel: KLYS:LI10:31:PCON
+  - channel: KLYS:LI10:41:ACON
+  - channel: KLYS:LI10:41:PCON
+  - channel: KLYS:LI10:51:ACON
+  - channel: KLYS:LI10:51:PCON
+  - channel: KLYS:LI10:61:ACON
+  - channel: KLYS:LI10:61:PCON
+  - channel: KLYS:LI10:71:ACON
+  - channel: KLYS:LI10:71:PCON
+  - channel: KLYS:LI10:81:ACON
+  - channel: KLYS:LI10:81:PCON
+  - channel: KLYS:LI11:11:ACON
+  - channel: KLYS:LI11:11:PCON
+  - channel: KLYS:LI11:21:ACON
+  - channel: KLYS:LI11:21:PCON
+  - channel: KLYS:LI11:22:ACON
+  - channel: KLYS:LI11:22:PCON
+  - channel: KLYS:LI11:31:ACON
+  - channel: KLYS:LI11:31:PCON
+  - channel: KLYS:LI11:41:ACON
+  - channel: KLYS:LI11:41:PCON
+  - channel: KLYS:LI11:51:ACON
+  - channel: KLYS:LI11:51:PCON
+  - channel: KLYS:LI11:61:ACON
+  - channel: KLYS:LI11:61:PCON
+  - channel: KLYS:LI11:71:ACON
+  - channel: KLYS:LI11:71:PCON
+  - channel: KLYS:LI11:81:ACON
+  - channel: KLYS:LI11:81:PCON
+  - channel: KLYS:LI12:11:ACON
+  - channel: KLYS:LI12:11:PCON
+  - channel: KLYS:LI12:21:ACON
+  - channel: KLYS:LI12:21:PCON
+  - channel: KLYS:LI12:31:ACON
+  - channel: KLYS:LI12:31:PCON
+  - channel: KLYS:LI12:41:ACON
+  - channel: KLYS:LI12:41:PCON
+  - channel: KLYS:LI12:51:ACON
+  - channel: KLYS:LI12:51:PCON
+  - channel: KLYS:LI12:61:ACON
+  - channel: KLYS:LI12:61:PCON
+  - channel: KLYS:LI12:71:ACON
+  - channel: KLYS:LI12:71:PCON
+  - channel: KLYS:LI12:81:ACON
+  - channel: KLYS:LI12:81:PCON
+  - channel: KLYS:LI13:11:ACON
+  - channel: KLYS:LI13:11:PCON
+  - channel: KLYS:LI13:21:ACON
+  - channel: KLYS:LI13:21:PCON
+  - channel: KLYS:LI13:31:ACON
+  - channel: KLYS:LI13:31:PCON
+  - channel: KLYS:LI13:41:ACON
+  - channel: KLYS:LI13:41:PCON
+  - channel: KLYS:LI13:51:ACON
+  - channel: KLYS:LI13:51:PCON
+  - channel: KLYS:LI13:61:ACON
+  - channel: KLYS:LI13:61:PCON
+  - channel: KLYS:LI13:71:ACON
+  - channel: KLYS:LI13:71:PCON
+  - channel: KLYS:LI13:81:ACON
+  - channel: KLYS:LI13:81:PCON
+  - channel: KLYS:LI14:11:ACON
+  - channel: KLYS:LI14:11:PCON
+  - channel: KLYS:LI14:21:ACON
+  - channel: KLYS:LI14:21:PCON
+  - channel: KLYS:LI14:31:ACON
+  - channel: KLYS:LI14:31:PCON
+  - channel: KLYS:LI14:41:ACON
+  - channel: KLYS:LI14:41:PCON
+  - channel: KLYS:LI14:51:ACON
+  - channel: KLYS:LI14:51:PCON
+  - channel: KLYS:LI14:61:ACON
+  - channel: KLYS:LI14:61:PCON
+  - channel: KLYS:LI14:71:ACON
+  - channel: KLYS:LI14:71:PCON
+  - channel: KLYS:LI14:81:ACON
+  - channel: KLYS:LI14:81:PCON
+  - channel: KLYS:LI15:11:ACON
+  - channel: KLYS:LI15:11:PCON
+  - channel: KLYS:LI15:21:ACON
+  - channel: KLYS:LI15:21:PCON
+  - channel: KLYS:LI15:31:ACON
+  - channel: KLYS:LI15:31:PCON
+  - channel: KLYS:LI15:41:ACON
+  - channel: KLYS:LI15:41:PCON
+  - channel: KLYS:LI15:51:ACON
+  - channel: KLYS:LI15:51:PCON
+  - channel: KLYS:LI15:61:ACON
+  - channel: KLYS:LI15:61:PCON
+  - channel: KLYS:LI15:71:ACON
+  - channel: KLYS:LI15:71:PCON
+  - channel: KLYS:LI15:81:ACON
+  - channel: KLYS:LI15:81:PCON
+  - channel: KLYS:LI16:11:ACON
+  - channel: KLYS:LI16:11:PCON
+  - channel: KLYS:LI16:21:ACON
+  - channel: KLYS:LI16:21:PCON
+  - channel: KLYS:LI16:31:ACON
+  - channel: KLYS:LI16:31:PCON
+  - channel: KLYS:LI16:41:ACON
+  - channel: KLYS:LI16:41:PCON
+  - channel: KLYS:LI16:51:ACON
+  - channel: KLYS:LI16:51:PCON
+  - channel: KLYS:LI16:61:ACON
+  - channel: KLYS:LI16:61:PCON
+  - channel: KLYS:LI16:71:ACON
+  - channel: KLYS:LI16:71:PCON
+  - channel: KLYS:LI16:81:ACON
+  - channel: KLYS:LI16:81:PCON
+  - channel: KLYS:LI17:11:ACON
+  - channel: KLYS:LI17:11:PCON
+  - channel: KLYS:LI17:21:ACON
+  - channel: KLYS:LI17:21:PCON
+  - channel: KLYS:LI17:31:ACON
+  - channel: KLYS:LI17:31:PCON
+  - channel: KLYS:LI17:41:ACON
+  - channel: KLYS:LI17:41:PCON
+  - channel: KLYS:LI17:51:ACON
+  - channel: KLYS:LI17:51:PCON
+  - channel: KLYS:LI17:61:ACON
+  - channel: KLYS:LI17:61:PCON
+  - channel: KLYS:LI17:71:ACON
+  - channel: KLYS:LI17:71:PCON
+  - channel: KLYS:LI17:81:ACON
+  - channel: KLYS:LI17:81:PCON
+  - channel: KLYS:LI18:11:ACON
+  - channel: KLYS:LI18:11:PCON
+  - channel: KLYS:LI18:21:ACON
+  - channel: KLYS:LI18:21:PCON
+  - channel: KLYS:LI18:31:ACON
+  - channel: KLYS:LI18:31:PCON
+  - channel: KLYS:LI18:41:ACON
+  - channel: KLYS:LI18:41:PCON
+  - channel: KLYS:LI18:51:ACON
+  - channel: KLYS:LI18:51:PCON
+  - channel: KLYS:LI18:61:ACON
+  - channel: KLYS:LI18:61:PCON
+  - channel: KLYS:LI18:71:ACON
+  - channel: KLYS:LI18:71:PCON
+  - channel: KLYS:LI18:81:ACON
+  - channel: KLYS:LI18:81:PCON
+  - channel: KLYS:LI18:91:ACON
+  - channel: KLYS:LI18:91:PCON
+  - channel: KLYS:LI19:11:ACON
+  - channel: KLYS:LI19:11:PCON
+  - channel: KLYS:LI19:21:ACON
+  - channel: KLYS:LI19:21:PCON
+  - channel: KLYS:LI19:31:ACON
+  - channel: KLYS:LI19:31:PCON
+  - channel: KLYS:LI19:41:ACON
+  - channel: KLYS:LI19:41:PCON
+  - channel: KLYS:LI19:51:ACON
+  - channel: KLYS:LI19:51:PCON
+  - channel: KLYS:LI19:61:ACON
+  - channel: KLYS:LI19:61:PCON
+  - channel: KLYS:LI19:81:ACON
+  - channel: KLYS:LI19:81:PCON
+  - channel: KLYS:LI19:97:ACON
+  - channel: KLYS:LI19:97:PCON
+  - channel: KLYS:LI20:21:ACON
+  - channel: KLYS:LI20:21:PCON
+  - channel: KLYS:LI20:31:ACON
+  - channel: KLYS:LI20:31:PCON
+  - channel: KLYS:LI20:41:ACON
+  - channel: KLYS:LI20:41:PCON
+  - channel: KLYS:LI20:93:ACON
+  - channel: KLYS:LI20:93:PCON
+  - channel: KLYS:LI20:94:ACON
+  - channel: KLYS:LI20:94:PCON
+  - channel: KLYS:LI20:95:ACON
+  - channel: KLYS:LI20:95:PCON
+  - channel: KLYS:LI31:11:ACON
+  - channel: KLYS:LI31:11:PCON
+  - channel: KLYS:LI31:21:ACON
+  - channel: KLYS:LI31:21:PCON
+  - channel: KLYS:LI31:31:ACON
+  - channel: KLYS:LI31:31:PCON
+  - channel: KLYS:LI32:22:ACON
+  - channel: KLYS:LI32:22:PCON
+  - channel: KLYS:LI32:32:ACON
+  - channel: KLYS:LI32:32:PCON
+  - channel: KLYS:RF00:1:ACON
+  - channel: KLYS:RF00:1:PCON
+  - channel: KLYS:RF00:2:ACON
+  - channel: KLYS:RF00:2:PCON
+  - channel: KLYS:RF00:3:ACON
+  - channel: KLYS:RF00:3:PCON
+  - channel: KLYS:RF00:4:ACON
+  - channel: KLYS:RF00:4:PCON
+  - channel: SBST:AM00:1:ACON
+  - channel: SBST:AM00:1:PCON
+  - channel: SBST:LI00:1:ACON
+  - channel: SBST:LI00:1:PCON
+  - channel: SBST:LI01:1:ACON
+  - channel: SBST:LI01:1:PCON
+  - channel: SBST:LI02:1:ACON
+  - channel: SBST:LI02:1:PCON
+  - channel: SBST:LI03:1:ACON
+  - channel: SBST:LI03:1:PCON
+  - channel: SBST:LI04:1:ACON
+  - channel: SBST:LI04:1:PCON
+  - channel: SBST:LI05:1:ACON
+  - channel: SBST:LI05:1:PCON
+  - channel: SBST:LI06:1:ACON
+  - channel: SBST:LI06:1:PCON
+  - channel: SBST:LI07:1:ACON
+  - channel: SBST:LI07:1:PCON
+  - channel: SBST:LI08:1:ACON
+  - channel: SBST:LI08:1:PCON
+  - channel: SBST:LI09:1:ACON
+  - channel: SBST:LI09:1:PCON
+  - channel: SBST:LI10:1:ACON
+  - channel: SBST:LI10:1:PCON
+  - channel: SBST:LI11:1:ACON
+  - channel: SBST:LI11:1:PCON
+  - channel: SBST:LI12:1:ACON
+  - channel: SBST:LI12:1:PCON
+  - channel: SBST:LI13:1:ACON
+  - channel: SBST:LI13:1:PCON
+  - channel: SBST:LI14:1:ACON
+  - channel: SBST:LI14:1:PCON
+  - channel: SBST:LI15:1:ACON
+  - channel: SBST:LI15:1:PCON
+  - channel: SBST:LI16:1:ACON
+  - channel: SBST:LI16:1:PCON
+  - channel: SBST:LI17:1:ACON
+  - channel: SBST:LI17:1:PCON
+  - channel: SBST:LI18:1:ACON
+  - channel: SBST:LI18:1:PCON
+  - channel: SBST:LI19:1:ACON
+  - channel: SBST:LI19:1:PCON
+  - channel: SBST:LI20:1:ACON
+  - channel: SBST:LI20:1:PCON
+  - channel: SBST:LI31:1:ACON
+  - channel: SBST:LI31:1:PCON
+  - channel: SBST:LI32:1:ACON
+  - channel: SBST:LI32:1:PCON
+  - channel: SBST:RF00:1:ACON
+  - channel: SBST:RF00:1:PCON
 

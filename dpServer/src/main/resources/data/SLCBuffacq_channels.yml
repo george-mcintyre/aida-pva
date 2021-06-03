@@ -4,23 +4,21 @@
 id: 262
 name: SLCBuffacq
 description: SLC BPM Buffered acquisition
+config:
+  type: TABLE
+  layout: ROW_MAJOR
+  fields:
+    - label: foo
+      name: bar
+      description: Lorem ipsum
 channels:
-- instance: SCAVSPPS
-  attribute: BUFFACQ
-- instance: SDRFACET
-  attribute: BUFFACQ
-- instance: INJ_ELEC
-  attribute: BUFFACQ
-- instance: ELECEP01
-  attribute: BUFFACQ
-- instance: SCAVPOSI
-  attribute: BUFFACQ
-- instance: INJ_POSI
-  attribute: BUFFACQ
-- instance: TAXXALL
-  attribute: BUFFACQ
-- instance: E163BMLN
-  attribute: BUFFACQ
-- instance: NDRFACET
-  attribute: BUFFACQ
+  - channel: E163BMLN:BUFFACQ
+  - channel: ELECEP01:BUFFACQ
+  - channel: INJ_ELEC:BUFFACQ
+  - channel: INJ_POSI:BUFFACQ
+  - channel: NDRFACET:BUFFACQ
+  - channel: SCAVPOSI:BUFFACQ
+  - channel: SCAVSPPS:BUFFACQ
+  - channel: SDRFACET:BUFFACQ
+  - channel: TAXXALL:BUFFACQ
 

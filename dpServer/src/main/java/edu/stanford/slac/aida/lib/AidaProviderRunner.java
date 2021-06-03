@@ -1,38 +1,24 @@
 package edu.stanford.slac.aida.lib;
 
-import edu.stanford.slac.aida.provider.sample.standard.AidaChannelProvider;
-import org.epics.pvaccess.server.impl.remote.ServerContextImpl;
-import org.epics.pvaccess.server.impl.remote.plugins.DefaultBeaconServerDataProvider;
+import org.epics.pvaccess.PVAException;
 
 public class AidaProviderRunner {
     public static void run(AidaChannelProvider aidaChannelProvider) {
-        // Create a context with default configuration values.
-        final ServerContextImpl context = new ServerContextImpl();
-        context.setBeaconServerStatusProvider(new DefaultBeaconServerDataProvider(context));
+        // Create new RPCServer
+        AidaRPCServer server = new AidaRPCServer(aidaChannelProvider);
 
+        // Create new Service for handling requests on the server
+        // pass it an AidaChannelProvider which implements request() method
+        AidaRPCService service = new AidaRPCService(aidaChannelProvider);
+
+        // Register each channel hosted by this server, with the service
+        server.registerServices(service);
+
+        // Run the server to start servicing requests
         try {
-            context.initialize(aidaChannelProvider);
-
-            // Display basic information about the context.
-            System.out.println(context.getVersion().getVersionString());
-            context.printInfo();
-            System.out.println();
-
-            new Thread(new Runnable() {
-
-                public void run() {
-                    try {
-                        System.out.println("Running server...");
-                        context.run(0);
-                        System.out.println("Done.");
-                    } catch (Throwable th) {
-                        System.out.println("Failure:");
-                        th.printStackTrace();
-                    }
-                }
-            }, "pvAccess server").start();
-        } catch (Throwable th) {
-            th.printStackTrace();
+            server.run(0);
+        } catch (PVAException e) {
+            e.printStackTrace();
         }
     }
 }

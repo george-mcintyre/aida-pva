@@ -20,13 +20,14 @@ public class ChannelProviderFactory {
      * <p>
      * A yaml file (*.yml or *.yaml) defines the channels of this AIDA Channel Provider
      *
+     * @param channelProvider the channel provider
      * @return an AidaProvider object or null if there is a problem reading the configuration
      */
-    public static AidaProvider create() {
+    public static AidaProvider create(AidaChannelProvider channelProvider) {
         // Get service name and channel definitions for the server to publish.
         // Priority: max=properties, medium=environment, low=default
-        String channelsFilename = System.getProperty("CHANNELS_FILENAME", CHANNELS_FILENAME_DEFAULT);
-        String channelsFilenameFromEnv = System.getenv("CHANNELS_FILENAME");
+        String channelsFilename = System.getProperty("AIDA_CHANNELS_FILENAME", CHANNELS_FILENAME_DEFAULT);
+        String channelsFilenameFromEnv = System.getenv("AIDA_CHANNELS_FILENAME");
         if (channelsFilenameFromEnv != null && channelsFilename.equals(CHANNELS_FILENAME_DEFAULT)) {
             channelsFilename = channelsFilenameFromEnv;
         }
@@ -51,9 +52,11 @@ public class ChannelProviderFactory {
                     }
                 }
             }
-            return mapper.readValue(channelSource, AidaProvider.class);
+            AidaProvider aidaProvider =  mapper.readValue(channelSource, AidaProvider.class);
+            aidaProvider.setChannelProvider(channelProvider);
+            return aidaProvider;
         } catch (IOException e) {
-            logger.severe("Unable to initialise channel provider: " + e.getMessage());
+            logger.severe("Unable to initialise channel provider with " + channelsFilename + " : " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }

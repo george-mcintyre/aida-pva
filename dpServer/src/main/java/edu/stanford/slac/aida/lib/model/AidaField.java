@@ -6,7 +6,9 @@ import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
-public class AidaChannel {
-    private @NonNull String channel;
-    private AidaChannelConfig config;
+public class AidaField {
+    private @NonNull String name;
+    private String label;
+    private String description;
+    private String units;
 }

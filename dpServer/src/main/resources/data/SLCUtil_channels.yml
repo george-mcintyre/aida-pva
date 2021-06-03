@@ -4,1005 +4,508 @@
 id: 122
 name: SLCUtil
 description: SLC Utility Server
+config:
+  type: DOUBLE
+  fields:
+    - name: value
 channels:
-- instance: TRIG:LI24:409
-  attribute: TACT
-- instance: TRIG:LI24:413
-  attribute: TACT
-- instance: MKB
-  attribute: VAL
-- instance: BGRP
-  attribute: VAL
-- instance: TRIG:LI00:203
-  attribute: TACT
-- instance: TRIG:LI00:100
-  attribute: TACT
-- instance: TRIG:LI00:101
-  attribute: TACT
-- instance: TRIG:LI00:202
-  attribute: TACT
-- instance: TRIG:LI00:204
-  attribute: TACT
-- instance: TRIG:LI00:205
-  attribute: TACT
-- instance: TRIG:LI00:206
-  attribute: TACT
-- instance: TRIG:LI00:209
-  attribute: TACT
-- instance: TRIG:LI00:210
-  attribute: TACT
-- instance: TRIG:LI00:211
-  attribute: TACT
-- instance: TRIG:LI00:213
-  attribute: TACT
-- instance: TRIG:LI00:214
-  attribute: TACT
-- instance: TRIG:LI00:309
-  attribute: TACT
-- instance: TRIG:LI00:314
-  attribute: TACT
-- instance: TRIG:LI00:315
-  attribute: TACT
-- instance: TRIG:LI00:400
-  attribute: TACT
-- instance: TRIG:LI00:401
-  attribute: TACT
-- instance: TRIG:LI00:402
-  attribute: TACT
-- instance: TRIG:LI00:403
-  attribute: TACT
-- instance: TRIG:LI00:404
-  attribute: TACT
-- instance: TRIG:LI00:406
-  attribute: TACT
-- instance: TRIG:LI00:408
-  attribute: TACT
-- instance: TRIG:LI00:409
-  attribute: TACT
-- instance: TRIG:LI00:410
-  attribute: TACT
-- instance: TRIG:LI00:414
-  attribute: TACT
-- instance: TRIG:LI00:415
-  attribute: TACT
-- instance: TRIG:LI00:501
-  attribute: TACT
-- instance: TRIG:LI00:502
-  attribute: TACT
-- instance: TRIG:LI00:503
-  attribute: TACT
-- instance: TRIG:LI00:504
-  attribute: TACT
-- instance: TRIG:LI00:508
-  attribute: TACT
-- instance: TRIG:LI00:513
-  attribute: TACT
-- instance: TRIG:LI00:515
-  attribute: TACT
-- instance: TRIG:LI00:608
-  attribute: TACT
-- instance: TRIG:LI00:609
-  attribute: TACT
-- instance: TRIG:LI00:610
-  attribute: TACT
-- instance: TRIG:LI00:613
-  attribute: TACT
-- instance: TRIG:LI00:614
-  attribute: TACT
-- instance: TRIG:LI00:615
-  attribute: TACT
-- instance: TRIG:LI00:801
-  attribute: TACT
-- instance: TRIG:LI00:802
-  attribute: TACT
-- instance: TRIG:LI00:803
-  attribute: TACT
-- instance: TRIG:LI00:804
-  attribute: TACT
-- instance: TRIG:LI00:806
-  attribute: TACT
-- instance: TRIG:LI00:809
-  attribute: TACT
-- instance: TRIG:LI00:810
-  attribute: TACT
-- instance: TRIG:LI00:815
-  attribute: TACT
-- instance: TRIG:LI00:901
-  attribute: TACT
-- instance: TRIG:LI00:902
-  attribute: TACT
-- instance: TRIG:LI00:903
-  attribute: TACT
-- instance: TRIG:LI00:905
-  attribute: TACT
-- instance: TRIG:LI00:906
-  attribute: TACT
-- instance: TRIG:LI00:909
-  attribute: TACT
-- instance: TRIG:LI00:910
-  attribute: TACT
-- instance: TRIG:LI00:912
-  attribute: TACT
-- instance: TRIG:LI00:913
-  attribute: TACT
-- instance: TRIG:LI00:914
-  attribute: TACT
-- instance: TRIG:LI00:915
-  attribute: TACT
-- instance: TRIG:LI00:1001
-  attribute: TACT
-- instance: TRIG:LI00:1002
-  attribute: TACT
-- instance: TRIG:LI00:1003
-  attribute: TACT
-- instance: TRIG:LI00:1004
-  attribute: TACT
-- instance: TRIG:LI00:1005
-  attribute: TACT
-- instance: TRIG:LI00:1006
-  attribute: TACT
-- instance: TRIG:LI00:1007
-  attribute: TACT
-- instance: TRIG:LI00:1015
-  attribute: TACT
-- instance: TRIG:LI01:209
-  attribute: TACT
-- instance: TRIG:LI01:210
-  attribute: TACT
-- instance: TRIG:LI01:213
-  attribute: TACT
-- instance: TRIG:LI01:214
-  attribute: TACT
-- instance: TRIG:LI01:215
-  attribute: TACT
-- instance: TRIG:LI01:308
-  attribute: TACT
-- instance: TRIG:LI01:309
-  attribute: TACT
-- instance: TRIG:LI01:310
-  attribute: TACT
-- instance: TRIG:LI01:313
-  attribute: TACT
-- instance: TRIG:LI01:314
-  attribute: TACT
-- instance: TRIG:LI01:315
-  attribute: TACT
-- instance: TRIG:LI01:405
-  attribute: TACT
-- instance: TRIG:LI01:407
-  attribute: TACT
-- instance: TRIG:LI01:414
-  attribute: TACT
-- instance: TRIG:LI01:415
-  attribute: TACT
-- instance: TRIG:LI01:601
-  attribute: TACT
-- instance: TRIG:LI01:602
-  attribute: TACT
-- instance: TRIG:LI01:603
-  attribute: TACT
-- instance: TRIG:LI01:604
-  attribute: TACT
-- instance: TRIG:LI01:605
-  attribute: TACT
-- instance: TRIG:LI01:607
-  attribute: TACT
-- instance: TRIG:LI01:608
-  attribute: TACT
-- instance: TRIG:LI01:609
-  attribute: TACT
-- instance: TRIG:LI01:615
-  attribute: TACT
-- instance: TRIG:LI01:705
-  attribute: TACT
-- instance: TRIG:LI01:709
-  attribute: TACT
-- instance: TRIG:LI01:710
-  attribute: TACT
-- instance: TRIG:LI01:713
-  attribute: TACT
-- instance: TRIG:LI02:209
-  attribute: TACT
-- instance: TRIG:LI02:215
-  attribute: TACT
-- instance: TRIG:LI02:306
-  attribute: TACT
-- instance: TRIG:LI02:307
-  attribute: TACT
-- instance: TRIG:LI02:308
-  attribute: TACT
-- instance: TRIG:LI02:309
-  attribute: TACT
-- instance: TRIG:LI02:310
-  attribute: TACT
-- instance: TRIG:LI02:313
-  attribute: TACT
-- instance: TRIG:LI02:315
-  attribute: TACT
-- instance: TRIG:LI02:407
-  attribute: TACT
-- instance: TRIG:LI02:414
-  attribute: TACT
-- instance: TRIG:LI02:415
-  attribute: TACT
-- instance: TRIG:LI02:615
-  attribute: TACT
-- instance: TRIG:LI02:715
-  attribute: TACT
-- instance: TRIG:LI02:813
-  attribute: TACT
-- instance: TRIG:LI02:815
-  attribute: TACT
-- instance: TRIG:LI03:204
-  attribute: TACT
-- instance: TRIG:LI03:205
-  attribute: TACT
-- instance: TRIG:LI03:209
-  attribute: TACT
-- instance: TRIG:LI03:210
-  attribute: TACT
-- instance: TRIG:LI03:215
-  attribute: TACT
-- instance: TRIG:LI03:305
-  attribute: TACT
-- instance: TRIG:LI03:306
-  attribute: TACT
-- instance: TRIG:LI03:307
-  attribute: TACT
-- instance: TRIG:LI03:315
-  attribute: TACT
-- instance: TRIG:LI03:407
-  attribute: TACT
-- instance: TRIG:LI03:408
-  attribute: TACT
-- instance: TRIG:LI03:415
-  attribute: TACT
-- instance: TRIG:LI04:213
-  attribute: TACT
-- instance: TRIG:LI04:215
-  attribute: TACT
-- instance: TRIG:LI04:315
-  attribute: TACT
-- instance: TRIG:LI04:408
-  attribute: TACT
-- instance: TRIG:LI04:415
-  attribute: TACT
-- instance: TRIG:LI05:214
-  attribute: TACT
-- instance: TRIG:LI05:215
-  attribute: TACT
-- instance: TRIG:LI05:315
-  attribute: TACT
-- instance: TRIG:LI05:409
-  attribute: TACT
-- instance: TRIG:LI05:410
-  attribute: TACT
-- instance: TRIG:LI05:413
-  attribute: TACT
-- instance: TRIG:LI05:414
-  attribute: TACT
-- instance: TRIG:LI05:415
-  attribute: TACT
-- instance: TRIG:LI06:215
-  attribute: TACT
-- instance: TRIG:LI06:315
-  attribute: TACT
-- instance: TRIG:LI06:409
-  attribute: TACT
-- instance: TRIG:LI06:410
-  attribute: TACT
-- instance: TRIG:LI06:413
-  attribute: TACT
-- instance: TRIG:LI06:414
-  attribute: TACT
-- instance: TRIG:LI06:415
-  attribute: TACT
-- instance: TRIG:LI07:215
-  attribute: TACT
-- instance: TRIG:LI07:315
-  attribute: TACT
-- instance: TRIG:LI07:415
-  attribute: TACT
-- instance: TRIG:LI08:204
-  attribute: TACT
-- instance: TRIG:LI08:205
-  attribute: TACT
-- instance: TRIG:LI08:209
-  attribute: TACT
-- instance: TRIG:LI08:210
-  attribute: TACT
-- instance: TRIG:LI08:215
-  attribute: TACT
-- instance: TRIG:LI08:305
-  attribute: TACT
-- instance: TRIG:LI08:306
-  attribute: TACT
-- instance: TRIG:LI08:315
-  attribute: TACT
-- instance: TRIG:LI08:407
-  attribute: TACT
-- instance: TRIG:LI08:408
-  attribute: TACT
-- instance: TRIG:LI08:414
-  attribute: TACT
-- instance: TRIG:LI08:415
-  attribute: TACT
-- instance: TRIG:LI09:204
-  attribute: TACT
-- instance: TRIG:LI09:205
-  attribute: TACT
-- instance: TRIG:LI09:209
-  attribute: TACT
-- instance: TRIG:LI09:210
-  attribute: TACT
-- instance: TRIG:LI09:215
-  attribute: TACT
-- instance: TRIG:LI09:307
-  attribute: TACT
-- instance: TRIG:LI09:315
-  attribute: TACT
-- instance: TRIG:LI09:415
-  attribute: TACT
-- instance: TRIG:LI10:209
-  attribute: TACT
-- instance: TRIG:LI10:214
-  attribute: TACT
-- instance: TRIG:LI10:215
-  attribute: TACT
-- instance: TRIG:LI10:307
-  attribute: TACT
-- instance: TRIG:LI10:309
-  attribute: TACT
-- instance: TRIG:LI10:310
-  attribute: TACT
-- instance: TRIG:LI10:313
-  attribute: TACT
-- instance: TRIG:LI10:315
-  attribute: TACT
-- instance: TRIG:LI10:413
-  attribute: TACT
-- instance: TRIG:LI10:415
-  attribute: TACT
-- instance: TRIG:LI11:215
-  attribute: TACT
-- instance: TRIG:LI11:309
-  attribute: TACT
-- instance: TRIG:LI11:315
-  attribute: TACT
-- instance: TRIG:LI11:415
-  attribute: TACT
-- instance: TRIG:LI12:214
-  attribute: TACT
-- instance: TRIG:LI12:215
-  attribute: TACT
-- instance: TRIG:LI12:315
-  attribute: TACT
-- instance: TRIG:LI12:415
-  attribute: TACT
-- instance: TRIG:LI13:215
-  attribute: TACT
-- instance: TRIG:LI13:315
-  attribute: TACT
-- instance: TRIG:LI13:415
-  attribute: TACT
-- instance: TRIG:LI14:204
-  attribute: TACT
-- instance: TRIG:LI14:205
-  attribute: TACT
-- instance: TRIG:LI14:209
-  attribute: TACT
-- instance: TRIG:LI14:210
-  attribute: TACT
-- instance: TRIG:LI14:215
-  attribute: TACT
-- instance: TRIG:LI14:315
-  attribute: TACT
-- instance: TRIG:LI14:415
-  attribute: TACT
-- instance: TRIG:LI15:215
-  attribute: TACT
-- instance: TRIG:LI15:314
-  attribute: TACT
-- instance: TRIG:LI15:315
-  attribute: TACT
-- instance: TRIG:LI15:415
-  attribute: TACT
-- instance: TRIG:LI16:214
-  attribute: TACT
-- instance: TRIG:LI16:215
-  attribute: TACT
-- instance: TRIG:LI16:315
-  attribute: TACT
-- instance: TRIG:LI16:415
-  attribute: TACT
-- instance: TRIG:LI17:215
-  attribute: TACT
-- instance: TRIG:LI17:315
-  attribute: TACT
-- instance: TRIG:LI17:415
-  attribute: TACT
-- instance: TRIG:LI18:215
-  attribute: TACT
-- instance: TRIG:LI18:315
-  attribute: TACT
-- instance: TRIG:LI18:415
-  attribute: TACT
-- instance: TRIG:LI19:204
-  attribute: TACT
-- instance: TRIG:LI19:205
-  attribute: TACT
-- instance: TRIG:LI19:209
-  attribute: TACT
-- instance: TRIG:LI19:210
-  attribute: TACT
-- instance: TRIG:LI19:215
-  attribute: TACT
-- instance: TRIG:LI19:313
-  attribute: TACT
-- instance: TRIG:LI19:315
-  attribute: TACT
-- instance: TRIG:LI19:415
-  attribute: TACT
-- instance: TRIG:LI20:209
-  attribute: TACT
-- instance: TRIG:LI20:215
-  attribute: TACT
-- instance: TRIG:LI20:309
-  attribute: TACT
-- instance: TRIG:LI20:310
-  attribute: TACT
-- instance: TRIG:LI20:313
-  attribute: TACT
-- instance: TRIG:LI20:314
-  attribute: TACT
-- instance: TRIG:LI20:315
-  attribute: TACT
-- instance: TRIG:LI20:409
-  attribute: TACT
-- instance: TRIG:LI20:410
-  attribute: TACT
-- instance: TRIG:LI20:411
-  attribute: TACT
-- instance: TRIG:LI20:413
-  attribute: TACT
-- instance: TRIG:LI20:414
-  attribute: TACT
-- instance: TRIG:LI20:415
-  attribute: TACT
-- instance: TRIG:LI20:515
-  attribute: TACT
-- instance: TRIG:LI21:209
-  attribute: TACT
-- instance: TRIG:LI21:210
-  attribute: TACT
-- instance: TRIG:LI21:214
-  attribute: TACT
-- instance: TRIG:LI21:315
-  attribute: TACT
-- instance: TRIG:LI21:415
-  attribute: TACT
-- instance: TRIG:LI22:214
-  attribute: TACT
-- instance: TRIG:LI22:215
-  attribute: TACT
-- instance: TRIG:LI22:315
-  attribute: TACT
-- instance: TRIG:LI22:415
-  attribute: TACT
-- instance: TRIG:LI23:215
-  attribute: TACT
-- instance: TRIG:LI23:315
-  attribute: TACT
-- instance: TRIG:LI23:415
-  attribute: TACT
-- instance: TRIG:LI24:204
-  attribute: TACT
-- instance: TRIG:LI24:205
-  attribute: TACT
-- instance: TRIG:LI24:209
-  attribute: TACT
-- instance: TRIG:LI24:210
-  attribute: TACT
-- instance: TRIG:LI24:215
-  attribute: TACT
-- instance: TRIG:LI24:315
-  attribute: TACT
-- instance: TRIG:LI24:415
-  attribute: TACT
-- instance: TRIG:LI25:214
-  attribute: TACT
-- instance: TRIG:LI25:215
-  attribute: TACT
-- instance: TRIG:LI25:315
-  attribute: TACT
-- instance: TRIG:LI25:415
-  attribute: TACT
-- instance: TRIG:LI26:204
-  attribute: TACT
-- instance: TRIG:LI26:205
-  attribute: TACT
-- instance: TRIG:LI26:209
-  attribute: TACT
-- instance: TRIG:LI26:210
-  attribute: TACT
-- instance: TRIG:LI26:215
-  attribute: TACT
-- instance: TRIG:LI26:306
-  attribute: TACT
-- instance: TRIG:LI26:307
-  attribute: TACT
-- instance: TRIG:LI26:315
-  attribute: TACT
-- instance: TRIG:LI26:415
-  attribute: TACT
-- instance: TRIG:LI27:215
-  attribute: TACT
-- instance: TRIG:LI27:315
-  attribute: TACT
-- instance: TRIG:LI27:406
-  attribute: TACT
-- instance: TRIG:LI27:407
-  attribute: TACT
-- instance: TRIG:LI27:408
-  attribute: TACT
-- instance: TRIG:LI27:409
-  attribute: TACT
-- instance: TRIG:LI27:415
-  attribute: TACT
-- instance: TRIG:LI28:211
-  attribute: TACT
-- instance: TRIG:LI28:215
-  attribute: TACT
-- instance: TRIG:LI28:308
-  attribute: TACT
-- instance: TRIG:LI28:309
-  attribute: TACT
-- instance: TRIG:LI28:315
-  attribute: TACT
-- instance: TRIG:LI28:415
-  attribute: TACT
-- instance: TRIG:LI29:204
-  attribute: TACT
-- instance: TRIG:LI29:205
-  attribute: TACT
-- instance: TRIG:LI29:209
-  attribute: TACT
-- instance: TRIG:LI29:210
-  attribute: TACT
-- instance: TRIG:LI29:211
-  attribute: TACT
-- instance: TRIG:LI29:214
-  attribute: TACT
-- instance: TRIG:LI29:215
-  attribute: TACT
-- instance: TRIG:LI29:314
-  attribute: TACT
-- instance: TRIG:LI29:315
-  attribute: TACT
-- instance: TRIG:LI29:415
-  attribute: TACT
-- instance: TRIG:LI30:205
-  attribute: TACT
-- instance: TRIG:LI30:211
-  attribute: TACT
-- instance: TRIG:LI30:214
-  attribute: TACT
-- instance: TRIG:LI30:215
-  attribute: TACT
-- instance: TRIG:LI30:315
-  attribute: TACT
-- instance: TRIG:LI30:321
-  attribute: TACT
-- instance: TRIG:LI30:403
-  attribute: TACT
-- instance: TRIG:LI30:404
-  attribute: TACT
-- instance: TRIG:LI30:410
-  attribute: TACT
-- instance: TRIG:LI30:414
-  attribute: TACT
-- instance: TRIG:LI30:415
-  attribute: TACT
-- instance: TRIG:LI30:501
-  attribute: TACT
-- instance: TRIG:LI30:502
-  attribute: TACT
-- instance: TRIG:LI30:503
-  attribute: TACT
-- instance: TRIG:LI30:508
-  attribute: TACT
-- instance: TRIG:LI30:504
-  attribute: TACT
-- instance: TRIG:LI30:505
-  attribute: TACT
-- instance: TRIG:LI30:506
-  attribute: TACT
-- instance: TRIG:LI30:509
-  attribute: TACT
-- instance: TRIG:LI30:510
-  attribute: TACT
-- instance: TRIG:LI30:511
-  attribute: TACT
-- instance: TRIG:LI30:513
-  attribute: TACT
-- instance: TRIG:LI30:514
-  attribute: TACT
-- instance: TRIG:LI30:515
-  attribute: TACT
-- instance: TRIG:DR01:201
-  attribute: TACT
-- instance: TRIG:DR01:202
-  attribute: TACT
-- instance: TRIG:DR01:203
-  attribute: TACT
-- instance: TRIG:DR01:204
-  attribute: TACT
-- instance: TRIG:DR01:205
-  attribute: TACT
-- instance: TRIG:DR01:206
-  attribute: TACT
-- instance: TRIG:DR01:207
-  attribute: TACT
-- instance: TRIG:DR01:214
-  attribute: TACT
-- instance: TRIG:DR01:215
-  attribute: TACT
-- instance: TRIG:DR01:314
-  attribute: TACT
-- instance: TRIG:DR01:315
-  attribute: TACT
-- instance: TRIG:DR01:404
-  attribute: TACT
-- instance: TRIG:DR01:405
-  attribute: TACT
-- instance: TRIG:DR01:409
-  attribute: TACT
-- instance: TRIG:DR01:410
-  attribute: TACT
-- instance: TRIG:DR01:413
-  attribute: TACT
-- instance: TRIG:DR01:414
-  attribute: TACT
-- instance: TRIG:DR01:415
-  attribute: TACT
-- instance: TRIG:DR02:201
-  attribute: TACT
-- instance: TRIG:DR02:202
-  attribute: TACT
-- instance: TRIG:DR02:203
-  attribute: TACT
-- instance: TRIG:DR02:204
-  attribute: TACT
-- instance: TRIG:DR02:205
-  attribute: TACT
-- instance: TRIG:DR02:206
-  attribute: TACT
-- instance: TRIG:DR02:207
-  attribute: TACT
-- instance: TRIG:DR02:208
-  attribute: TACT
-- instance: TRIG:DR02:209
-  attribute: TACT
-- instance: TRIG:DR02:210
-  attribute: TACT
-- instance: TRIG:DR02:211
-  attribute: TACT
-- instance: TRIG:DR02:215
-  attribute: TACT
-- instance: TRIG:DR02:301
-  attribute: TACT
-- instance: TRIG:DR02:302
-  attribute: TACT
-- instance: TRIG:DR02:303
-  attribute: TACT
-- instance: TRIG:DR02:304
-  attribute: TACT
-- instance: TRIG:DR02:305
-  attribute: TACT
-- instance: TRIG:DR02:306
-  attribute: TACT
-- instance: TRIG:DR02:307
-  attribute: TACT
-- instance: TRIG:DR02:308
-  attribute: TACT
-- instance: TRIG:DR02:309
-  attribute: TACT
-- instance: TRIG:DR02:310
-  attribute: TACT
-- instance: TRIG:DR02:314
-  attribute: TACT
-- instance: TRIG:DR02:315
-  attribute: TACT
-- instance: TRIG:DR02:401
-  attribute: TACT
-- instance: TRIG:DR02:402
-  attribute: TACT
-- instance: TRIG:DR02:403
-  attribute: TACT
-- instance: TRIG:DR02:404
-  attribute: TACT
-- instance: TRIG:DR02:405
-  attribute: TACT
-- instance: TRIG:DR02:406
-  attribute: TACT
-- instance: TRIG:DR02:407
-  attribute: TACT
-- instance: TRIG:DR02:408
-  attribute: TACT
-- instance: TRIG:DR02:409
-  attribute: TACT
-- instance: TRIG:DR02:410
-  attribute: TACT
-- instance: TRIG:DR02:411
-  attribute: TACT
-- instance: TRIG:DR02:412
-  attribute: TACT
-- instance: TRIG:DR02:413
-  attribute: TACT
-- instance: TRIG:DR02:414
-  attribute: TACT
-- instance: TRIG:DR02:415
-  attribute: TACT
-- instance: TRIG:DR02:501
-  attribute: TACT
-- instance: TRIG:DR02:502
-  attribute: TACT
-- instance: TRIG:DR02:503
-  attribute: TACT
-- instance: TRIG:DR02:504
-  attribute: TACT
-- instance: TRIG:DR02:505
-  attribute: TACT
-- instance: TRIG:DR02:506
-  attribute: TACT
-- instance: TRIG:DR02:507
-  attribute: TACT
-- instance: TRIG:DR02:511
-  attribute: TACT
-- instance: TRIG:DR02:514
-  attribute: TACT
-- instance: TRIG:DR02:515
-  attribute: TACT
-- instance: TRIG:DR02:601
-  attribute: TACT
-- instance: TRIG:DR02:602
-  attribute: TACT
-- instance: TRIG:DR02:603
-  attribute: TACT
-- instance: TRIG:DR02:604
-  attribute: TACT
-- instance: TRIG:DR02:605
-  attribute: TACT
-- instance: TRIG:DR02:606
-  attribute: TACT
-- instance: TRIG:DR02:607
-  attribute: TACT
-- instance: TRIG:DR02:608
-  attribute: TACT
-- instance: TRIG:DR02:609
-  attribute: TACT
-- instance: TRIG:DR02:610
-  attribute: TACT
-- instance: TRIG:DR02:615
-  attribute: TACT
-- instance: TRIG:DR02:701
-  attribute: TACT
-- instance: TRIG:DR02:703
-  attribute: TACT
-- instance: TRIG:DR02:704
-  attribute: TACT
-- instance: TRIG:DR02:706
-  attribute: TACT
-- instance: TRIG:DR02:707
-  attribute: TACT
-- instance: TRIG:DR02:708
-  attribute: TACT
-- instance: TRIG:DR02:709
-  attribute: TACT
-- instance: TRIG:DR02:710
-  attribute: TACT
-- instance: TRIG:DR02:711
-  attribute: TACT
-- instance: TRIG:DR02:712
-  attribute: TACT
-- instance: TRIG:DR02:801
-  attribute: TACT
-- instance: TRIG:DR02:803
-  attribute: TACT
-- instance: TRIG:DR02:804
-  attribute: TACT
-- instance: TRIG:DR02:806
-  attribute: TACT
-- instance: TRIG:DR02:807
-  attribute: TACT
-- instance: TRIG:DR02:808
-  attribute: TACT
-- instance: TRIG:DR02:809
-  attribute: TACT
-- instance: TRIG:DR02:810
-  attribute: TACT
-- instance: TRIG:DR02:811
-  attribute: TACT
-- instance: TRIG:DR02:812
-  attribute: TACT
-- instance: TRIG:DR02:901
-  attribute: TACT
-- instance: TRIG:DR02:903
-  attribute: TACT
-- instance: TRIG:DR02:904
-  attribute: TACT
-- instance: TRIG:DR02:906
-  attribute: TACT
-- instance: TRIG:DR02:907
-  attribute: TACT
-- instance: TRIG:DR02:908
-  attribute: TACT
-- instance: TRIG:DR02:909
-  attribute: TACT
-- instance: TRIG:DR02:910
-  attribute: TACT
-- instance: TRIG:DR02:911
-  attribute: TACT
-- instance: TRIG:DR02:912
-  attribute: TACT
-- instance: TRIG:DR02:1014
-  attribute: TACT
-- instance: TRIG:DR02:1015
-  attribute: TACT
-- instance: TRIG:DR02:1100
-  attribute: TACT
-- instance: TRIG:DR02:1101
-  attribute: TACT
-- instance: TRIG:DR02:1104
-  attribute: TACT
-- instance: TRIG:DR02:1106
-  attribute: TACT
-- instance: TRIG:DR02:1107
-  attribute: TACT
-- instance: TRIG:DR02:1113
-  attribute: TACT
-- instance: TRIG:DR02:1114
-  attribute: TACT
-- instance: TRIG:DR02:1115
-  attribute: TACT
-- instance: TRIG:DR03:201
-  attribute: TACT
-- instance: TRIG:DR03:202
-  attribute: TACT
-- instance: TRIG:DR03:203
-  attribute: TACT
-- instance: TRIG:DR03:204
-  attribute: TACT
-- instance: TRIG:DR03:205
-  attribute: TACT
-- instance: TRIG:DR03:214
-  attribute: TACT
-- instance: TRIG:DR03:215
-  attribute: TACT
-- instance: TRIG:DR03:314
-  attribute: TACT
-- instance: TRIG:DR03:315
-  attribute: TACT
-- instance: TRIG:DR03:410
-  attribute: TACT
-- instance: TRIG:DR03:501
-  attribute: TACT
-- instance: TRIG:DR03:502
-  attribute: TACT
-- instance: TRIG:DR03:504
-  attribute: TACT
-- instance: TRIG:DR03:505
-  attribute: TACT
-- instance: TRIG:DR03:506
-  attribute: TACT
-- instance: TRIG:DR03:507
-  attribute: TACT
-- instance: TRIG:DR03:508
-  attribute: TACT
-- instance: TRIG:DR03:509
-  attribute: TACT
-- instance: TRIG:DR03:513
-  attribute: TACT
-- instance: TRIG:DR03:514
-  attribute: TACT
-- instance: TRIG:DR03:515
-  attribute: TACT
-- instance: TRIG:DR11:201
-  attribute: TACT
-- instance: TRIG:DR11:202
-  attribute: TACT
-- instance: TRIG:DR11:203
-  attribute: TACT
-- instance: TRIG:DR11:204
-  attribute: TACT
-- instance: TRIG:DR11:205
-  attribute: TACT
-- instance: TRIG:DR11:214
-  attribute: TACT
-- instance: TRIG:DR11:215
-  attribute: TACT
-- instance: TRIG:DR11:304
-  attribute: TACT
-- instance: TRIG:DR11:308
-  attribute: TACT
-- instance: TRIG:DR11:309
-  attribute: TACT
-- instance: TRIG:DR11:314
-  attribute: TACT
-- instance: TRIG:DR11:315
-  attribute: TACT
-- instance: TRIG:DR11:414
-  attribute: TACT
-- instance: TRIG:DR11:415
-  attribute: TACT
-- instance: TRIG:DR11:615
-  attribute: TACT
-- instance: TRIG:DR11:715
-  attribute: TACT
-- instance: TRIG:DR12:201
-  attribute: TACT
-- instance: TRIG:DR12:202
-  attribute: TACT
-- instance: TRIG:DR12:203
-  attribute: TACT
-- instance: TRIG:DR12:204
-  attribute: TACT
-- instance: TRIG:DR12:205
-  attribute: TACT
-- instance: TRIG:DR12:206
-  attribute: TACT
-- instance: TRIG:DR12:207
-  attribute: TACT
-- instance: TRIG:DR12:208
-  attribute: TACT
-- instance: TRIG:DR12:210
-  attribute: TACT
-- instance: TRIG:DR12:211
-  attribute: TACT
-- instance: TRIG:DR12:215
-  attribute: TACT
-- instance: TRIG:DR12:301
-  attribute: TACT
-- instance: TRIG:DR12:302
-  attribute: TACT
-- instance: TRIG:DR12:303
-  attribute: TACT
-- instance: TRIG:DR12:305
-  attribute: TACT
-- instance: TRIG:DR12:306
-  attribute: TACT
-- instance: TRIG:DR12:307
-  attribute: TACT
-- instance: TRIG:DR12:308
-  attribute: TACT
-- instance: TRIG:DR12:309
-  attribute: TACT
-- instance: TRIG:DR12:310
-  attribute: TACT
-- instance: TRIG:DR12:314
-  attribute: TACT
-- instance: TRIG:DR12:315
-  attribute: TACT
-- instance: TRIG:DR12:401
-  attribute: TACT
-- instance: TRIG:DR12:402
-  attribute: TACT
-- instance: TRIG:DR12:403
-  attribute: TACT
-- instance: TRIG:DR12:404
-  attribute: TACT
-- instance: TRIG:DR12:406
-  attribute: TACT
-- instance: TRIG:DR12:407
-  attribute: TACT
-- instance: TRIG:DR12:408
-  attribute: TACT
-- instance: TRIG:DR12:409
-  attribute: TACT
-- instance: TRIG:DR12:410
-  attribute: TACT
-- instance: TRIG:DR12:411
-  attribute: TACT
-- instance: TRIG:DR12:412
-  attribute: TACT
-
+  - channel: BGRP:VAL
+  - channel: MKB:VAL
+  - channel: TRIG:DR01:201:TACT
+  - channel: TRIG:DR01:202:TACT
+  - channel: TRIG:DR01:203:TACT
+  - channel: TRIG:DR01:204:TACT
+  - channel: TRIG:DR01:205:TACT
+  - channel: TRIG:DR01:206:TACT
+  - channel: TRIG:DR01:207:TACT
+  - channel: TRIG:DR01:214:TACT
+  - channel: TRIG:DR01:215:TACT
+  - channel: TRIG:DR01:314:TACT
+  - channel: TRIG:DR01:315:TACT
+  - channel: TRIG:DR01:404:TACT
+  - channel: TRIG:DR01:405:TACT
+  - channel: TRIG:DR01:409:TACT
+  - channel: TRIG:DR01:410:TACT
+  - channel: TRIG:DR01:413:TACT
+  - channel: TRIG:DR01:414:TACT
+  - channel: TRIG:DR01:415:TACT
+  - channel: TRIG:DR02:1014:TACT
+  - channel: TRIG:DR02:1015:TACT
+  - channel: TRIG:DR02:1100:TACT
+  - channel: TRIG:DR02:1101:TACT
+  - channel: TRIG:DR02:1104:TACT
+  - channel: TRIG:DR02:1106:TACT
+  - channel: TRIG:DR02:1107:TACT
+  - channel: TRIG:DR02:1113:TACT
+  - channel: TRIG:DR02:1114:TACT
+  - channel: TRIG:DR02:1115:TACT
+  - channel: TRIG:DR02:201:TACT
+  - channel: TRIG:DR02:202:TACT
+  - channel: TRIG:DR02:203:TACT
+  - channel: TRIG:DR02:204:TACT
+  - channel: TRIG:DR02:205:TACT
+  - channel: TRIG:DR02:206:TACT
+  - channel: TRIG:DR02:207:TACT
+  - channel: TRIG:DR02:208:TACT
+  - channel: TRIG:DR02:209:TACT
+  - channel: TRIG:DR02:210:TACT
+  - channel: TRIG:DR02:211:TACT
+  - channel: TRIG:DR02:215:TACT
+  - channel: TRIG:DR02:301:TACT
+  - channel: TRIG:DR02:302:TACT
+  - channel: TRIG:DR02:303:TACT
+  - channel: TRIG:DR02:304:TACT
+  - channel: TRIG:DR02:305:TACT
+  - channel: TRIG:DR02:306:TACT
+  - channel: TRIG:DR02:307:TACT
+  - channel: TRIG:DR02:308:TACT
+  - channel: TRIG:DR02:309:TACT
+  - channel: TRIG:DR02:310:TACT
+  - channel: TRIG:DR02:314:TACT
+  - channel: TRIG:DR02:315:TACT
+  - channel: TRIG:DR02:401:TACT
+  - channel: TRIG:DR02:402:TACT
+  - channel: TRIG:DR02:403:TACT
+  - channel: TRIG:DR02:404:TACT
+  - channel: TRIG:DR02:405:TACT
+  - channel: TRIG:DR02:406:TACT
+  - channel: TRIG:DR02:407:TACT
+  - channel: TRIG:DR02:408:TACT
+  - channel: TRIG:DR02:409:TACT
+  - channel: TRIG:DR02:410:TACT
+  - channel: TRIG:DR02:411:TACT
+  - channel: TRIG:DR02:412:TACT
+  - channel: TRIG:DR02:413:TACT
+  - channel: TRIG:DR02:414:TACT
+  - channel: TRIG:DR02:415:TACT
+  - channel: TRIG:DR02:501:TACT
+  - channel: TRIG:DR02:502:TACT
+  - channel: TRIG:DR02:503:TACT
+  - channel: TRIG:DR02:504:TACT
+  - channel: TRIG:DR02:505:TACT
+  - channel: TRIG:DR02:506:TACT
+  - channel: TRIG:DR02:507:TACT
+  - channel: TRIG:DR02:511:TACT
+  - channel: TRIG:DR02:514:TACT
+  - channel: TRIG:DR02:515:TACT
+  - channel: TRIG:DR02:601:TACT
+  - channel: TRIG:DR02:602:TACT
+  - channel: TRIG:DR02:603:TACT
+  - channel: TRIG:DR02:604:TACT
+  - channel: TRIG:DR02:605:TACT
+  - channel: TRIG:DR02:606:TACT
+  - channel: TRIG:DR02:607:TACT
+  - channel: TRIG:DR02:608:TACT
+  - channel: TRIG:DR02:609:TACT
+  - channel: TRIG:DR02:610:TACT
+  - channel: TRIG:DR02:615:TACT
+  - channel: TRIG:DR02:701:TACT
+  - channel: TRIG:DR02:703:TACT
+  - channel: TRIG:DR02:704:TACT
+  - channel: TRIG:DR02:706:TACT
+  - channel: TRIG:DR02:707:TACT
+  - channel: TRIG:DR02:708:TACT
+  - channel: TRIG:DR02:709:TACT
+  - channel: TRIG:DR02:710:TACT
+  - channel: TRIG:DR02:711:TACT
+  - channel: TRIG:DR02:712:TACT
+  - channel: TRIG:DR02:801:TACT
+  - channel: TRIG:DR02:803:TACT
+  - channel: TRIG:DR02:804:TACT
+  - channel: TRIG:DR02:806:TACT
+  - channel: TRIG:DR02:807:TACT
+  - channel: TRIG:DR02:808:TACT
+  - channel: TRIG:DR02:809:TACT
+  - channel: TRIG:DR02:810:TACT
+  - channel: TRIG:DR02:811:TACT
+  - channel: TRIG:DR02:812:TACT
+  - channel: TRIG:DR02:901:TACT
+  - channel: TRIG:DR02:903:TACT
+  - channel: TRIG:DR02:904:TACT
+  - channel: TRIG:DR02:906:TACT
+  - channel: TRIG:DR02:907:TACT
+  - channel: TRIG:DR02:908:TACT
+  - channel: TRIG:DR02:909:TACT
+  - channel: TRIG:DR02:910:TACT
+  - channel: TRIG:DR02:911:TACT
+  - channel: TRIG:DR02:912:TACT
+  - channel: TRIG:DR03:201:TACT
+  - channel: TRIG:DR03:202:TACT
+  - channel: TRIG:DR03:203:TACT
+  - channel: TRIG:DR03:204:TACT
+  - channel: TRIG:DR03:205:TACT
+  - channel: TRIG:DR03:214:TACT
+  - channel: TRIG:DR03:215:TACT
+  - channel: TRIG:DR03:314:TACT
+  - channel: TRIG:DR03:315:TACT
+  - channel: TRIG:DR03:410:TACT
+  - channel: TRIG:DR03:501:TACT
+  - channel: TRIG:DR03:502:TACT
+  - channel: TRIG:DR03:504:TACT
+  - channel: TRIG:DR03:505:TACT
+  - channel: TRIG:DR03:506:TACT
+  - channel: TRIG:DR03:507:TACT
+  - channel: TRIG:DR03:508:TACT
+  - channel: TRIG:DR03:509:TACT
+  - channel: TRIG:DR03:513:TACT
+  - channel: TRIG:DR03:514:TACT
+  - channel: TRIG:DR03:515:TACT
+  - channel: TRIG:DR11:201:TACT
+  - channel: TRIG:DR11:202:TACT
+  - channel: TRIG:DR11:203:TACT
+  - channel: TRIG:DR11:204:TACT
+  - channel: TRIG:DR11:205:TACT
+  - channel: TRIG:DR11:214:TACT
+  - channel: TRIG:DR11:215:TACT
+  - channel: TRIG:DR11:304:TACT
+  - channel: TRIG:DR11:308:TACT
+  - channel: TRIG:DR11:309:TACT
+  - channel: TRIG:DR11:314:TACT
+  - channel: TRIG:DR11:315:TACT
+  - channel: TRIG:DR11:414:TACT
+  - channel: TRIG:DR11:415:TACT
+  - channel: TRIG:DR11:615:TACT
+  - channel: TRIG:DR11:715:TACT
+  - channel: TRIG:DR12:201:TACT
+  - channel: TRIG:DR12:202:TACT
+  - channel: TRIG:DR12:203:TACT
+  - channel: TRIG:DR12:204:TACT
+  - channel: TRIG:DR12:205:TACT
+  - channel: TRIG:DR12:206:TACT
+  - channel: TRIG:DR12:207:TACT
+  - channel: TRIG:DR12:208:TACT
+  - channel: TRIG:DR12:210:TACT
+  - channel: TRIG:DR12:211:TACT
+  - channel: TRIG:DR12:215:TACT
+  - channel: TRIG:DR12:301:TACT
+  - channel: TRIG:DR12:302:TACT
+  - channel: TRIG:DR12:303:TACT
+  - channel: TRIG:DR12:305:TACT
+  - channel: TRIG:DR12:306:TACT
+  - channel: TRIG:DR12:307:TACT
+  - channel: TRIG:DR12:308:TACT
+  - channel: TRIG:DR12:309:TACT
+  - channel: TRIG:DR12:310:TACT
+  - channel: TRIG:DR12:314:TACT
+  - channel: TRIG:DR12:315:TACT
+  - channel: TRIG:DR12:401:TACT
+  - channel: TRIG:DR12:402:TACT
+  - channel: TRIG:DR12:403:TACT
+  - channel: TRIG:DR12:404:TACT
+  - channel: TRIG:DR12:406:TACT
+  - channel: TRIG:DR12:407:TACT
+  - channel: TRIG:DR12:408:TACT
+  - channel: TRIG:DR12:409:TACT
+  - channel: TRIG:DR12:410:TACT
+  - channel: TRIG:DR12:411:TACT
+  - channel: TRIG:DR12:412:TACT
+  - channel: TRIG:LI00:1001:TACT
+  - channel: TRIG:LI00:1002:TACT
+  - channel: TRIG:LI00:1003:TACT
+  - channel: TRIG:LI00:1004:TACT
+  - channel: TRIG:LI00:1005:TACT
+  - channel: TRIG:LI00:1006:TACT
+  - channel: TRIG:LI00:1007:TACT
+  - channel: TRIG:LI00:100:TACT
+  - channel: TRIG:LI00:1015:TACT
+  - channel: TRIG:LI00:101:TACT
+  - channel: TRIG:LI00:202:TACT
+  - channel: TRIG:LI00:203:TACT
+  - channel: TRIG:LI00:204:TACT
+  - channel: TRIG:LI00:205:TACT
+  - channel: TRIG:LI00:206:TACT
+  - channel: TRIG:LI00:209:TACT
+  - channel: TRIG:LI00:210:TACT
+  - channel: TRIG:LI00:211:TACT
+  - channel: TRIG:LI00:213:TACT
+  - channel: TRIG:LI00:214:TACT
+  - channel: TRIG:LI00:309:TACT
+  - channel: TRIG:LI00:314:TACT
+  - channel: TRIG:LI00:315:TACT
+  - channel: TRIG:LI00:400:TACT
+  - channel: TRIG:LI00:401:TACT
+  - channel: TRIG:LI00:402:TACT
+  - channel: TRIG:LI00:403:TACT
+  - channel: TRIG:LI00:404:TACT
+  - channel: TRIG:LI00:406:TACT
+  - channel: TRIG:LI00:408:TACT
+  - channel: TRIG:LI00:409:TACT
+  - channel: TRIG:LI00:410:TACT
+  - channel: TRIG:LI00:414:TACT
+  - channel: TRIG:LI00:415:TACT
+  - channel: TRIG:LI00:501:TACT
+  - channel: TRIG:LI00:502:TACT
+  - channel: TRIG:LI00:503:TACT
+  - channel: TRIG:LI00:504:TACT
+  - channel: TRIG:LI00:508:TACT
+  - channel: TRIG:LI00:513:TACT
+  - channel: TRIG:LI00:515:TACT
+  - channel: TRIG:LI00:608:TACT
+  - channel: TRIG:LI00:609:TACT
+  - channel: TRIG:LI00:610:TACT
+  - channel: TRIG:LI00:613:TACT
+  - channel: TRIG:LI00:614:TACT
+  - channel: TRIG:LI00:615:TACT
+  - channel: TRIG:LI00:801:TACT
+  - channel: TRIG:LI00:802:TACT
+  - channel: TRIG:LI00:803:TACT
+  - channel: TRIG:LI00:804:TACT
+  - channel: TRIG:LI00:806:TACT
+  - channel: TRIG:LI00:809:TACT
+  - channel: TRIG:LI00:810:TACT
+  - channel: TRIG:LI00:815:TACT
+  - channel: TRIG:LI00:901:TACT
+  - channel: TRIG:LI00:902:TACT
+  - channel: TRIG:LI00:903:TACT
+  - channel: TRIG:LI00:905:TACT
+  - channel: TRIG:LI00:906:TACT
+  - channel: TRIG:LI00:909:TACT
+  - channel: TRIG:LI00:910:TACT
+  - channel: TRIG:LI00:912:TACT
+  - channel: TRIG:LI00:913:TACT
+  - channel: TRIG:LI00:914:TACT
+  - channel: TRIG:LI00:915:TACT
+  - channel: TRIG:LI01:209:TACT
+  - channel: TRIG:LI01:210:TACT
+  - channel: TRIG:LI01:213:TACT
+  - channel: TRIG:LI01:214:TACT
+  - channel: TRIG:LI01:215:TACT
+  - channel: TRIG:LI01:308:TACT
+  - channel: TRIG:LI01:309:TACT
+  - channel: TRIG:LI01:310:TACT
+  - channel: TRIG:LI01:313:TACT
+  - channel: TRIG:LI01:314:TACT
+  - channel: TRIG:LI01:315:TACT
+  - channel: TRIG:LI01:405:TACT
+  - channel: TRIG:LI01:407:TACT
+  - channel: TRIG:LI01:414:TACT
+  - channel: TRIG:LI01:415:TACT
+  - channel: TRIG:LI01:601:TACT
+  - channel: TRIG:LI01:602:TACT
+  - channel: TRIG:LI01:603:TACT
+  - channel: TRIG:LI01:604:TACT
+  - channel: TRIG:LI01:605:TACT
+  - channel: TRIG:LI01:607:TACT
+  - channel: TRIG:LI01:608:TACT
+  - channel: TRIG:LI01:609:TACT
+  - channel: TRIG:LI01:615:TACT
+  - channel: TRIG:LI01:705:TACT
+  - channel: TRIG:LI01:709:TACT
+  - channel: TRIG:LI01:710:TACT
+  - channel: TRIG:LI01:713:TACT
+  - channel: TRIG:LI02:209:TACT
+  - channel: TRIG:LI02:215:TACT
+  - channel: TRIG:LI02:306:TACT
+  - channel: TRIG:LI02:307:TACT
+  - channel: TRIG:LI02:308:TACT
+  - channel: TRIG:LI02:309:TACT
+  - channel: TRIG:LI02:310:TACT
+  - channel: TRIG:LI02:313:TACT
+  - channel: TRIG:LI02:315:TACT
+  - channel: TRIG:LI02:407:TACT
+  - channel: TRIG:LI02:414:TACT
+  - channel: TRIG:LI02:415:TACT
+  - channel: TRIG:LI02:615:TACT
+  - channel: TRIG:LI02:715:TACT
+  - channel: TRIG:LI02:813:TACT
+  - channel: TRIG:LI02:815:TACT
+  - channel: TRIG:LI03:204:TACT
+  - channel: TRIG:LI03:205:TACT
+  - channel: TRIG:LI03:209:TACT
+  - channel: TRIG:LI03:210:TACT
+  - channel: TRIG:LI03:215:TACT
+  - channel: TRIG:LI03:305:TACT
+  - channel: TRIG:LI03:306:TACT
+  - channel: TRIG:LI03:307:TACT
+  - channel: TRIG:LI03:315:TACT
+  - channel: TRIG:LI03:407:TACT
+  - channel: TRIG:LI03:408:TACT
+  - channel: TRIG:LI03:415:TACT
+  - channel: TRIG:LI04:213:TACT
+  - channel: TRIG:LI04:215:TACT
+  - channel: TRIG:LI04:315:TACT
+  - channel: TRIG:LI04:408:TACT
+  - channel: TRIG:LI04:415:TACT
+  - channel: TRIG:LI05:214:TACT
+  - channel: TRIG:LI05:215:TACT
+  - channel: TRIG:LI05:315:TACT
+  - channel: TRIG:LI05:409:TACT
+  - channel: TRIG:LI05:410:TACT
+  - channel: TRIG:LI05:413:TACT
+  - channel: TRIG:LI05:414:TACT
+  - channel: TRIG:LI05:415:TACT
+  - channel: TRIG:LI06:215:TACT
+  - channel: TRIG:LI06:315:TACT
+  - channel: TRIG:LI06:409:TACT
+  - channel: TRIG:LI06:410:TACT
+  - channel: TRIG:LI06:413:TACT
+  - channel: TRIG:LI06:414:TACT
+  - channel: TRIG:LI06:415:TACT
+  - channel: TRIG:LI07:215:TACT
+  - channel: TRIG:LI07:315:TACT
+  - channel: TRIG:LI07:415:TACT
+  - channel: TRIG:LI08:204:TACT
+  - channel: TRIG:LI08:205:TACT
+  - channel: TRIG:LI08:209:TACT
+  - channel: TRIG:LI08:210:TACT
+  - channel: TRIG:LI08:215:TACT
+  - channel: TRIG:LI08:305:TACT
+  - channel: TRIG:LI08:306:TACT
+  - channel: TRIG:LI08:315:TACT
+  - channel: TRIG:LI08:407:TACT
+  - channel: TRIG:LI08:408:TACT
+  - channel: TRIG:LI08:414:TACT
+  - channel: TRIG:LI08:415:TACT
+  - channel: TRIG:LI09:204:TACT
+  - channel: TRIG:LI09:205:TACT
+  - channel: TRIG:LI09:209:TACT
+  - channel: TRIG:LI09:210:TACT
+  - channel: TRIG:LI09:215:TACT
+  - channel: TRIG:LI09:307:TACT
+  - channel: TRIG:LI09:315:TACT
+  - channel: TRIG:LI09:415:TACT
+  - channel: TRIG:LI10:209:TACT
+  - channel: TRIG:LI10:214:TACT
+  - channel: TRIG:LI10:215:TACT
+  - channel: TRIG:LI10:307:TACT
+  - channel: TRIG:LI10:309:TACT
+  - channel: TRIG:LI10:310:TACT
+  - channel: TRIG:LI10:313:TACT
+  - channel: TRIG:LI10:315:TACT
+  - channel: TRIG:LI10:413:TACT
+  - channel: TRIG:LI10:415:TACT
+  - channel: TRIG:LI11:215:TACT
+  - channel: TRIG:LI11:309:TACT
+  - channel: TRIG:LI11:315:TACT
+  - channel: TRIG:LI11:415:TACT
+  - channel: TRIG:LI12:214:TACT
+  - channel: TRIG:LI12:215:TACT
+  - channel: TRIG:LI12:315:TACT
+  - channel: TRIG:LI12:415:TACT
+  - channel: TRIG:LI13:215:TACT
+  - channel: TRIG:LI13:315:TACT
+  - channel: TRIG:LI13:415:TACT
+  - channel: TRIG:LI14:204:TACT
+  - channel: TRIG:LI14:205:TACT
+  - channel: TRIG:LI14:209:TACT
+  - channel: TRIG:LI14:210:TACT
+  - channel: TRIG:LI14:215:TACT
+  - channel: TRIG:LI14:315:TACT
+  - channel: TRIG:LI14:415:TACT
+  - channel: TRIG:LI15:215:TACT
+  - channel: TRIG:LI15:314:TACT
+  - channel: TRIG:LI15:315:TACT
+  - channel: TRIG:LI15:415:TACT
+  - channel: TRIG:LI16:214:TACT
+  - channel: TRIG:LI16:215:TACT
+  - channel: TRIG:LI16:315:TACT
+  - channel: TRIG:LI16:415:TACT
+  - channel: TRIG:LI17:215:TACT
+  - channel: TRIG:LI17:315:TACT
+  - channel: TRIG:LI17:415:TACT
+  - channel: TRIG:LI18:215:TACT
+  - channel: TRIG:LI18:315:TACT
+  - channel: TRIG:LI18:415:TACT
+  - channel: TRIG:LI19:204:TACT
+  - channel: TRIG:LI19:205:TACT
+  - channel: TRIG:LI19:209:TACT
+  - channel: TRIG:LI19:210:TACT
+  - channel: TRIG:LI19:215:TACT
+  - channel: TRIG:LI19:313:TACT
+  - channel: TRIG:LI19:315:TACT
+  - channel: TRIG:LI19:415:TACT
+  - channel: TRIG:LI20:209:TACT
+  - channel: TRIG:LI20:215:TACT
+  - channel: TRIG:LI20:309:TACT
+  - channel: TRIG:LI20:310:TACT
+  - channel: TRIG:LI20:313:TACT
+  - channel: TRIG:LI20:314:TACT
+  - channel: TRIG:LI20:315:TACT
+  - channel: TRIG:LI20:409:TACT
+  - channel: TRIG:LI20:410:TACT
+  - channel: TRIG:LI20:411:TACT
+  - channel: TRIG:LI20:413:TACT
+  - channel: TRIG:LI20:414:TACT
+  - channel: TRIG:LI20:415:TACT
+  - channel: TRIG:LI20:515:TACT
+  - channel: TRIG:LI21:209:TACT
+  - channel: TRIG:LI21:210:TACT
+  - channel: TRIG:LI21:214:TACT
+  - channel: TRIG:LI21:315:TACT
+  - channel: TRIG:LI21:415:TACT
+  - channel: TRIG:LI22:214:TACT
+  - channel: TRIG:LI22:215:TACT
+  - channel: TRIG:LI22:315:TACT
+  - channel: TRIG:LI22:415:TACT
+  - channel: TRIG:LI23:215:TACT
+  - channel: TRIG:LI23:315:TACT
+  - channel: TRIG:LI23:415:TACT
+  - channel: TRIG:LI24:204:TACT
+  - channel: TRIG:LI24:205:TACT
+  - channel: TRIG:LI24:209:TACT
+  - channel: TRIG:LI24:210:TACT
+  - channel: TRIG:LI24:215:TACT
+  - channel: TRIG:LI24:315:TACT
+  - channel: TRIG:LI24:409:TACT
+  - channel: TRIG:LI24:413:TACT
+  - channel: TRIG:LI24:415:TACT
+  - channel: TRIG:LI25:214:TACT
+  - channel: TRIG:LI25:215:TACT
+  - channel: TRIG:LI25:315:TACT
+  - channel: TRIG:LI25:415:TACT
+  - channel: TRIG:LI26:204:TACT
+  - channel: TRIG:LI26:205:TACT
+  - channel: TRIG:LI26:209:TACT
+  - channel: TRIG:LI26:210:TACT
+  - channel: TRIG:LI26:215:TACT
+  - channel: TRIG:LI26:306:TACT
+  - channel: TRIG:LI26:307:TACT
+  - channel: TRIG:LI26:315:TACT
+  - channel: TRIG:LI26:415:TACT
+  - channel: TRIG:LI27:215:TACT
+  - channel: TRIG:LI27:315:TACT
+  - channel: TRIG:LI27:406:TACT
+  - channel: TRIG:LI27:407:TACT
+  - channel: TRIG:LI27:408:TACT
+  - channel: TRIG:LI27:409:TACT
+  - channel: TRIG:LI27:415:TACT
+  - channel: TRIG:LI28:211:TACT
+  - channel: TRIG:LI28:215:TACT
+  - channel: TRIG:LI28:308:TACT
+  - channel: TRIG:LI28:309:TACT
+  - channel: TRIG:LI28:315:TACT
+  - channel: TRIG:LI28:415:TACT
+  - channel: TRIG:LI29:204:TACT
+  - channel: TRIG:LI29:205:TACT
+  - channel: TRIG:LI29:209:TACT
+  - channel: TRIG:LI29:210:TACT
+  - channel: TRIG:LI29:211:TACT
+  - channel: TRIG:LI29:214:TACT
+  - channel: TRIG:LI29:215:TACT
+  - channel: TRIG:LI29:314:TACT
+  - channel: TRIG:LI29:315:TACT
+  - channel: TRIG:LI29:415:TACT
+  - channel: TRIG:LI30:205:TACT
+  - channel: TRIG:LI30:211:TACT
+  - channel: TRIG:LI30:214:TACT
+  - channel: TRIG:LI30:215:TACT
+  - channel: TRIG:LI30:315:TACT
+  - channel: TRIG:LI30:321:TACT
+  - channel: TRIG:LI30:403:TACT
+  - channel: TRIG:LI30:404:TACT
+  - channel: TRIG:LI30:410:TACT
+  - channel: TRIG:LI30:414:TACT
+  - channel: TRIG:LI30:415:TACT
+  - channel: TRIG:LI30:501:TACT
+  - channel: TRIG:LI30:502:TACT
+  - channel: TRIG:LI30:503:TACT
+  - channel: TRIG:LI30:504:TACT
+  - channel: TRIG:LI30:505:TACT
+  - channel: TRIG:LI30:506:TACT
+  - channel: TRIG:LI30:508:TACT
+  - channel: TRIG:LI30:509:TACT
+  - channel: TRIG:LI30:510:TACT
+  - channel: TRIG:LI30:511:TACT
+  - channel: TRIG:LI30:513:TACT
+  - channel: TRIG:LI30:514:TACT
+  - channel: TRIG:LI30:515:TACT

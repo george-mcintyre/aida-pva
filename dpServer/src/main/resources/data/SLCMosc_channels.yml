@@ -4,7 +4,10 @@
 id: 142
 name: SLCMosc
 description: Master Oscillator Server
+config:
+  type: DOUBLE
+  fields:
+    - name: value
 channels:
-  - instance: MASTEROSC
-    attribute: VAL
+  - channel: MASTEROSC:VAL
 
