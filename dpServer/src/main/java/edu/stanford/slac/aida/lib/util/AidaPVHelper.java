@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static edu.stanford.slac.aida.lib.model.AidaTableLayout.ROW_MAJOR;
 import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
 import static edu.stanford.slac.aida.lib.model.AidaType.aidaTypeOf;
-import static edu.stanford.slac.aida.lib.model.AidaTableLayout.ROW_MAJOR;
 import static org.epics.pvdata.pv.ScalarType.pvString;
 
 public class AidaPVHelper {

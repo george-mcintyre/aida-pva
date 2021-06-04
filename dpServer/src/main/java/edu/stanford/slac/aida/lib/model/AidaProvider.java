@@ -71,7 +71,7 @@ public class AidaProvider {
         AidaChannelConfig channelConfig = new AidaChannelConfig();
 
         // If nothing to override then return the default
-        if ( overrides == null ) {
+        if (overrides == null) {
             return defaultConfig;
         }
 

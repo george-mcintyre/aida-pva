@@ -52,7 +52,7 @@ public class ChannelProviderFactory {
                     }
                 }
             }
-            AidaProvider aidaProvider =  mapper.readValue(channelSource, AidaProvider.class);
+            AidaProvider aidaProvider = mapper.readValue(channelSource, AidaProvider.class);
             aidaProvider.setChannelProvider(channelProvider);
             return aidaProvider;
         } catch (IOException e) {

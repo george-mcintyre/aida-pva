@@ -20,7 +20,7 @@ public class AidaRPCServer extends RPCServer {
      * @param service the given service
      */
     public void registerServices(AidaRPCService service) {
-        for ( String channelName: aidaChannelProvider.getChannelNames() ) {
+        for (String channelName : aidaChannelProvider.getChannelNames()) {
             registerService(channelName, service);
         }
     }

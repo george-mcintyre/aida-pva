@@ -86,7 +86,7 @@ public abstract class AidaChannelProvider extends AidaNativeChannelProvider {
      * - collections of scalars e.g. List<Boolean>, List<Integer>, List<Byte>, List<Long>, List<Float>, List<Double>,  ...
      *
      * @param channelName request channel name
-     * @param aidaType the scalar type underpinning this scalar array
+     * @param aidaType    the scalar type underpinning this scalar array
      * @param arguments   request arguments
      * @return List of scalar object
      */
@@ -115,8 +115,9 @@ public abstract class AidaChannelProvider extends AidaNativeChannelProvider {
 
     /**
      * Handles tables
+     *
      * @param channelName channel name
-     * @param arguments arguments
+     * @param arguments   arguments
      * @return return list of lists
      */
     public List<List<?>> requestTable(String channelName, List<AidaArgument> arguments) {
@@ -132,7 +133,7 @@ public abstract class AidaChannelProvider extends AidaNativeChannelProvider {
      */
     public AidaChannelConfig getChannelConfig(String channelName) {
         AidaChannelConfig config = channelConfigMap.get(channelName);
-        if ( config == null ) {
+        if (config == null) {
             try {
                 config = aidaChannelConfig(channelName);
                 channelConfigMap.put(channelName, config);

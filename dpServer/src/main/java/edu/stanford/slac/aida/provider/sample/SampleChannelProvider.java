@@ -15,7 +15,6 @@
 package edu.stanford.slac.aida.provider.sample;
 
 import edu.stanford.slac.aida.lib.AidaChannelProvider;
-import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 
 /**
  * Implementation of an aida-pca-channel provider.
