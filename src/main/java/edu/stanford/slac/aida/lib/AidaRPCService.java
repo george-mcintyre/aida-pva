@@ -64,25 +64,24 @@ public class AidaRPCService implements RPCService {
      */
     private PVStructure request(String channelName, List<AidaArgument> arguments) {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
+
         AidaType aidaType = channelConfig.getType();
         Type channelType = typeOf(aidaType);
         if (channelType == null) {
             // TODO log exception
             return null;
         }
+        System.out.println("AIDA Request: " + channelName +  arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
 
         if (channelType.equals(scalar)) {
-            return asScalar(
-                    this.aidaChannelProvider.requestScalar(channelName, aidaType, arguments),
-                    this.aidaChannelProvider.getChannelConfig(channelName));
+            Object returnValue = this.aidaChannelProvider.requestScalar(channelName, aidaType, arguments);
+            return asScalar( returnValue, channelConfig);
         } else if (channelType.equals(scalarArray)) {
-            return asScalarArray(
-                    this.aidaChannelProvider.requestScalarArray(channelName, aidaType, arguments),
-                    this.aidaChannelProvider.getChannelConfig(channelName));
+            List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaType, arguments);
+            return asScalarArray( returnValue, channelConfig);
         } else {
-            return asNtTable(
-                    this.aidaChannelProvider.requestTable(channelName, arguments),
-                    this.aidaChannelProvider.getChannelConfig(channelName));
+            List<List<?>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
+            return asNtTable(returnValue, channelConfig);
         }
     }
 

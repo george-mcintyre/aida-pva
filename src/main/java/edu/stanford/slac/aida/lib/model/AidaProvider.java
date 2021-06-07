@@ -39,7 +39,7 @@ public class AidaProvider {
      * @param channelName the channel name
      * @return the fully configured AIDA channel
      */
-    private AidaChannel getAidaChannel(String channelName) {
+    public AidaChannel getAidaChannel(String channelName) {
         if (this.channelMap.isEmpty()) {
             setChannelNames();
         }
@@ -90,17 +90,18 @@ public class AidaProvider {
      */
     private void copyConfig(AidaChannel aidaChannel) {
         // Highest priority from provider itself
-        AidaChannelConfig providerConfig = this.channelProvider.getChannelConfig(aidaChannel.getChannel());
+        AidaChannelConfig providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel());
         // Next from yaml channel
         AidaChannelConfig channelConfig = aidaChannel.getConfig();
         // Finally from yaml global section
         AidaChannelConfig defaultConfig = getConfig();
 
         // Merge all together with these priorities
-        aidaChannel.setConfig(mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig));
+        AidaChannelConfig mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig);
+        aidaChannel.setConfig(mergedConfig);
 
         // Set default labels
-        setDefaultLabels(aidaChannel.getConfig().getFields());
+        setDefaultLabels(mergedConfig.getFields());
     }
 
     /**
@@ -109,9 +110,11 @@ public class AidaProvider {
      * @param fields the fields to update
      */
     private void setDefaultLabels(List<AidaField> fields) {
-        for (AidaField field : fields) {
-            if (field.getLabel() == null) {
-                field.setLabel(field.getName());
+        if ( fields != null ) {
+            for (AidaField field : fields) {
+                if (field.getLabel() == null) {
+                    field.setLabel(field.getName());
+                }
             }
         }
     }

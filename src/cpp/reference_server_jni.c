@@ -16,7 +16,7 @@
  */
 JNIEXPORT jobject
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaChannelConfig
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaChannelConfig
         (JNIEnv *env, jobject jthis, jstring channelName) {
     printf("Called aidaChannelConfig()");
     return NULL;
@@ -29,7 +29,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaChannelCon
  */
 JNIEXPORT jobject
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestTable
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestTable
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestTable()");
     return NULL;
@@ -42,7 +42,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestTab
  */
 JNIEXPORT jboolean
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestBoolean
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestBoolean
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestBoolean()");
     return 0;
@@ -55,7 +55,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestBoo
  */
 JNIEXPORT jbyte
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestByte
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestByte
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestByte()");
     return 0;
@@ -69,7 +69,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestByt
  */
 JNIEXPORT jshort
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestShort
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestShort
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestShort()");
     return 0;
@@ -83,7 +83,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestSho
  */
 JNIEXPORT jint
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestInteger
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestInteger
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestInteger()");
     return 0;
@@ -96,7 +96,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestInt
  */
 JNIEXPORT jlong
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestLong
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestLong
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestLong()");
     return 0;
@@ -110,7 +110,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestLon
  */
 JNIEXPORT jfloat
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestFloat
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestFloat
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestFloat()");
     return 0.0;
@@ -124,7 +124,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestFlo
  */
 JNIEXPORT jdouble
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestDouble
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestDouble
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestDouble()");
     return 0.0;
@@ -138,7 +138,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestDou
  */
 JNIEXPORT jstring
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestString
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestString
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestString()");
     return NULL;
@@ -152,7 +152,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestStr
  */
 JNIEXPORT jbooleanArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestBooleanArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestBooleanArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestBooleanArray()");
     return NULL;
@@ -166,7 +166,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestBoo
  */
 JNIEXPORT jbyteArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestByteArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestByteArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestByteArray()");
     return NULL;
@@ -180,7 +180,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestByt
  */
 JNIEXPORT jshortArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestShortArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestShortArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestShortArray()");
     return NULL;
@@ -193,7 +193,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestSho
  */
 JNIEXPORT jintArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestIntegerArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestIntegerArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestIntegerArray()");
     return NULL;
@@ -207,7 +207,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestInt
  */
 JNIEXPORT jlongArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestLongArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestLongArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestLongArray()");
     return NULL;
@@ -221,7 +221,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestLon
  */
 JNIEXPORT jfloatArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestFloatArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestFloatArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestFloatArray()");
     return NULL;
@@ -235,7 +235,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestFlo
  */
 JNIEXPORT jdoubleArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestDoubleArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestDoubleArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestDoubleArray()");
     return NULL;
@@ -249,7 +249,7 @@ JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestDou
  */
 JNIEXPORT jobjectArray
 
-JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestStringArray
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestStringArray
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestStringArray()");
     return NULL;

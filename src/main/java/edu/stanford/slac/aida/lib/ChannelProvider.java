@@ -92,43 +92,43 @@ public abstract class ChannelProvider extends NativeChannelProvider {
         switch (aidaType) {
             case BOOLEAN_ARRAY:
                 List<Boolean> tList = new ArrayList<Boolean>();
-                for ( Boolean b : aidaRequestBooleanArray(channelName, arguments)) {
+                for (Boolean b : aidaRequestBooleanArray(channelName, arguments)) {
                     tList.add(b);
                 }
                 return tList;
             case BYTE_ARRAY:
                 List<Byte> bList = new ArrayList<Byte>();
-                for ( Byte b : aidaRequestByteArray(channelName, arguments)) {
+                for (Byte b : aidaRequestByteArray(channelName, arguments)) {
                     bList.add(b);
                 }
                 return bList;
             case SHORT_ARRAY:
                 List<Short> sList = new ArrayList<Short>();
-                for ( Short s : aidaRequestShortArray(channelName, arguments)) {
+                for (Short s : aidaRequestShortArray(channelName, arguments)) {
                     sList.add(s);
                 }
                 return sList;
             case INTEGER_ARRAY:
                 List<Integer> iList = new ArrayList<Integer>();
-                for ( Integer i : aidaRequestIntegerArray(channelName, arguments)) {
+                for (Integer i : aidaRequestIntegerArray(channelName, arguments)) {
                     iList.add(i);
                 }
                 return iList;
             case LONG_ARRAY:
                 List<Long> lList = new ArrayList<Long>();
-                for ( Long l : aidaRequestLongArray(channelName, arguments)) {
+                for (Long l : aidaRequestLongArray(channelName, arguments)) {
                     lList.add(l);
                 }
                 return lList;
             case FLOAT_ARRAY:
                 List<Float> fList = new ArrayList<Float>();
-                for ( Float f : aidaRequestFloatArray(channelName, arguments)) {
+                for (Float f : aidaRequestFloatArray(channelName, arguments)) {
                     fList.add(f);
                 }
                 return fList;
             case DOUBLE_ARRAY:
                 List<Double> dList = new ArrayList<Double>();
-                for ( Double d : aidaRequestDoubleArray(channelName, arguments)) {
+                for (Double d : aidaRequestDoubleArray(channelName, arguments)) {
                     dList.add(d);
                 }
                 return dList;
@@ -151,13 +151,21 @@ public abstract class ChannelProvider extends NativeChannelProvider {
     }
 
     /**
-     * Called by the framework during channel initialisation to get channel config
-     * and also when making aida requests to retrieve cached config
+     * Get channel configuration
+     * @param channelName the channel name to retrieve configuration
+     * @return the configuration
+     */
+    public AidaChannelConfig getChannelConfig(String channelName) {
+        return this.aidaProvider.getAidaChannel(channelName).getConfig();
+    }
+
+    /**
+     * Called retrieves the native channel config if any is available
      *
      * @param channelName the channel for which config is to be returned
      * @return the channel config
      */
-    public AidaChannelConfig getChannelConfig(String channelName) {
+    public AidaChannelConfig getNativeChannelConfig(String channelName) {
         AidaChannelConfig config = channelConfigMap.get(channelName);
         if (config == null) {
             try {
