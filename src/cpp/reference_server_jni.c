@@ -45,7 +45,7 @@ JNIEXPORT jboolean
 JNICALL Java_edu_stanford_slac_aida_lib_AidaNativeChannelProvider_aidaRequestBoolean
         (JNIEnv *env, jobject jthis, jstring uri, jobject args) {
     printf("Called aidaRequestBoolean()");
-    return 0§;
+    return 0;
 }
 
 /*
