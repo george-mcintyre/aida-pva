@@ -12,15 +12,15 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package edu.stanford.slac.aida.provider.sample;
+package edu.stanford.slac.aida.reference.implementation;
 
-import edu.stanford.slac.aida.lib.AidaChannelProvider;
+import edu.stanford.slac.aida.lib.ChannelProvider;
 
 /**
  * Implementation of an aida-pca-channel provider.
  */
-public class SampleChannelProvider extends AidaChannelProvider {
-    public SampleChannelProvider() {
+public class ReferenceChannelProvider extends ChannelProvider {
+    public ReferenceChannelProvider() {
         super();
     }
 

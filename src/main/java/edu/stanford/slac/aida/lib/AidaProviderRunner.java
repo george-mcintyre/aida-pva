@@ -3,7 +3,7 @@ package edu.stanford.slac.aida.lib;
 import org.epics.pvaccess.PVAException;
 
 public class AidaProviderRunner {
-    public static void run(AidaChannelProvider aidaChannelProvider) {
+    public static void run(ChannelProvider aidaChannelProvider) {
         // Create new RPCServer
         AidaRPCServer server = new AidaRPCServer(aidaChannelProvider);
 

@@ -16,9 +16,9 @@ import static org.epics.pvdata.pv.Type.scalar;
 import static org.epics.pvdata.pv.Type.scalarArray;
 
 public class AidaRPCService implements RPCService {
-    private final AidaChannelProvider aidaChannelProvider;
+    private final ChannelProvider aidaChannelProvider;
 
-    public AidaRPCService(AidaChannelProvider aidaChannelProvider) {
+    public AidaRPCService(ChannelProvider aidaChannelProvider) {
         this.aidaChannelProvider = aidaChannelProvider;
     }
 

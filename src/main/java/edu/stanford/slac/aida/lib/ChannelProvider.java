@@ -19,18 +19,16 @@ import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaProvider;
 import edu.stanford.slac.aida.lib.model.AidaType;
 import edu.stanford.slac.aida.lib.util.AidaPva;
+import slac.aida.NativeChannelProvider;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
 
 /**
  * Implementation of an aida-pva-channel provider.
  */
-public abstract class AidaChannelProvider extends AidaNativeChannelProvider {
+public abstract class ChannelProvider extends NativeChannelProvider {
     private final AidaProvider aidaProvider;
     private final Map<String, AidaChannelConfig> channelConfigMap = new HashMap<String, AidaChannelConfig>();
 
@@ -39,7 +37,7 @@ public abstract class AidaChannelProvider extends AidaNativeChannelProvider {
      * configuration files.  Check AIDA_CHANNELS_FILENAME property or environment variable to control
      * loading of the yaml configuration file
      */
-    public AidaChannelProvider() {
+    public ChannelProvider() {
         // Aida server Banner on standard output
         System.out.println(AidaPva.banner());
 
@@ -93,21 +91,49 @@ public abstract class AidaChannelProvider extends AidaNativeChannelProvider {
     public List<?> requestScalarArray(String channelName, AidaType aidaType, List<AidaArgument> arguments) {
         switch (aidaType) {
             case BOOLEAN_ARRAY:
-                return aidaRequestBooleanArray(channelName, arguments);
+                List<Boolean> tList = new ArrayList<Boolean>();
+                for ( Boolean b : aidaRequestBooleanArray(channelName, arguments)) {
+                    tList.add(b);
+                }
+                return tList;
             case BYTE_ARRAY:
-                return aidaRequestByteArray(channelName, arguments);
+                List<Byte> bList = new ArrayList<Byte>();
+                for ( Byte b : aidaRequestByteArray(channelName, arguments)) {
+                    bList.add(b);
+                }
+                return bList;
             case SHORT_ARRAY:
-                return aidaRequestShortArray(channelName, arguments);
+                List<Short> sList = new ArrayList<Short>();
+                for ( Short s : aidaRequestShortArray(channelName, arguments)) {
+                    sList.add(s);
+                }
+                return sList;
             case INTEGER_ARRAY:
-                return aidaRequestIntegerArray(channelName, arguments);
+                List<Integer> iList = new ArrayList<Integer>();
+                for ( Integer i : aidaRequestIntegerArray(channelName, arguments)) {
+                    iList.add(i);
+                }
+                return iList;
             case LONG_ARRAY:
-                return aidaRequestLongArray(channelName, arguments);
+                List<Long> lList = new ArrayList<Long>();
+                for ( Long l : aidaRequestLongArray(channelName, arguments)) {
+                    lList.add(l);
+                }
+                return lList;
             case FLOAT_ARRAY:
-                return aidaRequestFloatArray(channelName, arguments);
+                List<Float> fList = new ArrayList<Float>();
+                for ( Float f : aidaRequestFloatArray(channelName, arguments)) {
+                    fList.add(f);
+                }
+                return fList;
             case DOUBLE_ARRAY:
-                return aidaRequestDoubleArray(channelName, arguments);
+                List<Double> dList = new ArrayList<Double>();
+                for ( Double d : aidaRequestDoubleArray(channelName, arguments)) {
+                    dList.add(d);
+                }
+                return dList;
             case STRING_ARRAY:
-                return aidaRequestStringArray(channelName, arguments);
+                return Arrays.asList(aidaRequestStringArray(channelName, arguments));
         }
         // TODO handle error
         return null;

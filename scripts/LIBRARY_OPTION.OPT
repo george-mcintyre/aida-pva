@@ -1,0 +1,7 @@
+reference_server_jni.obj
+!
+JAVA$JAVA_G_SHR/SHARE
+DBSSHR/shareable
+CRRUTIL/shareable
+SYSUTIL/shareable
+UTILSHR/shareable

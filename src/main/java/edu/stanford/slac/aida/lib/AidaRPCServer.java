@@ -3,13 +3,13 @@ package edu.stanford.slac.aida.lib;
 import org.epics.pvaccess.server.rpc.RPCServer;
 
 public class AidaRPCServer extends RPCServer {
-    private final AidaChannelProvider aidaChannelProvider;
+    private final ChannelProvider aidaChannelProvider;
 
-    public AidaRPCServer(AidaChannelProvider aidaChannelProvider) {
+    public AidaRPCServer(ChannelProvider aidaChannelProvider) {
         this.aidaChannelProvider = aidaChannelProvider;
     }
 
-    public AidaRPCServer(int threads, int queueSize, AidaChannelProvider aidaChannelProvider) {
+    public AidaRPCServer(int threads, int queueSize, ChannelProvider aidaChannelProvider) {
         super(threads, queueSize);
         this.aidaChannelProvider = aidaChannelProvider;
     }

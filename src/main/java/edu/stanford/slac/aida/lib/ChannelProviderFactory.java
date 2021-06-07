@@ -5,8 +5,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.stanford.slac.aida.lib.model.AidaProvider;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -23,7 +21,7 @@ public class ChannelProviderFactory {
      * @param channelProvider the channel provider
      * @return an AidaProvider object or null if there is a problem reading the configuration
      */
-    public static AidaProvider create(AidaChannelProvider channelProvider) {
+    public static AidaProvider create(ChannelProvider channelProvider) {
         // Get service name and channel definitions for the server to publish.
         // Priority: max=properties, medium=environment, low=default
         String channelsFilename = System.getProperty("AIDA_CHANNELS_FILENAME", CHANNELS_FILENAME_DEFAULT);
@@ -35,9 +33,11 @@ public class ChannelProviderFactory {
         // Set up the object mapper to read the channels
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
-            File channelSource;
-            channelSource = new File(channelsFilename);
-            if (!channelSource.exists()) {
+            File channelSource = new File(channelsFilename);
+            AidaProvider aidaProvider;
+            if (channelSource.exists()) {
+                aidaProvider = mapper.readValue(channelSource, AidaProvider.class);
+            } else {
                 logger.warning("Could not load external channel provider configuration, will try internal channel provider configuration file: " + channelsFilename);
                 // get the file url, not working in JAR file.
                 URL resource = AidaProvider.class.getClassLoader().getResource("data/" + channelsFilename);
@@ -46,16 +46,15 @@ public class ChannelProviderFactory {
                     throw new RuntimeException("Can't access channel provider configuration file: " + channelsFilename);
                 } else {
                     try {
-                        channelSource = new File(resource.toURI());
-                    } catch (URISyntaxException uriSyntaxException) {
-                        throw new RuntimeException(uriSyntaxException.getMessage());
+                        aidaProvider = mapper.readValue(resource, AidaProvider.class);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e.getMessage());
                     }
                 }
             }
-            AidaProvider aidaProvider = mapper.readValue(channelSource, AidaProvider.class);
             aidaProvider.setChannelProvider(channelProvider);
             return aidaProvider;
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.severe("Unable to initialise channel provider with " + channelsFilename + " : " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }

@@ -1,6 +1,6 @@
 package edu.stanford.slac.aida.lib.model;
 
-import edu.stanford.slac.aida.lib.AidaChannelProvider;
+import edu.stanford.slac.aida.lib.ChannelProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -15,7 +15,7 @@ public class AidaProvider {
     private String description;
     private @NonNull Set<AidaChannel> channels = new HashSet<AidaChannel>();
     private @NonNull AidaChannelConfig config;
-    private AidaChannelProvider channelProvider;
+    private ChannelProvider channelProvider;
 
     private final Map<String, AidaChannel> channelMap = new HashMap<String, AidaChannel>();
 
