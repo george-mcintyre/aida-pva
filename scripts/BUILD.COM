@@ -1,8 +1,11 @@
 $! Build shareable C library for Java interface
 $ OPTS = "/prefix=all /float=ieee /ieee=denorm /define=JIT_OPTION /names=(shortened,as_is) /reentrancy=multithread"
 $ INCL = "/include=sys$common:[java$122.include...]"
-$ CC/LIS 'OPTS'  'INCL'  reference_server_jni.c
+$ CC/LIS 'OPTS'  'INCL'  NativeChannelProviderJni.c
+$! CC/DEBUG reference_server.c
 $! CC/DEBUG aida_server_helper.c
+$! CC/DEBUG aida_jni_helper.c
+$! CC/DEBUG aida_types_helper.c
 $!
 $!
 $! Global option file
