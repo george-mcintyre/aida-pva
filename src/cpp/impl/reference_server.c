@@ -37,39 +37,6 @@ Config aidaChannelConfig(const char* channelName)
 }
 
 /**
- * Get a table of data
- *
- * @param uri the uri
- * @param arguments the arguments
- * @return the table
- */
-Table aidaRequestTable(char* uri, Arguments arguments)
-{
-	Table table;
-	memset(&table, 0, sizeof(table));
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute20") == 0) {
-		// int param1 = getIntegerArgument(arguments, "x");
-
-		// do something:
-		// table.columnCount = 2,
-		// table.rowCount = 10,
-		// table.types = { INTEGER, STRING },
-		// int *col1 = calloc(table.rowCount, sizeof(int))
-		// char **col2 = calloc(table.rowCount, sizeof(char *))
-		// ... set data in col1 and col2
-		// table.ppData = {col1, col2}
-		// ...
-
-		table.columnCount = 0;
-		table.rowCount = 0;
-	}
-
-	// Return the table
-	return table;
-}
-
-/**
  * Get a boolean
  *
  * @param uri the uri
@@ -400,3 +367,36 @@ StringArray aidaRequestStringArray(char* uri, Arguments arguments)
 	return stringArray;
 }
 
+
+/**
+ * Get a table of data
+ *
+ * @param uri the uri
+ * @param arguments the arguments
+ * @return the table
+ */
+Table aidaRequestTable(char* uri, Arguments arguments)
+{
+	Table table;
+	memset(&table, 0, sizeof(table));
+
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute20") == 0) {
+		// int param1 = getIntegerArgument(arguments, "x");
+
+		// do something:
+		// table.columnCount = 2,
+		// table.rowCount = 10,
+		// table.types = { INTEGER, STRING },
+		// int *col1 = calloc(table.rowCount, sizeof(int))
+		// char **col2 = calloc(table.rowCount, sizeof(char *))
+		// ... set data in col1 and col2
+		// table.ppData = {col1, col2}
+		// ...
+
+		table.columnCount = 0;
+		table.rowCount = 0;
+	}
+
+	// Return the table
+	return table;
+}
