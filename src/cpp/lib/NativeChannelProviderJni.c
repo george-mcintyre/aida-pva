@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include "aida_types.h"
 #include "../include/reference_server.h"
-#include "../include/aida_server_helper.h"
 #include "../include/aida_jni_helper.h"
 
 /*

@@ -3,12 +3,9 @@
       **MEMBER**=SLCLIBS:AIDASHRLIB
       **ATTRIBUTES**=JNI
  */
-#include <jni.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../include/reference_server.h"
-#include "../include/aida_server_helper.h"
 
 /**
  * Get channel configuration
@@ -20,7 +17,7 @@ Config aidaChannelConfig(const char* channelName)
 	Config config;
 	memset(&config, 0, sizeof(config));
 
-	if (strcmp(channelName, "PV1") == 0) {
+	if (strcmp(channelName, "AIDA:SAMPLE:DEVICE01:attribute01") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// example follows = ...
 		Field* fields = calloc(1, sizeof(Field)); /* CALLOC-aidaChannelConfig-config.fields */
@@ -31,7 +28,7 @@ Config aidaChannelConfig(const char* channelName)
 		config.layout = COLUMN_MAJOR;
  		config.fields = fields;
 		config.fieldCount = 1;
-	} else if (strcmp(channelName, "PV2") == 0) {
+	} else if (strcmp(channelName, "AIDA:SAMPLE:DEVICE01:attribute02") == 0) {
 		// do something else
 	}
 
@@ -51,7 +48,7 @@ Table aidaRequestTable(char* uri, Arguments arguments)
 	Table table;
 	memset(&table, 0, sizeof(table));
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute20") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 
 		// do something:
@@ -66,9 +63,6 @@ Table aidaRequestTable(char* uri, Arguments arguments)
 
 		table.columnCount = 0;
 		table.rowCount = 0;
-
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the table
@@ -86,11 +80,9 @@ int aidaRequestBoolean(char* uri, Arguments arguments)
 {
 	int item = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute01") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -109,11 +101,9 @@ unsigned char aidaRequestByte(char* uri, Arguments arguments)
 {
 	unsigned char item = 0x0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute02") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -131,11 +121,9 @@ short aidaRequestShort(char* uri, Arguments arguments)
 {
 	short item = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute03") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -153,11 +141,9 @@ int aidaRequestInteger(char* uri, Arguments arguments)
 {
 	int item = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute04") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -175,11 +161,9 @@ long aidaRequestLong(char* uri, Arguments arguments)
 {
 	long item = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute05") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -197,11 +181,9 @@ float aidaRequestFloat(char* uri, Arguments arguments)
 {
 	float item = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute06") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -219,11 +201,9 @@ double aidaRequestDouble(char* uri, Arguments arguments)
 {
 	double item = 0.0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute07") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -241,11 +221,9 @@ char* aidaRequestString(char* uri, Arguments arguments)
 {
 	char* item = "";
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute08") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: item = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the item
@@ -266,11 +244,9 @@ Array aidaRequestBooleanArray(char* uri, Arguments arguments)
 	Array booleanArray;
 	booleanArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute11") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: booleanArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the boolean array
@@ -289,11 +265,9 @@ Array aidaRequestByteArray(char* uri, Arguments arguments)
 	Array byteArray;
 	byteArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute12") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: byteArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the byte array
@@ -312,11 +286,9 @@ Array aidaRequestShortArray(char* uri, Arguments arguments)
 	Array shortArray;
 	shortArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute13") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: shortArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the short array
@@ -335,11 +307,9 @@ Array aidaRequestIntegerArray(char* uri, Arguments arguments)
 	Array integerArray;
 	integerArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute14") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: integerArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the integer array
@@ -358,11 +328,9 @@ Array aidaRequestLongArray(char* uri, Arguments arguments)
 	Array longArray;
 	longArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute15") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: longArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the long array
@@ -381,11 +349,9 @@ Array aidaRequestFloatArray(char* uri, Arguments arguments)
 	Array floatArray;
 	floatArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute16") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: floatArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the float array
@@ -404,11 +370,9 @@ Array aidaRequestDoubleArray(char* uri, Arguments arguments)
 	Array doubleArray;
 	doubleArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute17") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: doubleArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the double array
@@ -427,11 +391,9 @@ StringArray aidaRequestStringArray(char* uri, Arguments arguments)
 	StringArray stringArray;
 	stringArray.count = 0;
 
-	if (strcmp(uri, "PV1") == 0) {
+	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute18") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
 		// do something: stringArray.items = ...
-	} else if (strcmp(uri, "PV2") == 0) {
-		// do something else
 	}
 
 	// Return the string array

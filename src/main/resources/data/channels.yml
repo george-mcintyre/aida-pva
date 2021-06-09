@@ -8,75 +8,179 @@ description: Aida Sample Data Provider
 # The mandatory default config is used when specific config is not supplied for any of the channels included in this provider
 config:
   # Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (eg INTEGER_ARRAY, STRING_ARRAY) or TABLE
-  type: INTEGER
+  type: TABLE
   # For scalar or scalar arrays the there will be only one field defined.
   # For TABLE there will be as many fields as defined in the table's structure.
-  # Use dot notation for nested fields e.g. in a: { b: 10, c:11 } use a.b and a.c to reference the fields
-  # Only referenced fields will be included in the output TABLE
+  #     Only configured fields will be included in the output TABLE
   fields:
-    - label: result
-      name: x
-      description: The result
+    - label: field 1
+      name: a
+      description: The first field
+    - label: field 2
+      name: b
+      description: The second field
+    - label: field 3
+      name: c
+      description: The third field
+    - label: field 4
+      name: d
+      description: The fourth field
 channels:
-  - channel: AIDA:SAMPLE:DEVICE01:attribute1
+  - channel: AIDA:SAMPLE:DEVICE01:attribute01
     # Only override values that are different from the default.
     config:
+      type: BOOLEAN
       fields:
-        - units: cm
-  - channel: AIDA:SAMPLE:DEVICE02:attribute1
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute02
+    # Only override values that are different from the default.
+    config:
+      type: BYTE
+      fields:
+        - name: mode
+          label: "Device Mode Code"
+          description: "Device mode code"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute03
+    # Only override values that are different from the default.
+    config:
+      type: SHORT
+      fields:
+        - name: status
+          label: "Device Status Code"
+          description: "Device status code"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute04
+    # Only override values that are different from the default.
+    config:
+      type: INTEGER
+      fields:
+        - name: nbufs
+          label: "Number of buffers allocated"
+          description: "Number of buffers currently allocated on the device"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute05
+    # Only override values that are different from the default.
+    config:
+      type: LONG
+      fields:
+        - name: memory
+          label: "Device memory used"
+          description: "Total device memory used"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute06
+    # Only override values that are different from the default.
     config:
       type: FLOAT
       fields:
-        - units: "%"
-  - channel: AIDA:SAMPLE:DEVICE03:attribute1
+        - name: sensor
+          label: "Device Sensor Reading"
+          description: "Device sensor reading"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute07
+    # Only override values that are different from the default.
     config:
-      type: FLOAT
+      type: DOUBLE
       fields:
-        - units: "%"
-  - channel: AIDA:SAMPLE:DEVICE04:attribute1
-  - channel: AIDA:SAMPLE:DEVICE05:attribute1
-  - channel: AIDA:SAMPLE:DEVICE06:attribute1
-  - channel: AIDA:SAMPLE:DEVICE07:attribute1
-  - channel: AIDA:SAMPLE:DEVICE08:attribute1
-  - channel: AIDA:SAMPLE:DEVICE09:attribute1
+        - name: hisensor
+          label: "High Precision Device Sensor"
+          description: "Device sensor reading"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute08
+    # Only override values that are different from the default.
+    config:
+      type: STRING
+      fields:
+        - name: message
+          label: "Device Message"
+          description: "Last device message"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute11
+    # Only override values that are different from the default.
+    config:
+      type: BOOLEAN_ARRAY
+      fields:
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute12
+    # Only override values that are different from the default.
+    config:
+      type: BYTE_ARRAY
+      fields:
+        - name: mode
+          label: "Device Mode Code"
+          description: "Device mode code"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute13
+    # Only override values that are different from the default.
+    config:
+      type: SHORT_ARRAY
+      fields:
+        - name: status
+          label: "Device Status Code"
+          description: "Device status code"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute14
+    # Only override values that are different from the default.
     config:
       type: INTEGER_ARRAY
       fields:
-        - label: results
-          name: y
-          description: The results
-  - channel: AIDA:SAMPLE:DEVICE10:attribute1
+        - name: nbufs
+          label: "Number of buffers allocated"
+          description: "Number of buffers currently allocated on the device"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute15
+    # Only override values that are different from the default.
+    config:
+      type: LONG_ARRAY
+      fields:
+        - name: memory
+          label: "Device memory used"
+          description: "Total device memory used"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute16
+    # Only override values that are different from the default.
+    config:
+      type: FLOAT_ARRAY
+      fields:
+        - name: sensor
+          label: "Device Sensor Reading"
+          description: "Device sensor reading"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute17
+    # Only override values that are different from the default.
+    config:
+      type: DOUBLE_ARRAY
+      fields:
+        - name: hisensor
+          label: "High Precision Device Sensor"
+          description: "Device sensor reading"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute18
+    # Only override values that are different from the default.
+    config:
+      type: STRING_ARRAY
+      fields:
+        - name: message
+          label: "Device Message"
+          description: "Last device message"
+  - channel: AIDA:SAMPLE:DEVICE01:attribute20
     config:
       type: TABLE
       fields:
-        - label: field
-          name: a
-          description: The field
-  - channel: AIDA:SAMPLE:DEVICE11:attribute1
-    config:
-      type: TABLE
-      fields:
-        - label: field 1
-          name: a
-          description: The first field
-        - label: field 2
-          name: b
-          description: The second field
-  - channel: AIDA:SAMPLE:DEVICE12:attribute1
-    config:
-      type: TABLE
-      fields:
-        - label: field 1
-          name: a
-          description: The first field
-        - label: field 2
-          name: b
-          description: The second field
-        - label: field 3
-          name: c.a
-          description: The first subfield
-        - label: field 4
-          name: c.b
-          description: The second subfield
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+        - name: mode
+          label: "Device Mode Code"
+          description: "Device mode code"
+        - name: status
+          label: "Device Status Code"
+          description: "Device status code"
+        - name: nbufs
+          label: "Number of buffers allocated"
+          description: "Number of buffers currently allocated on the device"
+        - name: memory
+          label: "Device memory used"
+          description: "Total device memory used"
+        - name: sensor
+          label: "Device Sensor Reading"
+          description: "Device sensor reading"
+        - name: hisensor
+          label: "High Precision Device Sensor"
+          description: "Device sensor reading"
+        - name: message
+          label: "Device Message"
+          description: "Last device message"
 
 
