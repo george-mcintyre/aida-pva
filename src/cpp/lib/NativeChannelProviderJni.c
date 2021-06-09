@@ -27,7 +27,7 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaChannelConfig
 	// Call the implementation
 	Config config = aidaChannelConfig(channel);
 
-	// marshal results
+	// marshal results and free fields
 	returnValue = aidaChannelConfigToJObject(env, config);
 
 	return returnValue;
