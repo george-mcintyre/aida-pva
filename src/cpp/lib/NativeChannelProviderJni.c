@@ -226,18 +226,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestBooleanArray
 	Array array = aidaRequestBooleanArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewBooleanArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetBooleanArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue = toBooleanArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -259,18 +251,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestByteArray
 	Array array = aidaRequestByteArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewByteArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetByteArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue =toByteArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -292,18 +276,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestShortArray
 	Array array = aidaRequestShortArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewShortArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetShortArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue = toShortArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -325,18 +301,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestIntegerArray
 	Array array = aidaRequestIntegerArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewIntArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetIntArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue = toIntegerArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -358,18 +326,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestLongArray
 	Array array = aidaRequestLongArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewLongArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetLongArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue = toLongArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -391,18 +351,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestFloatArray
 	Array array = aidaRequestFloatArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewFloatArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetFloatArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue = toFloatArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -424,18 +376,10 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestDoubleArray
 	Array array = aidaRequestDoubleArray(pv, arguments);
 
 	// create result array
-	returnValue = (*env)->NewDoubleArray(env, array.count);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	(*env)->SetDoubleArrayRegion(env, returnValue, 0, array.count, array.items);
+	returnValue = toDoubleArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseArray(array);
 
 	return returnValue;
 }
@@ -456,24 +400,11 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestStringArray
 
 	StringArray array = aidaRequestStringArray(pv, arguments);
 
-	// Get a class reference for java.lang.String
-	jclass classString = (*env)->FindClass(env, "java/lang/String");
-
 	// create result array
-	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
-	if (NULL == returnValue)
-		return NULL;
-
-	// Copy values
-	for (int i = 0; i < array.count; i++) {
-		(*env)->SetObjectArrayElement(env, returnValue, i, toJString(env, array.items[i]));
-	}
+	returnValue = toStringArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);
-
-	// Free up array
-	releaseStringArray(array);
 
 	return returnValue;
 }
@@ -487,8 +418,20 @@ JNIEXPORT jobject
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestTable
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestTable()");
-	return NULL;
+	jobject returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Table table = aidaRequestTable(pv, arguments);
+
+	// create result table
+	returnValue = toTable(env, table);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 

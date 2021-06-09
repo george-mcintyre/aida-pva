@@ -110,22 +110,109 @@ void callSetterWithJString(JNIEnv* env, JavaObject javaObject, char* method, jst
 Arguments toArguments(JNIEnv* env, jobject jArgs);
 
 /**
- * Free up any memory allocated with arguments
+ * Free up any memory allocated for arguments
  * @param arguments
  */
 void releaseArguments(Arguments arguments);
 
 /**
- * Free up any memory allocated with arguments
+ * Free up any memory allocated scalar arrays
  * @param array
  */
 void releaseArray(Array array);
 
 /**
- * Free up any memory allocated with arguments
+ * Free up any memory allocated for string arrays
  * @param array
  */
 void releaseStringArray(StringArray array);
+
+/**
+ * Free up any memory allocated for tables
+ * @param table
+ */
+void releaseTable(Table table);
+
+/**
+ * Create a java boolean array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java boolean array
+ */
+jbooleanArray toBooleanArray(JNIEnv* env, Array array);
+
+/**
+ * Create a java byte array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java byte array
+ */
+jbyteArray toByteArray(JNIEnv* env, Array array);
+
+/**
+ * Create a java short array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java short array
+ */
+jshortArray toShortArray(JNIEnv* env, Array array);
+
+/**
+ * Create a java integer array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java integer array
+ */
+jintArray toIntegerArray(JNIEnv* env, Array array);
+
+/**
+ * Create a java long array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java long array
+ */
+jlongArray toLongArray(JNIEnv* env, Array array);
+
+/**
+ * Create a java float array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java float array
+ */
+jfloatArray toFloatArray(JNIEnv* env, Array array);
+
+/**
+ * Create a java double array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java double array
+ */
+jdoubleArray toDoubleArray(JNIEnv* env, Array array);
+
+/**
+ * Convert a string array to a java object array
+ *
+ * @param env env
+ * @param array string array
+ * @return jobject
+ */
+jobjectArray toStringArray(JNIEnv* env, StringArray array);
+
+/**
+ * Convert a table to a jobject for returning to java
+ *
+ * @param env env
+ * @param table the table
+ * @return jobject to return to java
+ */
+jobject toTable(JNIEnv* env, Table table);
 
 #ifdef __cplusplus
 }

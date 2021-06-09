@@ -250,7 +250,294 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 }
 
 /**
- * Free up any memory allocated with arguments
+ * Create a java boolean array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java boolean array
+ */
+jbooleanArray toBooleanArray(JNIEnv* env, Array array)
+{
+	jbooleanArray returnValue;
+
+	returnValue = (*env)->NewBooleanArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetBooleanArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+	return returnValue;
+}
+
+/**
+ * Create a java byte array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java byte array
+ */
+jbyteArray toByteArray(JNIEnv* env, Array array)
+{
+	jbyteArray returnValue;
+
+	returnValue = (*env)->NewByteArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetByteArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Create a java short array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java short array
+ */
+jshortArray toShortArray(JNIEnv* env, Array array)
+{
+	jshortArray returnValue;
+
+	returnValue = (*env)->NewShortArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetShortArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Create a java integer array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java integer array
+ */
+jintArray toIntegerArray(JNIEnv* env, Array array)
+{
+	jintArray returnValue;
+
+	returnValue = (*env)->NewIntArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetIntArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Create a java long array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java long array
+ */
+jlongArray toLongArray(JNIEnv* env, Array array)
+{
+	jlongArray returnValue;
+
+	returnValue = (*env)->NewLongArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetLongArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Create a java float array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java float array
+ */
+jfloatArray toFloatArray(JNIEnv* env, Array array)
+{
+	jfloatArray returnValue;
+
+	returnValue = (*env)->NewFloatArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetFloatArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Create a java double array from a c-array
+ *
+ * @param env env
+ * @param array c-array
+ * @return java double array
+ */
+jdoubleArray toDoubleArray(JNIEnv* env, Array array)
+{
+	jdoubleArray returnValue;
+
+	// create result array
+	returnValue = (*env)->NewDoubleArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetDoubleArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Convert a string array to a java object array
+ *
+ * @param env env
+ * @param array string array
+ * @return jobject
+ */
+jobjectArray toStringArray(JNIEnv* env, StringArray array)
+{
+	jobjectArray returnValue;
+
+	// Get a class reference for java.lang.String
+	jclass classString = (*env)->FindClass(env, "java/lang/String");
+
+	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	for (int i = 0; i < array.count; i++) {
+		(*env)->SetObjectArrayElement(env, returnValue, i, toJString(env, array.items[i]));
+	}
+
+	// Free up array
+	releaseStringArray(array);
+
+	return returnValue;
+}
+
+/**
+ * Convert a table to a jobject for returning to java.
+ * Tables are returned as lists of Lists so:-
+ * we create a java ArrayList
+ * then for each column in the table
+ *   we create a sub list
+ *   then we loop over each row to call add() to add entries to that list
+ *   then we add() the sublist to the main list
+ *
+ * @param env env
+ * @param table the table
+ * @return jobject to return to java
+ */
+jobject toTable(JNIEnv* env, Table table)
+{
+	jobject returnValue;
+
+	// create a java ArrayList
+	JavaObject listObject = newObject(env, "java.util.ArrayList");
+	returnValue = listObject.object;
+	jclass cList = listObject.class;
+
+	// retrieve the size and the get methods of list
+	jmethodID mAdd = (*env)->GetMethodID(env, cList, "add", "(java.util.List)Z");
+	jmethodID mAddBoolean = (*env)->GetMethodID(env, cList, "add", "(java.lang.Boolean)Z");
+	jmethodID mAddByte = (*env)->GetMethodID(env, cList, "add", "(java.lang.Byte)Z");
+	jmethodID mAddShort = (*env)->GetMethodID(env, cList, "add", "(java.lang.Short)Z");
+	jmethodID mAddInteger = (*env)->GetMethodID(env, cList, "add", "(java.lang.Integer)Z");
+	jmethodID mAddLong = (*env)->GetMethodID(env, cList, "add", "(java.lang.Long)Z");
+	jmethodID mAddFloat = (*env)->GetMethodID(env, cList, "add", "(java.lang.Float)Z");
+	jmethodID mAddDouble = (*env)->GetMethodID(env, cList, "add", "(java.lang.Double)Z");
+	jmethodID mAddString = (*env)->GetMethodID(env, cList, "add", "(java.lang.String)Z");
+
+	if (mAdd == NULL) {
+		return returnValue;
+	}
+	// Loop over each column
+	for (int column = 0; column < table.columnCount; column++) {
+		//   we create a sub list
+		JavaObject sublistObject = newObject(env, "java.util.ArrayList");
+		jobject sublist = sublistObject.object;
+
+		// loop over each row
+		for (int row = 0; row < table.rowCount; row++) {
+			// call appropriate add())
+			switch (table.types[column]) {
+			case BOOLEAN_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddBoolean, ((jboolean*)(table.ppData[column]))[row]);
+				break;
+			case BYTE_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddByte, ((jbyte*)(table.ppData[column]))[row]);
+				break;
+			case SHORT_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddShort, ((jshort*)(table.ppData[column]))[row]);
+				break;
+			case INTEGER_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddInteger, ((jint*)(table.ppData[column]))[row]);
+				break;
+			case LONG_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddLong, ((jlong*)(table.ppData[column]))[row]);
+				break;
+			case FLOAT_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddFloat, ((jfloat*)(table.ppData[column]))[row]);
+				break;
+			case DOUBLE_ARRAY:
+				(*env)->CallObjectMethod(env, sublist, mAddDouble, ((jdouble*)(table.ppData[column]))[row]);
+				break;
+			case STRING_ARRAY: {
+				char* string = ((char**)(table.ppData[column]))[row];
+				toJString(env, string);
+				(*env)->CallObjectMethod(env, sublist, mAddString, ((jobject*)(table.ppData[column]))[row]);
+
+				// Free up string buffer
+				free(string);
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		// then we add() the sublist to the main list
+		(*env)->CallObjectMethod(env, returnValue, mAdd, sublist);
+	}
+
+	releaseTable(table);
+
+	return returnValue;
+}
+
+/**
+ * Free up any memory allocated for arguments
  * @param arguments
  */
 void releaseArguments(Arguments arguments)
@@ -261,7 +548,7 @@ void releaseArguments(Arguments arguments)
 }
 
 /**
- * Free up any memory allocated with arguments
+ * Free up any memory allocated scalar arrays
  * @param array
  */
 void releaseArray(Array array)
@@ -272,12 +559,26 @@ void releaseArray(Array array)
 }
 
 /**
- * Free up any memory allocated with arguments
+ * Free up any memory allocated for string arrays
  * @param array
  */
 void releaseStringArray(StringArray array)
 {
 	if (array.count > 0) {
 		free(array.items);
+	}
+}
+
+/**
+ * Free up any memory allocated for tables
+ * @param table
+ */
+void releaseTable(Table table)
+{
+	if (table.columnCount > 0) {
+		for (int column = 0; column < table.columnCount; column++) {
+			free(table.ppData[column]);
+		}
+		free(table.ppData);
 	}
 }

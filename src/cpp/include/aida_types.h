@@ -98,7 +98,7 @@ typedef struct
  *  columnCount:    number of columns in table
  *  rowCount:       number of rows in table
  *  types:          the scalar type of each column, one of BOOLEAN, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, or STRING
- *  ppData:         the data.  Either and array of [rows][columns] or an array of [columns][rows].
+ *  ppData:         the data.  Array of [rows][columns]
  */
 typedef struct
 {
