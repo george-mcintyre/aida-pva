@@ -190,3 +190,60 @@ jmethodID getConstructorMethodId(JNIEnv* env, jclass cls)
 {
 	return getMethodId(env, cls, "<init>", "()V");
 }
+
+/**
+ * Get c arguments structure from a java arguments list - List<AidaArgument>
+ *
+ *
+ * @param env env
+ * @param jArgs java arguments list - List<AidaArgument> (name, value}
+ * @return c arguments structure
+ */
+Arguments toArguments(JNIEnv* env, jobject jArgs)
+{
+	Arguments cArgs;
+	cArgs.argumentCount = 0;
+
+	// retrieve the java.util.List interface class
+	jclass cList = (*env)->FindClass(env, "java/util/List");
+	jclass aidaArgumentClass = (*env)->FindClass(env, "Ledu.stanford.slac.aida.lib.model.AidaArgument");
+
+	// retrieve the size and the get methods of list
+	jmethodID mSize = (*env)->GetMethodID(env, cList, "size", "()I");
+	jmethodID mGet = (*env)->GetMethodID(env, cList, "get", "(I)Ljava/lang/Object;");
+
+	// retrieve the getName and the getValue methods of list
+	jmethodID mName = (*env)->GetMethodID(env, aidaArgumentClass, "getName", "()Ljava/lang/String");
+	jmethodID mValue = (*env)->GetMethodID(env, aidaArgumentClass, "getValue", "()Ljava/lang/String");
+
+	if (mSize == NULL || mGet == NULL || mName == NULL || mValue == NULL) {
+		return cArgs;
+	}
+
+	// get the size of the list
+	cArgs.argumentCount = (*env)->CallIntMethod(env, jArgs, mSize);
+
+	// Create array of arguments
+	cArgs.arguments = calloc(cArgs.argumentCount, sizeof(Argument));
+
+	// walk through and fill array
+	for (int i = 0; i < cArgs.argumentCount; i++) {
+		jobject argument = (*env)->CallObjectMethod(env, jArgs, mGet, i);
+		cArgs.arguments[i].name = toCString(env, (*env)->CallObjectMethod(env, argument, mName));
+		cArgs.arguments[i].value = toCString(env, (*env)->CallObjectMethod(env, argument, mValue));
+	}
+
+	// Return arguments
+	return cArgs;
+}
+
+/**
+ * Free up any memory allocated with arguments
+ * @param arguments
+ */
+void releaseArguments(Arguments arguments)
+{
+	if (arguments.argumentCount > 0) {
+		free(arguments.arguments);
+	}
+}

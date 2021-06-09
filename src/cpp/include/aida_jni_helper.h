@@ -10,7 +10,7 @@ extern "C" {
 /**
  * Java object: containing the jobject and the class
  */
-typdef struct
+typedef struct
 {
 	jobject object;
 	jclass class;
@@ -40,7 +40,7 @@ jobject getAidaField(JNIEnv* env, Field field);
  * @param class class to create
  * @return the new jni object
  */
-jobject newObject(JNIEnv* env, char* classToCreate);
+JavaObject newObject(JNIEnv* env, char* classToCreate);
 
 /**
  * Convert jstring to c string
@@ -57,6 +57,10 @@ jmethodID getConstructorMethodId(JNIEnv* env, jclass cls);
 void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char* value);
 
 void callSetterWithJString(JNIEnv* env, JavaObject javaObject, char* method, jstring value);
+
+Arguments toArguments(JNIEnv* env, jobject jArgs);
+
+void releaseArguments(Arguments arguments);
 
 #ifdef __cplusplus
 }

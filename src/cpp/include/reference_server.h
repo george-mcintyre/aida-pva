@@ -20,7 +20,7 @@ Config aidaChannelConfig(const char* channelName);
  * @param arguments the arguments
  * @return the table
  */
-Table aidaRequestTable(char* uri, Arguments arguments);
+Table aidaRequestTable(const char* uri, Arguments arguments);
 
 /**
  * Get a boolean
@@ -29,7 +29,7 @@ Table aidaRequestTable(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the boolean
  */
-int aidaRequestBoolean(char* uri, Arguments arguments);
+int aidaRequestBoolean(const char* uri, Arguments arguments);
 
 /**
  * Get a byte
@@ -38,7 +38,7 @@ int aidaRequestBoolean(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the byte
  */
-unsigned char aidaRequestByte(char* uri, Arguments arguments);
+unsigned char aidaRequestByte(const char* uri, Arguments arguments);
 
 /**
  * Get a short
@@ -47,7 +47,7 @@ unsigned char aidaRequestByte(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the short
  */
-short aidaRequestShort(char* uri, Arguments arguments);
+short aidaRequestShort(const char* uri, Arguments arguments);
 
 /**
  * Get a integer
@@ -56,7 +56,7 @@ short aidaRequestShort(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the integer
  */
-int aidaRequestInteger(char* uri, Arguments arguments);
+int aidaRequestInteger(const char* uri, Arguments arguments);
 
 /**
  * Get a long
@@ -65,7 +65,7 @@ int aidaRequestInteger(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the long
  */
-long aidaRequestLong(char* uri, Arguments arguments);
+long aidaRequestLong(const char* uri, Arguments arguments);
 
 /**
  * Get a float
@@ -74,7 +74,7 @@ long aidaRequestLong(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the float
  */
-float aidaRequestFloat(char* uri, Arguments arguments);
+float aidaRequestFloat(const char* uri, Arguments arguments);
 
 /**
  * Get a double
@@ -83,7 +83,7 @@ float aidaRequestFloat(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the double
  */
-double aidaRequestDouble(char* uri, Arguments arguments);
+double aidaRequestDouble(const char* uri, Arguments arguments);
 
 /**
  * Get a string
@@ -92,7 +92,7 @@ double aidaRequestDouble(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the string
  */
-char* aidaRequestString(char* uri, Arguments arguments);
+char* aidaRequestString(const char* uri, Arguments arguments);
 
 /**
  * Get a boolean array
@@ -101,7 +101,7 @@ char* aidaRequestString(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the boolean array
  */
-Array aidaRequestBooleanArray(char* uri, Arguments arguments);
+Array aidaRequestBooleanArray(const char* uri, Arguments arguments);
 
 /**
  * Get a byte array
@@ -110,7 +110,7 @@ Array aidaRequestBooleanArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the byte array
  */
-Array aidaRequestByteArray(char* uri, Arguments arguments);
+Array aidaRequestByteArray(const char* uri, Arguments arguments);
 
 /**
  * Get a short array
@@ -119,7 +119,7 @@ Array aidaRequestByteArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the short array
  */
-Array aidaRequestShortArray(char* uri, Arguments arguments);
+Array aidaRequestShortArray(const char* uri, Arguments arguments);
 
 /**
  * Get a integer array
@@ -128,7 +128,7 @@ Array aidaRequestShortArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the integer array
  */
-Array aidaRequestIntegerArray(char* uri, Arguments arguments);
+Array aidaRequestIntegerArray(const char* uri, Arguments arguments);
 
 /**
  * Get a long array
@@ -137,7 +137,7 @@ Array aidaRequestIntegerArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the long array
  */
-Array aidaRequestLongArray(char* uri, Arguments arguments);
+Array aidaRequestLongArray(const char* uri, Arguments arguments);
 
 /**
  * Get a float array
@@ -146,7 +146,7 @@ Array aidaRequestLongArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the float array
  */
-Array aidaRequestFloatArray(char* uri, Arguments arguments);
+Array aidaRequestFloatArray(const char* uri, Arguments arguments);
 
 /**
  * Get a double array
@@ -155,7 +155,7 @@ Array aidaRequestFloatArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the double array
  */
-Array aidaRequestDoubleArray(char* uri, Arguments arguments);
+Array aidaRequestDoubleArray(const char* uri, Arguments arguments);
 
 /**
  * Get a string array
@@ -164,7 +164,7 @@ Array aidaRequestDoubleArray(char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the string array
  */
-StringArray aidaRequestStringArray(char* uri, Arguments arguments);
+StringArray aidaRequestStringArray(const char* uri, Arguments arguments);
 
 #ifdef __cplusplus
 }

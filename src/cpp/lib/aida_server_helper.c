@@ -4,6 +4,7 @@
 
 /**
  * Get a named boolean argument
+ *
  * @param arguments arguments
  * @param name name
  * @return boolean
@@ -14,7 +15,14 @@ int getBooleanArgument(Arguments arguments, char* name)
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.boolean_value;
+			// set true if non-empty string and not 'FALSE', 'false', 'False', or '0'
+			if (strlen(argument.value) > 0) {
+				item = strlen(argument.value) &&
+						!strcmp(argument.value, "FALSE") &&
+						!strcmp(argument.value, "false") &&
+						!strcmp(argument.value, "False") &&
+						!strcmp(argument.value, "0");
+			}
 			break;
 		}
 	}
@@ -23,6 +31,7 @@ int getBooleanArgument(Arguments arguments, char* name)
 
 /**
  * Get a named byte argument
+ *
  * @param arguments arguments
  * @param name name
  * @return byte
@@ -30,10 +39,18 @@ int getBooleanArgument(Arguments arguments, char* name)
 unsigned char getByteArgument(Arguments arguments, char* name)
 {
 	unsigned char item = 0;
+	unsigned int scannedValue = 0;
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.byte_value;
+			if (strlen(argument.value) > 0) {
+				if ( !strncmp('0x', argument.value, 2)) {
+					sscanf(argument.value, "%x", &scannedValue);
+				} else {
+					sscanf(argument.value, "%d", &scannedValue);
+				}
+				item = scannedValue;
+			}
 			break;
 		}
 	}
@@ -52,7 +69,9 @@ short getShortArgument(Arguments arguments, char* name)
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.short_value;
+			if (strlen(argument.value) > 0) {
+				sscanf(argument.value, "%hi", &item);
+			}
 			break;
 		}
 	}
@@ -68,10 +87,13 @@ short getShortArgument(Arguments arguments, char* name)
 int getIntegerArgument(Arguments arguments, char* name)
 {
 	int item = 0;
+	unsigned int scannedValue = 0;
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.integer_value;
+			if (strlen(argument.value) > 0) {
+				sscanf(argument.value, "%d", &item);
+			}
 			break;
 		}
 	}
@@ -90,7 +112,9 @@ long getLongArgument(Arguments arguments, char* name)
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.long_value;
+			if (strlen(argument.value) > 0) {
+				sscanf(argument.value, "%ld", &item);
+			}
 			break;
 		}
 	}
@@ -109,7 +133,9 @@ float getFloatArgument(Arguments arguments, char* name)
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.float_value;
+			if (strlen(argument.value) > 0) {
+				sscanf(argument.value, "%f", &item);
+			}
 			break;
 		}
 	}
@@ -128,7 +154,9 @@ double getDoubleArgument(Arguments arguments, char* name)
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.double_value;
+			if (strlen(argument.value) > 0) {
+				sscanf(argument.value, "%lf", &item);
+			}
 			break;
 		}
 	}
@@ -141,15 +169,13 @@ double getDoubleArgument(Arguments arguments, char* name)
  * @param name name
  * @return string
  */
-char* getStringArgument(Arguments arguments, char* name)
+const char* getStringArgument(Arguments arguments, char* name)
 {
-	char* item = NULL;
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
-			item = argument.value.string_value;
-			break;
+			return argument.value;
 		}
 	}
-	return item;
+	return NULL;
 }

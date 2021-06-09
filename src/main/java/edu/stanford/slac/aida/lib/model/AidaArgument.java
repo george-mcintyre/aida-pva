@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AidaArgument {
     private final String name;
-    private final Object value;
+    private final String value;
 }

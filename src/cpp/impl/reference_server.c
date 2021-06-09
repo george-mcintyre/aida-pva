@@ -43,7 +43,7 @@ Config aidaChannelConfig(const char* channelName)
  * @param arguments the arguments
  * @return the boolean
  */
-int aidaRequestBoolean(char* uri, Arguments arguments)
+int aidaRequestBoolean(const char* uri, Arguments arguments)
 {
 	int item = 0;
 
@@ -64,7 +64,7 @@ int aidaRequestBoolean(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the byte
  */
-unsigned char aidaRequestByte(char* uri, Arguments arguments)
+unsigned char aidaRequestByte(const char* uri, Arguments arguments)
 {
 	unsigned char item = 0x0;
 
@@ -84,7 +84,7 @@ unsigned char aidaRequestByte(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the short
  */
-short aidaRequestShort(char* uri, Arguments arguments)
+short aidaRequestShort(const char* uri, Arguments arguments)
 {
 	short item = 0;
 
@@ -104,7 +104,7 @@ short aidaRequestShort(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the integer
  */
-int aidaRequestInteger(char* uri, Arguments arguments)
+int aidaRequestInteger(const char* uri, Arguments arguments)
 {
 	int item = 0;
 
@@ -124,7 +124,7 @@ int aidaRequestInteger(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the long
  */
-long aidaRequestLong(char* uri, Arguments arguments)
+long aidaRequestLong(const char* uri, Arguments arguments)
 {
 	long item = 0;
 
@@ -144,7 +144,7 @@ long aidaRequestLong(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the float
  */
-float aidaRequestFloat(char* uri, Arguments arguments)
+float aidaRequestFloat(const char* uri, Arguments arguments)
 {
 	float item = 0;
 
@@ -164,7 +164,7 @@ float aidaRequestFloat(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the double
  */
-double aidaRequestDouble(char* uri, Arguments arguments)
+double aidaRequestDouble(const char* uri, Arguments arguments)
 {
 	double item = 0.0;
 
@@ -184,7 +184,7 @@ double aidaRequestDouble(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the string
  */
-char* aidaRequestString(char* uri, Arguments arguments)
+char* aidaRequestString(const char* uri, Arguments arguments)
 {
 	char* item = "";
 
@@ -206,7 +206,7 @@ char* aidaRequestString(char* uri, Arguments arguments)
  */
 
 
-Array aidaRequestBooleanArray(char* uri, Arguments arguments)
+Array aidaRequestBooleanArray(const char* uri, Arguments arguments)
 {
 	Array booleanArray;
 	booleanArray.count = 0;
@@ -227,7 +227,7 @@ Array aidaRequestBooleanArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the byte array
  */
-Array aidaRequestByteArray(char* uri, Arguments arguments)
+Array aidaRequestByteArray(const char* uri, Arguments arguments)
 {
 	Array byteArray;
 	byteArray.count = 0;
@@ -248,7 +248,7 @@ Array aidaRequestByteArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the short array
  */
-Array aidaRequestShortArray(char* uri, Arguments arguments)
+Array aidaRequestShortArray(const char* uri, Arguments arguments)
 {
 	Array shortArray;
 	shortArray.count = 0;
@@ -269,7 +269,7 @@ Array aidaRequestShortArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the integer array
  */
-Array aidaRequestIntegerArray(char* uri, Arguments arguments)
+Array aidaRequestIntegerArray(const char* uri, Arguments arguments)
 {
 	Array integerArray;
 	integerArray.count = 0;
@@ -290,7 +290,7 @@ Array aidaRequestIntegerArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the long array
  */
-Array aidaRequestLongArray(char* uri, Arguments arguments)
+Array aidaRequestLongArray(const char* uri, Arguments arguments)
 {
 	Array longArray;
 	longArray.count = 0;
@@ -311,7 +311,7 @@ Array aidaRequestLongArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the float array
  */
-Array aidaRequestFloatArray(char* uri, Arguments arguments)
+Array aidaRequestFloatArray(const char* uri, Arguments arguments)
 {
 	Array floatArray;
 	floatArray.count = 0;
@@ -332,7 +332,7 @@ Array aidaRequestFloatArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the double array
  */
-Array aidaRequestDoubleArray(char* uri, Arguments arguments)
+Array aidaRequestDoubleArray(const char* uri, Arguments arguments)
 {
 	Array doubleArray;
 	doubleArray.count = 0;
@@ -353,7 +353,7 @@ Array aidaRequestDoubleArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the string array
  */
-StringArray aidaRequestStringArray(char* uri, Arguments arguments)
+StringArray aidaRequestStringArray(const char* uri, Arguments arguments)
 {
 	StringArray stringArray;
 	stringArray.count = 0;
@@ -375,7 +375,7 @@ StringArray aidaRequestStringArray(char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the table
  */
-Table aidaRequestTable(char* uri, Arguments arguments)
+Table aidaRequestTable(const char* uri, Arguments arguments)
 {
 	Table table;
 	memset(&table, 0, sizeof(table));

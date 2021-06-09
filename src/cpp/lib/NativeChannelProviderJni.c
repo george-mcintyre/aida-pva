@@ -38,12 +38,20 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaChannelConfig
  * Method:    aidaRequestBoolean
  * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/lang/Boolean;
  */
-JNIEXPORT jboolean
+jboolean
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestBoolean
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestBoolean()");
-	return 0;
+	int returnValue = 0;
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue  = aidaRequestBoolean(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*

@@ -81,23 +81,10 @@ typedef struct
 	Field* fields;
 } Config;
 
-typedef union
-{
-	bool boolean_value;
-	unsigned char byte_value;
-	char short_value;
-	int integer_value;
-	long long_value;
-	float float_value;
-	double double_value;
-	char* string_value;
-} ArgumentValue;
-
 typedef struct
 {
-	char* name;
-	Type type;
-	ArgumentValue value;
+	const char* name;
+	const char* value;
 } Argument;
 
 typedef struct
