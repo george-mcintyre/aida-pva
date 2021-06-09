@@ -34,19 +34,6 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaChannelConfig
 }
 
 /*
- * Class:     slac_aida_lib_AidaNativeChannelProvider
- * Method:    aidaRequestTable
- * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/util/List;
- */
-JNIEXPORT jobject
-JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestTable
-		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
-{
-	printf("Called aidaRequestTable()");
-	return NULL;
-}
-
-/*
  * Class:     slac_aida_AidaNativeChannelProvider
  * Method:    aidaRequestBoolean
  * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/lang/Boolean;
@@ -251,6 +238,19 @@ JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestStringArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
 	printf("Called aidaRequestStringArray()");
+	return NULL;
+}
+
+/*
+ * Class:     slac_aida_lib_AidaNativeChannelProvider
+ * Method:    aidaRequestTable
+ * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/util/List;
+ */
+JNIEXPORT jobject
+JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestTable
+		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
+{
+	printf("Called aidaRequestTable()");
 	return NULL;
 }
 
