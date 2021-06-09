@@ -68,7 +68,7 @@ double getDoubleArgument(Arguments arguments, char* name);
  * @param name name
  * @return string
  */
-char* getStringArgument(Arguments arguments, char* name);
+const char* getStringArgument(Arguments arguments, char* name);
 
 #ifdef __cplusplus
 }
