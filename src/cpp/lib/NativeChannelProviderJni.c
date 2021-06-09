@@ -42,11 +42,12 @@ jboolean
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestBoolean
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	int returnValue = 0;
+	jboolean returnValue;
+
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue  = aidaRequestBoolean(pv, arguments);
+	returnValue = aidaRequestBoolean(pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -63,8 +64,17 @@ JNIEXPORT jbyte
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestByte
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestByte()");
-	return 0;
+	jbyte returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = aidaRequestByte(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -76,8 +86,17 @@ JNIEXPORT jshort
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestShort
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestShort()");
-	return 0;
+	jshort returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = aidaRequestShort(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -89,8 +108,17 @@ JNIEXPORT jint
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestInteger
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestInteger()");
-	return 0;
+	jint returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = aidaRequestInteger(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -102,8 +130,17 @@ JNIEXPORT jlong
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestLong
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestLong()");
-	return 0;
+	jlong returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = aidaRequestLong(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -115,8 +152,17 @@ JNIEXPORT jfloat
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestFloat
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestFloat()");
-	return 0.0;
+	jfloat returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = aidaRequestFloat(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -128,8 +174,17 @@ JNIEXPORT jdouble
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestDouble
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestDouble()");
-	return 0.0;
+	jdouble returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = aidaRequestDouble(pv, arguments);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -141,8 +196,17 @@ JNIEXPORT jstring
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestString
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestString()");
-	return NULL;
+	jstring returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	returnValue = toJString(env, aidaRequestString(pv, arguments));
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
 }
 
 /*
@@ -154,8 +218,28 @@ JNIEXPORT jbooleanArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestBooleanArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestBooleanArray()");
-	return NULL;
+	jbooleanArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestBooleanArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewBooleanArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetBooleanArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
@@ -167,8 +251,28 @@ JNIEXPORT jbyteArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestByteArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestByteArray()");
-	return NULL;
+	jbyteArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestByteArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewByteArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetByteArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
@@ -180,8 +284,28 @@ JNIEXPORT jshortArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestShortArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestShortArray()");
-	return NULL;
+	jshortArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestShortArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewShortArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetShortArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
@@ -193,8 +317,28 @@ JNIEXPORT jintArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestIntegerArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestIntegerArray()");
-	return NULL;
+	jintArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestIntegerArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewIntArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetIntArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
@@ -206,8 +350,28 @@ JNIEXPORT jlongArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestLongArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestLongArray()");
-	return NULL;
+	jlongArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestLongArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewLongArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetLongArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
@@ -219,21 +383,61 @@ JNIEXPORT jfloatArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestFloatArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestFloatArray()");
-	return NULL;
+	jfloatArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestFloatArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewFloatArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetFloatArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
  * Class:     slac_aida_AidaNativeChannelProvider
- * Method:    aidaRequestDoubleArray
+ * Method:    aidaRequestBooleanArray
  * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/util/List;
  */
 JNIEXPORT jdoubleArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestDoubleArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestDoubleArray()");
-	return NULL;
+	jdoubleArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	Array array = aidaRequestDoubleArray(pv, arguments);
+
+	// create result array
+	returnValue = (*env)->NewDoubleArray(env, array.count);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	(*env)->SetDoubleArrayRegion(env, returnValue, 0, array.count, array.items);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseArray(array);
+
+	return returnValue;
 }
 
 /*
@@ -245,8 +449,33 @@ JNIEXPORT jobjectArray
 JNICALL Java_slac_aida_AidaNativeChannelProvider_aidaRequestStringArray
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	printf("Called aidaRequestStringArray()");
-	return NULL;
+	jobjectArray returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+
+	StringArray array = aidaRequestStringArray(pv, arguments);
+
+	// Get a class reference for java.lang.String
+	jclass classString = (*env)->FindClass(env, "java/lang/String");
+
+	// create result array
+	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
+	if (NULL == returnValue)
+		return NULL;
+
+	// Copy values
+	for (int i = 0; i < array.count; i++) {
+		(*env)->SetObjectArrayElement(env, returnValue, i, toJString(env, array.items[i]));
+	}
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	// Free up array
+	releaseStringArray(array);
+
+	return returnValue;
 }
 
 /*

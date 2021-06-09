@@ -166,6 +166,18 @@ const char* toCString(JNIEnv* env, jstring string)
 }
 
 /**
+ * Convert c-string to j-string
+ *
+ * @param env env
+ * @param string c-string
+ * @return j-string
+ */
+jstring toJString(JNIEnv* env, const char* string)
+{
+	return (*env)->NewStringUTF(env, string);
+}
+
+/**
  * Get the method ID on the given class with the given method name and signature
  *
  * @param env env
@@ -245,5 +257,27 @@ void releaseArguments(Arguments arguments)
 {
 	if (arguments.argumentCount > 0) {
 		free(arguments.arguments);
+	}
+}
+
+/**
+ * Free up any memory allocated with arguments
+ * @param array
+ */
+void releaseArray(Array array)
+{
+	if (array.count > 0) {
+		free(array.items);
+	}
+}
+
+/**
+ * Free up any memory allocated with arguments
+ * @param array
+ */
+void releaseStringArray(StringArray array)
+{
+	if (array.count > 0) {
+		free(array.items);
 	}
 }

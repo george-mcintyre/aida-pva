@@ -38,7 +38,7 @@ int aidaRequestBoolean(const char* uri, Arguments arguments);
  * @param arguments the arguments
  * @return the byte
  */
-unsigned char aidaRequestByte(const char* uri, Arguments arguments);
+char aidaRequestByte(const char* uri, Arguments arguments);
 
 /**
  * Get a short

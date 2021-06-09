@@ -64,9 +64,9 @@ int aidaRequestBoolean(const char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the byte
  */
-unsigned char aidaRequestByte(const char* uri, Arguments arguments)
+char aidaRequestByte(const char* uri, Arguments arguments)
 {
-	unsigned char item = 0x0;
+	char item = 0x0;
 
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute02") == 0) {
 		// int param1 = getIntegerArgument(arguments, "x");
