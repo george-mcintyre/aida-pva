@@ -5,7 +5,7 @@
  */
 #include <string.h>
 #include <stdlib.h>
-#include "../include/reference_server.h"
+#include "reference_server.h"
 
 /**
  * Get channel configuration

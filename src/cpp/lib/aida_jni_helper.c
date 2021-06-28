@@ -1,8 +1,8 @@
 #include <jni.h>
 #include <memory.h>
 #include <stdlib.h>
-#include "../include/aida_types.h"
-#include "../include/aida_jni_helper.h"
+#include "aida_types.h"
+#include "aida_jni_helper.h"
 
 /**
  * Empty config block for null comparison.  Static variables are automatically initialised to zero

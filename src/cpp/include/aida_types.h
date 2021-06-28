@@ -11,7 +11,7 @@ extern "C" {
  */
 typedef enum
 {
-	NONE,
+	NO_TYPE,
 	BOOLEAN,
 	BYTE,
 	SHORT,
@@ -43,7 +43,7 @@ jstring toTypeString(JNIEnv* env, Type type);
  */
 typedef enum
 {
-	NONE,
+	NO_LAYOUT,
 	COLUMN_MAJOR,
 	ROW_MAJOR
 } Layout;

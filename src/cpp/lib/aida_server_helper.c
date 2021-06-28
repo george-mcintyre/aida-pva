@@ -1,6 +1,6 @@
 #include <string.h>
-#include "../include/aida_types.h"
-#include "../include/aida_server_helper.h"
+#include "aida_types.h"
+#include "aida_server_helper.h"
 
 /**
  * Get a named boolean argument
@@ -44,7 +44,7 @@ unsigned char getByteArgument(Arguments arguments, char* name)
 		Argument argument = arguments.arguments[i];
 		if (strcmp(argument.name, name) == 0) {
 			if (strlen(argument.value) > 0) {
-				if ( !strncmp('0x', argument.value, 2)) {
+				if ( !strncmp("0x", argument.value, 2)) {
 					sscanf(argument.value, "%x", &scannedValue);
 				} else {
 					sscanf(argument.value, "%d", &scannedValue);

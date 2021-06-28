@@ -6,8 +6,8 @@
 #include <jni.h>
 #include <stdio.h>
 #include "aida_types.h"
-#include "../include/reference_server.h"
-#include "../include/aida_jni_helper.h"
+#include "reference_server.h"
+#include "aida_jni_helper.h"
 
 /*
  * Get channel configuration for the specified channel

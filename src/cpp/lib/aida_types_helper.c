@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "../include/aida_types.h"
+#include "aida_types.h"
 
 /**
  * Convert Type to string
