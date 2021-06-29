@@ -235,14 +235,14 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 	cArgs.argumentCount = 0;
 
 	// retrieve the java.util.List interface class
-	jclass cList = (*env)->FindClass(env, "Ljava/util/List;");
+	jclass cList = (*env)->FindClass(env, "java/util/List");
 	if ( cList == NULL ) {
 		fprintf( stderr, "Failed to get List class\n");
 		return cArgs;
 	}
 
 	// retrieve the AidaArgument class
-	jclass aidaArgumentClass = (*env)->FindClass(env, "Ledu/stanford/slac/aida/lib/model/AidaArgument;");
+	jclass aidaArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArgument");
 	if ( aidaArgumentClass == NULL ) {
 		fprintf( stderr, "Failed to get AidaArgument class\n");
 		return cArgs;
