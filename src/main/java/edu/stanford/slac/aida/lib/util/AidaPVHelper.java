@@ -293,35 +293,26 @@ public class AidaPVHelper {
      * @return PVStructure containing an NT_SCALAR_ARRAY with the values
      */
     public static PVStructure asScalarArray(List<?> values, AidaChannelConfig aidaChannelConfig) {
-        System.out.println("DEBUG: getting Aida type ...");
         AidaType aidaType = aidaTypeOf(values);
         if (aidaType == null) {
             return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
         }
-        System.out.println("DEBUG: Aida Type: " + aidaType);
 
         ScalarType scalarType = scalarTypeOf(aidaType);
-        System.out.println("DEBUG: Scalar Type: " + scalarType);
 
-        System.out.println("DEBUG: Create Field that is the scalar array ...");
         Field[] scalarArrayField = new Field[]{
                 FieldFactory.getFieldCreate().createScalarArray(scalarType)
         };
-        System.out.println("DEBUG: Created Field: " + scalarArrayField);
 
-        System.out.println("DEBUG: Creating structure: ...");
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 // Structure with one element: label and empty scalar field definition
                                 .createStructure(NTSCALARARRAY_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarArrayField));
 
-        System.out.println("DEBUG: Created structure: " + retVal);
 
         // Set value
-        System.out.println("DEBUG: setting values in structure: ...");
         setValues(retVal, NT_FIELD_NAME, values, aidaType);
-        System.out.println("DEBUG: Filled structure: " + retVal);
 
         return retVal;
     }

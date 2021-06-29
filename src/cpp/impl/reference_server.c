@@ -246,7 +246,7 @@ Array aidaRequestShortArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute13") == 0) {
 		shortArray.count = 1;
 		shortArray.items = calloc(1, sizeof(short));
-		((short*)(shortArray.items))[0] = 1;
+		((short*)(shortArray.items))[0] = 2;
 	}
 
 	// Return the short array
@@ -268,7 +268,7 @@ Array aidaRequestIntegerArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute14") == 0) {
 		integerArray.count = 1;
 		integerArray.items = calloc(1, sizeof(int));
-		((int*)(integerArray.items))[0] = 1;
+		((int*)(integerArray.items))[0] = 3;
 	}
 
 	// Return the integer array
@@ -290,7 +290,7 @@ Array aidaRequestLongArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute15") == 0) {
 		longArray.count = 1;
 		longArray.items = calloc(1, sizeof(long));
-		((long*)(longArray.items))[0] = 1;
+		((long*)(longArray.items))[0] = 4;
 	}
 
 	// Return the long array
@@ -312,7 +312,7 @@ Array aidaRequestFloatArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute16") == 0) {
 		floatArray.count = 1;
 		floatArray.items = calloc(1, sizeof(float));
-		((float*)(floatArray.items))[0] = 1;
+		((float*)(floatArray.items))[0] = 5;
 	}
 
 	// Return the float array
@@ -334,7 +334,7 @@ Array aidaRequestDoubleArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute17") == 0) {
 		doubleArray.count = 1;
 		doubleArray.items = calloc(1, sizeof(double));
-		((double*)(doubleArray.items))[0] = 1;
+		((double*)(doubleArray.items))[0] = 6;
 	}
 
 	// Return the double array
