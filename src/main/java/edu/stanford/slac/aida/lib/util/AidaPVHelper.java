@@ -176,33 +176,76 @@ public class AidaPVHelper {
             fieldName = fieldParts[i + 1];
         }
 
+        int valuesCount = values.size();
+        Object[] valuesArray = values.toArray();
         PVScalarArray scalarArray = structure.getScalarArrayField(fieldName, scalarTypeOf(aidaType));
-        scalarArray.setCapacity(values.size());
+        scalarArray.setCapacity(valuesCount);
+
         switch (aidaType) {
-            case BOOLEAN_ARRAY:
-                ((PVBooleanArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Boolean[]) values.toArray()), 0);
+            case BOOLEAN_ARRAY: {
+                boolean[] primitiveArray = new boolean[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Boolean) valuesArray[i];
+
+                ((PVBooleanArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case BYTE_ARRAY:
-                ((PVByteArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Byte[]) values.toArray()), 0);
+            }
+            case BYTE_ARRAY: {
+                byte[] primitiveArray = new byte[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Byte) valuesArray[i];
+
+                ((PVByteArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case DOUBLE_ARRAY:
-                ((PVDoubleArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Double[]) values.toArray()), 0);
+            }
+            case DOUBLE_ARRAY: {
+                double[] primitiveArray = new double[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Double) valuesArray[i];
+
+                ((PVDoubleArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case FLOAT_ARRAY:
-                ((PVFloatArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Float[]) values.toArray()), 0);
+            }
+            case FLOAT_ARRAY: {
+                float[] primitiveArray = new float[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Float) valuesArray[i];
+
+                ((PVFloatArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case INTEGER_ARRAY:
-                ((PVIntArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Integer[]) values.toArray()), 0);
+            }
+            case INTEGER_ARRAY: {
+                int[] primitiveArray = new int[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Integer) valuesArray[i];
+
+                ((PVIntArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case LONG_ARRAY:
-                ((PVLongArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Long[]) values.toArray()), 0);
+            }
+            case LONG_ARRAY: {
+                long[] primitiveArray = new long[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Long) valuesArray[i];
+
+                ((PVLongArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case SHORT_ARRAY:
-                ((PVShortArray) scalarArray).put(0, values.size(), ArrayUtils.toPrimitive((Short[]) values.toArray()), 0);
+            }
+            case SHORT_ARRAY: {
+                short[] primitiveArray = new short[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (Short) valuesArray[i];
+
+                ((PVShortArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
-            case STRING_ARRAY:
-                ((PVStringArray) scalarArray).put(0, values.size(), (String[]) values.toArray(), 0);
+            }
+            case STRING_ARRAY: {
+                String[] primitiveArray = new String[valuesCount];
+                for (int i = 0; i < valuesCount; i++)
+                    primitiveArray[i] = (String) valuesArray[i];
+
+                ((PVStringArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
+            }
         }
         scalarArray.setImmutable();
     }
@@ -250,24 +293,35 @@ public class AidaPVHelper {
      * @return PVStructure containing an NT_SCALAR_ARRAY with the values
      */
     public static PVStructure asScalarArray(List<?> values, AidaChannelConfig aidaChannelConfig) {
+        System.out.println("DEBUG: getting Aida type ...");
         AidaType aidaType = aidaTypeOf(values);
         if (aidaType == null) {
             return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
         }
+        System.out.println("DEBUG: Aida Type: " + aidaType);
 
         ScalarType scalarType = scalarTypeOf(aidaType);
+        System.out.println("DEBUG: Scalar Type: " + scalarType);
+
+        System.out.println("DEBUG: Create Field that is the scalar array ...");
         Field[] scalarArrayField = new Field[]{
                 FieldFactory.getFieldCreate().createScalarArray(scalarType)
         };
+        System.out.println("DEBUG: Created Field: " + scalarArrayField);
 
+        System.out.println("DEBUG: Creating structure: ...");
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 // Structure with one element: label and empty scalar field definition
                                 .createStructure(NTSCALARARRAY_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarArrayField));
 
+        System.out.println("DEBUG: Created structure: " + retVal);
+
         // Set value
+        System.out.println("DEBUG: setting values in structure: ...");
         setValues(retVal, NT_FIELD_NAME, values, aidaType);
+        System.out.println("DEBUG: Filled structure: " + retVal);
 
         return retVal;
     }
