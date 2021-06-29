@@ -172,6 +172,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 config = aidaChannelConfig(channelName);
                 channelConfigMap.put(channelName, config);
             } catch (UnsatisfiedLinkError unsatisfiedLinkError) {
+                System.out.println("DEBUG: Unsatisfied Link for native call returning empty config");
                 config = new AidaChannelConfig();
             }
         }

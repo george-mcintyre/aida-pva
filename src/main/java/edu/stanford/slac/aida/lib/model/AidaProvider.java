@@ -7,6 +7,9 @@ import lombok.NonNull;
 
 import java.util.*;
 
+import static edu.stanford.slac.aida.lib.model.AidaTableLayout.COLUMN_MAJOR;
+import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
+
 @Data
 @NoArgsConstructor
 public class AidaProvider {
@@ -76,10 +79,21 @@ public class AidaProvider {
         }
 
         // Partially copy when not specified for channel
-        channelConfig.setType(((overrides.getType() == null) ? defaultConfig : overrides).getType());
-        channelConfig.setLayout(((overrides.getLayout() == null) ? defaultConfig : overrides).getLayout());
+        AidaType type = ((overrides.getType() == null) ? defaultConfig : overrides).getType();
+        if ( type == null ) {
+            type = STRING;
+        }
+        channelConfig.setType(type.toString());
+
+        AidaTableLayout layout = ((overrides.getLayout() == null) ? defaultConfig : overrides).getLayout();
+        if ( layout == null ) {
+            layout = COLUMN_MAJOR;
+        }
+        channelConfig.setLayout(layout.toString());
+
         channelConfig.setDescription(((overrides.getDescription() == null || overrides.getDescription().length() == 0) ? defaultConfig : overrides).getDescription());
-        channelConfig.setFields(((overrides.getFields() == null) ? defaultConfig : overrides).getFields());
+        channelConfig.setFields(((overrides.getFields() == null || overrides.getFields().isEmpty()) ? defaultConfig : overrides).getFields());
+
         return channelConfig;
     }
 

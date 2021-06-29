@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.stanford.slac.aida.lib.model.AidaTableLayout.COLUMN_MAJOR;
+import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
+
 @Data
 @NoArgsConstructor
 public class AidaChannelConfig {
@@ -15,36 +18,39 @@ public class AidaChannelConfig {
     private AidaTableLayout layout;
     private List<AidaField> fields;
 
-    public void setType(AidaType type) {
-        this.type = type;
-    }
-
-    public void setLayout(AidaTableLayout layout) {
-        this.layout = layout;
-    }
-
     /**
      * To set type from a string
+     *
      * @param stringType type string
      */
     public void setType(String stringType) {
-        this.type = AidaType.valueOf(stringType);
+        if ( stringType == null ) {
+            this.type = STRING;
+        } else {
+            this.type = AidaType.valueOf(stringType);
+        }
     }
 
     /**
      * To set layout from a string
+     *
      * @param stringLayout layout string
      */
     public void setLayout(String stringLayout) {
-        this.layout = AidaTableLayout.valueOf(stringLayout);
+        if ( stringLayout == null ) {
+            this.layout =COLUMN_MAJOR;
+        } else {
+            this.layout = AidaTableLayout.valueOf(stringLayout);
+        }
     }
 
     /**
      * To add a field one at a time
+     *
      * @param field field to add
      */
     public void addField(AidaField field) {
-        if ( this.fields == null ) {
+        if (this.fields == null) {
             this.fields = new ArrayList<AidaField>();
         }
         this.fields.add(field);

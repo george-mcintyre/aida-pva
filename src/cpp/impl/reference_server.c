@@ -19,8 +19,9 @@ Config aidaChannelConfig(const char* channelName)
 
 	if (strcmp(channelName, "AIDA:SAMPLE:DEVICE01:attribute01") == 0) {
 		Field* fields = calloc(1, sizeof(Field));
-		fields[0].name = "fieldName";
-		fields[0].label = "Field Value";
+		fields[0].name = "isActive";
+		fields[0].label = "Device is active?";
+		fields[0].description = "Device activity status.  Active if true";
 
 		config.type = BOOLEAN;
 		config.fields = fields;
@@ -412,6 +413,7 @@ Table aidaRequestTable(const char* uri, Arguments arguments)
 				table.ppData[column] = calloc(table.rowCount, sizeof(char*));
 				break;
 			default: // unsupported
+				fprintf( stderr, "Unsupported table column type: %d\n", table.types[column]);
 				break;
 			}
 		}

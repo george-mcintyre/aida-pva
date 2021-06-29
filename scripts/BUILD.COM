@@ -18,3 +18,4 @@ $! link native shareable
 $!
 $ LINK /MAP/DEBUG/SHARE=aida-pva-reference.EXE global_symbol_option /OPT, library_option /OPT, slcopt:slc_common/opt
 $!
+$ copy aida-pva-reference.exe [-.lib]

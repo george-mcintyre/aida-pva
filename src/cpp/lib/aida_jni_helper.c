@@ -7,7 +7,7 @@
 /**
  * Empty config block for null comparison.  Static variables are automatically initialised to zero
  */
-static const Config EMPTY_CONFIG;
+static const Config EMPTY_CONFIG = { 0 };
 
 /**
  * Get an aida channel config jni object from Config.
@@ -25,10 +25,11 @@ jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
 	}
 
 	// Get a java object reference
-	JavaObject javaObject = newObject(env, "Ledu/stanford/slac/aida/lib/model/AidaChannelConfig");
+	JavaObject javaObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaChannelConfig");
 	jobject configObject = javaObject.object;
 	jclass cls = javaObject.class;
-	if (configObject == NULL) {
+	if (configObject == NULL || cls == NULL) {
+		fprintf(stderr, "Failed to create AidaChannelConfig object\n");
 		return NULL;
 	}
 
@@ -44,19 +45,19 @@ jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
 	// Set fields ( and free up storage )
 	if (config.fields != NULL && config.fieldCount != 0) {
 		// Find the method to add fields to the config object's fields collection
-		jmethodID midAddField = getMethodId(env, cls, "addField", "(Ledu/stanford/slac/aida/lib/model/AidaField)V");
+		jmethodID midAddField = getMethodId(env, cls, "addField", "(Ledu/stanford/slac/aida/lib/model/AidaField;)V");
 		if (NULL == midAddField) {
-			return NULL;
-		}
-
-		// For each field, add it to config object's fields collection
-		for (int i = 0; i < config.fieldCount; i++) {
-			Field field = config.fields[i];
-			(*env)->CallObjectMethod(env, configObject, midAddField, getAidaField(env, field));
+			fprintf(stderr, "Failed to find the addField(AidaField) method on AidaChannelConfig object\n");
+		} else {
+			// For each field, add it to config object's fields collection
+			for (int i = 0; i < config.fieldCount; i++) {
+				Field field = config.fields[i];
+				(*env)->CallObjectMethod(env, configObject, midAddField, getAidaField(env, field));
+			}
 		}
 
 		// free any defined fields
-		free(&config.fields);
+		free(&(config.fields));
 	}
 
 	return configObject;
@@ -74,10 +75,17 @@ JavaObject newObject(JNIEnv* env, char* classToCreate)
 
 	// Get a class reference
 	javaObject.class = (*env)->FindClass(env, classToCreate);
+	if (javaObject.class == NULL) {
+		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
+		javaObject.class = NULL;
+		javaObject.object = NULL;
+		return javaObject;
+	}
 
 	// Get the Method ID of the no-args constructor
 	jmethodID midInit = getConstructorMethodId(env, javaObject.class);
 	if (NULL == midInit) {
+		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
 		javaObject.class = NULL;
 		javaObject.object = NULL;
 		return javaObject;
@@ -98,14 +106,16 @@ JavaObject newObject(JNIEnv* env, char* classToCreate)
 jobject getAidaField(JNIEnv* env, Field field)
 {
 	// Get new AidaField object
-	JavaObject javaObject = newObject(env, "Ledu/stanford/slac/aida/lib/model/AidaField");
+	JavaObject javaObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaField");
 	jobject fieldObject = javaObject.object;
 
-	// Set name, label, description and units
-	callSetterWithString(env, javaObject, "setName", field.name);
-	callSetterWithString(env, javaObject, "setLabel", field.label);
-	callSetterWithString(env, javaObject, "setDescription", field.description);
-	callSetterWithString(env, javaObject, "setUnits", field.units);
+	if (fieldObject != NULL) {
+		// Set name, label, description and units
+		callSetterWithString(env, javaObject, "setName", field.name);
+		callSetterWithString(env, javaObject, "setLabel", field.label);
+		callSetterWithString(env, javaObject, "setDescription", field.description);
+		callSetterWithString(env, javaObject, "setUnits", field.units);
+	}
 
 	return fieldObject;
 }
@@ -119,6 +129,9 @@ jobject getAidaField(JNIEnv* env, Field field)
  */
 jobject toJniString(JNIEnv* env, char* cString)
 {
+	if ( cString == NULL ) {
+		return NULL;
+	}
 	return (*env)->NewStringUTF(env, cString);
 }
 
@@ -132,7 +145,10 @@ jobject toJniString(JNIEnv* env, char* cString)
  */
 void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char* value)
 {
-	callSetterWithJString(env, javaObject, method, toJniString(env, value));
+	jobject jObject = toJniString(env, value);
+	if ( jObject != NULL ) {
+		callSetterWithJString(env, javaObject, method, jObject);
+	}
 }
 
 /**
@@ -146,8 +162,10 @@ void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char
 void callSetterWithJString(JNIEnv* env, JavaObject javaObject, char* method, jstring value)
 {
 	if (value != NULL) {
-		jmethodID midSetter = (*env)->GetMethodID(env, javaObject.class, method, "(Ljava/lang/String)V");
-		if (NULL != midSetter) {
+		jmethodID midSetter = (*env)->GetMethodID(env, javaObject.class, method, "(Ljava/lang/String;)V");
+		if (NULL == midSetter) {
+			fprintf(stderr, "Failed to get method %s(String)\n", method);
+		} else {
 			(*env)->CallObjectMethod(env, javaObject.object, midSetter, value);
 		}
 	}
@@ -217,18 +235,40 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 	cArgs.argumentCount = 0;
 
 	// retrieve the java.util.List interface class
-	jclass cList = (*env)->FindClass(env, "java/util/List");
-	jclass aidaArgumentClass = (*env)->FindClass(env, "Ledu.stanford.slac.aida.lib.model.AidaArgument");
+	jclass cList = (*env)->FindClass(env, "Ljava/util/List;");
+	if ( cList == NULL ) {
+		fprintf( stderr, "Failed to get List class\n");
+		return cArgs;
+	}
+
+	// retrieve the AidaArgument class
+	jclass aidaArgumentClass = (*env)->FindClass(env, "Ledu/stanford/slac/aida/lib/model/AidaArgument;");
+	if ( aidaArgumentClass == NULL ) {
+		fprintf( stderr, "Failed to get AidaArgument class\n");
+		return cArgs;
+	}
 
 	// retrieve the size and the get methods of list
 	jmethodID mSize = (*env)->GetMethodID(env, cList, "size", "()I");
 	jmethodID mGet = (*env)->GetMethodID(env, cList, "get", "(I)Ljava/lang/Object;");
 
 	// retrieve the getName and the getValue methods of list
-	jmethodID mName = (*env)->GetMethodID(env, aidaArgumentClass, "getName", "()Ljava/lang/String");
-	jmethodID mValue = (*env)->GetMethodID(env, aidaArgumentClass, "getValue", "()Ljava/lang/String");
+	jmethodID mName = (*env)->GetMethodID(env, aidaArgumentClass, "getName", "()Ljava/lang/String;");
+	jmethodID mValue = (*env)->GetMethodID(env, aidaArgumentClass, "getValue", "()Ljava/lang/String;");
 
 	if (mSize == NULL || mGet == NULL || mName == NULL || mValue == NULL) {
+		if (mSize == NULL) {
+			fprintf(stderr, "Failed to get size(String) method on List object\n");
+		}
+		if (mGet == NULL) {
+			fprintf(stderr, "Failed to get get(int) method on List object\n");
+		}
+		if (mName == NULL) {
+			fprintf(stderr, "Failed to get getName() method on AidaArgument object\n");
+		}
+		if (mValue == NULL) {
+			fprintf(stderr, "Failed to get getValue(int) method on AidaArgument object\n");
+		}
 		return cArgs;
 	}
 
@@ -261,8 +301,10 @@ jbooleanArray toBooleanArray(JNIEnv* env, Array array)
 	jbooleanArray returnValue;
 
 	returnValue = (*env)->NewBooleanArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Boolean Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetBooleanArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -284,8 +326,10 @@ jbyteArray toByteArray(JNIEnv* env, Array array)
 	jbyteArray returnValue;
 
 	returnValue = (*env)->NewByteArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Byte Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetByteArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -308,8 +352,10 @@ jshortArray toShortArray(JNIEnv* env, Array array)
 	jshortArray returnValue;
 
 	returnValue = (*env)->NewShortArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Short Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetShortArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -332,8 +378,10 @@ jintArray toIntegerArray(JNIEnv* env, Array array)
 	jintArray returnValue;
 
 	returnValue = (*env)->NewIntArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Integer Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetIntArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -356,8 +404,10 @@ jlongArray toLongArray(JNIEnv* env, Array array)
 	jlongArray returnValue;
 
 	returnValue = (*env)->NewLongArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Long Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetLongArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -380,8 +430,10 @@ jfloatArray toFloatArray(JNIEnv* env, Array array)
 	jfloatArray returnValue;
 
 	returnValue = (*env)->NewFloatArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Float Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetFloatArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -405,8 +457,10 @@ jdoubleArray toDoubleArray(JNIEnv* env, Array array)
 
 	// create result array
 	returnValue = (*env)->NewDoubleArray(env, array.count);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new Double Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	(*env)->SetDoubleArrayRegion(env, returnValue, 0, array.count, array.items);
@@ -429,11 +483,13 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 	jobjectArray returnValue;
 
 	// Get a class reference for java.lang.String
-	jclass classString = (*env)->FindClass(env, "java/lang/String");
+	jclass classString = (*env)->FindClass(env, "Ljava/lang/String;");
 
 	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
-	if (NULL == returnValue)
+	if (NULL == returnValue) {
+		fprintf(stderr, "Failed to create a new String Array with %d elements\n", array.count);
 		return NULL;
+	}
 
 	// Copy values
 	for (int i = 0; i < array.count; i++) {
@@ -468,6 +524,11 @@ jobject toTable(JNIEnv* env, Table table)
 	returnValue = listObject.object;
 	jclass cList = listObject.class;
 
+	if (returnValue == NULL || cList == NULL) {
+		fprintf(stderr, "Failed to create a new ArrayList object\n");
+		return returnValue;
+	}
+
 	// retrieve the size and the get methods of list
 	jmethodID mAdd = (*env)->GetMethodID(env, cList, "add", "(java.util.List)Z");
 	jmethodID mAddBoolean = (*env)->GetMethodID(env, cList, "add", "(java.lang.Boolean)Z");
@@ -479,14 +540,49 @@ jobject toTable(JNIEnv* env, Table table)
 	jmethodID mAddDouble = (*env)->GetMethodID(env, cList, "add", "(java.lang.Double)Z");
 	jmethodID mAddString = (*env)->GetMethodID(env, cList, "add", "(java.lang.String)Z");
 
-	if (mAdd == NULL) {
+	if (mAdd == NULL || mAddBoolean == NULL || mAddByte == NULL || mAddShort == NULL || mAddInteger == NULL
+			|| mAddLong == NULL || mAddFloat == NULL || mAddDouble == NULL || mAddString == NULL) {
+		if (mAdd == NULL) {
+			fprintf(stderr, "Failed to find the add(List) method on ArrayList object\n");
+		}
+		if (mAddBoolean == NULL) {
+			fprintf(stderr, "Failed to find the add(Boolean) method on ArrayList object\n");
+		}
+		if (mAddByte == NULL) {
+			fprintf(stderr, "Failed to find the add(Byte) method on ArrayList object\n");
+		}
+		if (mAddShort == NULL) {
+			fprintf(stderr, "Failed to find the add(Short) method on ArrayList object\n");
+		}
+		if (mAddInteger == NULL) {
+			fprintf(stderr, "Failed to find the add(Integer) method on ArrayList object\n");
+		}
+		if (mAddLong == NULL) {
+			fprintf(stderr, "Failed to find the add(Long) method on ArrayList object\n");
+		}
+		if (mAddFloat == NULL) {
+			fprintf(stderr, "Failed to find the add(Float) method on ArrayList object\n");
+		}
+		if (mAddDouble == NULL) {
+			fprintf(stderr, "Failed to find the add(Double) method on ArrayList object\n");
+		}
+		if (mAddString == NULL) {
+			fprintf(stderr, "Failed to find the add(String) method on ArrayList object\n");
+		}
 		return returnValue;
 	}
+
 	// Loop over each column
 	for (int column = 0; column < table.columnCount; column++) {
 		//   we create a sub list
 		JavaObject sublistObject = newObject(env, "java.util.ArrayList");
 		jobject sublist = sublistObject.object;
+
+		if (sublist == NULL) {
+			fprintf(stderr, "Failed to create a new ArrayList object for table rows\n");
+			return returnValue;
+		}
+
 
 		// loop over each row
 		for (int row = 0; row < table.rowCount; row++) {
@@ -523,6 +619,7 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			default:
+				fprintf(stderr, "Warning: Unsupported type found in table\n");
 				break;
 			}
 		}
