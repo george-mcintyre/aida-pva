@@ -80,7 +80,7 @@ public class AidaRPCService implements RPCService {
             List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaType, arguments);
             return asScalarArray( returnValue, channelConfig);
         } else {
-            List<List<?>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
+            List<List<Object>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
             return asNtTable(returnValue, channelConfig);
         }
     }

@@ -14,10 +14,7 @@
 
 package edu.stanford.slac.aida.lib;
 
-import edu.stanford.slac.aida.lib.model.AidaArgument;
-import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
-import edu.stanford.slac.aida.lib.model.AidaProvider;
-import edu.stanford.slac.aida.lib.model.AidaType;
+import edu.stanford.slac.aida.lib.model.*;
 import edu.stanford.slac.aida.lib.util.AidaPva;
 import slac.aida.NativeChannelProvider;
 
@@ -146,8 +143,15 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   arguments
      * @return return list of lists
      */
-    public List<List<?>> requestTable(String channelName, List<AidaArgument> arguments) {
-        return aidaRequestTable(channelName, arguments);
+    public List<List<Object>> requestTable(String channelName, List<AidaArgument> arguments) {
+        AidaTable table = null;
+        try {
+            table = aidaRequestTable(channelName, arguments);
+            return table.asList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<List<Object>>();
     }
 
     /**

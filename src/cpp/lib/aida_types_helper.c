@@ -64,4 +64,3 @@ jstring toLayoutString(JNIEnv* env, Layout layout)
 		return (*env)->NewStringUTF(env, "COLUMN_MAJOR");
 	}
 }
-

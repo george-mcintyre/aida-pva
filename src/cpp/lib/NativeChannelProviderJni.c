@@ -5,6 +5,7 @@
  */
 #include <jni.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "aida_types.h"
 #include "reference_server.h"
 #include "aida_jni_helper.h"
@@ -201,7 +202,11 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = toJString(env, aidaRequestString(pv, arguments));
+	char * string = aidaRequestString(pv, arguments);
+	returnValue = toJString(env, string);
+
+	// Release String
+	free(string);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -412,7 +417,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestStringArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestTable
- * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/util/List;
+ * Signature: (Ljava/lang/String;Ljava/util/List;)Ledu/stanford/slac/aida/lib/model/AidaTable;
  */
 JNIEXPORT jobject
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestTable

@@ -2,6 +2,7 @@ package slac.aida;
 
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
+import edu.stanford.slac.aida.lib.model.AidaTable;
 
 import java.util.List;
 
@@ -21,9 +22,9 @@ public class NativeChannelProvider {
      *
      * @param pvUri     the uri
      * @param arguments the arguments
-     * @return a List of Arbitrary objects to be tabulated either ROW_MAJOR (list of rows) or COLUMN_MAJOR (list of columns)
+     * @return a List of AidaTable to be tabulated either ROW_MAJOR (list of rows) or COLUMN_MAJOR (list of columns)
      */
-    protected native List<List<?>> aidaRequestTable(String pvUri, List<AidaArgument> arguments);
+    protected native AidaTable aidaRequestTable(String pvUri, List<AidaArgument> arguments);
 
     /**
      * Prototype to be implemented for Scalar Boolean

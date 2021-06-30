@@ -3,179 +3,115 @@
 #include "aida_server_helper.h"
 
 /**
- * Get a named boolean argument
- *
+ * Get a named argument
  * @param arguments arguments
  * @param name name
+ * @return Argument
+ */
+Argument getArgument(Arguments arguments, char* name)
+{
+	Argument noArgument;
+	memset(&noArgument, 0, sizeof(Argument));
+
+	for (int i = 0; i < arguments.argumentCount; i++) {
+		Argument argument = arguments.arguments[i];
+		if (strcmp(argument.name, name) == 0) {
+			if (strlen(argument.value) > 0) {
+				return argument;
+			}
+		}
+	}
+	return noArgument;
+}
+
+/**
+ * Get boolean argument
+ * @param argument argument
  * @return boolean
  */
-int getBooleanArgument(Arguments arguments, char* name)
+int getBooleanArgument(Argument argument)
 {
-	int item = 0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			// set true if non-empty string and not 'FALSE', 'false', 'False', or '0'
-			if (strlen(argument.value) > 0) {
-				item = strlen(argument.value) &&
-						!strcmp(argument.value, "FALSE") &&
-						!strcmp(argument.value, "false") &&
-						!strcmp(argument.value, "False") &&
-						!strcmp(argument.value, "0");
-			}
-			break;
-		}
-	}
-	return item;
+	return strlen(argument.value) &&
+			strcasecmp(argument.value, "false") != 0 &&
+			strcmp(argument.value, "0") != 0;
 }
 
 /**
- * Get a named byte argument
- *
- * @param arguments arguments
- * @param name name
+ * Get byte argument
+ * @param argument argument
  * @return byte
  */
-unsigned char getByteArgument(Arguments arguments, char* name)
+char getByteArgument(Argument argument)
 {
-	unsigned char item = 0;
-	unsigned int scannedValue = 0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			if (strlen(argument.value) > 0) {
-				if ( !strncmp("0x", argument.value, 2)) {
-					sscanf(argument.value, "%x", &scannedValue);
-				} else {
-					sscanf(argument.value, "%d", &scannedValue);
-				}
-				item = scannedValue;
-			}
-			break;
-		}
+	char item = 0;
+	int scannedValue = 0;
+
+	if (!strncmp("0x", argument.value, 2)) {
+		sscanf(argument.value, "%x", &scannedValue);
+	} else {
+		sscanf(argument.value, "%d", &scannedValue);
 	}
+	item = (char)scannedValue;
+
 	return item;
 }
 
 /**
- * Get a named short argument
- * @param arguments arguments
- * @param name name
+ * Get short argument
+ * @param argument argument
  * @return short
  */
-short getShortArgument(Arguments arguments, char* name)
+short getShortArgument(Argument argument)
 {
 	short item = 0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			if (strlen(argument.value) > 0) {
-				sscanf(argument.value, "%hi", &item);
-			}
-			break;
-		}
-	}
+	sscanf(argument.value, "%hi", &item);
 	return item;
 }
 
 /**
- * Get a named integer argument
- * @param arguments arguments
- * @param name name
+ * Get integer argument
+ * @param argument argument
  * @return int
  */
-int getIntegerArgument(Arguments arguments, char* name)
+int getIntegerArgument(Argument argument)
 {
 	int item = 0;
-	unsigned int scannedValue = 0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			if (strlen(argument.value) > 0) {
-				sscanf(argument.value, "%d", &item);
-			}
-			break;
-		}
-	}
+	sscanf(argument.value, "%d", &item);
 	return item;
 }
 
 /**
- * Get a named long argument
- * @param arguments arguments
- * @param name name
+ * Get long argument
+ * @param argument argument
  * @return long
  */
-long getLongArgument(Arguments arguments, char* name)
+long getLongArgument(Argument argument)
 {
 	long item = 0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			if (strlen(argument.value) > 0) {
-				sscanf(argument.value, "%ld", &item);
-			}
-			break;
-		}
-	}
+	sscanf(argument.value, "%ld", &item);
 	return item;
 }
 
 /**
- * Get a named float argument
- * @param arguments arguments
- * @param name name
+ * Get float argument
+ * @param argument argument
  * @return float
  */
-float getFloatArgument(Arguments arguments, char* name)
+float getFloatArgument(Argument argument)
 {
 	float item = 0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			if (strlen(argument.value) > 0) {
-				sscanf(argument.value, "%f", &item);
-			}
-			break;
-		}
-	}
+	sscanf(argument.value, "%f", &item);
 	return item;
 }
 
 /**
- * Get a named double argument
- * @param arguments arguments
- * @param name name
+ * Get double argument
+ * @param argument argument
  * @return double
  */
-double getDoubleArgument(Arguments arguments, char* name)
+double getDoubleArgument(Argument argument)
 {
 	double item = 0.0;
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			if (strlen(argument.value) > 0) {
-				sscanf(argument.value, "%lf", &item);
-			}
-			break;
-		}
-	}
+	sscanf(argument.value, "%lf", &item);
 	return item;
-}
-
-/**
- * Get a named string argument
- * @param arguments arguments
- * @param name name
- * @return string
- */
-const char* getStringArgument(Arguments arguments, char* name)
-{
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
-			return argument.value;
-		}
-	}
-	return NULL;
 }

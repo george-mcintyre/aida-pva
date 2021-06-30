@@ -64,6 +64,28 @@ jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
 }
 
 /**
+ * Create a new java object
+ * @param env environment
+ * @param class class of object to create
+ * @return the new jni object
+ */
+jobject newObjectFromClass(JNIEnv* env, jclass class)
+{
+	jobject object;
+
+	// Get the Method ID of the no-args constructor
+	jmethodID midInit = getConstructorMethodId(env, class);
+	if (NULL == midInit) {
+		fprintf(stderr, "Failed to create object\n");
+		return NULL;
+	}
+	// Call back constructor to allocate a new instance
+	object = (*env)->NewObject(env, class, midInit);
+
+	return object;
+}
+
+/**
  * Look up class in environment and create a new java object
  * @param env environment
  * @param class class to create
@@ -72,26 +94,16 @@ jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
 JavaObject newObject(JNIEnv* env, char* classToCreate)
 {
 	JavaObject javaObject;
+	javaObject.class = NULL;
+	javaObject.object = NULL;
 
 	// Get a class reference
 	javaObject.class = (*env)->FindClass(env, classToCreate);
-	if (javaObject.class == NULL) {
+	if (NULL == javaObject.class) {
 		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
-		javaObject.class = NULL;
-		javaObject.object = NULL;
 		return javaObject;
 	}
-
-	// Get the Method ID of the no-args constructor
-	jmethodID midInit = getConstructorMethodId(env, javaObject.class);
-	if (NULL == midInit) {
-		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
-		javaObject.class = NULL;
-		javaObject.object = NULL;
-		return javaObject;
-	}
-	// Call back constructor to allocate a new instance
-	javaObject.object = (*env)->NewObject(env, javaObject.class, midInit);
+	javaObject.object = newObjectFromClass(env, javaObject.class);
 
 	return javaObject;
 }
@@ -219,6 +231,18 @@ jmethodID getMethodId(JNIEnv* env, jclass cls, char* methodName, char* methodSig
 jmethodID getConstructorMethodId(JNIEnv* env, jclass cls)
 {
 	return getMethodId(env, cls, "<init>", "()V");
+}
+
+/**
+ * Get the method ID of the constructor of the given class for ArrayLists
+ *
+ * @param env env
+ * @param cls given class
+ * @return the constructor method id
+ */
+jmethodID getArrayListConstructorMethodId(JNIEnv* env, jclass cls)
+{
+	return getMethodId(env, cls, "<init>", "(I)V");
 }
 
 /**
@@ -522,105 +546,88 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
  */
 jobject toTable(JNIEnv* env, Table table)
 {
-	jobject returnValue;
+	jobject tableToReturn;
 
-	// create a java ArrayList
-	JavaObject listObject = newObject(env, "java.util.ArrayList");
-	returnValue = listObject.object;
+	JavaObject listObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaTable");
+	tableToReturn = listObject.object;
 	jclass cList = listObject.class;
 
-	if (returnValue == NULL || cList == NULL) {
-		fprintf(stderr, "Failed to create a new ArrayList object\n");
-		return returnValue;
+	// retrieve the add method of the list
+	jmethodID mAdd = (*env)->GetMethodID(env, cList, "add", "(ILjava/lang/Object;)Z");
+	if (mAdd == NULL) {
+		fprintf(stderr, "Failed to find the add(int, Object) method on AidaTable object\n");
+		return NULL;
 	}
 
-	// retrieve the size and the get methods of list
-	jmethodID mAdd = (*env)->GetMethodID(env, cList, "add", "(java.util.List)Z");
-	jmethodID mAddBoolean = (*env)->GetMethodID(env, cList, "add", "(java.lang.Boolean)Z");
-	jmethodID mAddByte = (*env)->GetMethodID(env, cList, "add", "(java.lang.Byte)Z");
-	jmethodID mAddShort = (*env)->GetMethodID(env, cList, "add", "(java.lang.Short)Z");
-	jmethodID mAddInteger = (*env)->GetMethodID(env, cList, "add", "(java.lang.Integer)Z");
-	jmethodID mAddLong = (*env)->GetMethodID(env, cList, "add", "(java.lang.Long)Z");
-	jmethodID mAddFloat = (*env)->GetMethodID(env, cList, "add", "(java.lang.Float)Z");
-	jmethodID mAddDouble = (*env)->GetMethodID(env, cList, "add", "(java.lang.Double)Z");
-	jmethodID mAddString = (*env)->GetMethodID(env, cList, "add", "(java.lang.String)Z");
-
-	if (mAdd == NULL || mAddBoolean == NULL || mAddByte == NULL || mAddShort == NULL || mAddInteger == NULL
-			|| mAddLong == NULL || mAddFloat == NULL || mAddDouble == NULL || mAddString == NULL) {
-		if (mAdd == NULL) {
-			fprintf(stderr, "Failed to find the add(List) method on ArrayList object\n");
-		}
-		if (mAddBoolean == NULL) {
-			fprintf(stderr, "Failed to find the add(Boolean) method on ArrayList object\n");
-		}
-		if (mAddByte == NULL) {
-			fprintf(stderr, "Failed to find the add(Byte) method on ArrayList object\n");
-		}
-		if (mAddShort == NULL) {
-			fprintf(stderr, "Failed to find the add(Short) method on ArrayList object\n");
-		}
-		if (mAddInteger == NULL) {
-			fprintf(stderr, "Failed to find the add(Integer) method on ArrayList object\n");
-		}
-		if (mAddLong == NULL) {
-			fprintf(stderr, "Failed to find the add(Long) method on ArrayList object\n");
-		}
-		if (mAddFloat == NULL) {
-			fprintf(stderr, "Failed to find the add(Float) method on ArrayList object\n");
-		}
-		if (mAddDouble == NULL) {
-			fprintf(stderr, "Failed to find the add(Double) method on ArrayList object\n");
-		}
-		if (mAddString == NULL) {
-			fprintf(stderr, "Failed to find the add(String) method on ArrayList object\n");
-		}
-		return returnValue;
+	if (tableToReturn == NULL) {
+		fprintf(stderr, "Failed to create a new AidaTable object\n");
+		return tableToReturn;
 	}
+
 
 	// Loop over each column
 	for (int column = 0; column < table.columnCount; column++) {
-		//   we create a sub list
-		JavaObject sublistObject = newObject(env, "java.util.ArrayList");
-		jobject sublist = sublistObject.object;
-
-		if (sublist == NULL) {
-			fprintf(stderr, "Failed to create a new ArrayList object for table rows\n");
-			return returnValue;
-		}
-
-
 		// loop over each row
 		for (int row = 0; row < table.rowCount; row++) {
 			// call appropriate add())
 			switch (table.types[column]) {
-			case BOOLEAN_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddBoolean, ((jboolean*)(table.ppData[column]))[row]);
+			case BOOLEAN_ARRAY : {
+				jboolean data = ((jboolean*)(table.ppData[column]))[row];
+				jobject dataObject = toBoolean(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
-			case BYTE_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddByte, ((jbyte*)(table.ppData[column]))[row]);
+			}
+			case BYTE_ARRAY: {
+				jbyte data = ((jbyte*)(table.ppData[column]))[row];
+				jobject dataObject = toByte(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
-			case SHORT_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddShort, ((jshort*)(table.ppData[column]))[row]);
+			}
+			case SHORT_ARRAY: {
+				jshort data = ((jshort*)(table.ppData[column]))[row];
+				jobject dataObject = toShort(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
-			case INTEGER_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddInteger, ((jint*)(table.ppData[column]))[row]);
+			}
+			case INTEGER_ARRAY: {
+				jint data = ((jint*)(table.ppData[column]))[row];
+				jobject dataObject = toInteger(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
-			case LONG_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddLong, ((jlong*)(table.ppData[column]))[row]);
+			}
+			case LONG_ARRAY: {
+				jlong data = ((jlong*)(table.ppData[column]))[row];
+				jobject dataObject = toLong(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
-			case FLOAT_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddFloat, ((jfloat*)(table.ppData[column]))[row]);
+			}
+			case FLOAT_ARRAY: {
+				jfloat data = ((jfloat*)(table.ppData[column]))[row];
+				jobject dataObject = toFloat(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
-			case DOUBLE_ARRAY:
-				(*env)->CallObjectMethod(env, sublist, mAddDouble, ((jdouble*)(table.ppData[column]))[row]);
+			}
+			case DOUBLE_ARRAY: {
+				jdouble data = ((jdouble*)(table.ppData[column]))[row];
+				jobject dataObject = toDouble(env, data);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
+				(*env)->DeleteLocalRef(env, dataObject);
 				break;
+			}
 			case STRING_ARRAY: {
 				char* string = ((char**)(table.ppData[column]))[row];
-				toJString(env, string);
-				(*env)->CallObjectMethod(env, sublist, mAddString, ((jobject*)(table.ppData[column]))[row]);
+				jstring stringValue = toJString(env, string);
+				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, stringValue);
 
 				// Free up string buffer
 				free(string);
+				(*env)->DeleteLocalRef(env, stringValue);
 				break;
 			}
 			default:
@@ -628,14 +635,11 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 		}
-
-		// then we add() the sublist to the main list
-		(*env)->CallObjectMethod(env, returnValue, mAdd, sublist);
 	}
 
 	releaseTable(table);
 
-	return returnValue;
+	return tableToReturn;
 }
 
 /**
@@ -684,3 +688,152 @@ void releaseTable(Table table)
 		free(table.ppData);
 	}
 }
+
+ClassAndMethod getClassAndValueOfMethod(JNIEnv* env, char* boxedClassSignature, char* valueOfMethodSignature)
+{
+	ClassAndMethod classAndMethod;
+
+	// Get a class reference
+	classAndMethod.class = (*env)->FindClass(env, boxedClassSignature);
+	if (NULL == classAndMethod.class) {
+		fprintf(stderr, "Failed to get class of: %s\n", boxedClassSignature);
+		return classAndMethod;
+	}
+
+	// retrieve the valueOf method
+	classAndMethod.methodId = (*env)->GetStaticMethodID(env, classAndMethod.class, "valueOf", valueOfMethodSignature);
+	if (classAndMethod.methodId == NULL) {
+		fprintf(stderr, "Failed to valueOf method with signature: %s\n", valueOfMethodSignature);
+		return classAndMethod;
+	}
+
+	return classAndMethod;
+}
+
+/**
+ * Create a new instance of a Java Boolean from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Boolean
+ */
+jobject toBoolean(JNIEnv* env, jboolean data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Boolean", "(Z)Ljava/lang/Boolean;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert boolean to Boolean\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+/**
+ * Create a new instance of a Java Byte from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Byte
+ */
+jobject toByte(JNIEnv* env, jbyte data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Byte", "(B)Ljava/lang/Byte;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert byte to Byte\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+/**
+ * Create a new instance of a Java Short from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Short
+ */
+jobject toShort(JNIEnv* env, jshort data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Short", "(S)Ljava/lang/Short;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert short to Short\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+/**
+ * Create a new instance of a Java Int from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Integer
+ */
+jobject toInteger(JNIEnv* env, jint data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Integer", "(I)Ljava/lang/Integer;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert int to Integer\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+/**
+ * Create a new instance of a Java Long from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Long
+ */
+jobject toLong(JNIEnv* env, jlong data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Long", "(J)Ljava/lang/Long;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert long to Long\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+/**
+ * Create a new instance of a Java Float from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Float
+ */
+jobject toFloat(JNIEnv* env, jfloat data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Float", "(F)Ljava/lang/Float;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert float to Float\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+/**
+ * Create a new instance of a Java Double from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Double
+ */
+jobject toDouble(JNIEnv* env, jdouble data)
+{
+	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Double", "(D)Ljava/lang/Double;");
+	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
+	if (dataObject == NULL) {
+		fprintf(stderr, "Failed to convert double to Double\n");
+		return NULL;
+	}
+
+	return dataObject;
+}
+
+

@@ -329,7 +329,7 @@ public class AidaPVHelper {
      * @param values the list of values
      * @return the returned PVStructure containing the NT_TABLE
      */
-    public static PVStructure asNtTable(List<List<?>> values, AidaChannelConfig aidaChannelConfig) {
+    public static PVStructure asNtTable(List<List<Object>> values, AidaChannelConfig aidaChannelConfig) {
         if (values == null || values.isEmpty() || values.get(0).isEmpty()) {
             return NT_TABLE_EMPTY_STRUCTURE;
         }
@@ -386,7 +386,7 @@ public class AidaPVHelper {
      * @param fieldTypesToPopulate  the types to populate - provide an empty list
      */
     private static void getFieldsNamesLabelsAndTypes(
-            List<List<?>> values, AidaChannelConfig channelConfig,
+            List<List<Object>> values, AidaChannelConfig channelConfig,
             List<Field> fieldsToPopulate, List<String> fieldNamesToPopulate, List<String> fieldLabelsToPopulate, List<AidaType> fieldTypesToPopulate) {
 
         // Loop over values and channel config simultaneously
@@ -396,7 +396,7 @@ public class AidaPVHelper {
             ScalarType scalarType = scalarTypeOf(aidaType);
             fieldsToPopulate.add(FieldFactory.getFieldCreate().createScalarArray(scalarType));
 
-            if (aidaType == null || !configIterator.hasNext()) {
+            if (!configIterator.hasNext()) {
                 break;
             }
             AidaField fieldConfig = configIterator.next();
@@ -419,8 +419,8 @@ public class AidaPVHelper {
      * @param rows rows of data
      * @return columns of data
      */
-    private static List<List<?>> transpose(List<List<?>> rows) {
-        List<List<?>> columns = new ArrayList<List<?>>();
+    private static List<List<Object>> transpose(List<List<Object>> rows) {
+        List<List<Object>> columns = new ArrayList<List<Object>>();
 
         for (int rowNumber = 0; rowNumber < rows.size(); rowNumber++) {
             List<?> row = rows.get(rowNumber);
@@ -431,8 +431,7 @@ public class AidaPVHelper {
                     columns.add(new ArrayList<Object>());
                 }
                 // Add row value to the correct column list
-                //noinspection unchecked
-                ((List<Object>) columns.get(columnNumber)).add(value);
+                columns.get(columnNumber).add(value);
             }
         }
         return columns;

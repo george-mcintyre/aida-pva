@@ -16,6 +16,15 @@ typedef struct
 	jclass class;
 } JavaObject;
 
+/**
+ * Class and method
+ */
+typedef struct
+{
+	jclass class;
+	jmethodID methodId;
+} ClassAndMethod;
+
 JavaObject newObject(JNIEnv* env, char* classToCreate);
 
 /**
@@ -78,6 +87,15 @@ const char* toCString(JNIEnv* env, jstring string);
  * @return the constructor method id
  */
 jmethodID getConstructorMethodId(JNIEnv* env, jclass cls);
+
+/**
+ * Get the method ID of the constructor of the given class for ArrayLists only
+ *
+ * @param env env
+ * @param cls given class
+ * @return the constructor method id
+ */
+jmethodID getArrayListConstructorMethodId(JNIEnv* env, jclass cls);
 
 /**
  * Call setter on a given object with a string argument
@@ -213,6 +231,63 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array);
  * @return jobject to return to java
  */
 jobject toTable(JNIEnv* env, Table table);
+
+/**
+ * Create a new instance of a Java Boolean from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Boolean
+ */
+jobject toBoolean(JNIEnv* env, jboolean data);
+
+/**
+ * Create a new instance of a Java Byte from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Byte
+ */
+jobject toByte(JNIEnv* env, jbyte data);
+
+/**
+ * Create a new instance of a Java Short from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Short
+ */
+jobject toShort(JNIEnv* env, jshort data);
+
+/**
+ * Create a new instance of a Java Int from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Integer
+ */
+jobject toInteger(JNIEnv* env, jint data);
+
+/**
+ * Create a new instance of a Java Long from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Long
+ */
+jobject toLong(JNIEnv* env, jlong data);
+
+/**
+ * Create a new instance of a Java Float from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Float
+ */
+jobject toFloat(JNIEnv* env, jfloat data);
+
+/**
+ * Create a new instance of a Java Double from the scalar
+ * @param env env
+ * @param data scalar
+ * @return new Java Double
+ */
+jobject toDouble(JNIEnv* env, jdouble data);
+
 
 #ifdef __cplusplus
 }

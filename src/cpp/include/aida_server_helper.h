@@ -7,68 +7,62 @@ extern "C" {
 #include "aida_types.h"
 
 /**
- * Get a named boolean argument
+ * Get a named argument
  * @param arguments arguments
  * @param name name
+ * @return Argument
+ */
+Argument getArgument(Arguments arguments, char* name);
+
+/**
+ * Get boolean argument
+ * @param argument argument
  * @return boolean
  */
-int getBooleanArgument(Arguments arguments, char* name);
+int getBooleanArgument(Argument argument);
 
 /**
- * Get a named byte argument
- * @param arguments arguments
- * @param name name
+ * Get byte argument
+ * @param argument argument
  * @return byte
  */
-unsigned char getByteArgument(Arguments arguments, char* name);
+char getByteArgument(Argument argument);
 
 /**
- * Get a named short argument
- * @param arguments arguments
- * @param name name
+ * Get short argument
+ * @param argument argument
  * @return short
  */
-short getShortArgument(Arguments arguments, char* name);
+short getShortArgument(Argument argument);
 
 /**
- * Get a named integer argument
- * @param arguments arguments
- * @param name name
+ * Get integer argument
+ * @param argument argument
  * @return int
  */
-int getIntegerArgument(Arguments arguments, char* name);
+int getIntegerArgument(Argument argument);
 
 /**
- * Get a named long argument
- * @param arguments arguments
- * @param name name
+ * Get long argument
+ * @param argument argument
  * @return long
  */
-long getLongArgument(Arguments arguments, char* name);
+long getLongArgument(Argument argument);
 
 /**
- * Get a named float argument
- * @param arguments arguments
- * @param name name
+ * Get float argument
+ * @param argument argument
  * @return float
  */
-float getFloatArgument(Arguments arguments, char* name);
+float getFloatArgument(Argument argument);
 
 /**
- * Get a named double argument
- * @param arguments arguments
- * @param name name
+ * Get double argument
+ * @param argument argument
  * @return double
  */
-double getDoubleArgument(Arguments arguments, char* name);
+double getDoubleArgument(Argument argument);
 
-/**
- * Get a named string argument
- * @param arguments arguments
- * @param name name
- * @return string
- */
-const char* getStringArgument(Arguments arguments, char* name);
 
 #ifdef __cplusplus
 }
