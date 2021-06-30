@@ -489,7 +489,7 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 		return NULL;
 	}
 
-	returnValue = (*env)->NewObjectArray(env, array.count, classString, (*env)->NewStringUTF(env, ""));
+	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
 	if (NULL == returnValue) {
 		fprintf(stderr, "Failed to create a new String Array with %d elements\n", array.count);
 		return NULL;
