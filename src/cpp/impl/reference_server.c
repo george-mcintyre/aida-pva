@@ -178,7 +178,7 @@ char* aidaRequestString(const char* uri, Arguments arguments)
 	char* item = "";
 
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute08") == 0) {
-		item = "8";
+		item = "eight";
 	}
 
 	// Return the item
@@ -312,7 +312,7 @@ Array aidaRequestFloatArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute16") == 0) {
 		floatArray.count = 1;
 		floatArray.items = calloc(1, sizeof(float));
-		((float*)(floatArray.items))[0] = 5;
+		((float*)(floatArray.items))[0] = 5.5f;
 	}
 
 	// Return the float array
@@ -334,7 +334,7 @@ Array aidaRequestDoubleArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute17") == 0) {
 		doubleArray.count = 1;
 		doubleArray.items = calloc(1, sizeof(double));
-		((double*)(doubleArray.items))[0] = 6;
+		((double*)(doubleArray.items))[0] = 6.6;
 	}
 
 	// Return the double array
@@ -356,8 +356,8 @@ StringArray aidaRequestStringArray(const char* uri, Arguments arguments)
 	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute18") == 0) {
 		stringArray.count = 1;
 		stringArray.items = calloc(1, sizeof(char *));
-		((char **)(stringArray.items))[0] = malloc(2); // one character string
-		strcpy(((char**)(stringArray.items))[0], "8");
+		((char **)(stringArray.items))[0] = malloc(6); // one character string
+		strcpy(((char**)(stringArray.items))[0], "eight");
 	}
 
 	// Return the string array
@@ -425,11 +425,11 @@ Table aidaRequestTable(const char* uri, Arguments arguments)
 	((short*)(table.ppData[2]))[0] = 3; // Short
 	((int*)(table.ppData[3]))[0] = 4; // Integer
 	((long*)(table.ppData[4]))[0] = 5; // Long
-	((float*)(table.ppData[5]))[0] = 6; // Float
-	((double*)(table.ppData[6]))[0] = 7.0; // Double
+	((float*)(table.ppData[5]))[0] = 6.6f; // Float
+	((double*)(table.ppData[6]))[0] = 7.7; // Double
 
-	((char**)(table.ppData[7]))[0] = malloc(2); // String (one character)
-	strcpy(((char**)(table.ppData[7]))[0], "8");
+	((char**)(table.ppData[7]))[0] = malloc(6); // String (one character)
+	strcpy(((char**)(table.ppData[7]))[0], "eight");
 
 	// Return the table
 	return table;

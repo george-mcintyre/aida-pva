@@ -129,7 +129,7 @@ jobject getAidaField(JNIEnv* env, Field field)
  */
 jobject toJniString(JNIEnv* env, char* cString)
 {
-	if ( cString == NULL ) {
+	if (cString == NULL) {
 		return NULL;
 	}
 	return (*env)->NewStringUTF(env, cString);
@@ -146,7 +146,7 @@ jobject toJniString(JNIEnv* env, char* cString)
 void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char* value)
 {
 	jobject jObject = toJniString(env, value);
-	if ( jObject != NULL ) {
+	if (jObject != NULL) {
 		callSetterWithJString(env, javaObject, method, jObject);
 	}
 }
@@ -236,15 +236,15 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 
 	// retrieve the java.util.List interface class
 	jclass cList = (*env)->FindClass(env, "java/util/List");
-	if ( cList == NULL ) {
-		fprintf( stderr, "Failed to get List class\n");
+	if (cList == NULL) {
+		fprintf(stderr, "Failed to get List class\n");
 		return cArgs;
 	}
 
 	// retrieve the AidaArgument class
 	jclass aidaArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArgument");
-	if ( aidaArgumentClass == NULL ) {
-		fprintf( stderr, "Failed to get AidaArgument class\n");
+	if (aidaArgumentClass == NULL) {
+		fprintf(stderr, "Failed to get AidaArgument class\n");
 		return cArgs;
 	}
 
@@ -483,9 +483,13 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 	jobjectArray returnValue;
 
 	// Get a class reference for java.lang.String
-	jclass classString = (*env)->FindClass(env, "Ljava/lang/String;");
+	jclass classString = (*env)->FindClass(env, "java/lang/String");
+	if (classString == NULL) {
+		fprintf(stderr, "Failed to get jclass of java String\n");
+		return NULL;
+	}
 
-	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
+	returnValue = (*env)->NewObjectArray(env, array.count, classString, (*env)->NewStringUTF(env, ""));
 	if (NULL == returnValue) {
 		fprintf(stderr, "Failed to create a new String Array with %d elements\n", array.count);
 		return NULL;
@@ -495,6 +499,7 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 	for (int i = 0; i < array.count; i++) {
 		(*env)->SetObjectArrayElement(env, returnValue, i, toJString(env, array.items[i]));
 	}
+
 
 	// Free up array
 	releaseStringArray(array);
