@@ -202,7 +202,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	char * string = aidaRequestString(pv, arguments);
+	char* string = aidaRequestString(pv, arguments);
 	returnValue = toJString(env, string);
 
 	// Release String
@@ -256,7 +256,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByteArray
 	Array array = aidaRequestByteArray(pv, arguments);
 
 	// create result array
-	returnValue =toByteArray(env, array);
+	returnValue = toByteArray(env, array);
 
 	// Free up arguments list
 	releaseArguments(arguments);

@@ -27,18 +27,18 @@ public class AidaTable {
         synchronized (this.data) {
             List<Object> collection;
             int currentCollectionCount = this.data.size();
-            if ( currentCollectionCount <= collectionID ) {
+            if (currentCollectionCount <= collectionID) {
                 for (int collectionCounter = currentCollectionCount - 1; collectionCounter < collectionID; collectionCounter++) {
                     collection = new ArrayList<Object>();
                     this.data.add(collection);
                 }
             }
             collection = this.data.get(collectionID);
-            if ( collection == null ) {
+            if (collection == null) {
                 return false;
             }
 
-            if ( object == null) {
+            if (object == null) {
                 return collection.add("<null>");
             }
 

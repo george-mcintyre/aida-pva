@@ -63,7 +63,6 @@ float getFloatArgument(Argument argument);
  */
 double getDoubleArgument(Argument argument);
 
-
 #ifdef __cplusplus
 }
 #endif

@@ -24,7 +24,7 @@ public class AidaChannelConfig {
      * @param stringType type string
      */
     public void setType(String stringType) {
-        if ( stringType == null ) {
+        if (stringType == null) {
             this.type = STRING;
         } else {
             this.type = AidaType.valueOf(stringType);
@@ -37,8 +37,8 @@ public class AidaChannelConfig {
      * @param stringLayout layout string
      */
     public void setLayout(String stringLayout) {
-        if ( stringLayout == null ) {
-            this.layout =COLUMN_MAJOR;
+        if (stringLayout == null) {
+            this.layout = COLUMN_MAJOR;
         } else {
             this.layout = AidaTableLayout.valueOf(stringLayout);
         }

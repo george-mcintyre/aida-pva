@@ -71,14 +71,14 @@ public class AidaRPCService implements RPCService {
             // TODO log exception
             return null;
         }
-        System.out.println("AIDA Request: " + channelName +  arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
+        System.out.println("AIDA Request: " + channelName + arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
 
         if (channelType.equals(scalar)) {
             Object returnValue = this.aidaChannelProvider.requestScalar(channelName, aidaType, arguments);
-            return asScalar( returnValue, channelConfig);
+            return asScalar(returnValue, channelConfig);
         } else if (channelType.equals(scalarArray)) {
             List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaType, arguments);
-            return asScalarArray( returnValue, channelConfig);
+            return asScalarArray(returnValue, channelConfig);
         } else {
             List<List<Object>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
             return asNtTable(returnValue, channelConfig);

@@ -156,6 +156,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
 
     /**
      * Get channel configuration
+     *
      * @param channelName the channel name to retrieve configuration
      * @return the configuration
      */

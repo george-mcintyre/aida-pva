@@ -4,7 +4,6 @@ import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaField;
 import edu.stanford.slac.aida.lib.model.AidaType;
 import lombok.NonNull;
-import org.apache.commons.lang.ArrayUtils;
 import org.epics.pvaccess.PVFactory;
 import org.epics.pvdata.factory.FieldFactory;
 import org.epics.pvdata.pv.*;
@@ -349,10 +348,18 @@ public class AidaPVHelper {
         getFieldsNamesLabelsAndTypes(values, aidaChannelConfig, pvFields, fieldNames, labels, aidaTypes);
 
         // Create top level NT_TABLE fields (labels and value{column1[], column2[], ...})
-        Field[] topFields = new Field[]{
-                FieldFactory.getFieldCreate().createScalarArray(pvString),
-                FieldFactory.getFieldCreate().createStructure((String[]) fieldNames.toArray(), (Field[]) pvFields.toArray())
-        };
+        Field scalarArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
+        String [] fieldNameArray = new String[fieldNames.size()];
+        for ( int i = 0; i < fieldNames.size() ; i++) {
+            fieldNameArray[i] = fieldNames.get(i);
+        }
+        Field [] fieldArray = new Field[pvFields.size()];
+        for ( int i = 0; i < pvFields.size() ; i++) {
+            fieldArray[i] = pvFields.get(i);
+        }
+        Field structure = FieldFactory.getFieldCreate().createStructure(fieldNameArray, fieldArray);
+
+        Field[] topFields = new Field[]{scalarArray, structure};
 
         // Create the top structure that will be returned (labels and values)
         PVStructure retVal = PVFactory.getPVDataCreate()
@@ -406,10 +413,6 @@ public class AidaPVHelper {
             fieldTypesToPopulate.add(aidaType);
             fieldNamesToPopulate.add(fieldConfig.getName());
             fieldLabelsToPopulate.add(fieldConfig.getLabel());
-
-            // Add Fields (scalar arrays of correct type
-            Field field = FieldFactory.getFieldCreate().createScalarArray(scalarType);
-            fieldsToPopulate.add(field);
         }
     }
 

@@ -80,13 +80,13 @@ public class AidaProvider {
 
         // Partially copy when not specified for channel
         AidaType type = ((overrides.getType() == null) ? defaultConfig : overrides).getType();
-        if ( type == null ) {
+        if (type == null) {
             type = STRING;
         }
         channelConfig.setType(type.toString());
 
         AidaTableLayout layout = ((overrides.getLayout() == null) ? defaultConfig : overrides).getLayout();
-        if ( layout == null ) {
+        if (layout == null) {
             layout = COLUMN_MAJOR;
         }
         channelConfig.setLayout(layout.toString());
@@ -124,7 +124,7 @@ public class AidaProvider {
      * @param fields the fields to update
      */
     private void setDefaultLabels(List<AidaField> fields) {
-        if ( fields != null ) {
+        if (fields != null) {
             for (AidaField field : fields) {
                 if (field.getLabel() == null) {
                     field.setLabel(field.getName());

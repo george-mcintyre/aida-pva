@@ -66,7 +66,7 @@ const char* toCString(JNIEnv* env, jstring string);
  * @param string c-string
  * @return j-string
  */
- jstring toJString(JNIEnv* env, const char* string);
+jstring toJString(JNIEnv* env, const char* string);
 
 /**
  * Get the method ID on the given class with the given method name and signature
@@ -77,7 +77,7 @@ const char* toCString(JNIEnv* env, jstring string);
  * @param methodSignature given signature
  * @return the method that matches the name and signature specified
  */
- jmethodID getMethodId(JNIEnv* env, jclass cls, char* methodName, char* methodSignature);
+jmethodID getMethodId(JNIEnv* env, jclass cls, char* methodName, char* methodSignature);
 
 /**
  * Get the method ID of the constructor of the given class
@@ -287,7 +287,6 @@ jobject toFloat(JNIEnv* env, jfloat data);
  * @return new Java Double
  */
 jobject toDouble(JNIEnv* env, jdouble data);
-
 
 #ifdef __cplusplus
 }

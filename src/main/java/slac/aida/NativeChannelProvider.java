@@ -9,7 +9,8 @@ import java.util.List;
 public class NativeChannelProvider {
     /**
      * To provide channel configuration to override configuration specified in the channel configuration yaml files
-     *AidaField
+     * AidaField
+     *
      * @param channelName the channel name to provide the configuration for
      * @return the channel configuration or null to use defaults from yaml
      */
