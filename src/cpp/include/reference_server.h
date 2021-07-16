@@ -7,6 +7,11 @@ extern "C" {
 #include "aida_types.h"
 
 /**
+ * Initialise channel provider
+ */
+void aidaServiceInit();
+
+/**
  * Get channel configuration
  * @param channelName
  * @return the channel config

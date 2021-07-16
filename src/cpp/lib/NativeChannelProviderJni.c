@@ -11,6 +11,17 @@
 #include "aida_jni_helper.h"
 
 /*
+ * Class:     slac_aida_NativeChannelProvider
+ * Method:    aidaServiceInit
+ * Signature: ()V
+ */
+JNIEXPORT void
+JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv *, jclass) {
+    return aidaServiceInit();
+}
+
+
+/*
  * Get channel configuration for the specified channel
  *
  * Class:     slac_aida_NativeChannelProvider

@@ -13,6 +13,16 @@
  * @param channelName
  * @return the channel config.  Leave empty if you don't have any specific configuration overrides
  */
+void aidaServiceInit()
+{
+	printf("Aida Service Initialised\n");
+}
+
+/**
+ * Get channel configuration
+ * @param channelName
+ * @return the channel config.  Leave empty if you don't have any specific configuration overrides
+ */
 Config aidaChannelConfig(const char* channelName)
 {
 	Config config;

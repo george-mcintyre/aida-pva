@@ -7,6 +7,12 @@ import edu.stanford.slac.aida.lib.model.AidaTable;
 import java.util.List;
 
 public class NativeChannelProvider {
+
+    /**
+     * Called once to initialise the channel provider
+     */
+    static public native void aidaServiceInit();
+
     /**
      * To provide channel configuration to override configuration specified in the channel configuration yaml files
      * AidaField
