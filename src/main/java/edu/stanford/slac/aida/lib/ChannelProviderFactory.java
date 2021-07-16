@@ -24,8 +24,8 @@ public class ChannelProviderFactory {
     public static AidaProvider create(ChannelProvider channelProvider) {
         // Get service name and channel definitions for the server to publish.
         // Priority: max=properties, medium=environment, low=default
-        String channelsFilename = System.getProperty("AIDA_CHANNELS_FILENAME", CHANNELS_FILENAME_DEFAULT);
-        String channelsFilenameFromEnv = System.getenv("AIDA_CHANNELS_FILENAME");
+        String channelsFilename = System.getProperty("aida.pva.channels.filename", CHANNELS_FILENAME_DEFAULT);
+        String channelsFilenameFromEnv = System.getenv("AIDA_PVA_CHANNELS_FILENAME");
         if (channelsFilenameFromEnv != null && channelsFilename.equals(CHANNELS_FILENAME_DEFAULT)) {
             channelsFilename = channelsFilenameFromEnv;
         }
