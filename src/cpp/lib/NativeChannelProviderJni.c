@@ -16,8 +16,9 @@
  * Signature: ()V
  */
 JNIEXPORT void
-JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv *, jclass) {
-    return aidaServiceInit();
+JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv* env, jclass jclass)
+{
+	aidaServiceInit(env);
 }
 
 
@@ -37,7 +38,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaChannelConfig
 	const char* channel = toCString(env, channelName);
 
 	// Call the implementation
-	Config config = aidaChannelConfig(channel);
+	Config config = aidaChannelConfig(env, channel);
 
 	// marshal results and free fields
 	returnValue = aidaChannelConfigToJObject(env, config);
@@ -59,7 +60,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBoolean
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestBoolean(pv, arguments);
+	returnValue = aidaRequestBoolean(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -81,7 +82,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByte
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestByte(pv, arguments);
+	returnValue = aidaRequestByte(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -103,7 +104,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShort
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestShort(pv, arguments);
+	returnValue = aidaRequestShort(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -125,7 +126,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestInteger
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestInteger(pv, arguments);
+	returnValue = aidaRequestInteger(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -147,7 +148,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLong
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestLong(pv, arguments);
+	returnValue = aidaRequestLong(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -169,7 +170,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloat
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestFloat(pv, arguments);
+	returnValue = aidaRequestFloat(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -191,7 +192,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDouble
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	returnValue = aidaRequestDouble(pv, arguments);
+	returnValue = aidaRequestDouble(env, pv, arguments);
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -213,7 +214,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	char* string = aidaRequestString(pv, arguments);
+	char* string = aidaRequestString(env, pv, arguments);
 	returnValue = toJString(env, string);
 
 	// Release String
@@ -239,7 +240,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBooleanArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestBooleanArray(pv, arguments);
+	Array array = aidaRequestBooleanArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toBooleanArray(env, array);
@@ -264,7 +265,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByteArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestByteArray(pv, arguments);
+	Array array = aidaRequestByteArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toByteArray(env, array);
@@ -289,7 +290,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShortArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestShortArray(pv, arguments);
+	Array array = aidaRequestShortArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toShortArray(env, array);
@@ -314,7 +315,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestIntegerArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestIntegerArray(pv, arguments);
+	Array array = aidaRequestIntegerArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toIntegerArray(env, array);
@@ -339,7 +340,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLongArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestLongArray(pv, arguments);
+	Array array = aidaRequestLongArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toLongArray(env, array);
@@ -364,7 +365,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloatArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestFloatArray(pv, arguments);
+	Array array = aidaRequestFloatArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toFloatArray(env, array);
@@ -389,7 +390,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDoubleArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Array array = aidaRequestDoubleArray(pv, arguments);
+	Array array = aidaRequestDoubleArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toDoubleArray(env, array);
@@ -414,7 +415,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestStringArray
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	StringArray array = aidaRequestStringArray(pv, arguments);
+	StringArray array = aidaRequestStringArray(env, pv, arguments);
 
 	// create result array
 	returnValue = toStringArray(env, array);
@@ -439,7 +440,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestTable
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
 
-	Table table = aidaRequestTable(pv, arguments);
+	Table table = aidaRequestTable(env, pv, arguments);
 
 	// create result table
 	returnValue = toTable(env, table);

@@ -9,11 +9,10 @@
 #include "reference_server.h"
 
 /**
- * Get channel configuration
- * @param channelName
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
+ * Initialise the aida service.  Called once by the framework when starting up.
+ * @param env to be used to throw exceptions using throw()
  */
-void aidaServiceInit()
+void aidaServiceInit(JNIEnv* env)
 {
 	printf("Aida Service Initialised\n");
 }
@@ -21,9 +20,10 @@ void aidaServiceInit()
 /**
  * Get channel configuration
  * @param channelName
+ * @param env to be used to throw exceptions using throw()
  * @return the channel config.  Leave empty if you don't have any specific configuration overrides
  */
-Config aidaChannelConfig(const char* channelName)
+Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 {
 	Config config;
 	memset(&config, 0, sizeof(config));
@@ -46,11 +46,12 @@ Config aidaChannelConfig(const char* channelName)
 /**
  * Get a boolean
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean
  */
-int aidaRequestBoolean(const char* uri, Arguments arguments)
+int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	int item = 0;
 
@@ -72,11 +73,12 @@ int aidaRequestBoolean(const char* uri, Arguments arguments)
 /**
  * Get a byte
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte
  */
-char aidaRequestByte(const char* uri, Arguments arguments)
+char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	char item = 0x0;
 
@@ -98,10 +100,11 @@ char aidaRequestByte(const char* uri, Arguments arguments)
  * Get a short
  *
  * @param uri the uri
+ * @param env to be used to throw exceptions using throw()
  * @param arguments the arguments
  * @return the short
  */
-short aidaRequestShort(const char* uri, Arguments arguments)
+short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short item = 0;
 
@@ -122,11 +125,12 @@ short aidaRequestShort(const char* uri, Arguments arguments)
 /**
  * Get a integer
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer
  */
-int aidaRequestInteger(const char* uri, Arguments arguments)
+int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	int item = 0;
 
@@ -147,11 +151,12 @@ int aidaRequestInteger(const char* uri, Arguments arguments)
 /**
  * Get a long
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long
  */
-long aidaRequestLong(const char* uri, Arguments arguments)
+long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	long item = 0;
 
@@ -172,11 +177,12 @@ long aidaRequestLong(const char* uri, Arguments arguments)
 /**
  * Get a float
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float
  */
-float aidaRequestFloat(const char* uri, Arguments arguments)
+float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	float item = 0;
 
@@ -197,11 +203,12 @@ float aidaRequestFloat(const char* uri, Arguments arguments)
 /**
  * Get a double
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double
  */
-double aidaRequestDouble(const char* uri, Arguments arguments)
+double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	double item = 0.0;
 
@@ -222,11 +229,12 @@ double aidaRequestDouble(const char* uri, Arguments arguments)
 /**
  * Get a string.  Allocate memory for string and it will be freed for you by framework
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string
  */
-char* aidaRequestString(const char* uri, Arguments arguments)
+char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	char* item;
 	char* data = "";
@@ -257,11 +265,12 @@ char* aidaRequestString(const char* uri, Arguments arguments)
 /**
  * Get a boolean array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean array
  */
-Array aidaRequestBooleanArray(const char* uri, Arguments arguments)
+Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array booleanArray;
 	booleanArray.count = 0;
@@ -279,11 +288,12 @@ Array aidaRequestBooleanArray(const char* uri, Arguments arguments)
 /**
  * Get a byte array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte array
  */
-Array aidaRequestByteArray(const char* uri, Arguments arguments)
+Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array byteArray;
 	byteArray.count = 0;
@@ -301,11 +311,12 @@ Array aidaRequestByteArray(const char* uri, Arguments arguments)
 /**
  * Get a short array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the short array
  */
-Array aidaRequestShortArray(const char* uri, Arguments arguments)
+Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array shortArray;
 	shortArray.count = 0;
@@ -323,11 +334,12 @@ Array aidaRequestShortArray(const char* uri, Arguments arguments)
 /**
  * Get a integer array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer array
  */
-Array aidaRequestIntegerArray(const char* uri, Arguments arguments)
+Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array integerArray;
 	integerArray.count = 0;
@@ -345,11 +357,12 @@ Array aidaRequestIntegerArray(const char* uri, Arguments arguments)
 /**
  * Get a long array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long array
  */
-Array aidaRequestLongArray(const char* uri, Arguments arguments)
+Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array longArray;
 	longArray.count = 0;
@@ -367,11 +380,12 @@ Array aidaRequestLongArray(const char* uri, Arguments arguments)
 /**
  * Get a float array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float array
  */
-Array aidaRequestFloatArray(const char* uri, Arguments arguments)
+Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array floatArray;
 	floatArray.count = 0;
@@ -389,11 +403,12 @@ Array aidaRequestFloatArray(const char* uri, Arguments arguments)
 /**
  * Get a double array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double array
  */
-Array aidaRequestDoubleArray(const char* uri, Arguments arguments)
+Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Array doubleArray;
 	doubleArray.count = 0;
@@ -411,11 +426,12 @@ Array aidaRequestDoubleArray(const char* uri, Arguments arguments)
 /**
  * Get a string array
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string array
  */
-StringArray aidaRequestStringArray(const char* uri, Arguments arguments)
+StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	StringArray stringArray;
 	stringArray.count = 0;
@@ -434,11 +450,12 @@ StringArray aidaRequestStringArray(const char* uri, Arguments arguments)
 /**
  * Get a table of data
  *
+ * @param env to be used to throw exceptions using throw()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
  */
-Table aidaRequestTable(const char* uri, Arguments arguments)
+Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	Table table;
 	memset(&table, 0, sizeof(table));

@@ -1,5 +1,6 @@
 package edu.stanford.slac.aida.lib;
 
+import edu.stanford.slac.aida.exception.UnableToGetDataException;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaType;
@@ -27,9 +28,10 @@ public class AidaRPCService implements RPCService {
      *
      * @param pvUri the uri passed to the channel containing the name, query, and arguments
      * @return the result of the call
-     * @throws RPCRequestException if any error occurs
+     * @throws RPCRequestException if any error occurs formulating the request or decoding the response
+     * @throws UnableToGetDataException when server fails to retrieve data
      */
-    public PVStructure request(PVStructure pvUri) throws RPCRequestException {
+    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException {
         // Check that the parameter is always a normative type
         String type = pvUri.getStructure().getID();
         if (!NTURI.is_a(pvUri.getStructure())) {
@@ -61,8 +63,9 @@ public class AidaRPCService implements RPCService {
      * @param channelName channel name
      * @param arguments   arguments if any
      * @return the structure containing the results.
+     * @throws UnableToGetDataException when server fails to retrieve data
      */
-    private PVStructure request(String channelName, List<AidaArgument> arguments) {
+    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
 
         AidaType aidaType = channelConfig.getType();

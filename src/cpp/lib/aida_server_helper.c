@@ -1,6 +1,61 @@
 #include <string.h>
+
+#include <stsdef.h>               /* $VMS.. status manipulation */
+#include <ssdef.h>                /* SS$_NORMAL and other VMS general codes */
+#include <descrip.h>              /*  for definition of $DESCRIPTOR  */
+
 #include "aida_types.h"
 #include "aida_server_helper.h"
+
+
+/**
+ * To log any exceptions and throw back to java
+ *
+ * The exception is formatted in a standard way using the VMS status code and its associated message
+ * and the optionally supplied message
+ * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ *
+ * @param env
+ * @param status
+ * @param exception
+ * @param message
+ */
+void throw(JNIEnv* env, int4u status, char* exception, const char* message)
+{
+	char vmsErrorMessage[256] = { '\0' };
+	$DESCRIPTOR(MESSAGE, vmsErrorMessage);
+	struct dsc$descriptor errorMessageDescriptor = { 256, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
+
+	//	Get the message text associated with the VMS message code. If there
+	//	was a supplemental string given, append that to the message text,
+	//	then throw the given exception to Java server code, giving the
+	//	VMS error text and supplement as the exception text.
+	ERRTRANSLATE(&status, &errorMessageDescriptor);
+
+	// If a message is specified then append it to the vms message string
+	if (message) {
+		strncat(errorMessageDescriptor.dsc$a_pointer, "; ", MIN(strlen("; "), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+		strncat(errorMessageDescriptor.dsc$a_pointer, message, MIN(strlen(message), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+	}
+
+	// Create the fully qualified java class name of the exception to throw
+	char classToCreate[256] = "edu/stanford/slac/aida/exception/";
+	strcat (classToCreate, exception);
+
+	// Clear any exception that may be in the process of being thrown (unlikely)
+	(*env)->ExceptionClear(env);
+
+	// Create the java exception class
+	jclass exceptionClass;
+	exceptionClass = (*env)->FindClass(env, classToCreate);
+	if (NULL == exceptionClass) {
+		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
+		return;
+	}
+
+	// Throw the exception back to java
+	(*env)->ThrowNew(env, exceptionClass, errorMessageDescriptor.dsc$a_pointer);
+}
 
 /**
  * Get a named argument
