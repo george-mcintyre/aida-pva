@@ -12,8 +12,6 @@ add_executable(cpp
         include/aida_jni_helper.h
         include/aida_server_helper.h
         include/aida_types.h
-        include/slc_macr.hc
-        include/slc_macros.h
         include/reference_server.h
         include/slac_aida_NativeChannelProvider.h
         lib/aida_jni_helper.c

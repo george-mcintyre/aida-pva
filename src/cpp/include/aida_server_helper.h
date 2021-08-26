@@ -7,7 +7,6 @@ extern "C" {
 #include <jni.h>
 
 #include "aida_types.h"
-#include "slc_macros.h"
 
 // Supported exceptions
 #define SERVER_INITIALISATION_EXCEPTION "ServerInitialisationException"

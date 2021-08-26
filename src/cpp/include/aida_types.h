@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+typedef unsigned long int int4u;          /* An unsigned I*4 */
+
 /**
  * Defines the permissible types of fields
  */
