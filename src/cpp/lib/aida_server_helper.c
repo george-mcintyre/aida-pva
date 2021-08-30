@@ -1,12 +1,11 @@
 #include <string.h>
-
 #include <stsdef.h>               /* $VMS.. status manipulation */
 #include <ssdef.h>                /* SS$_NORMAL and other VMS general codes */
 #include <descrip.h>              /*  for definition of $DESCRIPTOR  */
+#include <ctype.h>                /* isalnum, ispunct */
 
 #include "aida_types.h"
 #include "aida_server_helper.h"
-
 
 /**
  * To log any exceptions and throw back to java
@@ -20,22 +19,21 @@
  * @param exception
  * @param message
  */
-void throw(JNIEnv* env, int4u status, char* exception, const char* message)
+void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 {
 	char vmsErrorMessage[256] = { '\0' };
 	$DESCRIPTOR(MESSAGE, vmsErrorMessage);
 	struct dsc$descriptor errorMessageDescriptor = { 256, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
 
-	//	Get the message text associated with the VMS message code. If there
-	//	was a supplemental string given, append that to the message text,
-	//	then throw the given exception to Java server code, giving the
-	//	VMS error text and supplement as the exception text.
+	//	Get the message text associated with the VMS message code.
 	ERRTRANSLATE(&status, &errorMessageDescriptor);
 
 	// If a message is specified then append it to the vms message string
 	if (message) {
-		strncat(errorMessageDescriptor.dsc$a_pointer, "; ", MIN(strlen("; "), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
-		strncat(errorMessageDescriptor.dsc$a_pointer, message, MIN(strlen(message), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+		strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
+				MIN(strlen("; "), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+		strncat(errorMessageDescriptor.dsc$a_pointer, message,
+				MIN(strlen(message), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
 	}
 
 	// Create the fully qualified java class name of the exception to throw
@@ -53,7 +51,8 @@ void throw(JNIEnv* env, int4u status, char* exception, const char* message)
 		return;
 	}
 
-	// Throw the exception back to java
+	// 	Throw the given exception to Java server code, giving the
+	//	VMS error text and supplied message as the exception text.
 	(*env)->ThrowNew(env, exceptionClass, errorMessageDescriptor.dsc$a_pointer);
 }
 

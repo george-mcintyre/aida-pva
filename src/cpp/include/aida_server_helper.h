@@ -6,7 +6,15 @@ extern "C" {
 
 #include <jni.h>
 
+#include "slc_macros.h"
+#include "errtranslate.h"
 #include "aida_types.h"
+
+// Override prototypes of externals to uppercase names, since compile.com
+// adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
+// is in effect (as is for this module), then it's /names=AS_IS.
+
+void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msgdsc_ps);
 
 // Supported exceptions
 #define SERVER_INITIALISATION_EXCEPTION "ServerInitialisationException"
@@ -24,7 +32,7 @@ extern "C" {
  * @param exception
  * @param message
  */
-void throw(JNIEnv* env, int4u status, char* exception, const char* message);
+void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message);
 
 /**
  * Get a named argument

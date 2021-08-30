@@ -571,56 +571,56 @@ jobject toTable(JNIEnv* env, Table table)
 		for (int row = 0; row < table.rowCount; row++) {
 			// call appropriate add())
 			switch (table.types[column]) {
-			case BOOLEAN_ARRAY : {
+			case AIDA_BOOLEAN_ARRAY_TYPE : {
 				jboolean data = ((jboolean*)(table.ppData[column]))[row];
 				jobject dataObject = toBoolean(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case BYTE_ARRAY: {
+			case AIDA_BYTE_ARRAY_TYPE: {
 				jbyte data = ((jbyte*)(table.ppData[column]))[row];
 				jobject dataObject = toByte(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case SHORT_ARRAY: {
+			case AIDA_SHORT_ARRAY_TYPE: {
 				jshort data = ((jshort*)(table.ppData[column]))[row];
 				jobject dataObject = toShort(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case INTEGER_ARRAY: {
+			case AIDA_INTEGER_ARRAY_TYPE: {
 				jint data = ((jint*)(table.ppData[column]))[row];
 				jobject dataObject = toInteger(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case LONG_ARRAY: {
+			case AIDA_LONG_ARRAY_TYPE: {
 				jlong data = ((jlong*)(table.ppData[column]))[row];
 				jobject dataObject = toLong(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case FLOAT_ARRAY: {
+			case AIDA_FLOAT_ARRAY_TYPE: {
 				jfloat data = ((jfloat*)(table.ppData[column]))[row];
 				jobject dataObject = toFloat(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case DOUBLE_ARRAY: {
+			case AIDA_DOUBLE_ARRAY_TYPE: {
 				jdouble data = ((jdouble*)(table.ppData[column]))[row];
 				jobject dataObject = toDouble(env, data);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
 			}
-			case STRING_ARRAY: {
+			case AIDA_STRING_ARRAY_TYPE: {
 				char* string = ((char**)(table.ppData[column]))[row];
 				jstring stringValue = toJString(env, string);
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, stringValue);

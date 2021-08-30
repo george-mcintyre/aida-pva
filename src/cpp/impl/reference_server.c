@@ -34,7 +34,7 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 		fields[0].label = "Device is active?";
 		fields[0].description = "Device activity status.  Active if true";
 
-		config.type = BOOLEAN;
+		config.type = AIDA_BOOLEAN_TYPE;
 		config.fields = fields;
 		config.fieldCount = 1;
 	}
@@ -483,35 +483,35 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		for (int column = 0; column < table.columnCount; column++) {
 			switch (column) {
 			case 0:
-				table.types[column] = BOOLEAN_ARRAY;
+				table.types[column] = AIDA_BOOLEAN_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
 				break;
 			case 1:
-				table.types[column] = BYTE_ARRAY;
+				table.types[column] = AIDA_BYTE_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
 				break;
 			case 2:
-				table.types[column] = SHORT_ARRAY;
+				table.types[column] = AIDA_SHORT_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(short));
 				break;
 			case 3:
-				table.types[column] = INTEGER_ARRAY;
+				table.types[column] = AIDA_INTEGER_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(int));
 				break;
 			case 4:
-				table.types[column] = LONG_ARRAY;
+				table.types[column] = AIDA_LONG_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(long));
 				break;
 			case 5:
-				table.types[column] = FLOAT_ARRAY;
+				table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(float));
 				break;
 			case 6:
-				table.types[column] = DOUBLE_ARRAY;
+				table.types[column] = AIDA_DOUBLE_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(double));
 				break;
 			case 7:
-				table.types[column] = STRING_ARRAY;
+				table.types[column] = AIDA_STRING_ARRAY_TYPE;
 				table.ppData[column] = calloc(table.rowCount, sizeof(char*));
 				break;
 			default: // unsupported
