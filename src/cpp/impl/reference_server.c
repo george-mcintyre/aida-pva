@@ -9,8 +9,9 @@
 #include "reference_server.h"
 
 /**
- * Initialise the aida service.  Called once by the framework when starting up.
+ * Initialise the service
  * @param env to be used to throw exceptions using throw()
+ * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
 {
