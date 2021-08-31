@@ -13,8 +13,6 @@
 #include "msg_proto.h"            /* for standalone_init */
 #include "sysutil_proto.h"        /* for cvt_vms_to_ieee_flt */
 #include "err_proto.h"            /* for err_translate */
-#include "dbgetc.h"               /* useful database macros and prototypes */
-#include "db_types.hc"            /* for db_name_ta */
 #include "ref.h"                  /* Pass by ref to fortran helpers */
 #include "descr.h"                /* for pass by descr macros */
 #include "util_proto.h"           /* asts_color */
