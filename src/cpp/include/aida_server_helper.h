@@ -10,6 +10,12 @@ extern "C" {
 #include "errtranslate.h"
 #include "aida_types.h"
 
+	/**
+	 * Issues a given error message to SLC error log, which is passed on to cmlog.
+	 * @param message
+	 */
+	void issue_err( char* message );
+
 // Override prototypes of externals to uppercase names, since compile.com
 // adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
 // is in effect (as is for this module), then it's /names=AS_IS.

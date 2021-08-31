@@ -8,6 +8,39 @@
 #include "aida_server_helper.h"
 #include "reference_server.h"
 
+#include "opdef.hc"               /* General messages */
+#include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
+#include "msg_proto.h"            /* for standalone_init */
+#include "sysutil_proto.h"        /* for cvt_vms_to_ieee_flt */
+#include "err_proto.h"            /* for err_translate */
+#include "dbgetc.h"               /* useful database macros and prototypes */
+#include "db_types.hc"            /* for db_name_ta */
+#include "ref.h"                  /* Pass by ref to fortran helpers */
+#include "descr.h"                /* for pass by descr macros */
+#include "util_proto.h"           /* asts_color */
+#include "err_facility_p.h"
+
+/*
+ * Local Static
+ */
+static const $DESCRIPTOR( process_name, "AidaDbIf");
+
+/*
+* Implementation for cm log requires process name so needs to be implemented in service impl.
+ */
+void issue_err( char* message )
+{
+	DESCR_DECLARE;
+	REF_DECLARE;
+	char msg_c[BUFSIZ];
+
+	strcpy( msg_c, "ReferenceService: ");            /* Prepend Aida process name to msg */
+	strcat( msg_c, message );                 /* Add passed in message */
+
+	// TODO find impl of err_text
+	// err_text( REFINT4U_1(OP_MSGTXT), DESCRN1(msg_c), &process_name );
+}
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using throw()
