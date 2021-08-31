@@ -7,6 +7,20 @@
 #include "aida_types.h"
 #include "aida_server_helper.h"
 
+/*
+ * Issues a given error message to SLC error log, which is passed on to cmlog.
+ */
+static void issue_err( char* message )
+{
+	DESCR_DECLARE;
+	REF_DECLARE;
+	char msg_c[BUFSIZ];
+
+	strcpy( msg_c, "DpSlcBuff: ");            /* Prepend Aida process name to msg */
+	strcat( msg_c, message );                 /* Add passed in message */
+	err_text( REFINT4U_1(OP_MSGTXT), DESCRN1(msg_c), &process_name );
+}
+
 /**
  * To log any exceptions and throw back to java
  *
@@ -35,6 +49,9 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 		strncat(errorMessageDescriptor.dsc$a_pointer, message,
 				MIN(strlen(message), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
 	}
+
+	// Log error message to cm log
+	issue_err(errorMessageDescriptor.dsc$a_pointer);
 
 	// Create the fully qualified java class name of the exception to throw
 	char classToCreate[256] = "edu/stanford/slac/aida/exception/";
