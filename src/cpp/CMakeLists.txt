@@ -8,13 +8,27 @@ include_directories(include
         /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin)
 
 add_executable(cpp
-        impl/reference_server.c
-        include/aida_jni_helper.h
-        include/aida_server_helper.h
-        include/aida_types.h
-        include/reference_server.h
-        include/slac_aida_NativeChannelProvider.h
-        lib/aida_jni_helper.c
-        lib/aida_server_helper.c
-        lib/aida_types_helper.c
-        lib/NativeChannelProviderJni.c)
+        impl/Reference/reference_server.c
+        include/Reference/reference_server.h
+        impl/SLC/slc_server.c
+        include/SLC/slc_server.h
+        impl/SLCBpm/slcBpm_server.c
+        include/SLCBpm/slcBpm_server.h
+        impl/SLCBuffAcq/slcBuffAcq_server.c
+        include/SLCBuffAcq/slcBuffAcq_server.h
+        impl/SLCKlys/slcKlys_server.c
+        include/SLCKlys/slcKlys_server.h
+        impl/SLCModel/slcModel_server.c
+        include/SLCModel/slcModel_server.h
+        impl/SLCMosc/slcMosc_server.c
+        include/SLCMosc/slcMosc_server.h
+        impl/SLCUtil/slcUtil_server.c
+        include/SLCUtil/slcUtil_server.h
+        include/aida-pva/aida_jni_helper.h
+        include/aida-pva/aida_server_helper.h
+        include/aida-pva/aida_types.h
+        include/aida-pva/slac_aida_NativeChannelProvider.h
+        aida-pva/aida_jni_helper.c
+        aida-pva/aida_server_helper.c
+        aida-pva/aida_types_helper.c
+        aida-pva/NativeChannelProviderJni.c)
