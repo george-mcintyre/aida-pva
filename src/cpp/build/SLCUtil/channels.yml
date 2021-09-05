@@ -1,0 +1,14 @@
+# Channels definition file for aida-pva
+#
+# This file defines the available channels for the sample aida service
+id: 122
+name: SLCUtil
+description: SLC Utility Server
+config:
+  type: DOUBLE
+  fields:
+    - name: value
+channels:
+  - channel: BGRP:VAL
+  - channel: MKB:VAL
+  - channel: TRIG:*:*:*

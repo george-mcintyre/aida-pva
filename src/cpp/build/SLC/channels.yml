@@ -1,0 +1,47 @@
+!!edu.stanford.slac.aida.lib.model.AidaProvider
+# Channels definition file for aida-pva: SLC data provider
+#
+# This file defines the available channels for the SLC aida service
+id: 8
+name: SLC
+description: Aida SLC Data Provider
+# The mandatory default config is used when specific config is not supplied for any of the channels included in this provider
+config:
+  type: FLOAT
+
+channels:
+#long
+  - channel: *:*:*:IBIT
+    config:
+      type: LONG
+  - channel: *:*:*:OBIT
+    config:
+      type: LONG
+  - channel: *:*:*:ITRY
+    config:
+      type: LONG
+  - channel: [A-D]*:*:*:UNIT
+    config:
+      type: LONG
+  - channel: [M-R]*:*:*:UNIT
+    config:
+      type: LONG
+  - channel: [T-Z]*:*:*:UNIT
+    config:
+      type: LONG
+  - channel: F[AE]*:*:*:UNIT
+    config:
+      type: LONG
+  - channel: S[TW]*:*:*:UNIT
+    config:
+      type: LONG
+#string
+  - channel: F?BK:*:*:UNIT
+    config:
+      type: STRING
+  - channel: F[DFP]*:*:*:UNIT
+    config:
+      type: STRING
+  - channel: SUMY:*:*:UNIT
+    config:
+      type: STRING

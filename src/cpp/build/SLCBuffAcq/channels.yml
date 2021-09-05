@@ -1,0 +1,15 @@
+# Channels definition file for aida-pva
+#
+# This file defines the available channels for the sample aida service
+id: 262
+name: SLCBuffacq
+description: SLC BPM Buffered acquisition
+config:
+  type: TABLE
+  layout: ROW_MAJOR
+  fields:
+    - label: foo
+      name: bar
+      description: Lorem ipsum
+channels:
+  - channel: *:BUFFACQ

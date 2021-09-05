@@ -1,0 +1,14 @@
+# Channels definition file for aida-pva
+#
+# This file defines the available channels for the sample aida service
+id: 162
+name: SLCKlys
+description: Klystron Server
+config:
+  description: Kylstron Value
+  type: DOUBLE
+  fields:
+    - name: value
+channels:
+  - channel: KLYS:????:*:????
+  - channel: SBST:????:*:????
