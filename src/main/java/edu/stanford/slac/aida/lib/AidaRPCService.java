@@ -1,6 +1,7 @@
 package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.exception.UnableToGetDataException;
+import edu.stanford.slac.aida.exception.UnsupportedChannelException;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaType;
@@ -12,6 +13,7 @@ import org.epics.pvdata.pv.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.stanford.slac.aida.lib.model.AidaProvider.getAidaName;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Type.scalar;
 import static org.epics.pvdata.pv.Type.scalarArray;
@@ -30,8 +32,11 @@ public class AidaRPCService implements RPCService {
      * @return the result of the call
      * @throws RPCRequestException if any error occurs formulating the request or decoding the response
      * @throws UnableToGetDataException when server fails to retrieve data
+     * @throws UnsupportedChannelException when server does not yet support the specified channel.
+     *         Usually caused when channel matches a pattern specified in the channels.yml file
+     *         but is not yet supported in the service implementation
      */
-    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException {
+    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException {
         // Check that the parameter is always a normative type
         String type = pvUri.getStructure().getID();
         if (!NTURI.is_a(pvUri.getStructure())) {
@@ -49,6 +54,10 @@ public class AidaRPCService implements RPCService {
             throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: <blank>");
         }
 
+        // Convert the channelName to old AIDA format including '//' before the attribute name
+        // So that services can use simple matching to decode the pvName
+        channelName = getAidaName(channelName);
+
         // Retrieve arguments, if any given to this RPC PV channel.
         PVStructure pvUriQuery = pvUri.getStructureField("query");
         List<AidaArgument> arguments = getArguments(pvUriQuery);
@@ -64,15 +73,21 @@ public class AidaRPCService implements RPCService {
      * @param arguments   arguments if any
      * @return the structure containing the results.
      * @throws UnableToGetDataException when server fails to retrieve data
+     * @throws UnsupportedChannelException when server does not yet support the specified channel.
+     *         Usually caused when channel matches a pattern specified in the channels.yml file
+     *         but is not yet supported in the service implementation
      */
-    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException {
+    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
+
+        if ( channelConfig == null ) {
+            throw new UnsupportedChannelException("Could not find configuration for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
+        }
 
         AidaType aidaType = channelConfig.getType();
         Type channelType = typeOf(aidaType);
         if (channelType == null) {
-            // TODO log exception
-            return null;
+            throw new UnsupportedChannelException("Could not find return type for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
         }
         System.out.println("AIDA Request: " + channelName + arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
 

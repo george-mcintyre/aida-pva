@@ -53,7 +53,7 @@ public class AidaProvider {
         AidaChannel aidaChannel = this.channelMap.get(channelName);
         if ( aidaChannel == null ) {
             for (Map.Entry<String, AidaChannel> entry : this.channelMap.entrySet()) {
-                if (WildcardMatcher.match(entry.getKey(), channelName)) {
+                if (WildcardMatcher.match(getAidaName(entry.getKey()), channelName)) {
                     aidaChannel = entry.getValue();
                     break;
                 }
@@ -145,6 +145,20 @@ public class AidaProvider {
                 }
             }
         }
+    }
+
+    public static String getAidaName(String channelName) {
+        if ( channelName.lastIndexOf("//") != -1) {
+            return channelName;
+        }
+
+        int start = channelName.lastIndexOf(":");
+        // if channel name does not contain any colons then return unchanged
+        if ( start == -1) {
+            return channelName;
+        }
+
+        return (channelName.substring(0, start) + "//" + channelName.substring(start + 1));
     }
 
     @Override

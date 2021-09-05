@@ -161,7 +161,12 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @return the configuration
      */
     public AidaChannelConfig getChannelConfig(String channelName) {
-        return this.aidaProvider.getAidaChannel(channelName).getConfig();
+        AidaChannelConfig channelConfig = null;
+        AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
+        if ( channel != null) {
+            channelConfig = channel.getConfig();
+        }
+        return channelConfig;
     }
 
     /**
