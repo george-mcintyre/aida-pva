@@ -5,7 +5,17 @@ set(CMAKE_C_STANDARD 99)
 
 include_directories(include
         /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include
-        /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin)
+        /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin
+        include/aida-pva
+        include/Reference
+        include/SLC
+        include/SLCBpm
+        include/SLCBuffAcq
+        include/SLCKlys
+        include/SLCModel
+        include/SLCMosc
+        include/SLCUtil
+        )
 
 add_executable(cpp
         impl/Reference/reference_server.c
