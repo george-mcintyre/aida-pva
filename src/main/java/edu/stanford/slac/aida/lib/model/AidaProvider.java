@@ -4,6 +4,8 @@ import edu.stanford.slac.aida.lib.ChannelProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.epics.pvaccess.server.rpc.Service;
+import org.epics.pvaccess.util.WildcardMatcher;
 
 import java.util.*;
 
@@ -46,7 +48,19 @@ public class AidaProvider {
         if (this.channelMap.isEmpty()) {
             setChannelNames();
         }
-        return this.channelMap.get(channelName);
+
+        // Look for an exact match or a wild card match if that fails
+        AidaChannel aidaChannel = this.channelMap.get(channelName);
+        if ( aidaChannel == null ) {
+            for (Map.Entry<String, AidaChannel> entry : this.channelMap.entrySet()) {
+                if (WildcardMatcher.match(entry.getKey(), channelName)) {
+                    aidaChannel = entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        return aidaChannel;
     }
 
     /**

@@ -76,17 +76,35 @@ In the implementation you will simply allocate the space for the data and fill i
 
 # Implementation
 
-To implement a service simply copy the sample code from (github ref) and implement methods in reference_server.c as
-appropriate to your service.
+To implement a service (`yourService`) simply duplicate the `Reference` directories under `src/cpp/build`, `src/cpp/impl`
+and `src/cpp/include` and implement your code as appropriate to your service.
 
-You will also need to provide a yaml file containing the channel definition.
+You will also need to provide a yaml file (`channels.yaml`) containing the channel definition which you'll place in you
+new `src/cpp/build{yourService}` directory.
 
-Compile up the service using the build script or makefile and deploy the library (EXE file).
+From the `src/cpp/build{yourService}` directory, compile up the service using the `build` script which will deploy the library (`AIDA.EXE`) in the `lib/{yourService}` directory and copy the `channels.yml` file to the appropriate location.
+```shell
+MCCDEV> src
+Default:= DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC]
+MCCDEV> cd [.build.reference]
+MCCDEV> @build
+DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]AIDA_JNI_HELPER.OBJ;7
+DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]AIDA_SERVER_HELPER.OBJ;7
+DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]AIDA_TYPES_HELPER.OBJ;7
+DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]NATIVECHANNELPROVIDERJNI.OBJ;7
+DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]REFERENCE_SERVER.OBJ;7
+```
 
-Start the service by using the following commandline
+From the `lib/{yourlibrary}` directory start the service with `java -jar "-Djava.library.path=./" ../aida-pva.jar` where {yourLibrary} is the name of the library.
+`
+e.g.
 
 ```shell
- java -jar "-Djava.library.path=." aida-pva.jar
+MCCDEV> lib
+Default:= DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.LIB]
+MCCDEV> cd [.reference]
+MCCDEV> java -jar "-Djava.library.path=./" ../aida-pva.jar
+Aida Service Initialised
  
        db         88  88888888ba,           db
       d88b        88  88      `"8b         d88b
