@@ -60,6 +60,42 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 }
 
 /**
+ * Check if a string ends with another string
+ * @param str
+ * @param suffix
+ * @return
+ */
+int endsWith(const char *str, const char *suffix)
+{
+	if (!str || !suffix) {
+		return 0;
+	}
+	size_t lenstr = strlen(str);
+	size_t lenSuffix = strlen(suffix);
+	if (lenSuffix >  lenstr)
+		return 0;
+	return strncmp(str + lenstr - lenSuffix, suffix, lenSuffix) == 0;
+}
+
+/**
+ * Check if a string starts with another string
+ * @param str
+ * @param prefix
+ * @return
+ */
+int startsWith(const char *str, const char *prefix)
+{
+	if (!str || !prefix) {
+		return 0;
+	}
+	size_t lenstr = strlen(str);
+	size_t lenPrefix = strlen(prefix);
+	if (lenPrefix >  lenstr)
+		return 0;
+	return strncmp(str, prefix, lenPrefix) == 0;
+}
+
+/**
  * Get a named argument
  * @param arguments arguments
  * @param name name

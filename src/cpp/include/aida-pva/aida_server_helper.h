@@ -41,6 +41,23 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message);
 
 /**
+ * Check if a string ends with another string
+ * @param str
+ * @param suffix
+ * @return
+ */
+int endsWith(const char *str, const char *suffix);
+
+/**
+ * Check if a string starts with another string
+ * @param str
+ * @param prefix
+ * @return
+ */
+int startsWith(const char *str, const char *prefix);
+
+
+/**
  * Get a named argument
  * @param arguments arguments
  * @param name name
