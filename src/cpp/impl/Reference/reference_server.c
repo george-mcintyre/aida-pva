@@ -21,19 +21,20 @@
 /*
  * Local Static
  */
-static const $DESCRIPTOR( process_name, "AidaDbIf");
+static const $DESCRIPTOR( process_name,
+"AidaDbIf");
 
 /*
 * Implementation for cm log requires process name so needs to be implemented in service impl.
  */
-void issue_err( char* message )
+void issue_err(char* message)
 {
 	DESCR_DECLARE;
 	REF_DECLARE;
 	char msg_c[BUFSIZ];
 
-	strcpy( msg_c, "ReferenceService: ");            /* Prepend Aida process name to msg */
-	strcat( msg_c, message );                 /* Add passed in message */
+	strcpy(msg_c, "ReferenceService: ");            /* Prepend Aida process name to msg */
+	strcat(msg_c, message);                 /* Add passed in message */
 
 	// TODO find impl of err_text
 	// err_text( REFINT4U_1(OP_MSGTXT), DESCRN1(msg_c), &process_name );
@@ -60,7 +61,8 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 	Config config;
 	memset(&config, 0, sizeof(config));
 
-	if (strcmp(channelName, "AIDA:SAMPLE:DEVICE01:attribute01") == 0) {
+	// Only modify config for attribute01
+	if (startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
 		Field* fields = calloc(1, sizeof(Field));
 		fields[0].name = "isActive";
 		fields[0].label = "Device is active?";
@@ -85,11 +87,12 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
  */
 int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	int item = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute01") == 0) {
-		item = 1;
+	// Only for attribute01
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute01")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	int item = 1;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -112,11 +115,12 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
  */
 char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	char item = 0x0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute02") == 0) {
-		item = 0x02;
+	// Only for attribute02
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute02")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	char item = 0x02;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -138,11 +142,12 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
  */
 short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	short item = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute03") == 0) {
-		item = 3;
+	// Only for attribute03
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute03")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	short item = 3;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -164,11 +169,12 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
  */
 int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	int item = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute04") == 0) {
-		item = 4;
+	// Only for attribute04
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute04")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	int item = 4;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -190,11 +196,12 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
  */
 long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	long item = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute05") == 0) {
-		item = 5;
+	// Only for attribute05
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute05")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	long item = 5;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -216,11 +223,12 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
  */
 float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	float item = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute06") == 0) {
-		item = 6.6f;
+	// Only for attribute06
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute06")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	float item = 6.6f;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -242,11 +250,12 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
  */
 double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	double item = 0.0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute07") == 0) {
-		item = 7.7;
+	// Only for attribute07
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute07")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	double item = 7.7;
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -268,13 +277,14 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
  */
 char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	char* item;
-	char* data = "";
-	const char* arg = "";
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute08") == 0) {
-		data = "eight";
+	// Only for attribute08
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute08")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	char* item;
+	char* data = "eight";
+	const char* arg = "";
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
@@ -304,14 +314,15 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array booleanArray;
-	booleanArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute11") == 0) {
-		booleanArray.count = 1;
-		booleanArray.items = calloc(1, sizeof(unsigned char));
-		((unsigned char*)(booleanArray.items))[0] = 1;
+	// Only for attribute11
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute11")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array booleanArray;
+	booleanArray.count = 1;
+	booleanArray.items = calloc(1, sizeof(unsigned char));
+	((unsigned char*)(booleanArray.items))[0] = 1;
 
 	// Return the boolean array
 	return booleanArray;
@@ -327,14 +338,15 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array byteArray;
-	byteArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute12") == 0) {
-		byteArray.count = 1;
-		byteArray.items = calloc(1, sizeof(unsigned char));
-		((unsigned char*)(byteArray.items))[0] = 12;
+	// Only for attribute12
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute12")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array byteArray;
+	byteArray.count = 1;
+	byteArray.items = calloc(1, sizeof(unsigned char));
+	((unsigned char*)(byteArray.items))[0] = 12;
 
 	// Return the byte array
 	return byteArray;
@@ -350,14 +362,15 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array shortArray;
-	shortArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute13") == 0) {
-		shortArray.count = 1;
-		shortArray.items = calloc(1, sizeof(short));
-		((short*)(shortArray.items))[0] = 13;
+	// Only for attribute13
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute13")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array shortArray;
+	shortArray.count = 1;
+	shortArray.items = calloc(1, sizeof(short));
+	((short*)(shortArray.items))[0] = 13;
 
 	// Return the short array
 	return shortArray;
@@ -373,14 +386,15 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array integerArray;
-	integerArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute14") == 0) {
-		integerArray.count = 1;
-		integerArray.items = calloc(1, sizeof(int));
-		((int*)(integerArray.items))[0] = 14;
+	// Only for attribute14
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute14")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array integerArray;
+	integerArray.count = 1;
+	integerArray.items = calloc(1, sizeof(int));
+	((int*)(integerArray.items))[0] = 14;
 
 	// Return the integer array
 	return integerArray;
@@ -396,14 +410,15 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array longArray;
-	longArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute15") == 0) {
-		longArray.count = 1;
-		longArray.items = calloc(1, sizeof(long));
-		((long*)(longArray.items))[0] = 15;
+	// Only for attribute15
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute15")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array longArray;
+	longArray.count = 1;
+	longArray.items = calloc(1, sizeof(long));
+	((long*)(longArray.items))[0] = 15;
 
 	// Return the long array
 	return longArray;
@@ -419,14 +434,15 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array floatArray;
-	floatArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute16") == 0) {
-		floatArray.count = 1;
-		floatArray.items = calloc(1, sizeof(float));
-		((float*)(floatArray.items))[0] = 16.6f;
+	// Only for attribute16
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute16")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array floatArray;
+	floatArray.count = 1;
+	floatArray.items = calloc(1, sizeof(float));
+	((float*)(floatArray.items))[0] = 16.6f;
 
 	// Return the float array
 	return floatArray;
@@ -442,14 +458,15 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array doubleArray;
-	doubleArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute17") == 0) {
-		doubleArray.count = 1;
-		doubleArray.items = calloc(1, sizeof(double));
-		((double*)(doubleArray.items))[0] = 17.7;
+	// Only for attribute17
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute17")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	Array doubleArray;
+	doubleArray.count = 1;
+	doubleArray.items = calloc(1, sizeof(double));
+	((double*)(doubleArray.items))[0] = 17.7;
 
 	// Return the double array
 	return doubleArray;
@@ -465,15 +482,16 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	StringArray stringArray;
-	stringArray.count = 0;
-
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute18") == 0) {
-		stringArray.count = 1;
-		stringArray.items = calloc(1, sizeof(char*));
-		((char**)(stringArray.items))[0] = malloc(9); // one character string
-		strcpy(((char**)(stringArray.items))[0], "eighteen");
+	// Only for attribute18
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute18")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
+
+	StringArray stringArray;
+	stringArray.count = 1;
+	stringArray.items = calloc(1, sizeof(char*));
+	((char**)(stringArray.items))[0] = malloc(9); // one character string
+	strcpy(((char**)(stringArray.items))[0], "eighteen");
 
 	// Return the string array
 	return stringArray;
@@ -489,81 +507,83 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	// Only for attribute20
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute20")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+	}
+
 	Table table;
 	memset(&table, 0, sizeof(table));
+	table.columnCount = 8;
 
-	if (strcmp(uri, "AIDA:SAMPLE:DEVICE01:attribute20") == 0) {
-		table.columnCount = 8;
-
-		// Allocate space for columns
-		table.ppData = calloc(table.columnCount, sizeof(void*));
-		if (table.ppData == NULL) {
-			fprintf(stderr, "Unable to allocate memory for table: %ld\n", table.columnCount * sizeof(void*));
-			return table;
-		}
-
-		table.types = calloc(table.columnCount, sizeof(Type*));
-		if (table.types == NULL) {
-			fprintf(stderr, "Unable to allocate memory for table types: %ld\n", table.columnCount * sizeof(Type*));
-			return table;
-		}
-
-		// Do something to get rows of data ...
-		table.rowCount = 1;
-
-		// Allocate space for rows of data
-		for (int column = 0; column < table.columnCount; column++) {
-			switch (column) {
-			case 0:
-				table.types[column] = AIDA_BOOLEAN_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
-				break;
-			case 1:
-				table.types[column] = AIDA_BYTE_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
-				break;
-			case 2:
-				table.types[column] = AIDA_SHORT_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(short));
-				break;
-			case 3:
-				table.types[column] = AIDA_INTEGER_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(int));
-				break;
-			case 4:
-				table.types[column] = AIDA_LONG_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(long));
-				break;
-			case 5:
-				table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(float));
-				break;
-			case 6:
-				table.types[column] = AIDA_DOUBLE_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(double));
-				break;
-			case 7:
-				table.types[column] = AIDA_STRING_ARRAY_TYPE;
-				table.ppData[column] = calloc(table.rowCount, sizeof(char*));
-				break;
-			default: // unsupported
-				fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-				break;
-			}
-		}
-
-		// Add data to table
-		((unsigned char*)(table.ppData[0]))[0] = 1; // Boolean
-		((unsigned char*)(table.ppData[1]))[0] = 2; // Byte
-		((short*)(table.ppData[2]))[0] = 3; // Short
-		((int*)(table.ppData[3]))[0] = 4; // Integer
-		((long*)(table.ppData[4]))[0] = 5; // Long
-		((float*)(table.ppData[5]))[0] = 6.6f; // Float
-		((double*)(table.ppData[6]))[0] = 7.7; // Double
-
-		((char**)(table.ppData[7]))[0] = malloc(6); // String (one character)
-		strcpy(((char**)(table.ppData[7]))[0], "eight");
+	// Allocate space for columns
+	table.ppData = calloc(table.columnCount, sizeof(void*));
+	if (table.ppData == NULL) {
+		fprintf(stderr, "Unable to allocate memory for table: %ld\n", table.columnCount * sizeof(void*));
+		return table;
 	}
+
+	table.types = calloc(table.columnCount, sizeof(Type*));
+	if (table.types == NULL) {
+		fprintf(stderr, "Unable to allocate memory for table types: %ld\n", table.columnCount * sizeof(Type*));
+		return table;
+	}
+
+	// Do something to get rows of data ...
+	table.rowCount = 1;
+
+	// Allocate space for rows of data
+	for (int column = 0; column < table.columnCount; column++) {
+		switch (column) {
+		case 0:
+			table.types[column] = AIDA_BOOLEAN_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
+			break;
+		case 1:
+			table.types[column] = AIDA_BYTE_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
+			break;
+		case 2:
+			table.types[column] = AIDA_SHORT_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(short));
+			break;
+		case 3:
+			table.types[column] = AIDA_INTEGER_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(int));
+			break;
+		case 4:
+			table.types[column] = AIDA_LONG_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(long));
+			break;
+		case 5:
+			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			break;
+		case 6:
+			table.types[column] = AIDA_DOUBLE_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(double));
+			break;
+		case 7:
+			table.types[column] = AIDA_STRING_ARRAY_TYPE;
+			table.ppData[column] = calloc(table.rowCount, sizeof(char*));
+			break;
+		default: // unsupported
+			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
+			break;
+		}
+	}
+
+	// Add data to table
+	((unsigned char*)(table.ppData[0]))[0] = 1; // Boolean
+	((unsigned char*)(table.ppData[1]))[0] = 2; // Byte
+	((short*)(table.ppData[2]))[0] = 3; // Short
+	((int*)(table.ppData[3]))[0] = 4; // Integer
+	((long*)(table.ppData[4]))[0] = 5; // Long
+	((float*)(table.ppData[5]))[0] = 6.6f; // Float
+	((double*)(table.ppData[6]))[0] = 7.7; // Double
+
+	((char**)(table.ppData[7]))[0] = malloc(6); // String (one character)
+	strcpy(((char**)(table.ppData[7]))[0], "eight");
 
 	// Return the table
 	return table;

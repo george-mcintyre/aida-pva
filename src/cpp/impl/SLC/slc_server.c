@@ -1,5 +1,5 @@
 /**
- * Reference Server implementation: IMPLEMENT ANY METHODS THAT YOUR SERVER SUPPORTS
+ * SLC Database Server implementation: IMPLEMENT ANY METHODS THAT YOUR SERVER SUPPORTS
       **MEMBER**=SLCLIBS:AIDASHRLIB
       **ATTRIBUTES**=JNI
  */
@@ -56,9 +56,7 @@ void issue_err( char* message )
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	vmsstat_t status;
-/*---------------------------------------------------*/
-	status = standalone_init(&process_name, &((long)(TRUE)), NULL, &((long)(FALSE)), &((long)(FALSE)));
+	vmsstat_t status = standalone_init(&process_name, &((long)(TRUE)), NULL, &((long)(FALSE)), &((long)(FALSE)));
 
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "Failed to initialise Aida Service");

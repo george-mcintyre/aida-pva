@@ -8,6 +8,20 @@
 #include "aida_server_helper.h"
 
 /**
+ * To log any non-OS exceptions and throw back to java
+ *
+ * The exception is formatted in a standard way with the optionally supplied message
+ * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ *
+ * @param env
+ * @param exception
+ * @param message
+ */
+void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message) {
+	aidaThrow(env, 1, exception, message);
+}
+
+/**
  * To log any exceptions and throw back to java
  *
  * The exception is formatted in a standard way using the VMS status code and its associated message
@@ -25,8 +39,16 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 	$DESCRIPTOR(MESSAGE, vmsErrorMessage);
 	struct dsc$descriptor errorMessageDescriptor = { 256, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
 
-	//	Get the message text associated with the VMS message code.
-	ERRTRANSLATE(&status, &errorMessageDescriptor);
+	//	Get the message text associated with the VMS message code. if the cause is an OS error
+	if (!SUCCESS(status)) {
+		ERRTRANSLATE(&status, &errorMessageDescriptor);
+		strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
+				MIN(strlen("; "), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+	}
+
+	// Add exception
+	strncat(errorMessageDescriptor.dsc$a_pointer, exception,
+			MIN(strlen(exception), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
 
 	// If a message is specified then append it to the vms message string
 	if (message) {
@@ -63,9 +85,9 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
  * Check if a string ends with another string
  * @param str
  * @param suffix
- * @return
+ * @return true if string ends with suffix
  */
-int endsWith(const char *str, const char *suffix)
+int endsWith(const char *str, char *suffix)
 {
 	if (!str || !suffix) {
 		return 0;
@@ -81,9 +103,9 @@ int endsWith(const char *str, const char *suffix)
  * Check if a string starts with another string
  * @param str
  * @param prefix
- * @return
+ * @returns true if string starts with prefix
  */
-int startsWith(const char *str, const char *prefix)
+int startsWith(const char *str, char *prefix)
 {
 	if (!str || !prefix) {
 		return 0;

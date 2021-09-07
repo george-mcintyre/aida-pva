@@ -26,6 +26,10 @@ config:
       name: d
       description: The fourth field
 channels:
+  - channel: AIDA:SAMPLE:*:attribute00
+      # Test for channel not supported.  This channel is not supported by service
+    config:
+      type: BOOLEAN
   - channel: AIDA:SAMPLE:*:attribute01
     # Only override values that are different from the default.
     config:

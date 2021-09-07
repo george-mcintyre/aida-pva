@@ -25,6 +25,7 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 // Supported exceptions
 #define SERVER_INITIALISATION_EXCEPTION "ServerInitialisationException"
 #define UNABLE_TO_GET_DATA_EXCEPTION "UnableToGetDataException"
+#define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
 
 /**
  * To log any exceptions and throw back to java
@@ -41,20 +42,32 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message);
 
 /**
+ * To log any non-OS exceptions and throw back to java
+ *
+ * The exception is formatted in a standard way with the optionally supplied message
+ * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ *
+ * @param env
+ * @param exception
+ * @param message
+ */
+void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message);
+
+/**
  * Check if a string ends with another string
  * @param str
  * @param suffix
- * @return
+ * @return true if string ends with suffix
  */
-int endsWith(const char *str, const char *suffix);
+int endsWith(const char *str, char *suffix);
 
 /**
  * Check if a string starts with another string
  * @param str
  * @param prefix
- * @return
+ * @returns true if string starts with prefix
  */
-int startsWith(const char *str, const char *prefix);
+int startsWith(const char *str, char *prefix);
 
 
 /**
