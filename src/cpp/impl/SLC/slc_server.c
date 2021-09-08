@@ -46,7 +46,7 @@ void issue_err( char* message )
 	strcat( msg_c, message );                 /* Add passed in message */
 
 	// TODO find impl of err_text
-	// err_text( REFINT4U_1(OP_MSGTXT), DESCRN1(msg_c), &process_name );
+	err_text( REFINT4U_1(OP_MSGTXT), DESCRN1(msg_c), &process_name );
 }
 
 /**
