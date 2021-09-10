@@ -96,7 +96,7 @@ int endsWith(const char *str, char *suffix)
 	size_t lenSuffix = strlen(suffix);
 	if (lenSuffix >  lenstr)
 		return 0;
-	return strncmp(str + lenstr - lenSuffix, suffix, lenSuffix) == 0;
+	return strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix) == 0;
 }
 
 /**
@@ -114,7 +114,7 @@ int startsWith(const char *str, char *prefix)
 	size_t lenPrefix = strlen(prefix);
 	if (lenPrefix >  lenstr)
 		return 0;
-	return strncmp(str, prefix, lenPrefix) == 0;
+	return strncasecmp(str, prefix, lenPrefix) == 0;
 }
 
 /**
@@ -130,7 +130,7 @@ Argument getArgument(Arguments arguments, char* name)
 
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
-		if (strcmp(argument.name, name) == 0) {
+		if (strcasecmp(argument.name, name) == 0) {
 			if (strlen(argument.value) > 0) {
 				return argument;
 			}
