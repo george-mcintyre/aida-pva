@@ -19,7 +19,10 @@ public enum AidaType {
     FLOAT_ARRAY,
     DOUBLE_ARRAY,
     STRING_ARRAY,
-    TABLE;
+    TABLE,
+    SCALAR,
+   	SCALAR_ARRAY,
+   	ANY;
 
     /**
      * Determine the aida type of a java object of a supported type.  Return null if type not supported

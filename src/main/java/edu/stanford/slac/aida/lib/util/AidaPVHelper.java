@@ -496,6 +496,7 @@ public class AidaPVHelper {
             case FLOAT:
             case DOUBLE:
             case STRING:
+            case SCALAR:
                 return Type.scalar;
             case BOOLEAN_ARRAY:
             case BYTE_ARRAY:
@@ -505,8 +506,10 @@ public class AidaPVHelper {
             case FLOAT_ARRAY:
             case DOUBLE_ARRAY:
             case STRING_ARRAY:
+            case SCALAR_ARRAY:
                 return Type.scalarArray;
             case TABLE:
+            case ANY:
                 return Type.structure;
             default:
                 return null;

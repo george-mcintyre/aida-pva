@@ -2,6 +2,7 @@ package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.exception.UnableToGetDataException;
 import edu.stanford.slac.aida.exception.UnsupportedChannelException;
+import edu.stanford.slac.aida.exception.UnsupportedChannelTypeException;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaType;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.stanford.slac.aida.lib.model.AidaProvider.getAidaName;
+import static edu.stanford.slac.aida.lib.model.AidaType.TABLE;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Type.scalar;
 import static org.epics.pvdata.pv.Type.scalarArray;
@@ -85,6 +87,31 @@ public class AidaRPCService implements RPCService {
         }
 
         AidaType aidaType = channelConfig.getType();
+        // If the type is SCALAR, SCALAR_ARRAY or ANY then look for the `type` argument and use that for the aidaType instead
+        switch (aidaType) {
+            case SCALAR:
+            case SCALAR_ARRAY:
+            case ANY:
+            {
+                AidaArgument typeArgument = null;
+                for (AidaArgument argument : arguments) {
+                    if ( argument.getName().equalsIgnoreCase("type")) {
+                        typeArgument = argument;
+                    }
+                }
+                if ( typeArgument != null ) {
+                    try {
+                        aidaType =  AidaType.valueOf(typeArgument.getValue());
+                    } catch (IllegalArgumentException e) {
+                        throw new UnsupportedChannelTypeException("The type specified by the 'type' parameter is not a recognised AIDA type" + typeArgument.getValue());
+                    }
+                } else {
+                    // Default type is table when the type parameter is not specified
+                    aidaType = TABLE;
+                }
+            }
+        }
+
         Type channelType = typeOf(aidaType);
         if (channelType == null) {
             throw new UnsupportedChannelException("Could not find return type for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
