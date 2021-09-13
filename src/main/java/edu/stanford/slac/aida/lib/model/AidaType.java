@@ -3,6 +3,7 @@ package edu.stanford.slac.aida.lib.model;
 import java.util.List;
 
 public enum AidaType {
+    NONE,
     BOOLEAN,
     BYTE,
     SHORT,
@@ -69,6 +70,36 @@ public enum AidaType {
             return null;
         }
         return arrayTypeOf(aidaTypeOf(values.get(0)));
+    }
+
+    /**
+     * Get the meta-type of this aida type
+     * @return the meta type SCALAR, SCALAR_ARRAY, or AHY
+     */
+    public AidaType metaType() {
+        switch (this) {
+            case BOOLEAN:
+            case BYTE:
+            case DOUBLE:
+            case FLOAT:
+            case INTEGER:
+            case LONG:
+            case SHORT:
+            case STRING:
+                return SCALAR;
+            case BYTE_ARRAY:
+            case BOOLEAN_ARRAY:
+            case DOUBLE_ARRAY:
+            case FLOAT_ARRAY:
+            case INTEGER_ARRAY:
+            case LONG_ARRAY:
+            case SHORT_ARRAY:
+            case STRING_ARRAY:
+                return SCALAR_ARRAY;
+            case TABLE:
+            default:
+                return ANY;
+        }
     }
 
     /**

@@ -34,6 +34,25 @@ public class NativeChannelProvider {
     protected native AidaTable aidaRequestTable(String pvUri, List<AidaArgument> arguments);
 
     /**
+     * Prototype to be implemented for setting values with no return value.
+     *
+     * @param pvUri     the uri
+     * @param arguments the arguments
+     */
+    protected native void aidaSetValue(String pvUri, List<AidaArgument> arguments);
+
+    /**
+     * Prototype to be implemented for setting values with a Table as a return value.
+     * Tables are simply a list of arbitrary objects.  The object is unpacked based on the
+     * channel config.
+     *
+     * @param pvUri     the uri
+     * @param arguments the arguments
+     * @return a List of AidaTable to be tabulated either ROW_MAJOR (list of rows) or COLUMN_MAJOR (list of columns)
+     */
+    protected native AidaTable aidaSetValueWithResponse(String pvUri, List<AidaArgument> arguments);
+
+    /**
      * Prototype to be implemented for Scalar Boolean
      *
      * @param pvUri     the uri

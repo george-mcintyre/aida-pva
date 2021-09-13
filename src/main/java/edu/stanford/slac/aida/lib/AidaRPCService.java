@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.stanford.slac.aida.lib.model.AidaProvider.getAidaName;
-import static edu.stanford.slac.aida.lib.model.AidaType.TABLE;
+import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Type.scalar;
 import static org.epics.pvdata.pv.Type.scalarArray;
@@ -32,11 +32,11 @@ public class AidaRPCService implements RPCService {
      *
      * @param pvUri the uri passed to the channel containing the name, query, and arguments
      * @return the result of the call
-     * @throws RPCRequestException if any error occurs formulating the request or decoding the response
-     * @throws UnableToGetDataException when server fails to retrieve data
+     * @throws RPCRequestException         if any error occurs formulating the request or decoding the response
+     * @throws UnableToGetDataException    when server fails to retrieve data
      * @throws UnsupportedChannelException when server does not yet support the specified channel.
-     *         Usually caused when channel matches a pattern specified in the channels.yml file
-     *         but is not yet supported in the service implementation
+     *                                     Usually caused when channel matches a pattern specified in the channels.yml file
+     *                                     but is not yet supported in the service implementation
      */
     public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException {
         // Check that the parameter is always a normative type
@@ -74,59 +74,95 @@ public class AidaRPCService implements RPCService {
      * @param channelName channel name
      * @param arguments   arguments if any
      * @return the structure containing the results.
-     * @throws UnableToGetDataException when server fails to retrieve data
+     * @throws UnableToGetDataException    when server fails to retrieve data
      * @throws UnsupportedChannelException when server does not yet support the specified channel.
-     *         Usually caused when channel matches a pattern specified in the channels.yml file
-     *         but is not yet supported in the service implementation
+     *                                     Usually caused when channel matches a pattern specified in the channels.yml file
+     *                                     but is not yet supported in the service implementation
      */
     private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
 
-        if ( channelConfig == null ) {
+        if (channelConfig == null) {
             throw new UnsupportedChannelException("Could not find configuration for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
         }
 
         AidaType aidaType = channelConfig.getType();
-        // If the type is SCALAR, SCALAR_ARRAY or ANY then look for the `type` argument and use that for the aidaType instead
+
+        // Get special arguments type and value
+        String typeArgument = null;
+        AidaArgument valueArgument = null;
+        for (AidaArgument argument : arguments) {
+            if (argument.getName().equalsIgnoreCase("type")) {
+                typeArgument = argument.getValue().toUpperCase();
+            }
+            if (argument.getName().equalsIgnoreCase("value")) {
+                valueArgument = argument;
+            }
+        }
+
+        // If the type is SCALAR, SCALAR_ARRAY or ANY then use the `type` argument
+        // for the aidaType instead
+        // The type specified must match the type class defined in the channel file
+        //
         switch (aidaType) {
             case SCALAR:
             case SCALAR_ARRAY:
-            case ANY:
-            {
-                AidaArgument typeArgument = null;
-                for (AidaArgument argument : arguments) {
-                    if ( argument.getName().equalsIgnoreCase("type")) {
-                        typeArgument = argument;
-                    }
-                }
-                if ( typeArgument != null ) {
+            case ANY: {
+                if (typeArgument != null) {
+                    // If a type is specified then check that it matches the type class from the channels file
                     try {
-                        aidaType =  AidaType.valueOf(typeArgument.getValue());
+                        AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
+                        if ( aidaType.equals(ANY) || specifiedAidaType.metaType().equals(aidaType.metaType())) {
+                            aidaType = specifiedAidaType;
+                        } else {
+                            throw new UnsupportedChannelTypeException("The type specified by the 'type' parameter must be a " + aidaType + ", but you specified " + specifiedAidaType);
+                        }
                     } catch (IllegalArgumentException e) {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'type' parameter is not a recognised AIDA type" + typeArgument.getValue());
+                        throw new UnsupportedChannelTypeException("The type specified by the 'type' parameter is not a recognised AIDA type" + typeArgument);
                     }
                 } else {
-                    // Default type is table when the type parameter is not specified
-                    aidaType = TABLE;
+                    // If no class is specified then use a default for each type class
+                    switch (aidaType) {
+                        case SCALAR:
+                            aidaType = INTEGER;
+                            break;
+                        case SCALAR_ARRAY:
+                            aidaType = INTEGER_ARRAY;
+                            break;
+                        default:
+                            aidaType = TABLE;
+                    }
                 }
             }
         }
 
-        Type channelType = typeOf(aidaType);
-        if (channelType == null) {
-            throw new UnsupportedChannelException("Could not find return type for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
-        }
-        System.out.println("AIDA Request: " + channelName + arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
-
-        if (channelType.equals(scalar)) {
-            Object returnValue = this.aidaChannelProvider.requestScalar(channelName, aidaType, arguments);
-            return asScalar(returnValue, channelConfig);
-        } else if (channelType.equals(scalarArray)) {
-            List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaType, arguments);
-            return asScalarArray(returnValue, channelConfig);
-        } else {
-            List<List<Object>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
+        // Call entry point based on return type
+        if (aidaType.equals(NONE)) {
+            // If type is NONE then call setValue
+            this.aidaChannelProvider.setValue(channelName, arguments);
+            return NT_SCALAR_EMPTY_STRUCTURE;
+        } else if (valueArgument != null) {
+            // If a type is specified but type is not NONE then call setValue returning a table of results
+            List<List<Object>> returnValue = this.aidaChannelProvider.setValueWithResponse(channelName, arguments);
             return asNtTable(returnValue, channelConfig);
+        } else {
+            // Otherwise this is a regular get request
+            Type channelType = typeOf(aidaType);
+            if (channelType == null) {
+                throw new UnsupportedChannelException("Could not find return type for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
+            }
+            System.out.println("AIDA Request: " + channelName + arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
+
+            if (channelType.equals(scalar)) {
+                Object returnValue = this.aidaChannelProvider.requestScalar(channelName, aidaType, arguments);
+                return asScalar(returnValue, channelConfig);
+            } else if (channelType.equals(scalarArray)) {
+                List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaType, arguments);
+                return asScalarArray(returnValue, channelConfig);
+            } else {
+                List<List<Object>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
+                return asNtTable(returnValue, channelConfig);
+            }
         }
     }
 

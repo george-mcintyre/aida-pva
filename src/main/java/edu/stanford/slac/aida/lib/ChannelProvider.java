@@ -72,7 +72,6 @@ public abstract class ChannelProvider extends NativeChannelProvider {
             case STRING:
                 return aidaRequestString(channelName, arguments);
         }
-        // TODO handle error
         return null;
     }
 
@@ -132,7 +131,6 @@ public abstract class ChannelProvider extends NativeChannelProvider {
             case STRING_ARRAY:
                 return Arrays.asList(aidaRequestStringArray(channelName, arguments));
         }
-        // TODO handle error
         return null;
     }
 
@@ -144,14 +142,30 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @return return list of lists
      */
     public List<List<Object>> requestTable(String channelName, List<AidaArgument> arguments) {
-        AidaTable table = null;
-        try {
-            table = aidaRequestTable(channelName, arguments);
-            return table.asList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<List<Object>>();
+        return aidaRequestTable(channelName, arguments).asList();
+    }
+
+    /**
+     * Handles setting values with a void return
+     *
+     * @param channelName channel name
+     * @param arguments   arguments
+     *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
+     */
+    public void setValue(String channelName, List<AidaArgument> arguments) {
+        aidaSetValue(channelName, arguments);
+    }
+
+    /**
+     * Handles setting values with a void return
+     *
+     * @param channelName channel name
+     * @param arguments   arguments
+     *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
+     * @return return list of lists
+     */
+    public List<List<Object>> setValueWithResponse(String channelName, List<AidaArgument> arguments) {
+        return aidaSetValueWithResponse(channelName, arguments).asList();
     }
 
     /**
@@ -163,7 +177,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
     public AidaChannelConfig getChannelConfig(String channelName) {
         AidaChannelConfig channelConfig = null;
         AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
-        if ( channel != null) {
+        if (channel != null) {
             channelConfig = channel.getConfig();
         }
         return channelConfig;
