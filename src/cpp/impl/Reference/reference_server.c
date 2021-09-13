@@ -65,7 +65,7 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 	// Only modify config for attribute01
 	if (startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
 		Field* fields = calloc(1, sizeof(Field));
-		if ( !fields ) {
+		if (!fields) {
 			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate space for config field");
 			return config;
 		}
@@ -300,7 +300,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// allocate and return
 	item = malloc(strlen(data) + strlen(arg) + 3);
-	if ( !item ) {
+	if (!item) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate memory for string");
 		return NULL;
 	}
@@ -617,12 +617,13 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	// Do set value logic ...
-
-	printf("Setting Value: ...\n");
 	printValue(env, value);
 
-	// Test getting the value
-//	printf( "Value = %s", getValueElement(env, value, 0));
+	char path[] = "foo.[0].bar";
+	json_value* jsonValue = getJsonValue(value, path);
+	if (jsonValue) {
+		printf("Value foo.[0].bar = %d\n", jsonValue->u.integer);
+	}
 }
 
 /**
@@ -637,11 +638,13 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	// Do set value logic ...
-
-	printf("Setting Value ... \n");
 	printValue(env, value);
 
-	// Test getting the sub element called name
+	char path[] = "foo.[0].bar";
+	json_value* jsonValue = getJsonValue(value, path);
+	if (jsonValue) {
+		printf("Value foo.[0].bar = %d\n", jsonValue->u.integer);
+	}
 
 	// Return status in table
 	Table table;

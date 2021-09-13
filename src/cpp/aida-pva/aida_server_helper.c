@@ -19,7 +19,8 @@
  * @param exception
  * @param message
  */
-void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message) {
+void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
+{
 	fprintf(stderr, "AIDA Exception: %s: %s\n", exception, message);
 	aidaThrow(env, 1, exception, message);
 }
@@ -43,7 +44,7 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 		(*env)->ExceptionClear(env);
 	}
 
- 	char vmsErrorMessage[BUFSIZ] = { '\0' };
+	char vmsErrorMessage[BUFSIZ] = { '\0' };
 	$DESCRIPTOR(MESSAGE, vmsErrorMessage);
 	struct dsc$descriptor errorMessageDescriptor = { BUFSIZ, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
 
@@ -92,14 +93,14 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
  * @param suffix
  * @return true if string ends with suffix
  */
-int endsWith(const char *str, char *suffix)
+int endsWith(const char* str, char* suffix)
 {
 	if (!str || !suffix) {
 		return 0;
 	}
 	size_t lenstr = strlen(str);
 	size_t lenSuffix = strlen(suffix);
-	if (lenSuffix >  lenstr)
+	if (lenSuffix > lenstr)
 		return 0;
 	return !strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix);
 }
@@ -110,14 +111,14 @@ int endsWith(const char *str, char *suffix)
  * @param prefix
  * @returns true if string starts with prefix
  */
-int startsWith(const char *str, char *prefix)
+int startsWith(const char* str, char* prefix)
 {
 	if (!str || !prefix) {
 		return 0;
 	}
 	size_t lenstr = strlen(str);
 	size_t lenPrefix = strlen(prefix);
-	if (lenPrefix >  lenstr)
+	if (lenPrefix > lenstr)
 		return 0;
 	return !strncasecmp(str, prefix, lenPrefix);
 }
@@ -241,11 +242,53 @@ double getDoubleArgument(Argument argument)
  * @param env
  * @param value
  */
-void printValue(JNIEnv* env, Value value) {
-	if ( value.type == AIDA_STRING_TYPE ) {
+void printValue(JNIEnv* env, Value value)
+{
+	if (value.type == AIDA_STRING_TYPE) {
 		printf("%s\n", value.value.stringValue);
-	} else if ( value.type == AIDA_JSON_TYPE ) {
+	} else if (value.type == AIDA_JSON_TYPE) {
 		process_value(value.value.jsonValue, 0);
 	}
+}
+
+/**
+ * Get the json value from the given value identified by the path
+ *
+ * @param value the given value
+ * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection.[0].name
+ * @return pointer to the json_value
+ */
+json_value* getJsonValue(Value value, char* path)
+{
+	if (value.type != AIDA_JSON_TYPE) {
+		return NULL;
+	}
+
+	json_value* jsonValue = value.value.jsonValue;
+
+	// Extract the first token
+	char* token = strtok(path, ".");
+
+	while (token) {
+		if (*token == '[') {
+			if (jsonValue->type == json_array) {
+				int index = 0;
+				sscanf(token, "[%d]", &index);
+				if (jsonValue->u.array.length > index) {
+					jsonValue = jsonValue->u.array.values[index];
+				}
+			}
+		} else if (jsonValue->type == json_object) {
+			for (int i = 0; i < jsonValue->u.object.length; i++) {
+				if (strcasecmp(token, jsonValue->u.object.values[i].name) == 0) {
+					jsonValue = jsonValue->u.object.values[i].value;
+					break;
+				}
+			}
+		}
+		token = strtok(NULL, ".");
+	}
+
+	return jsonValue;
 }
 

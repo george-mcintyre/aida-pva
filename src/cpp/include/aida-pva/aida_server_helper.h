@@ -336,7 +336,22 @@ float getFloatArgument(Argument argument);
  */
 double getDoubleArgument(Argument argument);
 
+/**
+ * Print a value to standard output
+ * @param env
+ * @param value
+ */
 void printValue(JNIEnv* env, Value value);
+
+/**
+ * Get the json value from the given value identified by the path
+ *
+ * @param value the given value
+ * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection[0].name
+ * @return the json_value
+ */
+json_value * getJsonValue(Value value, char *path);
+
 
 #ifdef __cplusplus
 }
