@@ -25,8 +25,10 @@
 static const $DESCRIPTOR( process_name,
 "AidaDbIf");
 
-/*
+/**
 * Implementation for cm log requires process name so needs to be implemented in service impl.
+ *
+ * @param message
  */
 void issue_err(char* message)
 {
@@ -619,10 +621,10 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	// Do set value logic ...
 	printValue(env, value);
 
-	char path[] = "foo.[0].bar";
+	char path[] = "foo[0].bar";
 	json_value* jsonValue = getJsonValue(value, path);
 	if (jsonValue) {
-		printf("Value foo.[0].bar = %d\n", jsonValue->u.integer);
+		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
 	}
 }
 
@@ -640,10 +642,10 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	// Do set value logic ...
 	printValue(env, value);
 
-	char path[] = "foo.[0].bar";
+	char path[] = "foo[0].bar";
 	json_value* jsonValue = getJsonValue(value, path);
 	if (jsonValue) {
-		printf("Value foo.[0].bar = %d\n", jsonValue->u.integer);
+		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
 	}
 
 	// Return status in table

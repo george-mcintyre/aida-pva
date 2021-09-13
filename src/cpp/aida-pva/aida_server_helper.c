@@ -9,6 +9,9 @@
 #include "json.h"
 #include "aida_server_helper.h"
 
+static json_value* navigateToArrayElement(json_value* jsonValue, int index);
+static json_value* navigateToObjectElement(json_value* jsonValue, const char* name);
+static json_value* processArrayReference(json_value* jsonValue, const char* arrayRef);
 /**
  * To log any non-OS exceptions and throw back to java
  *
@@ -266,29 +269,86 @@ json_value* getJsonValue(Value value, char* path)
 
 	json_value* jsonValue = value.value.jsonValue;
 
+	int len;
+	char name[256];
+	char* arrayRef;
+
 	// Extract the first token
 	char* token = strtok(path, ".");
 
 	while (token) {
 		if (*token == '[') {
-			if (jsonValue->type == json_array) {
-				int index = 0;
-				sscanf(token, "[%d]", &index);
-				if (jsonValue->u.array.length > index) {
-					jsonValue = jsonValue->u.array.values[index];
-				}
-			}
-		} else if (jsonValue->type == json_object) {
-			for (int i = 0; i < jsonValue->u.object.length; i++) {
-				if (strcasecmp(token, jsonValue->u.object.values[i].name) == 0) {
-					jsonValue = jsonValue->u.object.values[i].value;
-					break;
-				}
-			}
+			// if array is at top level
+			jsonValue = processArrayReference(jsonValue, token);
+		} else if ((arrayRef = strstr(token, "["))) {
+			// element followed by array ref
+			len = (int)(arrayRef - token);
+			strncpy(name, token, len);
+			name[len] = 0x0;
+			jsonValue = navigateToObjectElement(jsonValue, name);
+
+			jsonValue = processArrayReference(jsonValue, arrayRef);
+		} else {
+			// element only
+			jsonValue = navigateToObjectElement(jsonValue, token);
 		}
+
+		// Next token
 		token = strtok(NULL, ".");
 	}
 
+	return jsonValue;
+}
+
+/**
+ * Process any array references.  Because arrays can be directly nested within other array we
+ * allow up to 4 levels of nesting without any intervening object
+ * @param jsonValue
+ * @param arrayRef
+ * @return the new position or unchanged if any  index is out of bounds or no indexes are found
+ */
+static json_value* processArrayReference(json_value* jsonValue, const char* arrayRef)
+{
+	int index[4];  // Up to 4 levels of array with no object
+	int count = sscanf(arrayRef, "[%d][%d][%d][%d]", &index[0], &index[1], &index[2], &index[3]);
+
+	while (count > 0) {
+		jsonValue = navigateToArrayElement(jsonValue, index[--count]);
+	}
+	return jsonValue;
+}
+
+/**
+ * Using the given name navigate to the named element from the current position in the json_value
+ * @param jsonValue
+ * @param name
+ * @return the new position or unchanged if the name is not found
+ */
+static json_value* navigateToObjectElement(json_value* jsonValue, const char* name)
+{
+	if (jsonValue->type == json_object) {
+		for (int i = 0; i < jsonValue->u.object.length; i++) {
+			if (strcasecmp(name, jsonValue->u.object.values[i].name) == 0) {
+				jsonValue = jsonValue->u.object.values[i].value;
+				break;
+			}
+		}
+	}
+	return jsonValue;
+}
+/**
+ * Using the given index navigate to the zero based index'th element of the array at the current position
+ * @param jsonValue
+ * @param index
+ * @return the new position or unchanged if the index is out of bounds
+ */
+static json_value* navigateToArrayElement(json_value* jsonValue, int index)
+{
+	if (jsonValue->type == json_array) {
+		if (jsonValue->u.array.length > index) {
+			jsonValue = jsonValue->u.array.values[index];
+		}
+	}
 	return jsonValue;
 }
 
