@@ -3,8 +3,10 @@
 #include <ssdef.h>                /* SS$_NORMAL and other VMS general codes */
 #include <descrip.h>              /*  for definition of $DESCRIPTOR  */
 #include <ctype.h>                /* isalnum, ispunct */
+#include <stdlib.h>
 
 #include "aida_types.h"
+#include "json.h"
 #include "aida_server_helper.h"
 
 /**
@@ -18,6 +20,7 @@
  * @param message
  */
 void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message) {
+	fprintf(stderr, "AIDA Exception: %s: %s\n", exception, message);
 	aidaThrow(env, 1, exception, message);
 }
 
@@ -35,45 +38,47 @@ void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message) 
  */
 void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 {
-	char vmsErrorMessage[256] = { '\0' };
+	// Clear any exception that may be in the process of being thrown (unlikely)
+	if ((*env)->ExceptionCheck(env)) {
+		(*env)->ExceptionClear(env);
+	}
+
+ 	char vmsErrorMessage[BUFSIZ] = { '\0' };
 	$DESCRIPTOR(MESSAGE, vmsErrorMessage);
-	struct dsc$descriptor errorMessageDescriptor = { 256, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
+	struct dsc$descriptor errorMessageDescriptor = { BUFSIZ, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
 
 	//	Get the message text associated with the VMS message code. if the cause is an OS error
 	if (!SUCCESS(status)) {
 		ERRTRANSLATE(&status, &errorMessageDescriptor);
 		strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
-				MIN(strlen("; "), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+				MIN(strlen("; "), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 	}
 
 	// Add exception
 	strncat(errorMessageDescriptor.dsc$a_pointer, exception,
-			MIN(strlen(exception), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+			MIN(strlen(exception), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 
 	// If a message is specified then append it to the vms message string
 	if (message) {
 		strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
-				MIN(strlen("; "), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+				MIN(strlen("; "), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 		strncat(errorMessageDescriptor.dsc$a_pointer, message,
-				MIN(strlen(message), 256 - strlen(errorMessageDescriptor.dsc$a_pointer)));
+				MIN(strlen(message), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 	}
 
 	// Log error message to cm log
 	issue_err(errorMessageDescriptor.dsc$a_pointer);
 
 	// Create the fully qualified java class name of the exception to throw
-	char classToCreate[256] = "edu/stanford/slac/aida/exception/";
+	char classToCreate[BUFSIZ] = "edu/stanford/slac/aida/exception/";
 	strcat (classToCreate, exception);
-
-	// Clear any exception that may be in the process of being thrown (unlikely)
-	(*env)->ExceptionClear(env);
 
 	// Create the java exception class
 	jclass exceptionClass;
 	exceptionClass = (*env)->FindClass(env, classToCreate);
-	if (NULL == exceptionClass) {
-		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
-		return;
+	if (!exceptionClass) {
+		fprintf(stderr, "FATAL: Failed to create object of class: %s\n", classToCreate);
+		exit(status);
 	}
 
 	// 	Throw the given exception to Java server code, giving the
@@ -96,7 +101,7 @@ int endsWith(const char *str, char *suffix)
 	size_t lenSuffix = strlen(suffix);
 	if (lenSuffix >  lenstr)
 		return 0;
-	return strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix) == 0;
+	return !strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix);
 }
 
 /**
@@ -114,7 +119,7 @@ int startsWith(const char *str, char *prefix)
 	size_t lenPrefix = strlen(prefix);
 	if (lenPrefix >  lenstr)
 		return 0;
-	return strncasecmp(str, prefix, lenPrefix) == 0;
+	return !strncasecmp(str, prefix, lenPrefix);
 }
 
 /**
@@ -130,7 +135,7 @@ Argument getArgument(Arguments arguments, char* name)
 
 	for (int i = 0; i < arguments.argumentCount; i++) {
 		Argument argument = arguments.arguments[i];
-		if (strcasecmp(argument.name, name) == 0) {
+		if (!strcasecmp(argument.name, name)) {
 			if (strlen(argument.value) > 0) {
 				return argument;
 			}
@@ -230,3 +235,17 @@ double getDoubleArgument(Argument argument)
 	sscanf(argument.value, "%lf", &item);
 	return item;
 }
+
+/**
+ * Print a value to standard output
+ * @param env
+ * @param value
+ */
+void printValue(JNIEnv* env, Value value) {
+	if ( value.type == AIDA_STRING_TYPE ) {
+		printf("%s\n", value.value.stringValue);
+	} else if ( value.type == AIDA_JSON_TYPE ) {
+		process_value(value.value.jsonValue, 0);
+	}
+}
+

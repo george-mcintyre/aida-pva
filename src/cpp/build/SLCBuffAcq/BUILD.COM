@@ -6,6 +6,7 @@ $ CC/LIS 'OPTS'  'INCL' [--.AIDA-PVA]NativeChannelProviderJni.c
 $ CC/LIS 'OPTS'  'INCL' [--.AIDA-PVA]aida_server_helper.c
 $ CC/LIS 'OPTS'  'INCL' [--.AIDA-PVA]aida_jni_helper.c
 $ CC/LIS 'OPTS'  'INCL' [--.AIDA-PVA]aida_types_helper.c
+$ CC/LIS 'OPTS'  'INCL' [--.AIDA-PVA]json.c
 $!
 $!
 $! Global option file

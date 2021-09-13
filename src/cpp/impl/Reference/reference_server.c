@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "aida_server_helper.h"
 #include "reference_server.h"
+#include "json.h"
 
 #include "opdef.hc"               /* General messages */
 #include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
@@ -42,7 +43,7 @@ void issue_err(char* message)
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -53,7 +54,7 @@ void aidaServiceInit(JNIEnv* env)
 /**
  * Get channel configuration
  * @param channelName
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @return the channel config.  Leave empty if you don't have any specific configuration overrides
  */
 Config aidaChannelConfig(JNIEnv* env, const char* channelName)
@@ -64,6 +65,10 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 	// Only modify config for attribute01
 	if (startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
 		Field* fields = calloc(1, sizeof(Field));
+		if ( !fields ) {
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate space for config field");
+			return config;
+		}
 		fields[0].name = "isActive";
 		fields[0].label = "Device is active?";
 		fields[0].description = "Device activity status.  Active if true";
@@ -80,7 +85,7 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 /**
  * Get a boolean
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean
@@ -96,7 +101,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item = getBooleanArgument(argument);
 	}
 
@@ -108,7 +113,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a byte
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte
@@ -124,7 +129,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item |= getByteArgument(argument);
 	}
 
@@ -136,7 +141,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
  * Get a short
  *
  * @param uri the uri
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param arguments the arguments
  * @return the short
  */
@@ -151,7 +156,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item += getShortArgument(argument);
 	}
 
@@ -162,7 +167,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a integer
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer
@@ -178,7 +183,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item += getIntegerArgument(argument);
 	}
 
@@ -189,7 +194,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a long
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long
@@ -205,7 +210,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item += getLongArgument(argument);
 	}
 
@@ -216,7 +221,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a float
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float
@@ -232,7 +237,7 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item *= getFloatArgument(argument);
 	}
 
@@ -243,7 +248,7 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a double
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double
@@ -259,7 +264,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		item *= getDoubleArgument(argument);
 	}
 
@@ -270,7 +275,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a string.  Allocate memory for string and it will be freed for you by framework
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string
@@ -280,6 +285,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 	// Only for attribute08
 	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute08")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+		return NULL;
 	}
 
 	char* item;
@@ -288,13 +294,18 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	Argument argument = getArgument(arguments, "x");
-	if (argument.name != NULL) {
+	if (argument.name) {
 		arg = argument.value;
 	}
 
 	// allocate and return
 	item = malloc(strlen(data) + strlen(arg) + 3);
-	if (strlen(arg) == 0) {
+	if ( !item ) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate memory for string");
+		return NULL;
+	}
+
+	if (!strlen(arg)) {
 		sprintf(item, "%s", data);
 	} else {
 		sprintf(item, "%s: %s", arg, data);
@@ -307,7 +318,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a boolean array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean array
@@ -331,7 +342,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a byte array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte array
@@ -355,7 +366,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a short array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the short array
@@ -379,7 +390,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a integer array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer array
@@ -403,7 +414,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a long array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long array
@@ -427,7 +438,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a float array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float array
@@ -451,7 +462,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a double array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double array
@@ -475,7 +486,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a string array
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string array
@@ -500,32 +511,37 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 /**
  * Get a table of data
  *
- * @param env to be used to throw exceptions using throw()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	// Only for attribute20
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute20")) {
-		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	}
-
 	Table table;
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 8;
 
+	// Only for attribute20
+	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute20")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+		return table;
+	}
+
 	// Allocate space for columns
 	table.ppData = calloc(table.columnCount, sizeof(void*));
-	if (table.ppData == NULL) {
-		fprintf(stderr, "Unable to allocate memory for table: %ld\n", table.columnCount * sizeof(void*));
+	if (!table.ppData) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return table;
 	}
 
 	table.types = calloc(table.columnCount, sizeof(Type*));
-	if (table.types == NULL) {
-		fprintf(stderr, "Unable to allocate memory for table types: %ld\n", table.columnCount * sizeof(Type*));
+	if (!table.types) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Unable to allocate memory for table types: %ld", table.columnCount * sizeof(Type*));
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return table;
 	}
 
@@ -588,3 +604,76 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// Return the table
 	return table;
 }
+
+/**
+ * Set a value
+ *
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param uri the uri
+ * @param arguments the arguments
+ * @param value to set
+ * @return the table
+ */
+void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
+{
+	// Do set value logic ...
+
+	printf("Setting Value: ...\n");
+	printValue(env, value);
+
+	// Test getting the value
+//	printf( "Value = %s", getValueElement(env, value, 0));
+}
+
+/**
+ * Set a value and return a table as a response
+ *
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param uri the uri
+ * @param arguments the arguments
+ * @param value to set
+ * @return a table
+ */
+Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
+{
+	// Do set value logic ...
+
+	printf("Setting Value ... \n");
+	printValue(env, value);
+
+	// Test getting the sub element called name
+
+	// Return status in table
+	Table table;
+	memset(&table, 0, sizeof(table));
+	table.columnCount = 1;
+
+	// Allocate space for columns
+	table.ppData = calloc(table.columnCount, sizeof(void*));
+	if (!table.ppData) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+	}
+
+	table.types = calloc(table.columnCount, sizeof(Type*));
+	if (!table.types) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Unable to allocate memory for table types: %ld", table.columnCount * sizeof(Type*));
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+	}
+
+	// Do something to get rows of data ...
+	table.rowCount = 1;
+
+	// Allocate space for rows of data
+	table.types[0] = AIDA_BOOLEAN_ARRAY_TYPE;
+	table.ppData[0] = calloc(table.rowCount, sizeof(unsigned char));
+
+	// Add data to table
+	((unsigned char*)(table.ppData[0]))[0] = 1; // Boolean
+
+	// Return the table
+	return table;
+}
+

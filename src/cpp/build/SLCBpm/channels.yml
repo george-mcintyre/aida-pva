@@ -1,15 +1,50 @@
 # Channels definition file for aida-pva
 #
-# This file defines the available channels for the sample aida service
+# This file defines the available channels for the SLCBPM service
 id: 102
 name: SLCBpm
-description: SLC BPM orbit acquisition
+description: SLC BPM orbit data under a given measurement definition
+# Arguments:
+# BPMD      : The timing profile of the acquisition
+# CNFTYPE   : Measurement configuration to use
+# CNFNUM    : BPM device configuration for difference
+# N         : "N" average
+# SORTORDER : Sort order
 config:
   type: TABLE
-  layout: ROW_MAJOR
+  layout: COLUMN_MAJOR
   fields:
-    - label: foo
-      name: bar
-      description: Lorem ipsum
+    - label: BPM Name
+      name: name
+      description: Name of BPM
+    - label: x offset (mm)
+      name: x
+      description: BPM x offset
+    - label: y offset (mm)
+      name: y
+      description: BPM y offset
+    - label: num particles (coulomb)
+      name: tmits
+      description: Number of particles
+    - label: z position (meters)
+      name: y
+      description: BPM z position
+    - label: HSTA
+      name: HSTA
+      description: 32 bit field
+    - label: STAT
+      name: STAT
+      description: 32 bit field
 channels:
-  - channel: *:BPMS
+  - channel: E163BMLN:BPMS
+  - channel: ELECEP01:BPMS
+  - channel: INJ_ELEC:BPMS
+  - channel: INJ_POSI:BPMS
+  - channel: LCLS_SL2:BPMS
+  - channel: NDRFACET:BPMS
+  - channel: P2BPMHER:BPMS
+  - channel: P2BPMLER:BPMS
+  - channel: PEP2INJF:BPMS
+  - channel: SCAVPOSI:BPMS
+  - channel: SDRFACET:BPMS
+  - channel: TAXXALL:BPMS

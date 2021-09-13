@@ -7,157 +7,80 @@ name: Sample
 description: Aida Sample Data Provider
 # The mandatory default config is used when specific config is not supplied for any of the channels included in this provider
 config:
-  # Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (eg INTEGER_ARRAY, STRING_ARRAY) or TABLE
-  type: TABLE
-  # For scalar or scalar arrays the there will be only one field defined.
-  # For TABLE there will be as many fields as defined in the table's structure.
-  #     Only configured fields will be included in the output TABLE
-  fields:
-    - label: field 1
-      name: a
-      description: The first field
-    - label: field 2
-      name: b
-      description: The second field
-    - label: field 3
-      name: c
-      description: The third field
-    - label: field 4
-      name: d
-      description: The fourth field
+  # Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (eg INTEGER_ARRAY, STRING_ARRAY), TABLE
+  # ANY to allow the channel to be called with a type option that will select the type at runtime
+  # or NONE if the channel will not return a value (e.g. for setValue)
+  # When calling a channel with a Value argument then the channel sets this value
+  type: INTEGER
 channels:
   - channel: AIDA:SAMPLE:*:attribute00
-      # Test for channel not supported.  This channel is not supported by service
+    # Test for channel not supported.  This channel is not supported by service
     config:
       type: BOOLEAN
   - channel: AIDA:SAMPLE:*:attribute01
     # Only override values that are different from the default.
     config:
       type: BOOLEAN
-      fields:
-        - name: isActive
-          label: "Device is active?"
-          description: "Device activity status.  Active if true"
   - channel: AIDA:SAMPLE:*:attribute02
     # Only override values that are different from the default.
     config:
       type: BYTE
-      fields:
-        - name: mode
-          label: "Device Mode Code"
-          description: "Device mode code"
   - channel: AIDA:SAMPLE:*:attribute03
     # Only override values that are different from the default.
     config:
       type: SHORT
-      fields:
-        - name: status
-          label: "Device Status Code"
-          description: "Device status code"
   - channel: AIDA:SAMPLE:*:attribute04
     # Only override values that are different from the default.
     config:
       type: INTEGER
-      fields:
-        - name: nbufs
-          label: "Number of buffers allocated"
-          description: "Number of buffers currently allocated on the device"
   - channel: AIDA:SAMPLE:*:attribute05
     # Only override values that are different from the default.
     config:
       type: LONG
-      fields:
-        - name: memory
-          label: "Device memory used"
-          description: "Total device memory used"
   - channel: AIDA:SAMPLE:*:attribute06
     # Only override values that are different from the default.
     config:
       type: FLOAT
-      fields:
-        - name: sensor
-          label: "Device Sensor Reading"
-          description: "Device sensor reading"
   - channel: AIDA:SAMPLE:*:attribute07
     # Only override values that are different from the default.
     config:
       type: DOUBLE
-      fields:
-        - name: hisensor
-          label: "High Precision Device Sensor"
-          description: "Device sensor reading"
   - channel: AIDA:SAMPLE:*:attribute08
     # Only override values that are different from the default.
     config:
       type: STRING
-      fields:
-        - name: message
-          label: "Device Message"
-          description: "Last device message"
   - channel: AIDA:SAMPLE:*:attribute11
     # Only override values that are different from the default.
     config:
       type: BOOLEAN_ARRAY
-      fields:
-        - name: isActive
-          label: "Device is active?"
-          description: "Device activity status.  Active if true"
   - channel: AIDA:SAMPLE:*:attribute12
     # Only override values that are different from the default.
     config:
       type: BYTE_ARRAY
-      fields:
-        - name: mode
-          label: "Device Mode Code"
-          description: "Device mode code"
   - channel: AIDA:SAMPLE:*:attribute13
     # Only override values that are different from the default.
     config:
       type: SHORT_ARRAY
-      fields:
-        - name: status
-          label: "Device Status Code"
-          description: "Device status code"
   - channel: AIDA:SAMPLE:*:attribute14
     # Only override values that are different from the default.
     config:
       type: INTEGER_ARRAY
-      fields:
-        - name: nbufs
-          label: "Number of buffers allocated"
-          description: "Number of buffers currently allocated on the device"
   - channel: AIDA:SAMPLE:*:attribute15
     # Only override values that are different from the default.
     config:
       type: LONG_ARRAY
-      fields:
-        - name: memory
-          label: "Device memory used"
-          description: "Total device memory used"
   - channel: AIDA:SAMPLE:*:attribute16
     # Only override values that are different from the default.
     config:
       type: FLOAT_ARRAY
-      fields:
-        - name: sensor
-          label: "Device Sensor Reading"
-          description: "Device sensor reading"
   - channel: AIDA:SAMPLE:*:attribute17
     # Only override values that are different from the default.
     config:
       type: DOUBLE_ARRAY
-      fields:
-        - name: hisensor
-          label: "High Precision Device Sensor"
-          description: "Device sensor reading"
   - channel: AIDA:SAMPLE:*:attribute18
     # Only override values that are different from the default.
     config:
       type: STRING_ARRAY
-      fields:
-        - name: message
-          label: "Device Message"
-          description: "Last device message"
   - channel: AIDA:SAMPLE:*:attribute20
     config:
       type: TABLE
@@ -186,5 +109,21 @@ channels:
         - name: message
           label: "Device Message"
           description: "Last device message"
-
+  - channel: AIDA:SAMPLE:*:attribute30
+    # To set this value include new value as an argument
+    config:
+      type: NONE
+  - channel: AIDA:SAMPLE:*:attribute31
+    # To set this value include new value as an argument
+    # A table will be returned as defined below
+    config:
+      type: TABLE
+      fields:
+        - name: status
+          label: "Result of setting value"
+          description: "True if the value was set successfully"
+  - channel: AIDA:SAMPLE:*:attribute32
+    # Get arbitrary type by specifying type=<AIDA_TYPE> argument
+    config:
+      type: ANY
 

@@ -1,7 +1,10 @@
 #include <jni.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "aida_types.h"
+#include "json.h"
+#include "aida_server_helper.h"
 #include "aida_jni_helper.h"
 
 /**
@@ -19,17 +22,18 @@ static const Config EMPTY_CONFIG = { 0 };
  */
 jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
 {
-	// Null check
-	if (memcmp(&config, &EMPTY_CONFIG, sizeof config) == 0) {
+	if (!memcmp(&config, &EMPTY_CONFIG, sizeof config)) {
 		return NULL;
 	}
 
 	// Get a java object reference
 	JavaObject javaObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaChannelConfig");
+	CHECK_EXCEPTION(NULL)
+
 	jobject configObject = javaObject.object;
 	jclass cls = javaObject.class;
-	if (configObject == NULL || cls == NULL) {
-		fprintf(stderr, "Failed to create AidaChannelConfig object\n");
+	if (!configObject || !cls) {
+		aidaThrowNonOsException(env, SERVER_INITIALISATION_EXCEPTION, "Failed to create AidaChannelConfig object");
 		return NULL;
 	}
 
@@ -39,20 +43,29 @@ jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
 
 	// Set type, layout, & description
 	callSetterWithJString(env, javaObject, "setType", toTypeString(env, config.type));
+	CHECK_EXCEPTION(NULL)
+
 	callSetterWithJString(env, javaObject, "setLayout", toLayoutString(env, config.layout));
+	CHECK_EXCEPTION(NULL)
+
 	callSetterWithString(env, javaObject, "setDescription", config.description);
+	CHECK_EXCEPTION(NULL)
+
 
 	// Set fields ( and free up storage )
-	if (config.fields != NULL && config.fieldCount != 0) {
+	if (config.fields && config.fieldCount) {
 		// Find the method to add fields to the config object's fields collection
 		jmethodID midAddField = getMethodId(env, cls, "addField", "(Ledu/stanford/slac/aida/lib/model/AidaField;)V");
-		if (NULL == midAddField) {
-			fprintf(stderr, "Failed to find the addField(AidaField) method on AidaChannelConfig object\n");
+		if (!midAddField) {
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+					"Failed to find the addField(AidaField) method on AidaChannelConfig object");
+			return NULL;
 		} else {
 			// For each field, add it to config object's fields collection
 			for (int i = 0; i < config.fieldCount; i++) {
 				Field field = config.fields[i];
 				(*env)->CallObjectMethod(env, configObject, midAddField, getAidaField(env, field));
+				CHECK_EXCEPTION(NULL)
 			}
 		}
 
@@ -75,8 +88,8 @@ jobject newObjectFromClass(JNIEnv* env, jclass class)
 
 	// Get the Method ID of the no-args constructor
 	jmethodID midInit = getConstructorMethodId(env, class);
-	if (NULL == midInit) {
-		fprintf(stderr, "Failed to create object\n");
+	if (!midInit) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to create object");
 		return NULL;
 	}
 	// Call back constructor to allocate a new instance
@@ -99,8 +112,10 @@ JavaObject newObject(JNIEnv* env, char* classToCreate)
 
 	// Get a class reference
 	javaObject.class = (*env)->FindClass(env, classToCreate);
-	if (NULL == javaObject.class) {
-		fprintf(stderr, "Failed to create object of class: %s\n", classToCreate);
+	if (!javaObject.class) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create object of class: %s", classToCreate);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return javaObject;
 	}
 	javaObject.object = newObjectFromClass(env, javaObject.class);
@@ -117,17 +132,23 @@ JavaObject newObject(JNIEnv* env, char* classToCreate)
  */
 jobject getAidaField(JNIEnv* env, Field field)
 {
-	// Get new AidaField object
 	JavaObject javaObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaField");
+	CHECK_EXCEPTION(NULL)
+
+	// Get new AidaField object
 	jobject fieldObject = javaObject.object;
 
-	if (fieldObject != NULL) {
-		// Set name, label, description and units
-		callSetterWithString(env, javaObject, "setName", field.name);
-		callSetterWithString(env, javaObject, "setLabel", field.label);
-		callSetterWithString(env, javaObject, "setDescription", field.description);
-		callSetterWithString(env, javaObject, "setUnits", field.units);
-	}
+	// Set name, label, description and units
+	callSetterWithString(env, javaObject, "setName", field.name);
+	CHECK_EXCEPTION(NULL)
+
+	callSetterWithString(env, javaObject, "setLabel", field.label);
+	CHECK_EXCEPTION(NULL)
+
+	callSetterWithString(env, javaObject, "setDescription", field.description);
+	CHECK_EXCEPTION(NULL)
+
+	callSetterWithString(env, javaObject, "setUnits", field.units);
 
 	return fieldObject;
 }
@@ -141,10 +162,14 @@ jobject getAidaField(JNIEnv* env, Field field)
  */
 jobject toJniString(JNIEnv* env, char* cString)
 {
-	if (cString == NULL) {
+	jobject object;
+
+	if (!cString) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Attempt to convert null string to java String");
 		return NULL;
 	}
-	return (*env)->NewStringUTF(env, cString);
+	object = (*env)->NewStringUTF(env, cString);
+	return object;
 }
 
 /**
@@ -158,9 +183,9 @@ jobject toJniString(JNIEnv* env, char* cString)
 void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char* value)
 {
 	jobject jObject = toJniString(env, value);
-	if (jObject != NULL) {
-		callSetterWithJString(env, javaObject, method, jObject);
-	}
+	CHECK_EXCEPTION_VOID
+
+	callSetterWithJString(env, javaObject, method, jObject);
 }
 
 /**
@@ -173,13 +198,15 @@ void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char
  */
 void callSetterWithJString(JNIEnv* env, JavaObject javaObject, char* method, jstring value)
 {
-	if (value != NULL) {
+	if (value) {
 		jmethodID midSetter = (*env)->GetMethodID(env, javaObject.class, method, "(Ljava/lang/String;)V");
-		if (NULL == midSetter) {
-			fprintf(stderr, "Failed to get method %s(String)\n", method);
-		} else {
-			(*env)->CallObjectMethod(env, javaObject.object, midSetter, value);
+		if (!midSetter) {
+			char errorString[BUFSIZ];
+			sprintf(errorString, "Failed to get method %s(String)", method);
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+			return;
 		}
+		(*env)->CallObjectMethod(env, javaObject.object, midSetter, value);
 	}
 }
 
@@ -190,9 +217,9 @@ void callSetterWithJString(JNIEnv* env, JavaObject javaObject, char* method, jst
  * @param string j-string
  * @return c-string
  */
-const char* toCString(JNIEnv* env, jstring string)
+char* toCString(JNIEnv* env, jstring string)
 {
-	return (*env)->GetStringUTFChars(env, string, NULL);
+	return (char*)(*env)->GetStringUTFChars(env, string, NULL);
 }
 
 /**
@@ -260,15 +287,15 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 
 	// retrieve the java.util.List interface class
 	jclass cList = (*env)->FindClass(env, "java/util/List");
-	if (cList == NULL) {
-		fprintf(stderr, "Failed to get List class\n");
+	if (!cList) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to get List class");
 		return cArgs;
 	}
 
 	// retrieve the AidaArgument class
 	jclass aidaArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArgument");
-	if (aidaArgumentClass == NULL) {
-		fprintf(stderr, "Failed to get AidaArgument class\n");
+	if (!aidaArgumentClass) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to get AidaArgument class");
 		return cArgs;
 	}
 
@@ -280,19 +307,23 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 	jmethodID mName = (*env)->GetMethodID(env, aidaArgumentClass, "getName", "()Ljava/lang/String;");
 	jmethodID mValue = (*env)->GetMethodID(env, aidaArgumentClass, "getValue", "()Ljava/lang/String;");
 
-	if (mSize == NULL || mGet == NULL || mName == NULL || mValue == NULL) {
-		if (mSize == NULL) {
-			fprintf(stderr, "Failed to get size(String) method on List object\n");
-		}
-		if (mGet == NULL) {
-			fprintf(stderr, "Failed to get get(int) method on List object\n");
-		}
-		if (mName == NULL) {
-			fprintf(stderr, "Failed to get getName() method on AidaArgument object\n");
-		}
-		if (mValue == NULL) {
-			fprintf(stderr, "Failed to get getValue(int) method on AidaArgument object\n");
-		}
+	if (!mSize) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Failed to get size(String) method on List object");
+		return cArgs;
+	}
+	if (!mGet) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to get get(int) method on List object");
+		return cArgs;
+	}
+	if (!mName) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Failed to get getName() method on AidaArgument object");
+		return cArgs;
+	}
+	if (!mValue) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Failed to get getValue(int) method on AidaArgument object");
 		return cArgs;
 	}
 
@@ -301,6 +332,11 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 
 	// Create array of arguments
 	cArgs.arguments = calloc(cArgs.argumentCount, sizeof(Argument));
+	if (!cArgs.arguments) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Failed to allocate memory for arguments");
+		return cArgs;
+	}
 
 	// walk through and fill array
 	for (int i = 0; i < cArgs.argumentCount; i++) {
@@ -311,6 +347,59 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 
 	// Return arguments
 	return cArgs;
+}
+
+/**
+ * Get value from the {@code value} argument in the provided arguments structure.
+ *
+ * @param env env
+ * @param arguments provided arguments structure
+ * @return the extracted Value
+ */
+Value getValue(JNIEnv* env, Arguments arguments)
+{
+	Value value;
+	value.type = AIDA_NO_TYPE;
+
+	Argument valueArgument = getArgument(arguments, "value");
+	if (!valueArgument.name || !valueArgument.value) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"value argument missing or empty when calling setValue()");
+		return value;
+	}
+
+	// Get value to parse and trim leading space
+	char* valueToParse = valueArgument.value;
+	while (isspace(*valueToParse)) {
+		valueToParse++;
+	}
+
+	// If this is a json string then parse it otherwise just extract the string
+	if (*valueToParse == '[' || *valueToParse == '{') {
+		value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
+		if (value.value.jsonValue) {
+			value.type = AIDA_JSON_TYPE;
+		} else {
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+					"Unable to parse supplied JSON value string");
+		}
+	} else {
+		value.type = AIDA_STRING_TYPE;
+		value.value.stringValue = valueToParse;
+	}
+	return value;
+}
+
+/**
+ * Free the json value in a Value structure.
+ * @param value
+ */
+void releaseValue(Value value)
+{
+	// Only free json values because the string values will be freed with the arguments directly
+	if (value.type == AIDA_JSON_TYPE) {
+		json_value_free(value.value.jsonValue);
+	}
 }
 
 /**
@@ -325,8 +414,10 @@ jbooleanArray toBooleanArray(JNIEnv* env, Array array)
 	jbooleanArray returnValue;
 
 	returnValue = (*env)->NewBooleanArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Boolean Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Boolean Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -350,8 +441,10 @@ jbyteArray toByteArray(JNIEnv* env, Array array)
 	jbyteArray returnValue;
 
 	returnValue = (*env)->NewByteArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Byte Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Byte Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -376,8 +469,10 @@ jshortArray toShortArray(JNIEnv* env, Array array)
 	jshortArray returnValue;
 
 	returnValue = (*env)->NewShortArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Short Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Short Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -402,8 +497,10 @@ jintArray toIntegerArray(JNIEnv* env, Array array)
 	jintArray returnValue;
 
 	returnValue = (*env)->NewIntArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Integer Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Integer Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -428,8 +525,10 @@ jlongArray toLongArray(JNIEnv* env, Array array)
 	jlongArray returnValue;
 
 	returnValue = (*env)->NewLongArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Long Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Long Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -454,8 +553,10 @@ jfloatArray toFloatArray(JNIEnv* env, Array array)
 	jfloatArray returnValue;
 
 	returnValue = (*env)->NewFloatArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Float Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Float Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -481,8 +582,10 @@ jdoubleArray toDoubleArray(JNIEnv* env, Array array)
 
 	// create result array
 	returnValue = (*env)->NewDoubleArray(env, array.count);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new Double Array with %d elements\n", array.count);
+	if (!returnValue) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new Double Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -508,14 +611,17 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 
 	// Get a class reference for java.lang.String
 	jclass classString = (*env)->FindClass(env, "java/lang/String");
-	if (classString == NULL) {
-		fprintf(stderr, "Failed to get jclass of java String\n");
+	if (!classString) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to get jclass of java String");
 		return NULL;
 	}
 
 	returnValue = (*env)->NewObjectArray(env, array.count, classString, NULL);
-	if (NULL == returnValue) {
-		fprintf(stderr, "Failed to create a new String Array with %d elements\n", array.count);
+	if (!returnValue) {
+		releaseStringArray(array);
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to create a new String Array with %d elements", array.count);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return NULL;
 	}
 
@@ -523,7 +629,6 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 	for (int i = 0; i < array.count; i++) {
 		(*env)->SetObjectArrayElement(env, returnValue, i, toJString(env, array.items[i]));
 	}
-
 
 	// Free up array
 	releaseStringArray(array);
@@ -549,21 +654,23 @@ jobject toTable(JNIEnv* env, Table table)
 	jobject tableToReturn;
 
 	JavaObject listObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaTable");
+	CHECK_EXCEPTION(NULL)
+
 	tableToReturn = listObject.object;
 	jclass cList = listObject.class;
 
 	// retrieve the add method of the list
 	jmethodID mAdd = (*env)->GetMethodID(env, cList, "add", "(ILjava/lang/Object;)Z");
-	if (mAdd == NULL) {
-		fprintf(stderr, "Failed to find the add(int, Object) method on AidaTable object\n");
+	if (!mAdd) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Failed to find the add(int, Object) method on AidaTable object");
 		return NULL;
 	}
 
-	if (tableToReturn == NULL) {
-		fprintf(stderr, "Failed to create a new AidaTable object\n");
-		return tableToReturn;
+	if (!tableToReturn) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to create a new AidaTable object");
+		return NULL;
 	}
-
 
 	// Loop over each column
 	for (int column = 0; column < table.columnCount; column++) {
@@ -574,6 +681,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_BOOLEAN_ARRAY_TYPE : {
 				jboolean data = ((jboolean*)(table.ppData[column]))[row];
 				jobject dataObject = toBoolean(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -581,6 +690,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_BYTE_ARRAY_TYPE: {
 				jbyte data = ((jbyte*)(table.ppData[column]))[row];
 				jobject dataObject = toByte(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -588,6 +699,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_SHORT_ARRAY_TYPE: {
 				jshort data = ((jshort*)(table.ppData[column]))[row];
 				jobject dataObject = toShort(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -595,6 +708,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_INTEGER_ARRAY_TYPE: {
 				jint data = ((jint*)(table.ppData[column]))[row];
 				jobject dataObject = toInteger(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -602,6 +717,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_LONG_ARRAY_TYPE: {
 				jlong data = ((jlong*)(table.ppData[column]))[row];
 				jobject dataObject = toLong(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -609,6 +726,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_FLOAT_ARRAY_TYPE: {
 				jfloat data = ((jfloat*)(table.ppData[column]))[row];
 				jobject dataObject = toFloat(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -616,6 +735,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_DOUBLE_ARRAY_TYPE: {
 				jdouble data = ((jdouble*)(table.ppData[column]))[row];
 				jobject dataObject = toDouble(env, data);
+				CHECK_EXCEPTION(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
 				break;
@@ -623,6 +744,8 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_STRING_ARRAY_TYPE: {
 				char* string = ((char**)(table.ppData[column]))[row];
 				jstring stringValue = toJString(env, string);
+				CHECK_EXCEPTION_FOR_STRING_COLUMN(NULL)
+
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, stringValue);
 
 				// Free up string buffer
@@ -631,8 +754,8 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			default:
-				fprintf(stderr, "Warning: Unsupported type found in table\n");
-				break;
+				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unsupported type found in table");
+				return NULL;
 			}
 		}
 	}
@@ -689,21 +812,33 @@ void releaseTable(Table table)
 	}
 }
 
+/**
+ * Get the class and the valueOf() method for the given signature
+ *
+ * @param env
+ * @param boxedClassSignature
+ * @param valueOfMethodSignature
+ * @return
+ */
 ClassAndMethod getClassAndValueOfMethod(JNIEnv* env, char* boxedClassSignature, char* valueOfMethodSignature)
 {
 	ClassAndMethod classAndMethod;
 
 	// Get a class reference
 	classAndMethod.class = (*env)->FindClass(env, boxedClassSignature);
-	if (NULL == classAndMethod.class) {
-		fprintf(stderr, "Failed to get class of: %s\n", boxedClassSignature);
+	if (!classAndMethod.class) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to get class of: %s", boxedClassSignature);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return classAndMethod;
 	}
 
 	// retrieve the valueOf method
 	classAndMethod.methodId = (*env)->GetStaticMethodID(env, classAndMethod.class, "valueOf", valueOfMethodSignature);
-	if (classAndMethod.methodId == NULL) {
-		fprintf(stderr, "Failed to valueOf method with signature: %s\n", valueOfMethodSignature);
+	if (!classAndMethod.methodId) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Failed to valueOf method with signature: %s", valueOfMethodSignature);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
 		return classAndMethod;
 	}
 
@@ -719,10 +854,11 @@ ClassAndMethod getClassAndValueOfMethod(JNIEnv* env, char* boxedClassSignature, 
 jobject toBoolean(JNIEnv* env, jboolean data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Boolean", "(Z)Ljava/lang/Boolean;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert boolean to Boolean\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert boolean to Boolean");
 	}
 
 	return dataObject;
@@ -737,10 +873,11 @@ jobject toBoolean(JNIEnv* env, jboolean data)
 jobject toByte(JNIEnv* env, jbyte data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Byte", "(B)Ljava/lang/Byte;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert byte to Byte\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert byte to Byte");
 	}
 
 	return dataObject;
@@ -755,10 +892,11 @@ jobject toByte(JNIEnv* env, jbyte data)
 jobject toShort(JNIEnv* env, jshort data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Short", "(S)Ljava/lang/Short;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert short to Short\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert short to Short");
 	}
 
 	return dataObject;
@@ -773,10 +911,11 @@ jobject toShort(JNIEnv* env, jshort data)
 jobject toInteger(JNIEnv* env, jint data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Integer", "(I)Ljava/lang/Integer;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert int to Integer\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert int to Integer");
 	}
 
 	return dataObject;
@@ -791,10 +930,11 @@ jobject toInteger(JNIEnv* env, jint data)
 jobject toLong(JNIEnv* env, jlong data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Long", "(J)Ljava/lang/Long;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert long to Long\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert long to Long");
 	}
 
 	return dataObject;
@@ -809,10 +949,11 @@ jobject toLong(JNIEnv* env, jlong data)
 jobject toFloat(JNIEnv* env, jfloat data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Float", "(F)Ljava/lang/Float;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert float to Float\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert float to Float");
 	}
 
 	return dataObject;
@@ -827,10 +968,11 @@ jobject toFloat(JNIEnv* env, jfloat data)
 jobject toDouble(JNIEnv* env, jdouble data)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Double", "(D)Ljava/lang/Double;");
+	CHECK_EXCEPTION(NULL)
+
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, data);
-	if (dataObject == NULL) {
-		fprintf(stderr, "Failed to convert double to Double\n");
-		return NULL;
+	if (!dataObject) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to convert double to Double");
 	}
 
 	return dataObject;

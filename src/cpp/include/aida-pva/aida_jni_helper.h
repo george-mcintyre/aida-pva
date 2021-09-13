@@ -7,6 +7,84 @@ extern "C" {
 #include <jni.h>
 #include "aida_types.h"
 
+#define CHECK_EXCEPTION(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_VOID \
+    if ((*env)->ExceptionCheck(env)) { \
+        return; \
+    }
+
+#define CHECK_EXCEPTION_FOR_ARGUMENTS(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseArguments(arguments); \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_AND_ARGUMENTS_VOID \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseArguments(arguments); \
+        return; \
+    }
+
+#define CHECK_EXCEPTION_FOR_STRING(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        if ( string ) free(string); \
+        releaseArguments(arguments); \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_FOR_STRING_COLUMN(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        if ( string ) free(string); \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_FOR_CONFIG(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+	    if (config.fields && config.fieldCount) { \
+    	    free(&(config.fields)); \
+    	} \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_FOR_ARRAY(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseArray(array); \
+        releaseArguments(arguments); \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_FOR_STRING_ARRAY \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseStringArray(array); \
+        releaseArguments(arguments); \
+        return NULL; \
+    }
+
+#define CHECK_EXCEPTION_FOR_TABLE(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseTable(table); \
+        releaseArguments(arguments); \
+        return r; \
+    }
+
+#define CHECK_EXCEPTION_FOR_VALUE_VOID \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseValue(value); \
+        releaseArguments(arguments); \
+        return; \
+    }
+
+#define CHECK_EXCEPTION_FOR_VALUE(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+        releaseValue(value); \
+        releaseArguments(arguments); \
+        return r; \
+    }
+
 /**
  * Java object: containing the jobject and the class
  */
@@ -57,7 +135,7 @@ JavaObject newObject(JNIEnv* env, char* classToCreate);
  * @param string jstring
  * @return c-string
  */
-const char* toCString(JNIEnv* env, jstring string);
+char* toCString(JNIEnv* env, jstring string);
 
 /**
  * Convert c-string to j-string
@@ -287,6 +365,15 @@ jobject toFloat(JNIEnv* env, jfloat data);
  * @return new Java Double
  */
 jobject toDouble(JNIEnv* env, jdouble data);
+
+Value getValue(JNIEnv* env, Arguments arguments);
+
+/**
+ * Print a value to standard output
+ * @param env
+ * @param value
+ */
+void releaseValue(Value value);
 
 #ifdef __cplusplus
 }

@@ -41,4 +41,5 @@ add_executable(cpp
         aida-pva/aida_jni_helper.c
         aida-pva/aida_server_helper.c
         aida-pva/aida_types_helper.c
-        aida-pva/NativeChannelProviderJni.c)
+        aida-pva/NativeChannelProviderJni.c
+        aida-pva/json.c)

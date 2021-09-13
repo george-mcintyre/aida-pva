@@ -1,4 +1,5 @@
 #include <jni.h>
+#include "json.h"
 
 #ifndef _Included_aida_types
 #define _Included_aida_types
@@ -28,7 +29,8 @@ typedef enum
 	AIDA_FLOAT_ARRAY_TYPE,
 	AIDA_DOUBLE_ARRAY_TYPE,
 	AIDA_STRING_ARRAY_TYPE,
-	AIDA_TABLE_TYPE
+	AIDA_TABLE_TYPE,
+	AIDA_JSON_TYPE
 } Type;
 
 /**
@@ -44,8 +46,8 @@ jstring toTypeString(JNIEnv* env, Type type);
 typedef enum
 {
 	AIDA_NO_LAYOUT,
-	AIDA_COLUMN_MAJOR_LAYOUT,
-	AIDA_ROW_MAJOR_LAYOUT
+	AIDA_COLUMN_MAJOR_LAYOUT,  // Each top level array entry is a column containing row data
+	AIDA_ROW_MAJOR_LAYOUT      // Each top level array entry is a row containing column data
 } Layout;
 
 /**
@@ -83,9 +85,19 @@ typedef struct
 
 typedef struct
 {
-	const char* name;
-	const char* value;
+	char* name;
+	char* value;
 } Argument;
+
+typedef union {
+	char *stringValue;
+	json_value* jsonValue;
+} ValueContents;
+
+typedef struct {
+	Type type;	// AIDA_STRING_TYPE or AIDA_JSON_TYPE
+	ValueContents value;
+} Value;
 
 typedef struct
 {

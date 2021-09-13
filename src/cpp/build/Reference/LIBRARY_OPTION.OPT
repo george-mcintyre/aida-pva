@@ -2,6 +2,7 @@ reference_server.obj
 aida_jni_helper.obj
 aida_server_helper.obj
 aida_types_helper.obj
+json.obj
 nativechannelproviderjni.obj
 !
 JAVA$JAVA_G_SHR/SHARE

@@ -4,10 +4,9 @@
       **ATTRIBUTES**=JNI
  */
 #include <jni.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "aida_types.h"
-#include "reference_server.h"
+#include "aida_server_helper.h"
 #include "aida_jni_helper.h"
 
 /*
@@ -39,9 +38,11 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaChannelConfig
 
 	// Call the implementation
 	Config config = aidaChannelConfig(env, channel);
+	CHECK_EXCEPTION_FOR_CONFIG(NULL)
 
 	// marshal results and free fields
 	returnValue = aidaChannelConfigToJObject(env, config);
+	CHECK_EXCEPTION_FOR_CONFIG(NULL)
 
 	return returnValue;
 }
@@ -55,10 +56,11 @@ jboolean
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBoolean
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jboolean returnValue;
+	jboolean returnValue = 0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestBoolean(env, pv, arguments);
 
@@ -77,10 +79,11 @@ JNIEXPORT jbyte
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByte
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jbyte returnValue;
+	jbyte returnValue  = 0x0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestByte(env, pv, arguments);
 
@@ -99,10 +102,11 @@ JNIEXPORT jshort
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShort
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jshort returnValue;
+	jshort returnValue = 0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestShort(env, pv, arguments);
 
@@ -121,10 +125,11 @@ JNIEXPORT jint
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestInteger
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jint returnValue;
+	jint returnValue = 0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestInteger(env, pv, arguments);
 
@@ -143,10 +148,11 @@ JNIEXPORT jlong
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLong
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jlong returnValue;
+	jlong returnValue = 0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestLong(env, pv, arguments);
 
@@ -165,10 +171,11 @@ JNIEXPORT jfloat
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloat
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jfloat returnValue;
+	jfloat returnValue = 0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestFloat(env, pv, arguments);
 
@@ -187,10 +194,11 @@ JNIEXPORT jdouble
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDouble
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jdouble returnValue;
+	jdouble returnValue = 0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(returnValue)
 
 	returnValue = aidaRequestDouble(env, pv, arguments);
 
@@ -213,8 +221,11 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	char* string = aidaRequestString(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_STRING(NULL)
+
 	returnValue = toJString(env, string);
 
 	// Release String
@@ -239,8 +250,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBooleanArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestBooleanArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toBooleanArray(env, array);
@@ -264,8 +277,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByteArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestByteArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toByteArray(env, array);
@@ -289,8 +304,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShortArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestShortArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toShortArray(env, array);
@@ -314,8 +331,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestIntegerArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestIntegerArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toIntegerArray(env, array);
@@ -339,8 +358,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLongArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestLongArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toLongArray(env, array);
@@ -364,8 +385,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloatArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestFloatArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toFloatArray(env, array);
@@ -389,8 +412,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDoubleArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Array array = aidaRequestDoubleArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_ARRAY(NULL)
 
 	// create result array
 	returnValue = toDoubleArray(env, array);
@@ -414,8 +439,10 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestStringArray
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	StringArray array = aidaRequestStringArray(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_STRING_ARRAY
 
 	// create result array
 	returnValue = toStringArray(env, array);
@@ -439,11 +466,14 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestTable
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
 
 	Table table = aidaRequestTable(env, pv, arguments);
+	CHECK_EXCEPTION_FOR_TABLE(NULL)
 
 	// create result table
 	returnValue = toTable(env, table);
+	CHECK_EXCEPTION_FOR_TABLE(NULL)
 
 	// Free up arguments list
 	releaseArguments(arguments);
@@ -451,4 +481,62 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestTable
 	return returnValue;
 }
 
+
+/*
+ * Class:     slac_aida_NativeChannelProvider
+ * Method:    aidaSetValue
+ * Signature: (Ljava/lang/String;Ljava/util/List;)V
+ */
+JNIEXPORT void
+JNICALL Java_slac_aida_NativeChannelProvider_aidaSetValue
+		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
+{
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_AND_ARGUMENTS_VOID
+
+	Value value = getValue(env, arguments);
+	CHECK_EXCEPTION_FOR_VALUE_VOID
+
+	aidaSetValue(env, pv, arguments, value);
+
+	// Free up value
+	releaseValue(value);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+}
+
+/*
+ * Class:     slac_aida_NativeChannelProvider
+ * Method:    aidaSetValueWithResponse
+ * Signature: (Ljava/lang/String;Ljava/util/List;)Ledu/stanford/slac/aida/lib/model/AidaTable;
+ */
+JNIEXPORT jobject
+JNICALL Java_slac_aida_NativeChannelProvider_aidaSetValueWithResponse
+		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
+{
+	jobject returnValue;
+
+	const char* pv = toCString(env, uri);
+	Arguments arguments = toArguments(env, args);
+	CHECK_EXCEPTION_FOR_ARGUMENTS(NULL)
+
+	Value value = getValue(env, arguments);
+	CHECK_EXCEPTION_FOR_VALUE(NULL)
+
+	Table table = aidaSetValueWithResponse(env, pv, arguments, value);
+	CHECK_EXCEPTION_FOR_TABLE(NULL)
+
+	// create result table
+	returnValue = toTable(env, table);
+
+	// Free up value
+	releaseValue(value);
+
+	// Free up arguments list
+	releaseArguments(arguments);
+
+	return returnValue;
+}
 
