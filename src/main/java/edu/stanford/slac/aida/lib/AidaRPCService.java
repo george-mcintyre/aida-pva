@@ -136,6 +136,13 @@ public class AidaRPCService implements RPCService {
             }
         }
 
+        Type channelType = typeOf(aidaType);
+        if ( aidaType.equals(NONE) || valueArgument != null ) {
+            System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaType + ":" + (channelType == null ? "" : channelType));
+        } else {
+            System.out.println("AIDA Request : " + channelName + arguments + " => " + aidaType + ":" + (channelType == null ? "" : channelType));
+        }
+
         // Call entry point based on return type
         if (aidaType.equals(NONE)) {
             // If type is NONE then call setValue
@@ -147,11 +154,9 @@ public class AidaRPCService implements RPCService {
             return asNtTable(returnValue, channelConfig);
         } else {
             // Otherwise this is a regular get request
-            Type channelType = typeOf(aidaType);
             if (channelType == null) {
                 throw new UnsupportedChannelException("Could not find return type for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
             }
-            System.out.println("AIDA Request: " + channelName + arguments + " => " + (aidaType == null ? "null" : aidaType) + ":" + channelType);
 
             if (channelType.equals(scalar)) {
                 Object returnValue = this.aidaChannelProvider.requestScalar(channelName, aidaType, arguments);
