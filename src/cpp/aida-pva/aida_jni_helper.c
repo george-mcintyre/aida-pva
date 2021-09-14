@@ -771,7 +771,7 @@ jobject toTable(JNIEnv* env, Table table)
  */
 void releaseArguments(Arguments arguments)
 {
-	if (arguments.argumentCount > 0) {
+	if (arguments.argumentCount > 0 && arguments.arguments) {
 		free(arguments.arguments);
 	}
 }
@@ -782,7 +782,7 @@ void releaseArguments(Arguments arguments)
  */
 void releaseArray(Array array)
 {
-	if (array.count > 0) {
+	if (array.count > 0 && array.items) {
 		free(array.items);
 	}
 }
@@ -793,7 +793,7 @@ void releaseArray(Array array)
  */
 void releaseStringArray(StringArray array)
 {
-	if (array.count > 0) {
+	if (array.count > 0 && array.items) {
 		free(array.items);
 	}
 }
@@ -806,9 +806,13 @@ void releaseTable(Table table)
 {
 	if (table.columnCount > 0) {
 		for (int column = 0; column < table.columnCount; column++) {
-			free(table.ppData[column]);
+			if ( table.ppData[column] ) {
+				free(table.ppData[column]);
+			}
 		}
-		free(table.ppData);
+		if ( table.ppData) {
+			free(table.ppData);
+		}
 	}
 }
 

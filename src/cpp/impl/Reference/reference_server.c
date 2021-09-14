@@ -526,6 +526,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Only for attribute20
 	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute20")) {
+		table.columnCount = 0;
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 		return table;
 	}
@@ -533,6 +534,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// Allocate space for columns
 	table.ppData = calloc(table.columnCount, sizeof(void*));
 	if (!table.ppData) {
+		table.columnCount = 0;
 		char errorString[BUFSIZ];
 		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
