@@ -1,15 +1,37 @@
 # Channels definition file for aida-pva
 #
-# This file defines the available channels for the sample aida service
+# This file defines the available channels for the Buff Acq Service
 id: 262
 name: SLCBuffacq
-description: SLC BPM Buffered acquisition
+description: SLC control system pulse synchronized "Buffered Data"
+# Arguments:
+# BPMD      : Integer Bpm Measurement Definition number
+# NRPOS     : Number of pulses
+# BPMi or DEVi : BPM, TORO, GAPM, KLYS or SBST device name
 config:
   type: TABLE
-  layout: ROW_MAJOR
+  layout: COLUMN_MAJOR
   fields:
-    - label: foo
-      name: bar
-      description: Lorem ipsum
-channels:
+    - label: BPM Name
+      name: name
+      description: Name of BPM
+    - label: pulse id
+      name: id
+      description: pulse id
+    - label: x offset (mm)
+      name: x
+      description: BPM x offset
+    - label: y offset (mm)
+      name: y
+      description: BPM y offset
+    - label: num particles (coulomb)
+      name: tmits
+      description: Number of particles
+    - label: STAT
+      name: STAT
+      description: 32 bit field
+    - label: good measurement
+        name: goodmeas
+        description: Good Measurement
+  channels:
   - channel: *:BUFFACQ

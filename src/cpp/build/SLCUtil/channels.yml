@@ -1,14 +1,37 @@
 # Channels definition file for aida-pva
 #
-# This file defines the available channels for the sample aida service
+# This file defines the available channels for the SLC Utility Service
+#
+# Arguments:
+# MKB       : File name path
+# BGRP      : The BGRP name
+# VARNAME   : A BGRP variable name for the specified BGRP
+#
+#  Supply the 'AType' parameter to choose the return type, e.g. AType=FLOAT
+#  Supply the 'AValue' parameter to call setValue() e.g. AValue=set, MKB=filename
+#
 id: 122
 name: SLCUtil
 description: SLC Utility Server
 config:
-  type: DOUBLE
+  type: ANY
   fields:
     - name: value
 channels:
   - channel: BGRP:VAL
+      type: NONE
   - channel: MKB:VAL
-  - channel: TRIG:*:*:*
+      type: TABLE
+      fields:
+        - name: name
+          label: "Device Name"
+          description: "name of each device referenced in the specified multiknob file"
+        - name: value
+          label: "Value"
+          description: "value of each device after the knob rotation set operation"
+  - channel: TRIG:*:*:TACT
+      type: TABLE
+      fields:
+        - name: status
+          label: "Status"
+          description: "Status code for the specified trigger device on a beam"

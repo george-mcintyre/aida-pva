@@ -36,15 +36,5 @@ config:
       name: STAT
       description: 32 bit field
 channels:
-  - channel: E163BMLN:BPMS
-  - channel: ELECEP01:BPMS
-  - channel: INJ_ELEC:BPMS
-  - channel: INJ_POSI:BPMS
-  - channel: LCLS_SL2:BPMS
-  - channel: NDRFACET:BPMS
-  - channel: P2BPMHER:BPMS
-  - channel: P2BPMLER:BPMS
-  - channel: PEP2INJF:BPMS
-  - channel: SCAVPOSI:BPMS
-  - channel: SDRFACET:BPMS
-  - channel: TAXXALL:BPMS
+  - channel: "????????:BPMS"
+  - channel: "???????:BPMS"

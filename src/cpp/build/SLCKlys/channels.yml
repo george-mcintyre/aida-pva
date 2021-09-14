@@ -1,14 +1,58 @@
 # Channels definition file for aida-pva
 #
-# This file defines the available channels for the sample aida service
+# This file defines the available channels for the Kyystron Service
 id: 162
 name: SLCKlys
 description: Klystron Server
 config:
+  # Arguments:
+  # type      : For TACT attribute this is either SHORT, LONG, or STRING
+  # BEAM      : Beam Code number
+  # DGRP      : Dgrp name
+  # TRIM      : Trim value (YES or NO)
   description: Kylstron Value
-  type: DOUBLE
+  type: TABLE
+  layout: COLUMN_MAJOR
   fields:
-    - name: value
+    - label: Status Code
+      name: status
+      description: Status code
 channels:
-  - channel: KLYS:????:*:????
-  - channel: SBST:????:*:????
+  - channel: KLYS:????:*:TACT
+  - channel: SBST:????:*:TACT
+  - channel: KLYS:????:*:PDES
+    config:
+      fields:
+        - label: PHAS secondary value
+          name: PHAS
+          description: PHAS secondary value
+  - channel: SBST:????:*:PDES
+    config:
+      fields:
+        - label: PHAS secondary value
+          name: PHAS
+          description: PHAS secondary value
+  - channel: KLYS:????:*:KPHR
+    config:
+      fields:
+        - label: PHAS secondary value
+          name: PHAS
+          description: PHAS secondary value
+  - channel: SBST:????:*:KPHR
+    config:
+      fields:
+        - label: PHAS secondary value
+          name: PHAS
+          description: PHAS secondary value
+  - channel: KLYS:????:*:PCON
+    config:
+      type: NONE
+  - channel: SBST:????:*:PCON
+    config:
+      type: NONE
+  - channel: KLYS:????:*:ACON
+    config:
+      type: NONE
+  - channel: SBST:????:*:ACON
+    config:
+      type: NONE

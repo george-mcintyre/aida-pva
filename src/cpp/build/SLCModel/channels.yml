@@ -1,18 +1,14 @@
 # Channels definition file for aida-pva
 #
-# This file defines the available channels for the sample aida service
+# This file defines the available channels for the Model Service
 id: 63
 name: SLCModel
 description: SLC Modelling parameters
 config:
   description: Modelling Value
-  type: DOUBLE
+  type: SCALAR_ARRAY
   fields:
     - name: value
 channels:
-  - channel: BPMS:*:*:*
-  - channel: PROF:*:*:*
-  - channel: WIRE:*:*:*
-  - channel: XCOR:*:*:*
-  - channel: XMOV:*:*:*
-  - channel: YCOR:*:*:*
+  - channel: "????:????:*:twiss"
+  - channel: "????:????:*:R"
