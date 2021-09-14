@@ -100,45 +100,38 @@ public class AidaRPCService implements RPCService {
             }
         }
 
-        // If the type is SCALAR, SCALAR_ARRAY or ANY then use the `AType` argument
-        // for the aidaType instead
-        // The concrete type specified must match the general type class defined in the channel file
-        // e.g if the channel file has SCALAR_ARRAY then the AType parameter can't be INTEGER, but INTEGER_ARRAY is ok
-        //
-        switch (aidaType) {
-            case SCALAR:
-            case SCALAR_ARRAY:
-            case ANY: {
-                if (typeArgument != null) {
-                    // If a type is specified then check that it matches the type class from the channels file
-                    try {
-                        AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
-                        if ( aidaType.equals(ANY) || specifiedAidaType.metaType().equals(aidaType.metaType())) {
-                            aidaType = specifiedAidaType;
-                        } else {
-                            throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter must be a " + aidaType + ", but you specified " + specifiedAidaType);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter is not a recognised AIDA type" + typeArgument);
-                    }
+        // If you've specified a type the override the config type with the specified one
+        if (typeArgument != null) {
+            try {
+                AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
+
+                // Check that it matches the type class from the channels file
+                if (aidaType.equals(ANY) ||
+                        (!aidaType.equals(SCALAR) && !aidaType.equals(SCALAR_ARRAY)) ||
+                        specifiedAidaType.metaType().equals(aidaType.metaType())) {
+                    aidaType = specifiedAidaType;
                 } else {
-                    // If no class is specified then use a default for each type class
-                    switch (aidaType) {
-                        case SCALAR:
-                            aidaType = INTEGER;
-                            break;
-                        case SCALAR_ARRAY:
-                            aidaType = INTEGER_ARRAY;
-                            break;
-                        default:
-                            aidaType = TABLE;
-                    }
+                    throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter must be a " + aidaType + ", but you specified " + specifiedAidaType);
                 }
+            } catch (IllegalArgumentException e) {
+                throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter is not a recognised AIDA type" + typeArgument);
+            }
+        } else {
+            // If no class is specified then use a default for each type class
+            switch (aidaType) {
+                case SCALAR:
+                    aidaType = INTEGER;
+                    break;
+                case SCALAR_ARRAY:
+                    aidaType = INTEGER_ARRAY;
+                    break;
+                case ANY:
+                    aidaType = TABLE;
             }
         }
 
         Type channelType = typeOf(aidaType);
-        if ( aidaType.equals(NONE) || valueArgument != null ) {
+        if (aidaType.equals(NONE) || valueArgument != null) {
             System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaType + ":" + (channelType == null ? "" : channelType));
         } else {
             System.out.println("AIDA Request : " + channelName + arguments + " => " + aidaType + ":" + (channelType == null ? "" : channelType));
