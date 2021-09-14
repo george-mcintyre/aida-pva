@@ -92,17 +92,18 @@ public class AidaRPCService implements RPCService {
         String typeArgument = null;
         AidaArgument valueArgument = null;
         for (AidaArgument argument : arguments) {
-            if (argument.getName().equalsIgnoreCase("type")) {
+            if (argument.getName().equalsIgnoreCase("AType")) {
                 typeArgument = argument.getValue().toUpperCase();
             }
-            if (argument.getName().equalsIgnoreCase("value")) {
+            if (argument.getName().equalsIgnoreCase("AValue")) {
                 valueArgument = argument;
             }
         }
 
-        // If the type is SCALAR, SCALAR_ARRAY or ANY then use the `type` argument
+        // If the type is SCALAR, SCALAR_ARRAY or ANY then use the `AType` argument
         // for the aidaType instead
-        // The type specified must match the type class defined in the channel file
+        // The concrete type specified must match the general type class defined in the channel file
+        // e.g if the channel file has SCALAR_ARRAY then the AType parameter can't be INTEGER, but INTEGER_ARRAY is ok
         //
         switch (aidaType) {
             case SCALAR:
@@ -115,10 +116,10 @@ public class AidaRPCService implements RPCService {
                         if ( aidaType.equals(ANY) || specifiedAidaType.metaType().equals(aidaType.metaType())) {
                             aidaType = specifiedAidaType;
                         } else {
-                            throw new UnsupportedChannelTypeException("The type specified by the 'type' parameter must be a " + aidaType + ", but you specified " + specifiedAidaType);
+                            throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter must be a " + aidaType + ", but you specified " + specifiedAidaType);
                         }
                     } catch (IllegalArgumentException e) {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'type' parameter is not a recognised AIDA type" + typeArgument);
+                        throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter is not a recognised AIDA type" + typeArgument);
                     }
                 } else {
                     // If no class is specified then use a default for each type class
