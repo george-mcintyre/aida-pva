@@ -350,7 +350,7 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 }
 
 /**
- * Get value from the {@code value} argument in the provided arguments structure.
+ * Get value from the {@code AValue} argument in the provided arguments structure.
  *
  * @param env env
  * @param arguments provided arguments structure
@@ -361,10 +361,10 @@ Value getValue(JNIEnv* env, Arguments arguments)
 	Value value;
 	value.type = AIDA_NO_TYPE;
 
-	Argument valueArgument = getArgument(arguments, "value");
+	Argument valueArgument = getArgument(arguments, "AValue");
 	if (!valueArgument.name || !valueArgument.value) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"value argument missing or empty when calling setValue()");
+				"`AValue` argument missing or empty when calling setValue()");
 		return value;
 	}
 
