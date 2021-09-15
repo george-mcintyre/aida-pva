@@ -11,8 +11,7 @@ description: SLC BPM orbit data under a given measurement definition
 # N         : "N" average
 # SORTORDER : Sort order
 config:
-  type: TABLE
-  layout: COLUMN_MAJOR
+  type: FLOAT_ARRAY
   fields:
     - label: BPM Name
       name: name

@@ -13,11 +13,6 @@
 
 #include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
 
-/*
- * Local Static
- */
-static const $DESCRIPTOR( process_name, "AidaDbIf");
-
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
