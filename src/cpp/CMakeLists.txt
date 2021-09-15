@@ -13,6 +13,7 @@ include_directories(include
         include/SLCBuffAcq
         include/SLCKlys
         include/SLCModel
+        include/SLCmagnet
         include/SLCMosc
         include/SLCUtil
         )
@@ -28,6 +29,8 @@ add_executable(cpp
         include/SLCBuffAcq/slcBuffAcq_server.h
         impl/SLCKlys/slcKlys_server.c
         include/SLCKlys/slcKlys_server.h
+        impl/SLCMagnet/SLCMagnet_server.c
+        include/SLCMagnet/slcMagnet_server.h
         impl/SLCModel/slcModel_server.c
         include/SLCModel/slcModel_server.h
         impl/SLCMosc/slcMosc_server.c
