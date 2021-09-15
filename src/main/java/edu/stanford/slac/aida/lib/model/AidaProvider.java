@@ -4,7 +4,6 @@ import edu.stanford.slac.aida.lib.ChannelProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.epics.pvaccess.server.rpc.Service;
 import org.epics.pvaccess.util.WildcardMatcher;
 
 import java.util.*;
@@ -51,7 +50,7 @@ public class AidaProvider {
 
         // Look for an exact match or a wild card match if that fails
         AidaChannel aidaChannel = this.channelMap.get(channelName);
-        if ( aidaChannel == null ) {
+        if (aidaChannel == null) {
             for (Map.Entry<String, AidaChannel> entry : this.channelMap.entrySet()) {
                 if (WildcardMatcher.match(getAidaName(entry.getKey()), channelName)) {
                     aidaChannel = entry.getValue();
@@ -75,9 +74,12 @@ public class AidaProvider {
 
                 this.channelMap.put(channel, aidaChannel);
 
-                // Add legacy style channel name
+                // Add legacy style channel name.  If already legacy name then don't modify.  This is to
+                // allow attributes that contain colons which don't work in the new format
                 int indexOfLastSeparator = channel.lastIndexOf(":");
-                if (indexOfLastSeparator != -1) {
+                int indexOfLastLegacySeparator = channel.lastIndexOf("//");
+
+                if (indexOfLastSeparator != -1 && indexOfLastLegacySeparator == -1) {
                     this.channelMap.put(channel.substring(0, indexOfLastSeparator) + "//" + channel.substring(indexOfLastSeparator + 1), aidaChannel);
                 }
             }
@@ -148,13 +150,13 @@ public class AidaProvider {
     }
 
     public static String getAidaName(String channelName) {
-        if ( channelName.lastIndexOf("//") != -1) {
+        if (channelName.lastIndexOf("//") != -1) {
             return channelName;
         }
 
         int start = channelName.lastIndexOf(":");
         // if channel name does not contain any colons then return unchanged
-        if ( start == -1) {
+        if (start == -1) {
             return channelName;
         }
 
