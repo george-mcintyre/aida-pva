@@ -37,11 +37,6 @@ void aidaServiceInit(JNIEnv* env)
 		return;
 	}
 
-	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
-		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "while initializing BPM acquisition");
-		return;
-	}
-
 	printf("Aida BPM Service Initialised\n");
 }
 
@@ -300,12 +295,8 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	StringArray stringArray;
-	stringArray.count = 1;
-	stringArray.items = calloc(1, sizeof(char*));
-	((char**)(stringArray.items))[0] = malloc(9); // one character string
-	strcpy(((char**)(stringArray.items))[0], "eighteen");
-
-	// Return the string array
+	stringArray.count = 0;
+	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	return stringArray;
 }
 
@@ -327,8 +318,11 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	Table table;
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 0;
+	table.rowCount = 0;
 
+	vmsstat_t status = 0;
 	int bpmd = 0;
+
 	int n = 1;
 	int cnfnum = 1;
 	int sortOrder = 2;
@@ -336,6 +330,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Argument argument;
 
+	// BPMD
 	argument = getArgument(arguments, "bpmd");
 	if (!argument.name) {
 		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
@@ -344,21 +339,25 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 	bpmd = getIntegerArgument(argument);
 
+	// N
 	argument = getArgument(arguments, "n");
 	if (argument.name) {
 		n = getIntegerArgument(argument);
 	}
 
+	// cnfnum
 	argument = getArgument(arguments, "cnfnum");
 	if (argument.name) {
 		cnfnum = getIntegerArgument(argument);
 	}
 
+	// sort order
 	argument = getArgument(arguments, "sortOrder");
 	if (argument.name) {
 		sortOrder = getIntegerArgument(argument);
 	}
 
+	// cnftype
 	argument = getArgument(arguments, "cnftype");
 	//         cnftype                The acquisition "configuration" type. If
 	//                                0 (NONE) no bpm config is used; cnfnum ignored.
@@ -379,8 +378,16 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		}
 	}
 
+	// Initialise acquisition
+	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing BPM acquisition");
+		table.rowCount = 0;
+		return table;
+	}
+
+	// Acquire BPM values
 	unsigned long bpmCount;
-	vmsstat_t status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
+	status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
 	table.rowCount = (int)bpmCount;
 
 	/* Check status from above call (will ThrowNew if status is bad) */

@@ -7,7 +7,7 @@ description: SLC control system pulse synchronized "Buffered Data"
 # Arguments:
 # BPMD      : Integer Bpm Measurement Definition number
 # NRPOS     : Number of pulses
-# BPMi or DEVi : BPM, TORO, GAPM, KLYS or SBST device name
+# BPMS or DEVS : An array of device names
 config:
   type: TABLE
   layout: COLUMN_MAJOR
@@ -31,7 +31,7 @@ config:
       name: STAT
       description: 32 bit field
     - label: good measurement
-        name: goodmeas
-        description: Good Measurement
-  channels:
-  - channel: *:BUFFACQ
+      name: goodmeas
+      description: Good Measurement
+channels:
+  - channel: "*:BUFFACQ"

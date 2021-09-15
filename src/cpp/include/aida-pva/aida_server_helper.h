@@ -347,6 +347,16 @@ void printValue(JNIEnv* env, Value value);
  */
 json_value * getJsonValue(Value value, char *path);
 
+/**
+ * Get value from a named  argument in the provided arguments structure.
+ *
+ * @param env env
+ * @param arguments provided arguments structure
+ * @param name provided name
+ * @return the extracted Value
+ */
+Value getNamedValue(JNIEnv* env, Arguments arguments, char *name);
+
 
 #ifdef __cplusplus
 }

@@ -358,36 +358,7 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
  */
 Value getValue(JNIEnv* env, Arguments arguments)
 {
-	Value value;
-	value.type = AIDA_NO_TYPE;
-
-	Argument valueArgument = getArgument(arguments, "AValue");
-	if (!valueArgument.name || !valueArgument.value) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"`AValue` argument missing or empty when calling setValue()");
-		return value;
-	}
-
-	// Get value to parse and trim leading space
-	char* valueToParse = valueArgument.value;
-	while (isspace(*valueToParse)) {
-		valueToParse++;
-	}
-
-	// If this is a json string then parse it otherwise just extract the string
-	if (*valueToParse == '[' || *valueToParse == '{') {
-		value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
-		if (value.value.jsonValue) {
-			value.type = AIDA_JSON_TYPE;
-		} else {
-			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-					"Unable to parse supplied JSON value string");
-		}
-	} else {
-		value.type = AIDA_STRING_TYPE;
-		value.value.stringValue = valueToParse;
-	}
-	return value;
+	return getNamedValue(env, arguments, "AValue");
 }
 
 /**

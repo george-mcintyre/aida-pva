@@ -148,6 +148,51 @@ Argument getArgument(Arguments arguments, char* name)
 }
 
 /**
+ * Get value from a named  argument in the provided arguments structure.
+ *
+ * @param env env
+ * @param arguments provided arguments structure
+ * @param name provided name
+ * @return the extracted Value
+ */
+Value getNamedValue(JNIEnv* env, Arguments arguments, char *name)
+{
+	Value value;
+	value.type = AIDA_NO_TYPE;
+
+	Argument valueArgument = getArgument(arguments, name);
+	if (!valueArgument.name || !valueArgument.value) {
+		if (strcasecmp(name, "Avalue") == 0) {
+			aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+					"`AValue` argument missing or empty when calling setValue()");
+		}
+		return value;
+	}
+
+	// Get value to parse and trim leading space
+	char* valueToParse = valueArgument.value;
+	while (isspace(*valueToParse)) {
+		valueToParse++;
+	}
+
+	// If this is a json string then parse it otherwise just extract the string
+	if (*valueToParse == '[' || *valueToParse == '{') {
+		value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
+		if (value.value.jsonValue) {
+			value.type = AIDA_JSON_TYPE;
+		} else {
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+					"Unable to parse supplied JSON value string");
+		}
+	} else {
+		value.type = AIDA_STRING_TYPE;
+		value.value.stringValue = valueToParse;
+	}
+	return value;
+}
+
+
+/**
  * Get boolean argument
  * @param argument argument
  * @return boolean
