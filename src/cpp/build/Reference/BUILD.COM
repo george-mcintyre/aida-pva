@@ -19,8 +19,8 @@ $! link native shareable
 $!
 $ LINK -
    /MAP/DEBUG/SHARE=AIDA-PVA.EXE -
-   global_symbol_option /OPT, -
-   library_option /OPT, -
+   'GLB_OPT' /OPT, -
+   'LIB_OPT' /OPT, -
    SLCOPT:SLC_COMMON.OPT /OPT, -
    SLCOPT:ALPHA_SYSSHR.OPT /OPT, -
    SLCOPT:DBSYMBOL /OPT
