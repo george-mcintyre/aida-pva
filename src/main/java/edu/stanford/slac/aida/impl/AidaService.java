@@ -1,10 +1,10 @@
-package edu.stanford.slac.aida.reference.implementation;
+package edu.stanford.slac.aida.impl;
 
 import edu.stanford.slac.aida.lib.AidaProviderRunner;
 
 import static slac.aida.NativeChannelProvider.aidaServiceInit;
 
-public class ReferenceService {
+public class AidaService {
     private final static String AIDA_PVA_LIB_NAME = "aida-pva";
     static {
         // Get library name from property or environment.
@@ -21,6 +21,6 @@ public class ReferenceService {
     }
 
     public static void main(String[] args) {
-        AidaProviderRunner.run(new ReferenceChannelProvider());
+        AidaProviderRunner.run(new AidaChannelProvider());
     }
 }

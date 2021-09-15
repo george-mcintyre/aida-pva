@@ -1,4 +1,4 @@
-package edu.stanford.slac.aida.exception;
+package edu.stanford.slac.except;
 
 
 public class UnsupportedChannelException extends RuntimeException {

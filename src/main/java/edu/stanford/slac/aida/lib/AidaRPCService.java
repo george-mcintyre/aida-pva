@@ -1,9 +1,9 @@
 package edu.stanford.slac.aida.lib;
 
-import edu.stanford.slac.aida.exception.UnableToGetDataException;
-import edu.stanford.slac.aida.exception.UnableToSetDataException;
-import edu.stanford.slac.aida.exception.UnsupportedChannelException;
-import edu.stanford.slac.aida.exception.UnsupportedChannelTypeException;
+import edu.stanford.slac.except.UnableToGetDataException;
+import edu.stanford.slac.except.UnableToSetDataException;
+import edu.stanford.slac.except.UnsupportedChannelException;
+import edu.stanford.slac.except.UnsupportedChannelTypeException;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaType;

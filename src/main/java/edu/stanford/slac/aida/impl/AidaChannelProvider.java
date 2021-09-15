@@ -12,16 +12,15 @@
  * OR REDISTRIBUTION OF THIS SOFTWARE.
  */
 
-package edu.stanford.slac.aida.reference.implementation;
+package edu.stanford.slac.aida.impl;
 
 import edu.stanford.slac.aida.lib.ChannelProvider;
 
 /**
- * Implementation of an aida-pca-channel provider.
+ * Implementation of an aida-pva-channel provider.
  */
-public class ReferenceChannelProvider extends ChannelProvider {
-    public ReferenceChannelProvider() {
+public class AidaChannelProvider extends ChannelProvider {
+    public AidaChannelProvider() {
         super();
     }
-
 }
