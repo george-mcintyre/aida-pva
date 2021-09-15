@@ -11,7 +11,8 @@ description: SLC BPM orbit data under a given measurement definition
 # N         : "N" average
 # SORTORDER : Sort order
 config:
-  type: FLOAT_ARRAY
+  type: TABLE
+  layout: COLUMN_MAJOR
   fields:
     - label: BPM Name
       name: name
@@ -26,13 +27,13 @@ config:
       name: tmits
       description: Number of particles
     - label: z position (meters)
-      name: y
+      name: z
       description: BPM z position
     - label: HSTA
       name: HSTA
       description: 32 bit field
-    - label: STAT
-      name: STAT
+    - label: STATS
+      name: STATS
       description: 32 bit field
 channels:
   - channel: "????????:BPMS"
