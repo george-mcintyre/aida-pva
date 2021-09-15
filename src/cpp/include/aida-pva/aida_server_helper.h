@@ -11,12 +11,6 @@ extern "C" {
 #include "aida_types.h"
 #include "json.h"
 
-/**
- * Issues a given error message to SLC error log, which is passed on to cmlog.
- * @param message
- */
-void issue_err( char* message );
-
 // Override prototypes of externals to uppercase names, since compile.com
 // adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
 // is in effect (as is for this module), then it's /names=AS_IS.
@@ -26,6 +20,7 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 // Supported exceptions
 #define SERVER_INITIALISATION_EXCEPTION "ServerInitialisationException"
 #define UNABLE_TO_GET_DATA_EXCEPTION "UnableToGetDataException"
+#define UNABLE_TO_SET_DATA_EXCEPTION "UnableToSetDataException"
 #define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
 #define MISSING_REQUIRED_ARGUMENT_EXCEPTION "MissingRequiredArgumentException"
 
@@ -241,20 +236,20 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
  *
  * The exception is formatted in a standard way using the VMS status code and its associated message
  * and the optionally supplied message
- * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ * The exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env
  * @param status
  * @param exception
  * @param message
  */
-void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message);
+void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* message);
 
 /**
  * To log any non-OS exceptions and throw back to java
  *
  * The exception is formatted in a standard way with the optionally supplied message
- * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ * The exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env
  * @param exception

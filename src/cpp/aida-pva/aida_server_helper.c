@@ -9,6 +9,8 @@
 #include "json.h"
 #include "aida_server_helper.h"
 
+#include "slc_macros.h"    /* vmsstat_t, int2u, int4u, etc. */
+
 static json_value* navigateToArrayElement(json_value* jsonValue, int index);
 static json_value* navigateToObjectElement(json_value* jsonValue, const char* name);
 static json_value* processArrayReference(json_value* jsonValue, const char* arrayRef);
@@ -16,7 +18,7 @@ static json_value* processArrayReference(json_value* jsonValue, const char* arra
  * To log any non-OS exceptions and throw back to java
  *
  * The exception is formatted in a standard way with the optionally supplied message
- * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ * The exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env
  * @param exception
@@ -33,14 +35,14 @@ void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
  *
  * The exception is formatted in a standard way using the VMS status code and its associated message
  * and the optionally supplied message
- * The exception is always assumed to be from the edu.stanford.slac.aida.exception package
+ * The exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env
  * @param status
  * @param exception
  * @param message
  */
-void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
+void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* message)
 {
 	// Clear any exception that may be in the process of being thrown (unlikely)
 	if ((*env)->ExceptionCheck(env)) {
@@ -70,11 +72,8 @@ void aidaThrow(JNIEnv* env, int4u status, char* exception, const char* message)
 				MIN(strlen(message), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 	}
 
-	// Log error message to cm log
-	issue_err(errorMessageDescriptor.dsc$a_pointer);
-
 	// Create the fully qualified java class name of the exception to throw
-	char classToCreate[BUFSIZ] = "edu/stanford/slac/aida/exception/";
+	char classToCreate[BUFSIZ] = "edu/stanford/slac/except/";
 	strcat (classToCreate, exception);
 
 	// Create the java exception class
