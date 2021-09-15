@@ -1,6 +1,7 @@
 package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.exception.UnableToGetDataException;
+import edu.stanford.slac.aida.exception.UnableToSetDataException;
 import edu.stanford.slac.aida.exception.UnsupportedChannelException;
 import edu.stanford.slac.aida.exception.UnsupportedChannelTypeException;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
@@ -34,11 +35,12 @@ public class AidaRPCService implements RPCService {
      * @return the result of the call
      * @throws RPCRequestException         if any error occurs formulating the request or decoding the response
      * @throws UnableToGetDataException    when server fails to retrieve data
+     * @throws UnableToSetDataException    when server fails to set data
      * @throws UnsupportedChannelException when server does not yet support the specified channel.
      *                                     Usually caused when channel matches a pattern specified in the channels.yml file
      *                                     but is not yet supported in the service implementation
      */
-    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException {
+    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException {
         // Check that the parameter is always a normative type
         String type = pvUri.getStructure().getID();
         if (!NTURI.is_a(pvUri.getStructure())) {
@@ -75,11 +77,12 @@ public class AidaRPCService implements RPCService {
      * @param arguments   arguments if any
      * @return the structure containing the results.
      * @throws UnableToGetDataException    when server fails to retrieve data
+     * @throws UnableToSetDataException    when server fails to set data
      * @throws UnsupportedChannelException when server does not yet support the specified channel.
      *                                     Usually caused when channel matches a pattern specified in the channels.yml file
      *                                     but is not yet supported in the service implementation
      */
-    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException {
+    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
 
         if (channelConfig == null) {
