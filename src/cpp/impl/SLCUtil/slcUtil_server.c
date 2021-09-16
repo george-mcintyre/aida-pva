@@ -573,8 +573,6 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 	}
 
 	// Allocate space for rows of data
-	char** stringArray;
-	stringArray = table.ppData[0];
 	for (int column = 0; column < table.columnCount; column++) {
 		switch (column) {
 		case 0: // names
@@ -589,7 +587,7 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 	// Get all data
 	short* shortArray;
 
-	// Secondary values
+	// Flag
 	shortArray = (short*)(table.ppData[0]);
 	shortArray[0] = flag;
 

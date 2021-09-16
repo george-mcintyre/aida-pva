@@ -2,7 +2,6 @@ slcMosc_server.obj
 aida_jni_helper.obj
 aida_server_helper.obj
 aida_types_helper.obj
-aida_values.obj
 json.obj
 nativechannelproviderjni.obj
 !

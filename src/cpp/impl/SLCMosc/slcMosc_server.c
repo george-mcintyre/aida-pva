@@ -1,15 +1,22 @@
 /**
  * Master Oscillator Server implementation
  */
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <descrip.h>              /*  for definition of $DESCRIPTOR  */
+#include <stdbool.h>
 
 #include "aida_server_helper.h"
 #include "json.h"
 
+#include "slc_macros.h"    /* vmsstat_t, int2u, int4u, etc. */
+#include "msg_proto.h"     /* for standalone_init */
+#include "sysutil_proto.h" /* for cvt_vms_to_ieee_flt */
+
 #include "slcMosc_server.h"
 
-#include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
+static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char** units, char** ring, float* floatValue);
 
 /**
  * Initialise the service
@@ -18,6 +25,13 @@
  */
 void aidaServiceInit(JNIEnv* env)
 {
+	vmsstat_t status;
+
+	if (!SUCCESS(status = DPSLCMOSC_DB_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Master Oscillator Service");
+		return;
+	}
+
 	printf("Aida Master Oscillator Service Initialised\n");
 }
 
@@ -128,8 +142,25 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
  */
 double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0;
+	vmsstat_t status = 0;
+
+	if (!DPSLCMOSC_ACCESSENABLED()) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Aida access to Master Oscillator is not currently enabled");
+		return 0.0;
+	}
+
+	double meas_abs_freq;
+
+	int2u one = 1;
+	status = DPSLCMOSC_MEASMASTEROSC(&meas_abs_freq);
+	if (!SUCCESS(status)) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
+		return 0.0;
+	}
+	CVT_VMS_TO_IEEE_DBL(&meas_abs_freq, &meas_abs_freq, &one);
+
+	return meas_abs_freq;
 }
 
 /**
@@ -294,7 +325,55 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	Table table;
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 0;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+
+	vmsstat_t status = 0;
+
+	if (!DPSLCMOSC_ACCESSENABLED()) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Aida access to Master Oscillator is not currently enabled");
+		return table;
+	}
+
+	double meas_abs_freq;
+
+	int2u one = 1;
+	status = DPSLCMOSC_MEASMASTEROSC(&meas_abs_freq);
+	if (!SUCCESS(status)) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
+		return table;
+	}
+	CVT_VMS_TO_IEEE_DBL(&meas_abs_freq, &meas_abs_freq, &one);
+
+	// Now create table to return
+
+	// Set columns
+	table.columnCount = 1;
+	table.rowCount = 1;
+
+	// Allocate space for table data
+	if (initTable(env, &table) == NULL) {
+		return table;
+	}
+
+	// Allocate space for rows of data
+	for (int column = 0; column < table.columnCount; column++) {
+		switch (column) {
+		case 0: // names
+			tableDoubleColumn(&table, column);
+			break;
+		default: // unsupported
+			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
+			break;
+		}
+	}
+
+	// Get all data
+	double* doubleArray;
+
+	// Secondary values
+	doubleArray = (double*)(table.ppData[0]);
+	doubleArray[0] = meas_abs_freq;
+
 	return table;
 }
 
@@ -326,7 +405,95 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	Table table;
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 0;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+	vmsstat_t status = 0;
+
+	if (!DPSLCMOSC_ACCESSENABLED()) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+				"Aida access to Master Oscillator is not currently enabled");
+		return table;
+	}
+
+	// Get Unit, Ring and Value
+	float floatValue;
+	double resulting_abs_freq;
+	char* units;
+	char* ring;
+
+	if (getMoscArguments(env, arguments, value, &units, &ring, &floatValue)) {
+		return table;
+	}
+
+	// Set value
+	int2u one = 1;
+	status = DPSLCMOSC_SETMASTEROSC(&floatValue, units, ring, &resulting_abs_freq);
+	if (!SUCCESS(status))
+	{
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+				"Unable to set master oscilator frequency");
+		return table;
+	}
+	CVT_VMS_TO_IEEE_DBL(&resulting_abs_freq, &resulting_abs_freq, &one);
+
+	// Now create table to return
+
+	// Set columns
+	table.columnCount = 1;
+	table.rowCount = 1;
+
+	// Allocate space for table data
+	if (initTable(env, &table) == NULL) {
+		return table;
+	}
+
+	// Allocate space for rows of data
+	for (int column = 0; column < table.columnCount; column++) {
+		switch (column) {
+		case 0: // names
+			tableDoubleColumn(&table, column);
+			break;
+		default: // unsupported
+			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
+			break;
+		}
+	}
+
+	// Get all data
+	double* doubleArray;
+
+	// Secondary values
+	doubleArray = (double*)(table.ppData[0]);
+	doubleArray[0] = resulting_abs_freq;
+
 	return table;
+}
+
+static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char** units, char** ring, float* floatValue)
+{
+	if (value.type != AIDA_STRING_TYPE) {
+		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+				"Master Oscillator Set Variable requires a AValue parameter to set to a float");
+		return 1;
+	}
+	sscanf(value.value.stringValue, "%f", floatValue);
+
+	Argument argument = getArgument(arguments, "units");
+	*units = "FREQUENCY";
+	if (argument.name) {
+		*units = argument.value;
+	}
+
+	argument = getArgument(arguments, "ring");
+	*ring = NULL;
+	if (argument.name) {
+		*ring = argument.value;
+	}
+
+	if (strcasecmp(*units, "ENERGY") == 0 && *ring == NULL ) {
+		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+				"Master Oscillator Set Variable requires a RING parameter if the UNITS are ENERGY");
+		return 2;
+	}
+
+	return 0;
 }
 
