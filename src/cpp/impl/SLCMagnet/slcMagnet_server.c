@@ -349,20 +349,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	table.columnCount = 2;
 
 	// Allocate space for table data
-	table.ppData = calloc(table.columnCount, sizeof(void*));
-	if (!table.ppData) {
-		table.columnCount = 0;
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
-		return table;
-	}
-
-	table.types = calloc(table.columnCount, sizeof(Type*));
-	if (!table.types) {
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table types: %ld", table.columnCount * sizeof(Type*));
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+	if (initTable(env, &table) == NULL) {
 		return table;
 	}
 
@@ -372,16 +359,10 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	for (int column = 0; column < table.columnCount; column++) {
 		switch (column) {
 		case 0: // names
-			table.types[column] = AIDA_STRING_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(char*));
-			// allocate data for each string too
-			for (int row = 0; row < table.rowCount; row++) {
-				stringArray[row] = malloc(MAX_PMU_STRING_LEN);
-			}
+			tableStringColumn(&table, column, MAX_PMU_STRING_LEN);
 			break;
 		case 1: // secondary values
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		default: // unsupported
 			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
