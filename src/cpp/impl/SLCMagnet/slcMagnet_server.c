@@ -18,6 +18,13 @@
 #include "msg_proto.h"     /* for standalone_init */
 #include "sysutil_proto.h" /* for cvt_vms_to_ieee_flt */
 
+static int getSimpleMagnetArguments(JNIEnv* env, const char* uri, Value value, int* count,
+		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values);
+
+static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count,
+		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values,
+		char** magFunc, char** limitCheck);
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -426,71 +433,15 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	int status;
-
-	if (value.type != AIDA_JSON_TYPE ||
-			value.value.jsonValue->type != json_object ||
-			value.value.jsonValue->u.object.length != 2) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-	}
-
-	// value contains an object with two congruent arrays
-	// { "names": [], "values": [] }
-
-	json_object_entry* v0 = &(value.value.jsonValue->u.object.values[0]);
-	json_object_entry* v1 = &(value.value.jsonValue->u.object.values[1]);
-	if (v0->value->type != json_array || v1->value->type != json_array) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-	}
-
-	int count = v0->value->u.array.length;
-	if (count != v1->value->u.array.length) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-	}
-
-	json_value** nameArray, ** valuesArray;
-
-	if (strcasecmp(v0->name, "names") == 0) {
-		nameArray = v0->value->u.array.values;
-		valuesArray = v1->value->u.array.values;
-	} else {
-		nameArray = v1->value->u.array.values;
-		valuesArray = v0->value->u.array.values;
-	}
-
-	// Get names array
-	char* prim_list = (char*)malloc((count * MAX_PRIM_NAME_LEN) + 1);
-	char* micr_list = (char*)malloc((count * MAX_MICR_NAME_LEN) + 1);
-	int* unit_list = (int*)malloc(count * sizeof(int));
-	char name[MAX_PRIM_NAME_LEN + MAX_MICR_NAME_LEN + sizeof(int) + 4];
-	for (int i = 0; i < count; i++) {
-		strcpy(name, nameArray[i]->u.string.ptr);
-		char* prim = strtok(name, ":");
-		strcpy(prim_list + (i * MAX_PRIM_NAME_LEN), prim);
-		char* micr = strtok(NULL, ":");
-		strcpy(micr_list + (i * MAX_PRIM_NAME_LEN), micr);
-		char* unit = strtok(NULL, ":");
-		sscanf(unit, "%d", &(unit_list[i]));
-	}
-
-	// Get values array
-	float* set_values = (float*)malloc(count * sizeof(float));
-	if (strcasecmp(v0->name, "names") == 0) {
-		for (int i = 0; i < count; i++) {
-			set_values[i] = (float)valuesArray[i]->u.dbl;
-			status = CVT$CONVERT_FLOAT((void*)(set_values + i), CVT$K_IEEE_S, (void*)(set_values + i), CVT$K_VAX_F, 0);
-			if (status != CVT$_NORMAL) {
-				aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-						"Illegal floating point number was provided");
-				return;
-			}
-		}
-	}
-
-	// Secondary name
-	char* secondary = strstr(uri, "//") + 2;
-	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
+	int count;
+	char* prim_list, * micr_list;
+	int* unit_list;
 	int4u secn;
-	memcpy(&secn, secondary, MAX_SECN_NAME_LEN);
+	float* set_values;
+
+	if (getSimpleMagnetArguments(env, uri, value, &count, &prim_list, &micr_list, &unit_list, &secn, &set_values)) {
+		return;
+	}
 
 	// set the PVs specified by the lists of primary, micros, and units
 	status = DPSLCMAGNET_SETCONFIG(count, prim_list, micr_list, unit_list, secn, set_values);
@@ -517,86 +468,16 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 0;
 
-	if (value.type != AIDA_JSON_TYPE ||
-			value.value.jsonValue->type != json_object ||
-			value.value.jsonValue->u.object.length != 2) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return table;
-	}
-
-	// value contains an object with two congruent arrays
-	// { "names": [], "values": [] }
-
-	json_object_entry* v0 = &(value.value.jsonValue->u.object.values[0]);
-	json_object_entry* v1 = &(value.value.jsonValue->u.object.values[1]);
-	if (v0->value->type != json_array || v1->value->type != json_array) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return table;
-	}
-
-	int count = v0->value->u.array.length;
-	if (count != v1->value->u.array.length) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return table;
-	}
-
-	json_value** nameArray, ** valuesArray;
-
-	if (strcasecmp(v0->name, "names") == 0) {
-		nameArray = v0->value->u.array.values;
-		valuesArray = v1->value->u.array.values;
-	} else {
-		nameArray = v1->value->u.array.values;
-		valuesArray = v0->value->u.array.values;
-	}
-
-	// Get names array
-	char* prim_list = (char*)malloc((count * MAX_PRIM_NAME_LEN) + 1);
-	char* micr_list = (char*)malloc((count * MAX_MICR_NAME_LEN) + 1);
-	int* unit_list = (int*)malloc(count * sizeof(int));
-	char name[MAX_PRIM_NAME_LEN + MAX_MICR_NAME_LEN + sizeof(int) + 4];
-	for (int i = 0; i < count; i++) {
-		strcpy(name, nameArray[i]->u.string.ptr);
-		char* prim = strtok(name, ":");
-		strcpy(prim_list + (i * MAX_PRIM_NAME_LEN), prim);
-		char* micr = strtok(NULL, ":");
-		strcpy(micr_list + (i * MAX_PRIM_NAME_LEN), micr);
-		char* unit = strtok(NULL, ":");
-		sscanf(unit, "%d", &(unit_list[i]));
-	}
-
-	// Get values array
-	float* set_values = (float*)malloc(count * sizeof(float));
-	if (strcasecmp(v0->name, "names") == 0) {
-		for (int i = 0; i < count; i++) {
-			set_values[i] = (float)valuesArray[i]->u.dbl;
-			status = CVT$CONVERT_FLOAT((void*)(set_values + i), CVT$K_IEEE_S, (void*)(set_values + i), CVT$K_VAX_F, 0);
-		}
-	}
-
-	// Secondary name
-	char* secondary = strstr(uri, "//") + 2;
-	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
+	int count;
 	int4u secn;
-	memcpy(&secn, secondary, MAX_SECN_NAME_LEN);
+	char* prim_list, * micr_list, * magFunc, * limitCheck;
+	int* unit_list;
+	float* set_values;
 
-	Argument argument;
-
-	// magfunc is required variable
-	argument = getArgument(arguments, "magfunc");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION, "magfunc");
+	if (getMagnetArguments(env, uri, arguments, value, &count, &prim_list, &micr_list, &unit_list, &secn, &set_values,
+			&magFunc, &limitCheck)) {
 		return table;
 	}
-	char* magFunc = argument.value;
-
-	// limitcheck is an optional variable
-	argument = getArgument(arguments, "limitcheck");
-	char* limitCheck = "ALL";
-	if (argument.name) {
-		limitCheck = argument.value;
-	}
-
 
 	// set the PVs specified by the lists of primary, micros, and units
 	status = DPSLCMAGNET_SET(count, prim_list, micr_list, unit_list, secn, set_values, magFunc);
@@ -608,20 +489,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	table.columnCount = 2;
 
 	// Allocate space for table data
-	table.ppData = calloc(table.columnCount, sizeof(void*));
-	if (!table.ppData) {
-		table.columnCount = 0;
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, errorString);
-		return table;
-	}
-
-	table.types = calloc(table.columnCount, sizeof(Type*));
-	if (!table.types) {
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table types: %ld", table.columnCount * sizeof(Type*));
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, errorString);
+	if (initTable(env, &table) == NULL) {
 		return table;
 	}
 
@@ -631,16 +499,10 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	for (int column = 0; column < table.columnCount; column++) {
 		switch (column) {
 		case 0: // names
-			table.types[column] = AIDA_STRING_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(char*));
-			// allocate data for each string too
-			for (int row = 0; row < table.rowCount; row++) {
-				stringArray[row] = malloc(MAX_STATE_NAME_LEN + 1);
-			}
+			tableStringColumn(&table, column, MAX_STATE_NAME_LEN + 1);
 			break;
 		case 1: // x
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		default: // unsupported
 			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
@@ -656,7 +518,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 		memcpy(stringArray[row], names + (row * MAX_STATE_NAME_LEN), MAX_STATE_NAME_LEN);
 		stringArray[row][MAX_STATE_NAME_LEN] = '\0';
 	}
-	free(name);
+	free(names);
 
 	// Status
 	int2u M;
@@ -666,5 +528,175 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
 
 	return table;
+}
+
+static int getSimpleMagnetArguments(JNIEnv* env, const char* uri, Value value, int* count,
+		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values)
+{
+	int status;
+	if (value.type != AIDA_JSON_TYPE ||
+			value.value.jsonValue->type != json_object ||
+			value.value.jsonValue->u.object.length != 2) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
+		return 1;
+	}
+
+	// value contains an object with two congruent arrays
+	// { "names": [], "values": [] }
+
+	json_object_entry* v0 = &(value.value.jsonValue->u.object.values[0]);
+	json_object_entry* v1 = &(value.value.jsonValue->u.object.values[1]);
+	if (v0->value->type != json_array || v1->value->type != json_array) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
+		return 2;
+	}
+
+	*count = (int)v0->value->u.array.length;
+	if (*count != v1->value->u.array.length) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
+		return 3;
+	}
+
+	json_value** nameArray, ** valuesArray;
+
+	if (strcasecmp(v0->name, "names") == 0) {
+		nameArray = v0->value->u.array.values;
+		valuesArray = v1->value->u.array.values;
+	} else {
+		nameArray = v1->value->u.array.values;
+		valuesArray = v0->value->u.array.values;
+	}
+
+	// Get names array
+	*prim_list = (char*)malloc((*count * MAX_PRIM_NAME_LEN) + 1);
+	*micr_list = (char*)malloc((*count * MAX_MICR_NAME_LEN) + 1);
+	*unit_list = (int*)malloc(*count * sizeof(int));
+	char name[MAX_PRIM_NAME_LEN + MAX_MICR_NAME_LEN + sizeof(int) + 4];
+	for (int i = 0; i < *count; i++) {
+		strcpy(name, nameArray[i]->u.string.ptr);
+		char* prim = strtok(name, ":");
+		strcpy(*prim_list + (i * MAX_PRIM_NAME_LEN), prim);
+		char* micr = strtok(NULL, ":");
+		strcpy(*micr_list + (i * MAX_PRIM_NAME_LEN), micr);
+		char* unit = strtok(NULL, ":");
+		sscanf(unit, "%d", unit_list[i]);
+	}
+
+	// Get values array
+	*set_values = (float*)malloc(*count * sizeof(float));
+	if (strcasecmp(v0->name, "names") == 0) {
+		for (int i = 0; i < *count; i++) {
+			*set_values[i] = (float)valuesArray[i]->u.dbl;
+			status = CVT$CONVERT_FLOAT((void*)(*set_values + i), CVT$K_IEEE_S, (void*)(*set_values + i), CVT$K_VAX_F,
+					0);
+			if (status != CVT$_NORMAL) {
+				aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+						"Illegal floating point number was provided");
+				return 4;
+			}
+		}
+	}
+
+	// Secondary name
+	char* secondary = strstr(uri, "//") + 2;
+	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
+	*secn;
+	memcpy(secn, secondary, MAX_SECN_NAME_LEN);
+
+	return 0;
+}
+
+static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count,
+		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values,
+		char** magFunc, char** limitCheck)
+{
+	int status;
+
+	if (value.type != AIDA_JSON_TYPE ||
+			value.value.jsonValue->type != json_object ||
+			value.value.jsonValue->u.object.length != 2) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
+		return 1;
+	}
+
+	// value contains an object with two congruent arrays
+	// { "names": [], "values": [] }
+
+	json_object_entry* v0 = &(value.value.jsonValue->u.object.values[0]);
+	json_object_entry* v1 = &(value.value.jsonValue->u.object.values[1]);
+	if (v0->value->type != json_array || v1->value->type != json_array) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
+		return 2;
+	}
+
+	*count = (int)v0->value->u.array.length;
+	if (*count != v1->value->u.array.length) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
+		return 3;
+	}
+
+	json_value** nameArray, ** valuesArray;
+
+	if (strcasecmp(v0->name, "names") == 0) {
+		nameArray = v0->value->u.array.values;
+		valuesArray = v1->value->u.array.values;
+	} else {
+		nameArray = v1->value->u.array.values;
+		valuesArray = v0->value->u.array.values;
+	}
+
+	// Get names array
+	*prim_list = (char*)malloc((*count * MAX_PRIM_NAME_LEN) + 1);
+	*micr_list = (char*)malloc((*count * MAX_MICR_NAME_LEN) + 1);
+	*unit_list = (int*)malloc(*count * sizeof(int));
+	char name[MAX_PRIM_NAME_LEN + MAX_MICR_NAME_LEN + sizeof(int) + 4];
+	for (int i = 0; i < *count; i++) {
+		strcpy(name, nameArray[i]->u.string.ptr);
+		char* prim = strtok(name, ":");
+		strcpy(*prim_list + (i * MAX_PRIM_NAME_LEN), prim);
+		char* micr = strtok(NULL, ":");
+		strcpy(*micr_list + (i * MAX_PRIM_NAME_LEN), micr);
+		char* unit = strtok(NULL, ":");
+		sscanf(unit, "%d", unit_list[i]);
+	}
+
+	// Get values array
+	*set_values = (float*)malloc(*count * sizeof(float));
+	if (strcasecmp(v0->name, "names") == 0) {
+		for (int i = 0; i < *count; i++) {
+			(*set_values)[i] = (float)valuesArray[i]->u.dbl;
+			status = CVT$CONVERT_FLOAT((void*)(*set_values + i), CVT$K_IEEE_S, (void*)(*set_values + i), CVT$K_VAX_F,
+					0);
+			if (status != CVT$_NORMAL) {
+				aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+						"Illegal floating point number was provided");
+				return 4;
+			}
+		}
+	}
+
+	// Secondary name
+	char* secondary = strstr(uri, "//") + 2;
+	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
+	memcpy(secn, secondary, MAX_SECN_NAME_LEN);
+
+	Argument argument;
+
+	// magfunc is required variable
+	argument = getArgument(arguments, "magfunc");
+	if (!argument.name) {
+		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION, "magfunc");
+		return 4;
+	}
+	*magFunc = argument.value;
+
+	// limitcheck is an optional variable
+	argument = getArgument(arguments, "limitcheck");
+	*limitCheck = "ALL";
+	if (argument.name) {
+		*limitCheck = argument.value;
+	}
+
+	return 0;
 }
 

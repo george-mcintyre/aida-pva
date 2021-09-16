@@ -1,5 +1,8 @@
 #include <jni.h>
+#include <stdlib.h>
+
 #include "aida_types.h"
+#include "aida_server_helper.h"
 
 /**
  * Convert Type to string
@@ -63,4 +66,80 @@ jstring toLayoutString(JNIEnv* env, Layout layout)
 	default:
 		return (*env)->NewStringUTF(env, "COLUMN_MAJOR");
 	}
+}
+
+static void tableColumn(Table* table, int columnNumber, Type aidaType, size_t elementSize);
+
+static void tableColumn(Table* table, int columnNumber, Type aidaType, size_t elementSize)
+{
+	table->types[columnNumber] = aidaType;
+	table->ppData[columnNumber] = calloc(table->rowCount, elementSize);
+}
+
+void tableStringColumn(Table* table, int columnNumber, int maxStringLength)
+{
+	tableColumn(table, columnNumber, AIDA_STRING_ARRAY_TYPE, sizeof(char*));
+
+	// allocate data for each string too
+	char** stringArray = table->ppData[columnNumber];
+	for (int row = 0; row < table->rowCount; row++) {
+		stringArray[row] = malloc(maxStringLength);
+	}
+}
+
+void tableFloatColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_FLOAT_ARRAY_TYPE, sizeof(float));
+}
+
+void tableLongColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_LONG_ARRAY_TYPE, sizeof(unsigned long));
+}
+
+void tableBooleanColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_BOOLEAN_ARRAY_TYPE, sizeof(unsigned char));
+}
+
+void tableByteColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_BYTE_ARRAY_TYPE, sizeof(unsigned char));
+}
+
+void tableShortColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_BOOLEAN_ARRAY_TYPE, sizeof(short));
+}
+
+void tableIntegerColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_BOOLEAN_ARRAY_TYPE, sizeof(int));
+}
+
+void tableDoubleColumn(Table* table, int columnNumber)
+{
+	tableColumn(table, columnNumber, AIDA_BOOLEAN_ARRAY_TYPE, sizeof(double));
+}
+
+Table* initTable(JNIEnv* env, Table* table)
+{
+	table->ppData = calloc(table->columnCount, sizeof(void*));
+	if (!table->ppData) {
+		table->columnCount = 0;
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Unable to allocate memory for table: %ld", table->columnCount * sizeof(void*));
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+		return NULL;
+	}
+
+	table->types = calloc(table->columnCount, sizeof(Type*));
+	if (!table->types) {
+		char errorString[BUFSIZ];
+		sprintf(errorString, "Unable to allocate memory for table types: %ld", table->columnCount * sizeof(Type*));
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+		return NULL;
+	}
+
+	return table;
 }

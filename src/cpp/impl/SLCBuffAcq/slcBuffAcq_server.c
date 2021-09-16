@@ -26,6 +26,10 @@
 #include "dpslcbpm.h"             /* BPM service include file, NAME_SIZE */
 #include "dpslcbuff.h"            /* Suite include file for dpslcbuff */
 
+static int
+getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd, int* nrpos, Value* devices,
+		DEVICE_NAME_TS* deviceNames, int* nDevices, char** dGroupName);
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -327,65 +331,14 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	vmsstat_t status = 0;
 	int bpmd = 0;
-
 	int nrpos = 1;
 	Value devices; // The devices to read
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
 	int nDevices = 0;
+	char* dGroupName;
 
-	Argument argument;
-
-	// BPMD
-	argument = getArgument(arguments, "bpmd");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'Acquisition requires a BPMD parameter");
+	if (getBuffAcqArguments(env, uri, arguments, &bpmd, &nrpos, &devices, &(deviceNames[0]), &nDevices, &dGroupName)) {
 		return table;
-	}
-	bpmd = getIntegerArgument(argument);
-
-	// NRPOS
-	argument = getArgument(arguments, "nrpos");
-	if (argument.name) {
-		nrpos = getIntegerArgument(argument);
-	}
-
-	char name[100];
-
-	// Get the dgroup which is the first part of the uri
-	strcpy(name, uri);
-	char* dGroupName = strtok(name, "/");
-	if (!dGroupName) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Invalid URI while making Buffered Data acquisition");
-		return table;
-	}
-
-	// BPMS or DEVS
-	devices = getNamedValue(env, arguments, "bpms");
-	if (devices.type == AIDA_NO_TYPE) {
-		devices = getNamedValue(env, arguments, "devs");
-	}
-	switch (devices.type) {
-	case AIDA_STRING_TYPE:
-		strcpy(name, devices.value.stringValue);
-		strcpy(deviceNames[0].prim_s._a, strtok(name, ":"));
-		strcpy(deviceNames[0].micr_s._a, strtok(NULL, ":"));
-		deviceNames[0].unit_s._i = atoi(strtok(NULL, ":"));
-		nDevices = 1;
-		break;
-	case AIDA_JSON_TYPE:
-		if (devices.value.jsonValue->type == json_array) {
-			nDevices = devices.value.jsonValue->u.array.length;
-			json_value** values = devices.value.jsonValue->u.array.values;
-			for (int i = 0; i < nDevices; i++) {
-				strcpy(name, values[i]->u.string.ptr);
-				strcpy(deviceNames[i].prim_s._a, strtok(name, ":"));
-				strcpy(deviceNames[i].micr_s._a, strtok(NULL, ":"));
-				deviceNames[i].unit_s._i = atoi(strtok(NULL, ":"));
-			}
-		}
-		break;
 	}
 
 	// Initialise acquisition
@@ -411,20 +364,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	table.columnCount = 7;
 
 	// Allocate space for table data
-	table.ppData = calloc(table.columnCount, sizeof(void*));
-	if (!table.ppData) {
-		table.columnCount = 0;
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
-		return table;
-	}
-
-	table.types = calloc(table.columnCount, sizeof(Type*));
-	if (!table.types) {
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table types: %ld", table.columnCount * sizeof(Type*));
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+	if (initTable(env, &table) == NULL) {
 		return table;
 	}
 
@@ -434,36 +374,25 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	for (int column = 0; column < table.columnCount; column++) {
 		switch (column) {
 		case 0: // names
-			table.types[column] = AIDA_STRING_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(char*));
-			// allocate data for each string too
-			for (int row = 0; row < table.rowCount; row++) {
-				stringArray[row] = malloc(NAME_SIZE);
-			}
+			tableStringColumn(&table, column, NAME_SIZE);
 			break;
 		case 1: // pulse id
-			table.types[column] = AIDA_LONG_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(unsigned long));
+			tableLongColumn(&table, column);
 			break;
 		case 2: // x offsets
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 3: // y offsets
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 4: // tmits
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 5: // stats
-			table.types[column] = AIDA_LONG_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(unsigned long));
+			tableFloatColumn(&table, column);
 			break;
 		case 6: // goodmeas
-			table.types[column] = AIDA_BOOLEAN_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(unsigned char));
+			tableBooleanColumn(&table, column);
 			break;
 		default: // unsupported
 			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
@@ -590,5 +519,67 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	table.columnCount = 0;
 	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	return table;
+}
+
+static int
+getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd, int* nrpos, Value* devices,
+		DEVICE_NAME_TS* deviceNames, int* nDevices, char** dGroupName)
+{
+	Argument argument;
+
+	// BPMD
+	argument = getArgument(arguments, "bpmd");
+	if (!argument.name) {
+		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+				"'Acquisition requires a BPMD parameter");
+		return 1;
+	}
+	*bpmd = getIntegerArgument(argument);
+
+	// NRPOS
+	argument = getArgument(arguments, "nrpos");
+	if (argument.name) {
+		*nrpos = getIntegerArgument(argument);
+	}
+
+	char name[100];
+
+	// Get the dgroup which is the first part of the uri
+	strcpy(name, uri);
+	*dGroupName = strtok(name, "/");
+	if (!dGroupName) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Invalid URI while making Buffered Data acquisition");
+		return 2;
+	}
+
+	// BPMS or DEVS
+	*devices = getNamedValue(env, arguments, "bpms");
+	if (devices->type == AIDA_NO_TYPE) {
+		*devices = getNamedValue(env, arguments, "devs");
+	}
+	switch (devices->type) {
+	case AIDA_STRING_TYPE:
+		strcpy(name, devices->value.stringValue);
+		strcpy(deviceNames[0].prim_s._a, strtok(name, ":"));
+		strcpy(deviceNames[0].micr_s._a, strtok(NULL, ":"));
+		deviceNames[0].unit_s._i = atoi(strtok(NULL, ":"));
+		*nDevices = 1;
+		break;
+	case AIDA_JSON_TYPE:
+		if (devices->value.jsonValue->type == json_array) {
+			*nDevices = (int)devices->value.jsonValue->u.array.length;
+			json_value** values = devices->value.jsonValue->u.array.values;
+			for (int i = 0; i < *nDevices; i++) {
+				strcpy(name, values[i]->u.string.ptr);
+				strcpy(deviceNames[i].prim_s._a, strtok(name, ":"));
+				strcpy(deviceNames[i].micr_s._a, strtok(NULL, ":"));
+				deviceNames[i].unit_s._i = atoi(strtok(NULL, ":"));
+			}
+		}
+		break;
+	}
+
+	return 0;
 }
 

@@ -23,6 +23,9 @@
 #include "dpslcbpm.h"             /* Suite include file for dpslcbpm */
 #include "errtranslate.h"
 
+static int
+getBpmArguments(JNIEnv* env, Arguments arguments, int* bpmd, int* n, int* cnftype, int* cnfnum, int* sortOrder);
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -330,54 +333,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	int sortOrder = 2;
 	int cnftype = 0;
 
-	Argument argument;
-
-	// BPMD
-	argument = getArgument(arguments, "bpmd");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'Acquisition requires a BPMD parameter");
+	if (getBpmArguments(env, arguments, &bpmd, &n, &cnftype, &cnfnum, &sortOrder)) {
 		return table;
-	}
-	bpmd = getIntegerArgument(argument);
-
-	// N
-	argument = getArgument(arguments, "n");
-	if (argument.name) {
-		n = getIntegerArgument(argument);
-	}
-
-	// cnfnum
-	argument = getArgument(arguments, "cnfnum");
-	if (argument.name) {
-		cnfnum = getIntegerArgument(argument);
-	}
-
-	// sort order
-	argument = getArgument(arguments, "sortOrder");
-	if (argument.name) {
-		sortOrder = getIntegerArgument(argument);
-	}
-
-	// cnftype
-	argument = getArgument(arguments, "cnftype");
-	//         cnftype                The acquisition "configuration" type. If
-	//                                0 (NONE) no bpm config is used; cnfnum ignored.
-	//                                1 (GOLD) "gold" config is used; cnfnum ignored.
-	//                                2 (LOADED). Last loaded used; cnfnum ignored.
-	//                                3 (SCRATCH). Scratch config <cnfnum> is used.
-	//                                4 (NORMAL). Normal config <cnfnum> is used.
-	if (argument.name) {
-		if (strcasecmp(argument.value, "NONE") == 0) {
-		} else if (strcasecmp(argument.value, "GOLD") == 0) {
-			cnftype = 0;
-		} else if (strcasecmp(argument.value, "LOADED") == 0) {
-			cnftype = 1;
-		} else if (strcasecmp(argument.value, "SCRATCH") == 0) {
-			cnftype = 2;
-		} else if (strcasecmp(argument.value, "NORMAL") == 0) {
-			cnftype = 4;
-		}
 	}
 
 	// Initialise acquisition
@@ -409,20 +366,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	table.columnCount = 7;
 
 	// Allocate space for table data
-	table.ppData = calloc(table.columnCount, sizeof(void*));
-	if (!table.ppData) {
-		table.columnCount = 0;
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table: %ld", table.columnCount * sizeof(void*));
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
-		return table;
-	}
-
-	table.types = calloc(table.columnCount, sizeof(Type*));
-	if (!table.types) {
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table types: %ld", table.columnCount * sizeof(Type*));
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, errorString);
+	if (initTable(env, &table) == NULL) {
 		return table;
 	}
 
@@ -432,36 +376,25 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	for (int column = 0; column < table.columnCount; column++) {
 		switch (column) {
 		case 0: // names
-			table.types[column] = AIDA_STRING_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(char*));
-			// allocate data for each string too
-			for (int row = 0; row < table.rowCount; row++) {
-				stringArray[row] = malloc(NAME_SIZE);
-			}
+			tableStringColumn(&table, column, NAME_SIZE);
 			break;
 		case 1: // x
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 2: // y
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 3: // tmits
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 4: // z
-			table.types[column] = AIDA_FLOAT_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(float));
+			tableFloatColumn(&table, column);
 			break;
 		case 5: // hstas
-			table.types[column] = AIDA_LONG_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(long));
+			tableLongColumn(&table, column);
 			break;
 		case 6: // stats
-			table.types[column] = AIDA_LONG_ARRAY_TYPE;
-			table.ppData[column] = calloc(table.rowCount, sizeof(long));
+			tableLongColumn(&table, column);
 			break;
 		default: // unsupported
 			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
@@ -583,5 +516,61 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	table.columnCount = 0;
 	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	return table;
+}
+
+static int
+getBpmArguments(JNIEnv* env, Arguments arguments, int* bpmd, int* n, int* cnftype, int* cnfnum, int* sortOrder)
+{
+	Argument argument;
+
+	// BPMD
+	argument = getArgument(arguments, "bpmd");
+	if (!argument.name) {
+		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+				"'Acquisition requires a BPMD parameter");
+		return 1;
+	}
+	*bpmd = getIntegerArgument(argument);
+
+	// N
+	argument = getArgument(arguments, "n");
+	if (argument.name) {
+		*n = getIntegerArgument(argument);
+	}
+
+	// cnfnum
+	argument = getArgument(arguments, "cnfnum");
+	if (argument.name) {
+		*cnfnum = getIntegerArgument(argument);
+	}
+
+	// sort order
+	argument = getArgument(arguments, "sortOrder");
+	if (argument.name) {
+		*sortOrder = getIntegerArgument(argument);
+	}
+
+	// cnftype
+	argument = getArgument(arguments, "cnftype");
+	//         cnftype                The acquisition "configuration" type. If
+	//                                0 (NONE) no bpm config is used; cnfnum ignored.
+	//                                1 (GOLD) "gold" config is used; cnfnum ignored.
+	//                                2 (LOADED). Last loaded used; cnfnum ignored.
+	//                                3 (SCRATCH). Scratch config <cnfnum> is used.
+	//                                4 (NORMAL). Normal config <cnfnum> is used.
+	if (argument.name) {
+		if (strcasecmp(argument.value, "NONE") == 0) {
+		} else if (strcasecmp(argument.value, "GOLD") == 0) {
+			*cnftype = 0;
+		} else if (strcasecmp(argument.value, "LOADED") == 0) {
+			*cnftype = 1;
+		} else if (strcasecmp(argument.value, "SCRATCH") == 0) {
+			*cnftype = 2;
+		} else if (strcasecmp(argument.value, "NORMAL") == 0) {
+			*cnftype = 4;
+		}
+	}
+
+	return 0;
 }
 

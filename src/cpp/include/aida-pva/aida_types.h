@@ -89,13 +89,15 @@ typedef struct
 	char* value;
 } Argument;
 
-typedef union {
-	char *stringValue;
+typedef union
+{
+	char* stringValue;
 	json_value* jsonValue;
 } ValueContents;
 
-typedef struct {
-	Type type;	// AIDA_STRING_TYPE or AIDA_JSON_TYPE
+typedef struct
+{
+	Type type;    // AIDA_STRING_TYPE or AIDA_JSON_TYPE
 	ValueContents value;
 } Value;
 
@@ -144,6 +146,16 @@ typedef struct
  * @return string
  */
 jstring toLayoutString(JNIEnv* env, Layout layout);
+
+Table* initTable(JNIEnv* env, Table* table);
+void tableFloatColumn(Table* table, int columnNumber);
+void tableLongColumn(Table* table, int columnNumber);
+void tableBooleanColumn(Table* table, int columnNumber);
+void tableByteColumn(Table *table, int columnNumber);
+void tableShortColumn(Table *table, int columnNumber);
+void tableIntegerColumn(Table *table, int columnNumber);
+void tableDoubleColumn(Table *table, int columnNumber);
+void tableStringColumn(Table* table, int columnNumber, int maxStringLength);
 
 #ifdef __cplusplus
 }
