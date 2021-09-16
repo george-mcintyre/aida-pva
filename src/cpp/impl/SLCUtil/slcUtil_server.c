@@ -546,7 +546,7 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 	float relative_delta_array[1];
 	int2u one = 1;
 
-	status = DPSLCUTIL_TRIG_SETDEACTORREACT((char *)uri, flag, beam);
+	status = DPSLCUTIL_TRIG_SETDEACTORREACT((char*)uri, flag, beam);
 	if (!SUCCESS(status)) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"unable to set value");
@@ -554,7 +554,7 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 	}
 
 	// Read back status
-	status = DPSLCUTIL_TRIG_GETSTATUS((char *)uri, beam, &flag);
+	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &flag);
 	if (!SUCCESS(status)) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"unable to read-back value");
