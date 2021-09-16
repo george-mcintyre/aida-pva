@@ -20,8 +20,30 @@ config:
       name: secondary
       description: secondary values (BDES or VDES)
 channels:
-  - channel: "MAGNETSET:*"
+  - channel: "MAGNETSET:BDES"
+    config:
+      type: TABLE
+      layout: COLUMN_MAJOR
+      fields:
+        - label: status
+          name: status
+          description: state of magnet device
+        - label: bact/vact
+          name: bact_vact
+          description: BACT/VACT value for each device
+  - channel: "MAGNETSET:VDES"
+    config:
+      type: TABLE
+      layout: COLUMN_MAJOR
+      fields:
+        - label: status
+          name: status
+          description: state of magnet device
+        - label: bact/vact
+          name: bact_vact
+          description: BACT/VACT value for each device
+  - channel: "MAGNETSET:BCON"
     config:
       type: NONE
-  - channel: "*:BDES"
-  - channel: "*:VDES"
+  - channel: "*//????:BDES"
+  - channel: "*//????:VDES"

@@ -315,6 +315,8 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	char pvname[NAME_MAX];
+
 	Table table;
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 0;
