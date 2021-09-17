@@ -1,16 +1,21 @@
-#ifndef _Included_slc_server
-#define _Included_slc_server
+#ifndef _Included_slcBpm_server
+#define _Included_slcBpm_server
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "aida_types.h"
 
-/* Override prototypes of externals to uppcase names, since compile.com
-   adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
-   is in effect (as is for this module), then it's /names=AS_IS.
-*/
-void CVT_VMS_TO_IEEE_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
+#define SORTORDER_Z 1
+#define SORTORDER_DISPLAY 2
+
+#define CHECK_VMS_STATUS \
+if (!$VMS_STATUS_SUCCESS(status)) { \
+    endAcquireBpmData(env); \
+	aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values"); \
+	return 0; \
+} \
+
 
 #ifdef __cplusplus
 }

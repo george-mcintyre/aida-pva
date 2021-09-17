@@ -7,6 +7,16 @@
 extern "C" {
 #endif
 
+/* Override prototypes of externals to uppercase names since
+compile.com adds cc/name=UPPERCASE on compiles by default.
+However, if the ATTRIBUTE=JNI is in effect (as it is for
+this module), then it is /names=AS_IS.
+-------------------------------------------------------------*/
+void CVT_VMS_TO_IEEE_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
+void CVT_VMS_TO_IEEE_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
+void CVT_IEEE_TO_VMS_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
+void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
+
 /**
  * Defines the permissible types of fields
  */
@@ -150,14 +160,14 @@ jstring toLayoutString(JNIEnv* env, Layout layout);
 
 Table makeTable(JNIEnv* env, int rows, int columns);
 void addColumn(JNIEnv* env, Table* table, Type type, void* data);
-void addSingleRowFloatColumn(JNIEnv *env, Table* table, float data);
-void addSingleRowLongColumn(JNIEnv *env, Table* table, long data);
-void addSingleRowBooleanColumn(JNIEnv *env, Table* table, unsigned char data);
-void addSingleRowByteColumn(JNIEnv *env, Table* table, unsigned char data);
-void addSingleRowShortColumn(JNIEnv *env, Table* table, short data);
-void addSingleRowIntegerColumn(JNIEnv *env, Table* table, int data);
-void addSingleRowDoubleColumn(JNIEnv *env, Table* table, double data);
-void addSingleRowStringColumn(JNIEnv *env, Table* table, char * data);
+void addSingleRowFloatColumn(JNIEnv* env, Table* table, float data);
+void addSingleRowLongColumn(JNIEnv* env, Table* table, long data);
+void addSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
+void addSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
+void addSingleRowShortColumn(JNIEnv* env, Table* table, short data);
+void addSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
+void addSingleRowDoubleColumn(JNIEnv* env, Table* table, double data);
+void addSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
 void addFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
 void addStringColumn(JNIEnv* env, Table* table, void** data);
 

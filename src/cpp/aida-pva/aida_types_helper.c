@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
+#include "sysutil_proto.h"        /* for cvt_vms_to_ieee_flt */
+
 #include "aida_types.h"
 #include "aida_server_helper.h"
 
@@ -226,6 +229,20 @@ void addColumn(JNIEnv* env, Table* table, Type type, void* data)
 	// Rest of processing for strings is done in addStringColumn
 	if (type == AIDA_STRING_ARRAY_TYPE) {
 		return;
+	}
+
+	// Convert float values if float array
+	if ( type == AIDA_FLOAT_ARRAY_TYPE ) {
+		int2u M = (int2u)table->rowCount;
+		float * floatArray = ((float*)(table->ppData[table->_currentColumn]));
+		CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
+	}
+
+	// Convert double values if double array
+	if ( type == AIDA_DOUBLE_ARRAY_TYPE ) {
+		int2u M = (int2u)table->rowCount;
+		double * doubleArray = ((double*)(table->ppData[table->_currentColumn]));
+		CVT_VMS_TO_IEEE_DBL(doubleArray, doubleArray, &M);
 	}
 
 	// Add data to column

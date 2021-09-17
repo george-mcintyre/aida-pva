@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD 99)
 include_directories(include
         /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include
         /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin
+        /Users/george/Projects/com/SLAC/include
         include/aida-pva
         include/Reference
         include/SLC
