@@ -501,58 +501,23 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		return table;
 	}
 
-	// Allocate space for table data
-	if ( initTable(env, &table) == NULL ) {
-		return table;
-	}
-
-	// Do something to get rows of data ...
-	table.rowCount = 1;
-
-	// Allocate space for rows of data
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0:
-			tableBooleanColumn(&table, column);
-			break;
-		case 1:
-			tableByteColumn(&table, column);
-			break;
-		case 2:
-			tableShortColumn(&table, column);
-			break;
-		case 3:
-			tableIntegerColumn(&table, column);
-			break;
-		case 4:
-			tableLongColumn(&table, column);
-			break;
-		case 5:
-			tableFloatColumn(&table, column);
-			break;
-		case 6:
-			tableDoubleColumn(&table, column);
-			break;
-		case 7:
-			tableStringColumn(&table, column, 6);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Add data to table
-	((unsigned char*)(table.ppData[0]))[0] = 1; // Boolean
-	((unsigned char*)(table.ppData[1]))[0] = 2; // Byte
-	((short*)(table.ppData[2]))[0] = 3; // Short
-	((int*)(table.ppData[3]))[0] = 4; // Integer
-	((long*)(table.ppData[4]))[0] = 5; // Long
-	((float*)(table.ppData[5]))[0] = 6.6f; // Float
-	((double*)(table.ppData[6]))[0] = 7.7; // Double
-
-	((char**)(table.ppData[7]))[0] = malloc(6); // String (one character)
-	strcpy(((char**)(table.ppData[7]))[0], "eight");
+	table = makeTable(env, 1, 8);
+	CHECK_EXCEPTION(table)
+	addSingleRowBooleanColumn(env, &table, 1);
+	CHECK_EXCEPTION(table)
+	addSingleRowByteColumn(env, &table, 2);
+	CHECK_EXCEPTION(table)
+	addSingleRowShortColumn(env, &table, 3);
+	CHECK_EXCEPTION(table)
+	addSingleRowIntegerColumn(env, &table, 4);
+	CHECK_EXCEPTION(table)
+	addSingleRowLongColumn(env, &table, 5);
+	CHECK_EXCEPTION(table)
+	addSingleRowFloatColumn(env, &table, 6.6f);
+	CHECK_EXCEPTION(table)
+	addSingleRowDoubleColumn(env, &table, 7.7);
+	CHECK_EXCEPTION(table)
+	addSingleRowStringColumn(env, &table, "eight");
 
 	// Return the table
 	return table;
@@ -599,24 +564,9 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
 	}
 
-	// Return status in table
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 1;
-
-	// Allocate space for columns
-	if ( initTable(env, &table) == NULL ) {
-		return table;
-	}
-
-	// Do something to get rows of data ...
-	table.rowCount = 1;
-
-	// Allocate space for rows of data
-	tableBooleanColumn(&table, 0);
-
-	// Add data to table
-	((unsigned char*)(table.ppData[0]))[0] = 1; // Boolean
+	Table table = makeTable(env, 1, 1);
+	CHECK_EXCEPTION(table)
+	addSingleRowBooleanColumn(env, &table, 1);
 
 	// Return the table
 	return table;

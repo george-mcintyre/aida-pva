@@ -647,7 +647,6 @@ jobject toTable(JNIEnv* env, Table table)
 	for (int column = 0; column < table.columnCount; column++) {
 		// loop over each row
 		for (int row = 0; row < table.rowCount; row++) {
-			// call appropriate add())
 			switch (table.types[column]) {
 			case AIDA_BOOLEAN_ARRAY_TYPE : {
 				jboolean data = ((jboolean*)(table.ppData[column]))[row];
@@ -725,7 +724,7 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			default:
-				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unsupported type found in table");
+				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unsupported type found in table.  Perhaps you declared a table with n columns but didnt add n columns");
 				return NULL;
 			}
 		}

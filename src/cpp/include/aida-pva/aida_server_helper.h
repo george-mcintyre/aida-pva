@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
 #include <jni.h>
+#include "aida_jni_helper.h"
 
 #include "slc_macros.h"
 #include "errtranslate.h"
@@ -18,6 +19,7 @@ extern "C" {
 void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msgdsc_ps);
 
 // Supported exceptions
+#define AIDA_INTERNAL_EXCEPTION "AidaInternalException"
 #define SERVER_INITIALISATION_EXCEPTION "ServerInitialisationException"
 #define UNABLE_TO_GET_DATA_EXCEPTION "UnableToGetDataException"
 #define UNABLE_TO_SET_DATA_EXCEPTION "UnableToSetDataException"

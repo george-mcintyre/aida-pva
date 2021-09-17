@@ -120,6 +120,7 @@ typedef struct
 	int rowCount;
 	Type* types;
 	void** ppData;
+	int _currentColumn; // For internal use by addColumn() etc
 } Table;
 
 /**
@@ -147,14 +148,28 @@ typedef struct
  */
 jstring toLayoutString(JNIEnv* env, Layout layout);
 
+Table makeTable(JNIEnv* env, int rows, int columns);
+void addColumn(JNIEnv* env, Table* table, Type type, void* data);
+void addSingleRowFloatColumn(JNIEnv *env, Table* table, float data);
+void addSingleRowLongColumn(JNIEnv *env, Table* table, long data);
+void addSingleRowBooleanColumn(JNIEnv *env, Table* table, unsigned char data);
+void addSingleRowByteColumn(JNIEnv *env, Table* table, unsigned char data);
+void addSingleRowShortColumn(JNIEnv *env, Table* table, short data);
+void addSingleRowIntegerColumn(JNIEnv *env, Table* table, int data);
+void addSingleRowDoubleColumn(JNIEnv *env, Table* table, double data);
+void addSingleRowStringColumn(JNIEnv *env, Table* table, char * data);
+void addFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
+void addStringColumn(JNIEnv* env, Table* table, void** data);
+
+/// TODO REMOVE
 Table* initTable(JNIEnv* env, Table* table);
 void tableFloatColumn(Table* table, int columnNumber);
 void tableLongColumn(Table* table, int columnNumber);
 void tableBooleanColumn(Table* table, int columnNumber);
-void tableByteColumn(Table *table, int columnNumber);
-void tableShortColumn(Table *table, int columnNumber);
-void tableIntegerColumn(Table *table, int columnNumber);
-void tableDoubleColumn(Table *table, int columnNumber);
+void tableByteColumn(Table* table, int columnNumber);
+void tableShortColumn(Table* table, int columnNumber);
+void tableIntegerColumn(Table* table, int columnNumber);
+void tableDoubleColumn(Table* table, int columnNumber);
 void tableStringColumn(Table* table, int columnNumber, int maxStringLength);
 
 #ifdef __cplusplus
