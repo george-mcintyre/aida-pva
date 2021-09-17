@@ -1,9 +1,9 @@
 package edu.stanford.slac.aida.lib;
 
-import edu.stanford.slac.except.*;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaType;
+import edu.stanford.slac.except.*;
 import org.epics.nt.NTURI;
 import org.epics.pvaccess.server.rpc.RPCRequestException;
 import org.epics.pvaccess.server.rpc.RPCService;
@@ -64,7 +64,14 @@ public class AidaRPCService implements RPCService {
         PVStructure pvUriQuery = pvUri.getStructureField("query");
         List<AidaArgument> arguments = getArguments(pvUriQuery);
 
-        return request(channelName, arguments);
+        // Make sure that only one request occurs at a time because
+        // the implementations are not thread safe.
+        PVStructure retVal;
+        synchronized (this) {
+            retVal = request(channelName, arguments);
+        }
+
+        return retVal;
     }
 
     /**
