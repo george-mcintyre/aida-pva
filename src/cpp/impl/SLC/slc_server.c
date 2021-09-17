@@ -9,8 +9,6 @@
 #include "aida_server_helper.h"
 #include "json.h"
 
-#include "slc_server.h"
-
 #include <cvtdef.h>               /*  CVT$K_*, CVT$M_*  */
 #include <cvtmsg.h>               /*  CVT$_NORMAL  */
 #include <cvt$routines.h>         /*  CVT$CONVERT_FLOAT  */
@@ -19,6 +17,8 @@
 #include "slc_macros.h"    /* vmsstat_t, int2u, int4u, etc. */
 #include "msg_proto.h"     /* for standalone_init */
 #include "sysutil_proto.h" /* for cvt_vms_to_ieee_flt */
+
+#include "slc_server.h"
 
 /**
  * Initialise the service
@@ -403,7 +403,6 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Must set AValue to an array of floats");
 		return;
 	}
-
 	int length = (int)value.value.jsonValue->u.array.length;
 
 	// Data to pass to JNI_DBSETFLOAT()
@@ -431,7 +430,6 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		}
 	}
 
-	// TODO Check whether we need to translate to VMS style floats prior to calling JNI_DBSETFLOAT
 	vmsstat_t status = JNI_DBSETFLOAT(uri, data, length);
 	free(data);
 
