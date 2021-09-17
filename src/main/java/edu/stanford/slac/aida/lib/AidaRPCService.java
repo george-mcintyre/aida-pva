@@ -1,9 +1,6 @@
 package edu.stanford.slac.aida.lib;
 
-import edu.stanford.slac.except.UnableToGetDataException;
-import edu.stanford.slac.except.UnableToSetDataException;
-import edu.stanford.slac.except.UnsupportedChannelException;
-import edu.stanford.slac.except.UnsupportedChannelTypeException;
+import edu.stanford.slac.except.*;
 import edu.stanford.slac.aida.lib.model.AidaArgument;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaType;
@@ -33,6 +30,7 @@ public class AidaRPCService implements RPCService {
      *
      * @param pvUri the uri passed to the channel containing the name, query, and arguments
      * @return the result of the call
+     * @throws AidaInternalException       if any error occurs because of an implementation error in aida server code
      * @throws RPCRequestException         if any error occurs formulating the request or decoding the response
      * @throws UnableToGetDataException    when server fails to retrieve data
      * @throws UnableToSetDataException    when server fails to set data
@@ -40,7 +38,7 @@ public class AidaRPCService implements RPCService {
      *                                     Usually caused when channel matches a pattern specified in the channels.yml file
      *                                     but is not yet supported in the service implementation
      */
-    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException {
+    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException {
         // Check that the parameter is always a normative type
         String type = pvUri.getStructure().getID();
         if (!NTURI.is_a(pvUri.getStructure())) {
@@ -82,7 +80,7 @@ public class AidaRPCService implements RPCService {
      *                                     Usually caused when channel matches a pattern specified in the channels.yml file
      *                                     but is not yet supported in the service implementation
      */
-    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException {
+    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
 
         if (channelConfig == null) {
