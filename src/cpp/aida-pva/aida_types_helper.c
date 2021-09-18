@@ -163,14 +163,14 @@ Table* initTable(JNIEnv* env, Table* table)
  * @param table
  * @param data
  */
-void addStringColumn(JNIEnv* env, Table* table, void** data)
+void addStringColumn(JNIEnv* env, Table* table, char** data)
 {
 	addColumn(env, table, AIDA_STRING_ARRAY_TYPE, data);
 
 	// allocate data for each string too
 	char** stringArray = table->ppData[table->_currentColumn];
-	for (int row = 0; row < table->rowCount; row++) {
-		unsigned long len = strlen((char*)*data);
+	for (int row = 0; row < table->rowCount; row++, data++) {
+		unsigned long len = strlen(*data);
 		stringArray[row] = malloc(len + 1);
 		strncpy(stringArray[row], *data, len + 1);
 	}
@@ -315,7 +315,7 @@ void addSingleRowDoubleColumn(JNIEnv* env, Table* table, double data)
 
 void addSingleRowStringColumn(JNIEnv* env, Table* table, char* data)
 {
-	addStringColumn(env, table, (void**)&data);
+	addStringColumn(env, table, &data);
 }
 
 /**

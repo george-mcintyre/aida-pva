@@ -525,8 +525,8 @@ static int getSimpleMagnetArguments(JNIEnv* env, const char* uri, Value value, i
 	// value contains an object with two congruent arrays
 	// { "names": [], "values": [] }
 
-	json_object_entry* v0 = &(value.value.jsonValue->u.object.values[0]);
-	json_object_entry* v1 = &(value.value.jsonValue->u.object.values[1]);
+	json_object_entry* v0 = &value.value.jsonValue->u.object.values[0];
+	json_object_entry* v1 = &value.value.jsonValue->u.object.values[1];
 	if (v0->value->type != json_array || v1->value->type != json_array) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
 		return 2;
@@ -603,8 +603,8 @@ static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments,
 	// value contains an object with two congruent arrays
 	// { "names": [], "values": [] }
 
-	json_object_entry* v0 = &(value.value.jsonValue->u.object.values[0]);
-	json_object_entry* v1 = &(value.value.jsonValue->u.object.values[1]);
+	json_object_entry* v0 = &value.value.jsonValue->u.object.values[0];
+	json_object_entry* v1 = &value.value.jsonValue->u.object.values[1];
 	if (v0->value->type != json_array || v1->value->type != json_array) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
 		return 2;

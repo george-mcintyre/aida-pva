@@ -19,7 +19,6 @@
 #include "bpmparam.hc"            /* prev of bpmstruc.hc */
 #include "bpmstruc.hc"            /* bpms_data_ts, prev of dpslcbpm.h */
 #include "dpslcbpm.h"             /* Suite include file for dpslcbpm */
-#include "errtranslate.h"
 
 #include "slcBpm_server.h"
 
@@ -471,8 +470,8 @@ getBpmArguments(JNIEnv* env, Arguments arguments, int* bpmd, int* navg, int* cnf
  */
 static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum, int sortOrder)
 {
-	int4u bpmCount = 0;
 	vmsstat_t status = 0;
+	int4u bpmCount = 0;
 
 	// Initialise acquisition
 	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
@@ -544,17 +543,13 @@ static int getBpmData(JNIEnv* env,
  */
 static int endAcquireBpmData(JNIEnv* env)
 {
-	printf("endAcquireBpmData: \n");
 	vmsstat_t status = 0;
 
 	// Terminate the acquisition
-	printf("    Ending Acquisition ... ");
 	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQTERM())) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while terminating BPM acquisition");
 		return 0;
 	}
-	printf(" Done\n");
-	printf("endAcquireBpmData!!\n");
 
 	return 1;
 }

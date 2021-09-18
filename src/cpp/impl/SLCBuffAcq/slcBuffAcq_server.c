@@ -11,8 +11,6 @@
 #include "aida_server_helper.h"
 #include "json.h"
 
-#include "slcBuffAcq_server.h"
-
 #include "opdef.hc"               /* OP_BADDATA */
 #include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
 #include "sysutil_proto.h"        /* for cvt_vms_to_ieee_flt */
@@ -26,9 +24,17 @@
 #include "dpslcbpm.h"             /* BPM service include file, NAME_SIZE */
 #include "dpslcbuff.h"            /* Suite include file for dpslcbuff */
 
-static int
-getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd, int* nrpos, Value* devices,
-		DEVICE_NAME_TS* deviceNames, int* nDevices, char** dGroupName);
+#include "slcBuffAcq_server.h"
+
+static int getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments,
+		int* bpmd, int* nrpos, DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS], int* nDevices, char** dGroupName);
+static int acquireBuffAcqData(JNIEnv* env,
+		int nDevices, DEVICE_NAME_TS deviceNames[3000], char* dGroupName, int bpmd, int nrpos);
+static int getBuffAcqData(JNIEnv* env,
+		char **namesData,
+		float* xData, float* yData, float* tmitData, unsigned long* pulseIdData,
+		int2u* statsData, int2u* goodMeasData);
+static int endAcquireBuffAcq(JNIEnv* env);
 
 /**
  * Initialise the service
@@ -324,166 +330,50 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	table.rowCount = 0;
-
-	vmsstat_t status = 0;
-	int bpmd = 0;
-	int nrpos = 1;
-	Value devices; // The devices to read
+	// Get arguments
+	int bpmd = 0, nrpos = 1, nDevices = 0;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
-	int nDevices = 0;
 	char* dGroupName;
-
-	if (getBuffAcqArguments(env, uri, arguments, &bpmd, &nrpos, &devices, &(deviceNames[0]), &nDevices, &dGroupName)) {
+	if (getBuffAcqArguments(env, uri, arguments, &bpmd, &nrpos, deviceNames, &nDevices, &dGroupName)) {
+		Table table;
 		return table;
 	}
 
-	// Initialise acquisition
-	if (!$VMS_STATUS_SUCCESS(status = DPSLCBUFF_ACQINIT(nDevices, nrpos))) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing Buffered BPM Acquisition");
-		table.rowCount = 0;
+	// Acquire Data
+	int rows;
+	if ((rows = acquireBuffAcqData(env, nDevices, deviceNames, dGroupName, bpmd, nrpos)) == 0) {
+		Table table;
 		return table;
 	}
 
-	// Acquire BPM values
-	status = DPSLCBUFF_ACQ(nDevices, deviceNames, dGroupName, bpmd, nrpos);
+	// To hold data
+	char *namesData[rows];
+	float xData[rows], yData[rows], tmitData[rows];
+	unsigned long pulseIdData[rows];
+	int2u statsData[rows], goodMeasData[rows];
 
-	if (!$VMS_STATUS_SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "while making Buffered Data acquisition");
-		table.rowCount = 0;
+	// Get Buffered Data
+	if (!(rows = getBuffAcqData(env, namesData, xData, yData, tmitData, pulseIdData, statsData, goodMeasData))) {
+		Table table;
 		return table;
 	}
 
-	table.rowCount = DPSLCBUFF_GETTABLEMROWS();
-
-
-	// Set columns
-	table.columnCount = 7;
-
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
-	}
-
-	// Allocate space for rows of data
-	char** stringArray;
-	stringArray = table.ppData[0];
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableStringColumn(&table, column, NAME_SIZE);
-			break;
-		case 1: // pulse id
-			tableLongColumn(&table, column);
-			break;
-		case 2: // x offsets
-			tableFloatColumn(&table, column);
-			break;
-		case 3: // y offsets
-			tableFloatColumn(&table, column);
-			break;
-		case 4: // tmits
-			tableFloatColumn(&table, column);
-			break;
-		case 5: // stats
-			tableFloatColumn(&table, column);
-			break;
-		case 6: // goodmeas
-			tableBooleanColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Get all data
-	unsigned long nBpmsRead = 0;
-	int2u M;
-	float* floatArray;
-	int* intArray;
-	unsigned char* booleArray;
-	unsigned long* longArray;
-
-	// Names
-	nBpmsRead = DPSLCBUFF_GETNAMES(stringArray);
-	if (!nBpmsRead) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM device names");
-		return table;
-	}
-
-	// pulse ids
-	longArray = (unsigned long*)(table.ppData[1]);
-	nBpmsRead = DPSLCBUFF_GETPULSEIDS(longArray);
-	if (!nBpmsRead) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM pulse IDs");
-		return table;
-	}
-
-	// x
-	floatArray = (float*)(table.ppData[2]);
-	nBpmsRead = DPSLCBUFF_GETXS(floatArray);
-	if (!nBpmsRead) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM x values");
-		return table;
-	}
-	M = (int2u)nBpmsRead;
-	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
-
-	// y
-	floatArray = (float*)(table.ppData[3]);
-	nBpmsRead = DPSLCBUFF_GETYS(floatArray);
-	if (!nBpmsRead) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM y values");
-		return table;
-	}
-	M = (int2u)nBpmsRead;
-	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
-
-	// tmit
-	floatArray = (float*)(table.ppData[4]);
-	nBpmsRead = DPSLCBUFF_GETTMITS(floatArray);
-	if (!nBpmsRead) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM tmit values");
-		return table;
-	}
-	M = (int2u)nBpmsRead;
-	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
-
-	int2u* buffer = malloc(table.rowCount * sizeof(int2u));
-
-	// stats
-	intArray = (int*)(table.ppData[5]);
-	nBpmsRead = DPSLCBUFF_GETSTATS(buffer);
-	if (!nBpmsRead) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM stats values");
-		return table;
-	}
-	for (int i = 0; i < nBpmsRead; i++) {
-		intArray[i] = (int)buffer[i];
-	}
-
-	// goodmeas
-	booleArray = (unsigned char*)(table.ppData[6]);
-	nBpmsRead = DPSLCBUFF_GETGOODMEASES(buffer);
-	if (nBpmsRead != 0) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM goodmeas values");
-		return table;
-	}
-	for (int i = 0; i < nBpmsRead; i++) {
-		booleArray[i] = (unsigned char)buffer[i];
-	}
-
-	free(buffer);
-
-	// Terminate the acquisition
-	status = DPSLCBUFF_ACQTERM();
-	if (!$VMS_STATUS_SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while terminating Buffered Data acquisition");
-	}
+	// Make and output table
+	Table table = makeTable(env, rows, 7);
+	CHECK_EXCEPTION(table)
+	addStringColumn(env, &table, namesData);
+	CHECK_EXCEPTION(table)
+	addColumn(env, &table, AIDA_INTEGER_TYPE, pulseIdData);
+	CHECK_EXCEPTION(table)
+	addColumn(env, &table, AIDA_FLOAT_TYPE, xData);
+	CHECK_EXCEPTION(table)
+	addColumn(env, &table, AIDA_FLOAT_TYPE, yData);
+	CHECK_EXCEPTION(table)
+	addColumn(env, &table, AIDA_FLOAT_TYPE, tmitData);
+	CHECK_EXCEPTION(table)
+	addColumn(env, &table, AIDA_SHORT_TYPE, statsData);
+	CHECK_EXCEPTION(table)
+	addColumn(env, &table, AIDA_SHORT_TYPE, goodMeasData);
 
 	// All read successfully
 	return table;
@@ -522,8 +412,8 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 }
 
 static int
-getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd, int* nrpos, Value* devices,
-		DEVICE_NAME_TS* deviceNames, int* nDevices, char** dGroupName)
+getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd, int* nrpos,
+		DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS], int* nDevices, char** dGroupName)
 {
 	Argument argument;
 
@@ -542,44 +432,122 @@ getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd
 		*nrpos = getIntegerArgument(argument);
 	}
 
-	char name[100];
-
 	// Get the dgroup which is the first part of the uri
-	strcpy(name, uri);
-	*dGroupName = strtok(name, "/");
-	if (!dGroupName) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Invalid URI while making Buffered Data acquisition");
-		return 2;
-	}
+	*dGroupName = groupNameFromUri(uri);
 
 	// BPMS or DEVS
-	*devices = getNamedValue(env, arguments, "bpms");
-	if (devices->type == AIDA_NO_TYPE) {
-		*devices = getNamedValue(env, arguments, "devs");
+	Value devices;
+	devices = getNamedValue(env, arguments, "bpms");
+	if (devices.type == AIDA_NO_TYPE) {
+		devices = getNamedValue(env, arguments, "devs");
 	}
-	switch (devices->type) {
+	switch (devices.type) {
 	case AIDA_STRING_TYPE:
-		strcpy(name, devices->value.stringValue);
-		strcpy(deviceNames[0].prim_s._a, strtok(name, ":"));
-		strcpy(deviceNames[0].micr_s._a, strtok(NULL, ":"));
-		deviceNames[0].unit_s._i = atoi(strtok(NULL, ":"));
+		pmuFromUri(devices.value.stringValue,
+				deviceNames[0].prim_s._a,
+				deviceNames[0].micr_s._a,
+				&deviceNames[0].unit_s._i);
 		*nDevices = 1;
 		break;
 	case AIDA_JSON_TYPE:
-		if (devices->value.jsonValue->type == json_array) {
-			*nDevices = (int)devices->value.jsonValue->u.array.length;
-			json_value** values = devices->value.jsonValue->u.array.values;
+		if (devices.value.jsonValue->type == json_array) {
+			*nDevices = (int)devices.value.jsonValue->u.array.length;
+			json_value** values = devices.value.jsonValue->u.array.values;
 			for (int i = 0; i < *nDevices; i++) {
-				strcpy(name, values[i]->u.string.ptr);
-				strcpy(deviceNames[i].prim_s._a, strtok(name, ":"));
-				strcpy(deviceNames[i].micr_s._a, strtok(NULL, ":"));
-				deviceNames[i].unit_s._i = atoi(strtok(NULL, ":"));
+				pmuFromUri(values[i]->u.string.ptr,
+						deviceNames[i].prim_s._a,
+						deviceNames[i].micr_s._a,
+						&deviceNames[i].unit_s._i);
 			}
 		}
 		break;
 	}
 
 	return 0;
+}
+
+/**
+ * Acquire Buffered Data and return the number of readings returned
+ *
+ * @param env
+ * @param nDevices
+ * @param deviceNames
+ * @param dGroupName
+ * @param bpmd
+ * @param nrpos
+ * @return
+ */
+static int acquireBuffAcqData(JNIEnv* env,
+		int nDevices, DEVICE_NAME_TS deviceNames[3000], char* dGroupName, int bpmd, int nrpos)
+{
+	vmsstat_t status;
+
+	// Initialise acquisition
+	if (!$VMS_STATUS_SUCCESS(status = DPSLCBUFF_ACQINIT(nDevices, nrpos))) {
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing Buffered BPM Acquisition");
+		return 0;
+	}
+
+	// Acquire BPM values
+	status = DPSLCBUFF_ACQ(nDevices, deviceNames, dGroupName, bpmd, nrpos);
+	if (!$VMS_STATUS_SUCCESS(status)) {
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making Buffered Data acquisition");
+		return 0;
+	}
+
+	return (int)DPSLCBUFF_GETTABLEMROWS();
+}
+
+/**
+ * Get the Buffered Data
+ *
+ * @param env
+ * @param namesData
+ * @param xData
+ * @param yData
+ * @param tmitData
+ * @param pulseIdData
+ * @param statsData
+ * @param goodMeasData
+ * @return
+ */
+static int
+getBuffAcqData(JNIEnv* env,
+		char **namesData,
+		float* xData, float* yData, float* tmitData,
+		unsigned long* pulseIdData, int2u* statsData, int2u* goodMeasData)
+{
+	if (!DPSLCBUFF_GETNAMES(namesData) ||
+			!DPSLCBUFF_GETPULSEIDS(pulseIdData) ||
+			!DPSLCBUFF_GETXS(xData) ||
+			!DPSLCBUFF_GETYS(yData) ||
+			!DPSLCBUFF_GETTMITS(tmitData) ||
+			!DPSLCBUFF_GETSTATS(statsData) ||
+			!DPSLCBUFF_GETGOODMEASES(goodMeasData)
+			) {
+		endAcquireBuffAcq(env);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading Buffered values");
+		return 0;
+	}
+
+	return endAcquireBuffAcq(env);
+}
+
+/**
+ * End Buffered data acquisition
+ *
+ * @param env
+ * @return
+ */
+static int endAcquireBuffAcq(JNIEnv* env)
+{
+	vmsstat_t status = 0;
+
+	// Terminate the acquisition
+	if (!$VMS_STATUS_SUCCESS(status = DPSLCBUFF_ACQTERM())) {
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while terminating Buffered Data acquisition");
+		return 0;
+	}
+	return 1;
 }
 

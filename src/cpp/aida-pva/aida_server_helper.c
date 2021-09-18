@@ -155,7 +155,7 @@ Argument getArgument(Arguments arguments, char* name)
  * @param name provided name
  * @return the extracted Value
  */
-Value getNamedValue(JNIEnv* env, Arguments arguments, char *name)
+Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 {
 	Value value;
 	value.type = AIDA_NO_TYPE;
@@ -190,7 +190,6 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char *name)
 	}
 	return value;
 }
-
 
 /**
  * Get boolean argument
@@ -396,3 +395,27 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 	return jsonValue;
 }
 
+char* groupNameFromUri(const char* uri)
+{
+	char _uri[100];
+	strcpy(_uri, uri);
+	return strtok(_uri, "/");
+}
+
+/**
+ * Get primary, micro and unit from a uri
+ *
+ * @param uri
+ * @param primary
+ * @param micro
+ * @param unit
+ */
+void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit)
+{
+	char _uri[100];
+	strcpy(_uri, uri);
+
+	strcpy(primary, strtok(_uri, ":"));
+	strcpy(micro, strtok(NULL, ":"));
+	*unit = atoi(strtok(NULL, ":"));
+}

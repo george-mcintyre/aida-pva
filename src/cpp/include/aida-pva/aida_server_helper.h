@@ -26,7 +26,6 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
 #define MISSING_REQUIRED_ARGUMENT_EXCEPTION "MissingRequiredArgumentException"
 
-
 /**
  * Initialise the aida service.  Called once by the framework when starting up.
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -265,7 +264,7 @@ void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message);
  * @param suffix
  * @return true if string ends with suffix
  */
-int endsWith(const char *str, char *suffix);
+int endsWith(const char* str, char* suffix);
 
 /**
  * Check if a string starts with another string
@@ -273,8 +272,7 @@ int endsWith(const char *str, char *suffix);
  * @param prefix
  * @returns true if string starts with prefix
  */
-int startsWith(const char *str, char *prefix);
-
+int startsWith(const char* str, char* prefix);
 
 /**
  * Get a named argument
@@ -347,7 +345,7 @@ void printValue(JNIEnv* env, Value value);
  * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection[0].name
  * @return the json_value
  */
-json_value * getJsonValue(Value value, char *path);
+json_value* getJsonValue(Value value, char* path);
 
 /**
  * Get value from a named  argument in the provided arguments structure.
@@ -357,8 +355,11 @@ json_value * getJsonValue(Value value, char *path);
  * @param name provided name
  * @return the extracted Value
  */
-Value getNamedValue(JNIEnv* env, Arguments arguments, char *name);
+Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
+char* groupNameFromUri(const char* uri);
+
+void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
 
 #ifdef __cplusplus
 }

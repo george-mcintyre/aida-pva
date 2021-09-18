@@ -169,7 +169,7 @@ void addSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
 void addSingleRowDoubleColumn(JNIEnv* env, Table* table, double data);
 void addSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
 void addFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
-void addStringColumn(JNIEnv* env, Table* table, void** data);
+void addStringColumn(JNIEnv* env, Table* table, char** data);
 
 /// TODO REMOVE
 Table* initTable(JNIEnv* env, Table* table);

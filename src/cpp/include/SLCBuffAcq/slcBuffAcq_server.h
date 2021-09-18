@@ -6,10 +6,6 @@ extern "C" {
 
 #include "aida_types.h"
 
-#define MAXPTS (MAX_DGRP_BPMS*MAX_BUFF_MEAS)
-
-extern vmsstat_t DPSLCBUFF_INIT(void);
-
 #ifdef __cplusplus
 }
 #endif
