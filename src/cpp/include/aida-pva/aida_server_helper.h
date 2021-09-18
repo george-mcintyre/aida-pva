@@ -26,6 +26,11 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
 #define MISSING_REQUIRED_ARGUMENT_EXCEPTION "MissingRequiredArgumentException"
 
+#define RETURN_NULL_TABLE \
+	Table nullTable; \
+	return nullTable;
+
+
 #define DEFAULT_CONFIG_REQUEST \
 	Config config; \
 	memset(&config, 0, sizeof(config)); \

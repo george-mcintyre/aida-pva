@@ -293,15 +293,13 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// Get arguments
 	int bpmd, navg = 1, cnfnum = 1, sortOrder = SORTORDER_DISPLAY, cnftype = 0;
 	if (getBpmArguments(env, arguments, &bpmd, &navg, &cnftype, &cnfnum, &sortOrder)) {
-		Table table;
-		return table;
+		RETURN_NULL_TABLE
 	}
 
 	// Acquire BPM Data
 	int rows;
 	if ((rows = acquireBpmData(env, bpmd, navg, cnftype, cnfnum, sortOrder)) == 0) {
-		Table table;
-		return table;
+		RETURN_NULL_TABLE
 	}
 
 	// To hold data
@@ -311,8 +309,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Get BPM data
 	if (!(rows = getBpmData(env, namesData, xData, yData, tmitData, zData, hstasData, statsData))) {
-		Table table;
-		return table;
+		RETURN_NULL_TABLE
 	}
 
 	// Make and output table

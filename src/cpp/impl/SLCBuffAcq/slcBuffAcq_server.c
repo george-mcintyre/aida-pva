@@ -302,15 +302,13 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
 	char* dGroupName;
 	if (getBuffAcqArguments(env, uri, arguments, &bpmd, &nrpos, deviceNames, &nDevices, &dGroupName)) {
-		Table table;
-		return table;
+		RETURN_NULL_TABLE
 	}
 
 	// Acquire Data
 	int rows;
 	if ((rows = acquireBuffAcqData(env, nDevices, deviceNames, dGroupName, bpmd, nrpos)) == 0) {
-		Table table;
-		return table;
+		RETURN_NULL_TABLE
 	}
 
 	// To hold data
@@ -321,8 +319,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Get Buffered Data
 	if (!(rows = getBuffAcqData(env, namesData, xData, yData, tmitData, pulseIdData, statsData, goodMeasData))) {
-		Table table;
-		return table;
+		RETURN_NULL_TABLE
 	}
 
 	// Make and output table
