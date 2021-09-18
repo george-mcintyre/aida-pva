@@ -43,9 +43,7 @@ void aidaServiceInit(JNIEnv* env)
  */
 Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 {
-	Config config;
-	memset(&config, 0, sizeof(config));
-	return config;
+	DEFAULT_CONFIG_REQUEST
 }
 
 /**
@@ -187,11 +185,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -204,11 +198,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -221,11 +211,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -238,11 +224,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -255,11 +237,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -272,11 +250,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -289,11 +263,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array array;
-	array.count = 0;
-	array.items = NULL;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return array;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -306,10 +276,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	StringArray stringArray;
-	stringArray.count = 0;
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return stringArray;
+	UNSUPPORTED_STRING_ARRAY_REQUEST
 }
 
 /**

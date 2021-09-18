@@ -26,6 +26,27 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
 #define MISSING_REQUIRED_ARGUMENT_EXCEPTION "MissingRequiredArgumentException"
 
+#define DEFAULT_CONFIG_REQUEST \
+	Config config; \
+	memset(&config, 0, sizeof(config)); \
+	return config;
+
+#define UNSUPPORTED_ARRAY_REQUEST \
+	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+	Array array; \
+	return array;
+
+#define UNSUPPORTED_STRING_ARRAY_REQUEST \
+	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+	StringArray stringArray; \
+	return stringArray;
+
+#define UNSUPPORTED_TABLE_REQUEST \
+	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+	Table table; \
+	return table;
+
+
 /**
  * Initialise the aida service.  Called once by the framework when starting up.
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()

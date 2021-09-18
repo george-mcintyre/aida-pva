@@ -44,11 +44,7 @@ void aidaServiceInit(JNIEnv* env)
  */
 Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 {
-	Config config;
-	memset(&config, 0, sizeof(config));
-
-	// Return the config
-	return config;
+	DEFAULT_CONFIG_REQUEST
 }
 
 /**
@@ -221,10 +217,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array booleanArray;
-	booleanArray.count = 0;
-	booleanArray.items = NULL;
-	return booleanArray;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -309,10 +302,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array longArray;
-	longArray.count = 0;
-	longArray.items = NULL;
-	return longArray;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -349,10 +339,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Array doubleArray;
-	doubleArray.count = 0;
-	doubleArray.items = NULL;
-	return doubleArray;
+	UNSUPPORTED_ARRAY_REQUEST
 }
 
 /**
@@ -365,10 +352,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	StringArray stringArray;
-	stringArray.count = 0;
-	stringArray.items = NULL;
-	return stringArray;
+	UNSUPPORTED_STRING_ARRAY_REQUEST
 }
 
 /**
@@ -381,10 +365,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	return table;
+	UNSUPPORTED_TABLE_REQUEST
 }
 
 /**
@@ -449,9 +430,6 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	return table;
+	UNSUPPORTED_TABLE_REQUEST
 }
 
