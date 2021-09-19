@@ -30,15 +30,16 @@ public class AidaRPCService implements RPCService {
      *
      * @param pvUri the uri passed to the channel containing the name, query, and arguments
      * @return the result of the call
-     * @throws AidaInternalException       if any error occurs because of an implementation error in aida server code
      * @throws RPCRequestException         if any error occurs formulating the request or decoding the response
+     * @throws AidaInternalException       if any error occurs because of an implementation error in aida server code
+     * @throws MissingRequiredArgumentException    when a required argument was not supplied
      * @throws UnableToGetDataException    when server fails to retrieve data
      * @throws UnableToSetDataException    when server fails to set data
      * @throws UnsupportedChannelException when server does not yet support the specified channel.
      *                                     Usually caused when channel matches a pattern specified in the channels.yml file
      *                                     but is not yet supported in the service implementation
      */
-    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException {
+    public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
         // Check that the parameter is always a normative type
         String type = pvUri.getStructure().getID();
         if (!NTURI.is_a(pvUri.getStructure())) {
@@ -81,13 +82,15 @@ public class AidaRPCService implements RPCService {
      * @param channelName channel name
      * @param arguments   arguments if any
      * @return the structure containing the results.
+     * @throws AidaInternalException       if any error occurs because of an implementation error in aida server code
+     * @throws MissingRequiredArgumentException    when a required argument was not supplied
      * @throws UnableToGetDataException    when server fails to retrieve data
      * @throws UnableToSetDataException    when server fails to set data
      * @throws UnsupportedChannelException when server does not yet support the specified channel.
      *                                     Usually caused when channel matches a pattern specified in the channels.yml file
      *                                     but is not yet supported in the service implementation
      */
-    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException {
+    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
         AidaChannelConfig channelConfig = aidaChannelProvider.getChannelConfig(channelName);
 
         if (channelConfig == null) {
