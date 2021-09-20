@@ -161,33 +161,28 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 	value.type = AIDA_NO_TYPE;
 
 	Argument valueArgument = getArgument(arguments, name);
-	if (!valueArgument.name || !valueArgument.value) {
-		if (strcasecmp(name, "Avalue") == 0) {
-			aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-					"`AValue` argument missing or empty when calling setValue()");
+	if (valueArgument.name && valueArgument.value) {
+		// Get value to parse and trim leading space
+		char* valueToParse = valueArgument.value;
+		while (isspace(*valueToParse)) {
+			valueToParse++;
 		}
-		return value;
-	}
 
-	// Get value to parse and trim leading space
-	char* valueToParse = valueArgument.value;
-	while (isspace(*valueToParse)) {
-		valueToParse++;
-	}
-
-	// If this is a json string then parse it otherwise just extract the string
-	if (*valueToParse == '[' || *valueToParse == '{') {
-		value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
-		if (value.value.jsonValue) {
-			value.type = AIDA_JSON_TYPE;
+		// If this is a json string then parse it otherwise just extract the string
+		if (*valueToParse == '[' || *valueToParse == '{') {
+			value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
+			if (value.value.jsonValue) {
+				value.type = AIDA_JSON_TYPE;
+			} else {
+				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+						"Unable to parse supplied JSON value string");
+			}
 		} else {
-			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-					"Unable to parse supplied JSON value string");
+			value.type = AIDA_STRING_TYPE;
+			value.value.stringValue = valueToParse;
 		}
-	} else {
-		value.type = AIDA_STRING_TYPE;
-		value.value.stringValue = valueToParse;
 	}
+
 	return value;
 }
 
@@ -402,6 +397,21 @@ char* groupNameFromUri(const char* uri)
 	return strtok(_uri, "/");
 }
 
+void secondaryFromUri(const char* uri, int4u *secn)
+{
+	char* secondary = strstr(uri, "//") + 2;
+
+	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
+	memcpy(secn, secondary, sizeof(int4u));
+}
+
+void pmuStringFromUri(const char* uri, char *pmuString)
+{
+	unsigned long  pmuEnd = strcspn(uri, "/");
+	strncpy(pmuString, uri, pmuEnd);
+	pmuString[pmuEnd] = 0x0;
+}
+
 /**
  * Get primary, micro and unit from a uri
  *
@@ -410,7 +420,7 @@ char* groupNameFromUri(const char* uri)
  * @param micro
  * @param unit
  */
-void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit)
+void pmuFromUri(const char* uri, char* primary, char* micro, int* unit)
 {
 	char _uri[100];
 	strcpy(_uri, uri);

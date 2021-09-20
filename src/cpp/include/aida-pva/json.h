@@ -278,6 +278,8 @@ void json_value_free_ex(json_settings* settings,
  */
 void process_value(json_value* value, int depth);
 
+unsigned int totalStingLengthOf(json_value *jsonArray);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

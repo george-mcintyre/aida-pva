@@ -1051,3 +1051,25 @@ void process_value(json_value* value, int depth)
 		break;
 	}
 }
+
+/**
+ * Get total length of strings in an array.  Used to calculate how much space to
+ * allocate to represent the array as strings
+ *
+ * @param jsonArray
+ * @return
+ */
+unsigned int totalStingLengthOf(json_value* jsonArray)
+{
+	unsigned int len = 0;
+	unsigned int nValues = jsonArray->u.array.length;
+	json_value** values = jsonArray->u.array.values;
+	for (unsigned int i = 0; i < nValues; i++) {
+		if ( values[i]->type == json_string) {
+			len += values[i]->u.string.length;
+		} else {
+			len += 30; // To cover long numbers
+		}
+	}
+	return len;
+}
