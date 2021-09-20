@@ -724,7 +724,8 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			default:
-				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unsupported type found in table.  Perhaps you declared a table with n columns but didnt add n columns");
+				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+						"Unsupported type found in table.  Perhaps you declared a table with n columns but didnt add n columns");
 				return NULL;
 			}
 		}
@@ -776,11 +777,11 @@ void releaseTable(Table table)
 {
 	if (table.columnCount > 0) {
 		for (int column = 0; column < table.columnCount; column++) {
-			if ( table.ppData[column] ) {
+			if (table.ppData[column]) {
 				free(table.ppData[column]);
 			}
 		}
-		if ( table.ppData) {
+		if (table.ppData) {
 			free(table.ppData);
 		}
 	}

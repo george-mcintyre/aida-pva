@@ -28,8 +28,8 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 
 #define RETURN_NULL_TABLE \
 	Table nullTable; \
+	nullTable.columnCount = 0; \
 	return nullTable;
-
 
 #define DEFAULT_CONFIG_REQUEST \
 	Config config; \

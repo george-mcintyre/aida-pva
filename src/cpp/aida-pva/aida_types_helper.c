@@ -401,8 +401,8 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				Argument elementArgument = getArgument(*arguments, argumentName);
 				if (!elementArgument.name) {
 					if (isRequiredFlag) {
-						aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
-								"call to ascanf() missing variable to correspond to format");
+						aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+								"Missing required argument");
 						return EXIT_FAILURE;
 					} else {
 						continue;
@@ -415,8 +415,8 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				CHECK_EXCEPTION(EXIT_FAILURE);
 				if (elementValue.type == AIDA_NO_TYPE) {
 					if (isRequiredFlag) {
-						aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
-								"call to ascanf() missing variable to correspond to format");
+						aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+								"Missing required argument");
 						return EXIT_FAILURE;
 					} else {
 						continue;
@@ -435,8 +435,8 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 			if (value->type == AIDA_NO_TYPE) {
 				if (isRequiredFlag) {
-					aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
-							"call to ascanf() missing variable to correspond to format");
+					aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+							"Missing required argument");
 					return EXIT_FAILURE;
 				} else {
 					continue;

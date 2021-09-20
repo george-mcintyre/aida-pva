@@ -22,8 +22,6 @@
 
 #include "slcBpm_server.h"
 
-static int getBpmArguments(JNIEnv* env, Arguments arguments,
-		int* bpmd, int* navg, int* cnftype, int* cnfnum, int* sortOrder);
 static int acquireBpmData(JNIEnv* env,
 		int bpmd, int n, int cnftype, int cnfnum, int sortOrder);
 static int getBpmData(JNIEnv* env,
@@ -292,8 +290,31 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Get arguments
 	int bpmd, navg = 1, cnfnum = 1, sortOrder = SORTORDER_DISPLAY, cnftype = 0;
-	if (getBpmArguments(env, arguments, &bpmd, &navg, &cnftype, &cnfnum, &sortOrder)) {
+	char* cfnTypeString = (char*)-1;
+
+	if (ascanf(env, &arguments, "%d %od %od %od %os",
+			"bpmd", &bpmd,
+			"n", &navg,
+			"cnfnum", &cnfnum,
+			"sortOrder", &sortOrder,
+			"cnftype", &cfnTypeString
+	)) {
 		RETURN_NULL_TABLE
+	}
+
+	// If set
+	if (cfnTypeString != (char*)-1) {
+		if (strcasecmp(cfnTypeString, "NONE") == 0) {
+		} else if (strcasecmp(cfnTypeString, "GOLD") == 0) {
+			cnftype = 0;
+		} else if (strcasecmp(cfnTypeString, "LOADED") == 0) {
+			cnftype = 1;
+		} else if (strcasecmp(cfnTypeString, "SCRATCH") == 0) {
+			cnftype = 2;
+		} else if (strcasecmp(cfnTypeString, "NORMAL") == 0) {
+			cnftype = 4;
+		}
+		free(cfnTypeString);
 	}
 
 	// Acquire BPM Data
@@ -313,21 +334,21 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// Make and output table
-	Table table = makeTable(env, rows, 7);
+	Table table = tableCreate(env, rows, 7);
 	CHECK_EXCEPTION(table)
-	addFixedWidthStringColumn(env, &table, namesData, NAME_SIZE);
+	tableAddFixedWidthStringColumn(env, &table, namesData, NAME_SIZE);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, xData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, yData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, tmitData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, zData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, zData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_LONG_TYPE, hstasData);
+	tableAddColumn(env, &table, AIDA_LONG_TYPE, hstasData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_LONG_TYPE, statsData);
+	tableAddColumn(env, &table, AIDA_LONG_TYPE, statsData);
 
 	// All read successfully
 	return table;
@@ -359,62 +380,6 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	UNSUPPORTED_TABLE_REQUEST
-}
-
-static int
-getBpmArguments(JNIEnv* env, Arguments arguments, int* bpmd, int* navg, int* cnftype, int* cnfnum, int* sortOrder)
-{
-	Argument argument;
-
-	// BPMD
-	argument = getArgument(arguments, "bpmd");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'Acquisition requires a BPMD parameter");
-		return 1;
-	}
-	*bpmd = getIntegerArgument(argument);
-
-	// N
-	argument = getArgument(arguments, "n");
-	if (argument.name) {
-		*navg = getIntegerArgument(argument);
-	}
-
-	// cnfnum
-	argument = getArgument(arguments, "cnfnum");
-	if (argument.name) {
-		*cnfnum = getIntegerArgument(argument);
-	}
-
-	// sort order
-	argument = getArgument(arguments, "sortOrder");
-	if (argument.name) {
-		*sortOrder = getIntegerArgument(argument);
-	}
-
-	// cnftype
-	argument = getArgument(arguments, "cnftype");
-	//         cnftype                The acquisition "configuration" type. If
-	//                                0 (NONE) no bpm config is used; cnfnum ignored.
-	//                                1 (GOLD) "gold" config is used; cnfnum ignored.
-	//                                2 (LOADED). Last loaded used; cnfnum ignored.
-	//                                3 (SCRATCH). Scratch config <cnfnum> is used.
-	//                                4 (NORMAL). Normal config <cnfnum> is used.
-	if (argument.name) {
-		if (strcasecmp(argument.value, "NONE") == 0) {
-		} else if (strcasecmp(argument.value, "GOLD") == 0) {
-			*cnftype = 0;
-		} else if (strcasecmp(argument.value, "LOADED") == 0) {
-			*cnftype = 1;
-		} else if (strcasecmp(argument.value, "SCRATCH") == 0) {
-			*cnftype = 2;
-		} else if (strcasecmp(argument.value, "NORMAL") == 0) {
-			*cnftype = 4;
-		}
-	}
-
-	return 0;
 }
 
 /**
