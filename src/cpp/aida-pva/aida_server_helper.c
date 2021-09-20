@@ -397,7 +397,7 @@ char* groupNameFromUri(const char* uri)
 	return strtok(_uri, "/");
 }
 
-void secondaryFromUri(const char* uri, int4u *secn)
+void secnFromUri(const char* uri, int4u *secn)
 {
 	char* secondary = strstr(uri, "//") + 2;
 

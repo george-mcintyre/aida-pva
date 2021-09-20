@@ -384,7 +384,7 @@ json_value* getJsonValue(Value value, char* path);
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
 char* groupNameFromUri(const char* uri);
-void secondaryFromUri(const char* uri, int4u *secn);
+void secnFromUri(const char* uri, int4u *secn);
 
 void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
 

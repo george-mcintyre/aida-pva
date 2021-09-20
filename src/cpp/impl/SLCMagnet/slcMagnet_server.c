@@ -1,5 +1,5 @@
 /**
- * Klystron Server implementation
+ * Magnet Server implementation
  */
 #include <stdio.h>
 #include <string.h>
@@ -18,11 +18,13 @@
 #include "msg_proto.h"     /* for standalone_init */
 #include "sysutil_proto.h" /* for cvt_vms_to_ieee_flt */
 
-static int getSimpleMagnetArguments(JNIEnv* env, const char* uri, Value value, int* count,
-		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values);
+static int
+getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
+		char** micr_list, int** unit_list, int4u* secn, float** set_values);
 static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count,
 		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values,
 		char** magFunc, char** limitCheck);
+void magnetDataCleanUp(char* primaryList, char* microList, int* unitList, float* setValues);
 
 /**
  * Initialise the service
@@ -32,7 +34,6 @@ static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments,
 void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
-
 	if (!SUCCESS(status = DPSLCMAGNET_DB_INIT())) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Magnet Service");
 		return;
@@ -278,87 +279,42 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	table.rowCount = 0;
-
-	vmsstat_t status = 0;
-	char* micrPattern;
-	char* unitPattern;
-
-	Argument argument;
-
-	// MICROS
-	argument = getArgument(arguments, "micros");
-	if (argument.name) {
-		micrPattern = argument.value;
-	}
-
-	// UNITS
-	argument = getArgument(arguments, "units");
-	if (argument.name) {
-		unitPattern = argument.value;
+	// Get arguments
+	char* micrPattern = NULL, *unitPattern = NULL;
+	if (ascanf(env, &arguments, "%os %os",
+			"micros", &micrPattern,
+			"units", &unitPattern
+			)) {
+		RETURN_NULL_TABLE;
 	}
 
 	// Acquire Magnet values
-	int num_magnet_pvs;
-	status = DPSLCMAGNET_GET((char*)uri, micrPattern, unitPattern, &num_magnet_pvs);
-
+	int numMagnetPvs;
+	vmsstat_t status = DPSLCMAGNET_GET((char*)uri, (micrPattern ? micrPattern : ""), (unitPattern ? unitPattern : ""), &numMagnetPvs);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while reading magnet values");
-		table.rowCount = 0;
-		return table;
+		RETURN_NULL_TABLE;
 	}
 
-	// Set columns
-	table.columnCount = 2;
+	// To hold the data
+	char namesData[(numMagnetPvs * MAX_PMU_STRING_LEN) + 1];
+	float secondaryValues[numMagnetPvs];
 
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
-	}
+	// Get Names
+	DPSLCMAGNET_GETNAMES(namesData);
 
-	// Allocate space for rows of data
-	char** stringArray;
-	stringArray = table.ppData[0];
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableStringColumn(&table, column, MAX_PMU_STRING_LEN);
-			break;
-		case 1: // secondary values
-			tableFloatColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Get all data
-	char* names = (char*)malloc((num_magnet_pvs * MAX_PMU_STRING_LEN) + 1);
-	unsigned long nMagnetsRead = DPSLCMAGNET_GETNUMPVS();
-	int2u M;
-	float* floatArray;
-	unsigned long* longArray;
-
-	// Names
-	DPSLCMAGNET_GETNAMES(names);
-	// Copy names to allocated space
-	for (int row = 0; row < nMagnetsRead; row++) {
-		memcpy(stringArray[row], names + (row * MAX_PMU_STRING_LEN), MAX_PMU_STRING_LEN);
-	}
-	free(names);
-
-	// Secondary values
-	floatArray = (float*)(table.ppData[1]);
-	DPSLCMAGNET_GETSECNVALUES(floatArray);
-	M = (int2u)nMagnetsRead;
-	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
+	// Get Secondary values
+	DPSLCMAGNET_GETSECNVALUES(secondaryValues);
 
 	// Cleanup
 	DPSLCMAGNET_GETCLEANUP();
+
+	// Make table and return results
+	Table table = tableCreate(env, numMagnetPvs, 2);
+	CHECK_EXCEPTION(table)
+	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_PMU_STRING_LEN);
+	CHECK_EXCEPTION(table)
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValues);
 
 	// All read successfully
 	return table;
@@ -379,24 +335,31 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	int status;
+	// Get the arguments
 	int count;
-	char* prim_list, * micr_list;
-	int* unit_list;
-	int4u secn;
-	float* set_values;
 
-	if (getSimpleMagnetArguments(env, uri, value, &count, &prim_list, &micr_list, &unit_list, &secn, &set_values)) {
+	char* primaryList = NULL;
+	char* microList = NULL;
+	int* unitList = NULL;
+
+	int4u secn;
+	float* setValues = NULL;
+
+	if (getBaseMagnetArguments(env, uri,
+			arguments, value, &count, &primaryList, &microList, &unitList, &secn, &setValues)) {
+		magnetDataCleanUp(primaryList, microList, unitList, setValues);
 		return;
 	}
 
 	// set the PVs specified by the lists of primary, micros, and units
-	status = DPSLCMAGNET_SETCONFIG(count, prim_list, micr_list, unit_list, secn, set_values);
+	vmsstat_t status;
+	status = DPSLCMAGNET_SETCONFIG(count, primaryList, microList, unitList, secn, setValues);
+	if (!SUCCESS(status)) {
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "while setting magnet values");
+	}
 
-	free(prim_list);
-	free(micr_list);
-	free(unit_list);
-	free(set_values);
+	// Cleanup
+	magnetDataCleanUp(primaryList, microList, unitList, setValues);
 }
 
 /**
@@ -410,240 +373,167 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	int status;
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-
+	// Get arguments
 	int count;
-	int4u secn;
-	char* prim_list, * micr_list, * magFunc, * limitCheck;
-	int* unit_list;
-	float* set_values;
-
-	if (getMagnetArguments(env, uri, arguments, value, &count, &prim_list, &micr_list, &unit_list, &secn, &set_values,
-			&magFunc, &limitCheck)) {
-		return table;
+	int4u secondary;
+	char* primaryList, * microList, * magnetFunction, * limitCheck;
+	int * unitList;
+	float* setValues;
+	if (getMagnetArguments(env, uri, arguments, value, &count, &primaryList, &microList, &unitList, &secondary,
+			&setValues,
+			&magnetFunction, &limitCheck)) {
+		magnetDataCleanUp(primaryList, microList, unitList, setValues);
+		RETURN_NULL_TABLE;
 	}
 
 	// set the PVs specified by the lists of primary, micros, and units
-	status = DPSLCMAGNET_SET(count, prim_list, micr_list, unit_list, secn, set_values, magFunc);
-
-	// NOW RETURN STATUS
-	table.rowCount = DPSLCMAGNET_RET_SETNUMPVS();
-
-	// Set columns
-	table.columnCount = 2;
-
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
+	vmsstat_t status;
+	status = DPSLCMAGNET_SET(count, primaryList, microList, unitList, secondary, setValues, magnetFunction);
+	if (!SUCCESS(status)) {
+		magnetDataCleanUp(primaryList, microList, unitList, setValues);
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "while setting magnet values");
 	}
 
-	// Allocate space for rows of data
-	char** stringArray;
-	stringArray = table.ppData[0];
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableStringColumn(&table, column, MAX_STATE_NAME_LEN + 1);
-			break;
-		case 1: // x
-			tableFloatColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
+	// To hold data
+	int rows = DPSLCMAGNET_RET_SETNUMPVS();
+	char namesData[(rows * MAX_STATE_NAME_LEN) + 1];
+	float bactData[rows];
 
-	// Names
-	char* names = (char*)malloc((table.rowCount * MAX_STATE_NAME_LEN) + 1);
-	DPSLCMAGNET_RET_STATENAMES(names);
-	// Copy names to allocated space
-	for (int row = 0; row < table.rowCount; row++) {
-		memcpy(stringArray[row], names + (row * MAX_STATE_NAME_LEN), MAX_STATE_NAME_LEN);
-		stringArray[row][MAX_STATE_NAME_LEN] = '\0';
-	}
-	free(names);
+	// Get data
+	DPSLCMAGNET_RET_STATENAMES(namesData);
+	DPSLCMAGNET_RET_BACTVALUES(bactData);
 
-	// Status
-	int2u M;
-	float* floatArray = (float*)(table.ppData[1]);
-	DPSLCMAGNET_RET_BACTVALUES(floatArray);
-	M = (int2u)table.rowCount;
-	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
+	Table table = tableCreate(env, rows, 2);
+	CHECK_EXCEPTION(table)
+	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_STATE_NAME_LEN);
+	CHECK_EXCEPTION(table)
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, bactData);
 
 	return table;
 }
 
-static int getSimpleMagnetArguments(JNIEnv* env, const char* uri, Value value, int* count,
-		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values)
+/**
+ * Get basic magnet arguments
+ *
+ * @param env
+ * @param uri
+ * @param value
+ * @param count
+ * @param prim_list
+ * @param micr_list
+ * @param unit_list
+ * @param secn
+ * @param set_values
+ * @return
+ */
+static int
+getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
+		char** micr_list, int** unit_list, int4u* secn, float** set_values)
 {
-	int status;
-	if (value.type != AIDA_JSON_TYPE ||
-			value.value.jsonValue->type != json_object ||
-			value.value.jsonValue->u.object.length != 2) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return 1;
-	}
+	*prim_list = NULL;
+	*micr_list = NULL;
+	*unit_list = NULL;
+	*set_values = NULL;
 
+	int nNames, nValues;
+	char **names = NULL;
+
+	// Get congruent list of values to set, name and value pairs
 	// value contains an object with two congruent arrays
-	// { "names": [], "values": [] }
-
-	json_object_entry* v0 = &value.value.jsonValue->u.object.values[0];
-	json_object_entry* v1 = &value.value.jsonValue->u.object.values[1];
-	if (v0->value->type != json_array || v1->value->type != json_array) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return 2;
+	if (avscanf(env, &arguments, &value, "%sa %fa",
+			"value.names", &names, &nNames,
+			"value.values", set_values, &nValues
+			)) {
+		EXIT_FAILURE;
 	}
 
-	*count = (int)v0->value->u.array.length;
-	if (*count != v1->value->u.array.length) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return 3;
+	// Find out how many values were supplied and check that both lists are the same length
+	*count = nNames;
+	if (nNames != nValues) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "supplied lists are not the same length");
+		return EXIT_FAILURE;
 	}
 
-	json_value** nameArray, ** valuesArray;
-
-	if (strcasecmp(v0->name, "names") == 0) {
-		nameArray = v0->value->u.array.values;
-		valuesArray = v1->value->u.array.values;
-	} else {
-		nameArray = v1->value->u.array.values;
-		valuesArray = v0->value->u.array.values;
-	}
-
-	// Get names array
+	// Get names array - and break up names into their components for other lists
 	*prim_list = (char*)malloc((*count * MAX_PRIM_NAME_LEN) + 1);
 	*micr_list = (char*)malloc((*count * MAX_MICR_NAME_LEN) + 1);
-	*unit_list = (int*)malloc(*count * sizeof(int));
-	char name[MAX_PRIM_NAME_LEN + MAX_MICR_NAME_LEN + sizeof(int) + 4];
-	for (int i = 0; i < *count; i++) {
-		strcpy(name, nameArray[i]->u.string.ptr);
-		char* prim = strtok(name, ":");
-		strcpy(*prim_list + (i * MAX_PRIM_NAME_LEN), prim);
-		char* micr = strtok(NULL, ":");
-		strcpy(*micr_list + (i * MAX_PRIM_NAME_LEN), micr);
-		char* unit = strtok(NULL, ":");
-		sscanf(unit, "%d", unit_list[i]);
+	*unit_list = (int *)malloc(*count * sizeof(int));
+	unsigned long longUnitList[*count];
+	for (int i = 0; i < nNames; i++) {
+		pmuFromUri(names[i], prim_list[i], micr_list[i], &longUnitList[i]);
+		*unit_list[i] = (int)longUnitList[i]; // change int type :)
 	}
+	free(names);
 
-	// Get values array
-	*set_values = (float*)malloc(*count * sizeof(float));
-	if (strcasecmp(v0->name, "names") == 0) {
-		for (int i = 0; i < *count; i++) {
-			*set_values[i] = (float)valuesArray[i]->u.dbl;
-			status = CVT$CONVERT_FLOAT((void*)(*set_values + i), CVT$K_IEEE_S, (void*)(*set_values + i), CVT$K_VAX_F,
-					0);
-			if (status != CVT$_NORMAL) {
-				aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-						"Illegal floating point number was provided");
-				return 4;
-			}
-		}
+	// Get convert values to VMS floats
+	for (int i = 0; i < nValues; i++) {
+		CONVERT_TO_VMS_FLOAT(*set_values[i]);
 	}
 
 	// Secondary name
-	char* secondary = strstr(uri, "//") + 2;
-	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
-	*secn;
-	memcpy(secn, secondary, MAX_SECN_NAME_LEN);
+	secnFromUri(uri, secn);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
+/**
+ * Get full set of arguments
+ *
+ * @param env
+ * @param uri
+ * @param arguments
+ * @param value
+ * @param count
+ * @param prim_list
+ * @param micr_list
+ * @param unit_list
+ * @param secn
+ * @param set_values
+ * @param magFunc
+ * @param limitCheck
+ * @return
+ */
 static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count,
 		char** prim_list, char** micr_list, int** unit_list, int4u* secn, float** set_values,
 		char** magFunc, char** limitCheck)
 {
-	int status;
-
-	if (value.type != AIDA_JSON_TYPE ||
-			value.value.jsonValue->type != json_object ||
-			value.value.jsonValue->u.object.length != 2) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return 1;
+	if (getBaseMagnetArguments(env, uri, arguments, value, count, prim_list, micr_list, unit_list, secn, set_values)) {
+		return EXIT_FAILURE;
 	}
 
-	// value contains an object with two congruent arrays
-	// { "names": [], "values": [] }
-
-	json_object_entry* v0 = &value.value.jsonValue->u.object.values[0];
-	json_object_entry* v1 = &value.value.jsonValue->u.object.values[1];
-	if (v0->value->type != json_array || v1->value->type != json_array) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return 2;
-	}
-
-	*count = (int)v0->value->u.array.length;
-	if (*count != v1->value->u.array.length) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting Magnet BCON values");
-		return 3;
-	}
-
-	json_value** nameArray, ** valuesArray;
-
-	if (strcasecmp(v0->name, "names") == 0) {
-		nameArray = v0->value->u.array.values;
-		valuesArray = v1->value->u.array.values;
-	} else {
-		nameArray = v1->value->u.array.values;
-		valuesArray = v0->value->u.array.values;
-	}
-
-	// Get names array
-	*prim_list = (char*)malloc((*count * MAX_PRIM_NAME_LEN) + 1);
-	*micr_list = (char*)malloc((*count * MAX_MICR_NAME_LEN) + 1);
-	*unit_list = (int*)malloc(*count * sizeof(int));
-	char name[MAX_PRIM_NAME_LEN + MAX_MICR_NAME_LEN + sizeof(int) + 4];
-	for (int i = 0; i < *count; i++) {
-		strcpy(name, nameArray[i]->u.string.ptr);
-		char* prim = strtok(name, ":");
-		strcpy(*prim_list + (i * MAX_PRIM_NAME_LEN), prim);
-		char* micr = strtok(NULL, ":");
-		strcpy(*micr_list + (i * MAX_PRIM_NAME_LEN), micr);
-		char* unit = strtok(NULL, ":");
-		sscanf(unit, "%d", unit_list[i]);
-	}
-
-	// Get values array
-	*set_values = (float*)malloc(*count * sizeof(float));
-	if (strcasecmp(v0->name, "names") == 0) {
-		for (int i = 0; i < *count; i++) {
-			(*set_values)[i] = (float)valuesArray[i]->u.dbl;
-			status = CVT$CONVERT_FLOAT((void*)(*set_values + i), CVT$K_IEEE_S, (void*)(*set_values + i), CVT$K_VAX_F,
-					0);
-			if (status != CVT$_NORMAL) {
-				aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-						"Illegal floating point number was provided");
-				return 4;
-			}
-		}
-	}
-
-	// Secondary name
-	char* secondary = strstr(uri, "//") + 2;
-	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
-	memcpy(secn, secondary, MAX_SECN_NAME_LEN);
-
-	Argument argument;
-
-	// magfunc is required variable
-	argument = getArgument(arguments, "magfunc");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION, "magfunc");
-		return 4;
-	}
-	*magFunc = argument.value;
-
-	// limitcheck is an optional variable
-	argument = getArgument(arguments, "limitcheck");
 	*limitCheck = "ALL";
-	if (argument.name) {
-		*limitCheck = argument.value;
+	if (ascanf(env, &arguments, "%s %os",
+			"magfunc", magFunc,
+			"limitcheck", limitCheck
+			)) {
+		return EXIT_FAILURE;
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
+}
+
+/**
+ * Clean up data space allocated for magnet functions
+ *
+ * @param primaryList
+ * @param microList
+ * @param unitList
+ * @param setValues
+ */
+void magnetDataCleanUp(char* primaryList, char* microList, int* unitList, float* setValues)
+{
+	// Clean up
+	if (primaryList) {
+		free(primaryList);
+	}
+	if (microList) {
+		free(microList);
+	}
+	if (unitList) {
+		free(unitList);
+	}
+	if (setValues) {
+		free(setValues);
+	}
 }
 
