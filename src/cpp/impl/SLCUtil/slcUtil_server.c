@@ -20,13 +20,8 @@
 
 #include "slcUtil_server.h"
 
-static int
-getBgrpArguments(JNIEnv* env, Arguments arguments, Value value, char** bgrp, char** varname, char** valueString);
 static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
 static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
-static int getMkbArguments(JNIEnv* env, Arguments arguments, Value value, char** mkb, float* floatValue);
-static bool getTrigArguments(JNIEnv* env, Arguments arguments, Value value, int* beam, short* flag);
-static bool getTrigBeamArgument(JNIEnv* env, Arguments arguments, int* beam);
 
 /**
  * Initialise the service
@@ -93,18 +88,18 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
  */
 short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	vmsstat_t status = 0;
-	short trig_status;
+	// Get the arguments
 	int beam;
-
-	if (getTrigBeamArgument(env, arguments, &beam)) {
+	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
 		return 0;
 	}
 
+	// Read the status
+	vmsstat_t status;
+	short trig_status;
 	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Unable to get beam status");
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
 	}
 
 	return trig_status;
@@ -120,18 +115,18 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
  */
 int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	vmsstat_t status = 0;
-	short trig_status;
+	// Get the arguments
 	int beam;
-
-	if (getTrigBeamArgument(env, arguments, &beam)) {
+	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
 		return 0;
 	}
 
+	// Read the status
+	vmsstat_t status;
+	short trig_status;
 	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Unable to get beam status");
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
 	}
 
 	return (int)trig_status;
@@ -189,21 +184,23 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
  */
 char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	vmsstat_t status = 0;
-	short trig_status;
+	// Get the arguments
 	int beam;
 
-	if (getTrigBeamArgument(env, arguments, &beam)) {
+	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
 		return NULL;
 	}
 
+	// Read the status
+	vmsstat_t status;
+	short trig_status;
 	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Unable to get beam status");
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
 		return NULL;
 	}
 
+	// Return the value
 	char* string = malloc(15);
 	if (trig_status) {
 		strcpy(string, "activated");
@@ -348,31 +345,34 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	vmsstat_t status = 0;
 	char* bgrp, * varname, * valueString;
 
+	// Check if operations are enabled?
 	if (!DPSLCUTIL_BGRP_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"Aida access to BGRP set variable operations is not currently enabled");
 		return;
 	}
 
-	if (getBgrpArguments(env, arguments, value, &bgrp, &varname, &valueString)) {
+	if (avscanf(env, &arguments, &value, "%s %s %s",
+			"value", &valueString,
+			"bgrp", &bgrp,
+			"varname", &varname
+	)) {
 		return;
 	}
 
+	if (strcasecmp(valueString, "Y") != 0 && strcasecmp(valueString, "N") != 0) {
+		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+				"'BGRP Set Variable requires a AValue parameter to be 'Y' or 'N'");
+		return;
+	}
+
+	// Set the value
 	status = DPSLCUTIL_BGRP_SETVAR(bgrp, varname, valueString);
 	if (!SUCCESS(status)) {
-		if ((status == MEMORY_ALLOCATE_FAIL) ||
-				(status == NO_BGRP_NAMES) ||
-				(status == BGRP_NAME_NOT_FOUND) ||
-				(status == NO_BGRP_VARIABLES) ||
-				(status == BGRP_VARIABLE_NOT_FOUND)) {
-			aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION,
-					"Failed to set data");
-		} else {
-			aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION,
-					"Failed to set data");
-		}
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Failed to set data");
 	}
 }
+
 /**
  * Set a value and return a table as a response
  *
@@ -393,247 +393,116 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	}
 }
 
+/**
+ * Set Multi-knob value
+ *
+ * @param env
+ * @param uri
+ * @param arguments
+ * @param value
+ * @return
+ */
 static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	vmsstat_t status = 0;
-
+	// Check if operations are enabled?
 	if (!DPSLCUTIL_MKB_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"Aida multiknob operations are not currently enabled");
-		return table;
+		RETURN_NULL_TABLE;
 	}
 
+	// Get arguments
 	char* mkb;
-	float valueFloat;
-
-	if (getMkbArguments(env, arguments, value, &mkb, &valueFloat)) {
-		return table;
+	float floatValue;
+	if (ascanf(env, &arguments, "%f %s",
+			"value", &floatValue,
+			"mkb", &mkb
+	)) {
+		RETURN_NULL_TABLE;
 	}
+	CONVERT_TO_VMS_FLOAT(floatValue)
 
+	// Set the value
 	int num_devices;
-	float relative_delta_array[1];
-	int2u one = 1;
-
-	/* CVT_IEEE_TO_VMS_FLT(relative_delta_array, relative_delta_array, &one);*/
-	status = CVT$CONVERT_FLOAT((void*)&valueFloat, CVT$K_IEEE_S, (void*)&valueFloat, CVT$K_VAX_F, 0);
-	if (status != CVT$_NORMAL) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-				"can't convert floating point numbers to the right format");
-		return table;
-	}
-
-	status = DPSLCUTIL_DO_MKB(mkb, &valueFloat, &num_devices);
+	vmsstat_t status;
+	status = DPSLCUTIL_DO_MKB(mkb, &floatValue, &num_devices);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-				"unable to set value");
-		return table;
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
+		RETURN_NULL_TABLE;
 	}
 
-	// Now create table to return
+	// Now get the new values to return
 
-	// Set columns
-	table.columnCount = 2;
-	table.rowCount = num_devices;
-
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
-	}
-
-	// Allocate space for rows of data
-	char** stringArray;
-	stringArray = table.ppData[0];
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableStringColumn(&table, column, MAX_DEVICE_STRING_LEN);
-			break;
-		case 1: // values
-			tableFloatColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Get all data
-	char* names = (char*)malloc((num_devices * MAX_DEVICE_STRING_LEN) + 1);
-	int2u M;
-	float* floatArray;
-	unsigned long* longArray;
+	// To hold the data
+	char namesData[(num_devices * MAX_DEVICE_STRING_LEN)];
+	float secondaryValuesData[num_devices];
 
 	// Names
-	DPSLCUTIL_MKB_GETNAMES(names);
-	// Copy names to allocated space
-	for (int row = 0; row < num_devices; row++) {
-		memcpy(stringArray[row], names + (row * MAX_DEVICE_STRING_LEN), MAX_DEVICE_STRING_LEN);
-	}
-	free(names);
+	DPSLCUTIL_MKB_GETNAMES(namesData);
 
 	// Secondary values
-	floatArray = (float*)(table.ppData[1]);
-	DPSLCUTIL_MKB_GETSECNVALUES(floatArray);
-	M = (int2u)num_devices;
-	CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
+	DPSLCUTIL_MKB_GETSECNVALUES(secondaryValuesData);
 
 	// cleanup
 	DPSLCUTIL_MKB_GETCLEANUP();
 
+	// Now create table to return
+	Table table = tableCreate(env, num_devices, 2);
+	CHECK_EXCEPTION(table)
+	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_DEVICE_STRING_LEN);
+	CHECK_EXCEPTION(table)
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValuesData);
+
 	return table;
 }
 
+/**
+ * Set Trigger value
+ *
+ * @param env
+ * @param uri
+ * @param arguments
+ * @param value
+ * @return
+ */
 static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	vmsstat_t status = 0;
-
+	// Check if operations are enabled?
 	if (!DPSLCUTIL_TRIG_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"Aida access to trigger operations is not currently enabled");
-		return table;
+		RETURN_NULL_TABLE;
 	}
 
+	// Get arguments
 	int beam;
 	short flag;
-	if (getTrigArguments(env, arguments, value, &beam, &flag)) {
-		return table;
+	if (avscanf(env, &arguments, &value, "%hd %d",
+			"value", &flag,
+			"beam", &beam
+	)) {
+		RETURN_NULL_TABLE;
 	}
 
-	int num_devices;
-	float relative_delta_array[1];
-	int2u one = 1;
-
+	// Set the trigger value
+	vmsstat_t status;
 	status = DPSLCUTIL_TRIG_SETDEACTORREACT((char*)uri, flag, beam);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-				"unable to set value");
-		return table;
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
+		RETURN_NULL_TABLE;
 	}
 
 	// Read back status
 	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &flag);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-				"unable to read-back value");
-		return table;
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to read-back value");
+		RETURN_NULL_TABLE;
 	}
 
 	// Now create table to return the flag
-
-	// Set columns
-	table.columnCount = 1;
-	table.rowCount = 1;
-
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
-	}
-
-	// Allocate space for rows of data
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableShortColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Get all data
-	short* shortArray;
-
-	// Flag
-	shortArray = (short*)(table.ppData[0]);
-	shortArray[0] = flag;
+	Table table = tableCreate(env, 1, 1);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowShortColumn(env, &table, flag);
 
 	return table;
 }
-
-static bool getTrigArguments(JNIEnv* env, Arguments arguments, Value value, int* beam, short* flag)
-{
-	if (value.type != AIDA_STRING_TYPE) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"Trig Set Variable requires a AValue parameter to set to a short");
-		return 1;
-	}
-	sscanf(value.value.stringValue, "%hi", flag);
-
-	getTrigBeamArgument(env, arguments, beam);
-
-	return 0;
-}
-
-static bool getTrigBeamArgument(JNIEnv* env, Arguments arguments, int* beam)
-{
-	Argument argument = getArgument(arguments, "beam");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'Trig Set Variable requires a beam parameter");
-		return 2;
-	}
-	*beam = getIntegerArgument(argument);
-
-	return 0;
-}
-
-static int getMkbArguments(JNIEnv* env, Arguments arguments, Value value, char** mkb, float* floatValue)
-{
-	if (value.type != AIDA_STRING_TYPE) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'MKB Set Variable requires a AValue parameter to set to a float");
-		return 1;
-	}
-	sscanf(value.value.stringValue, "%f", floatValue);
-
-	Argument argument = getArgument(arguments, "mkb");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'MKB Set Variable requires a MKB parameter");
-		return 2;
-	}
-	*mkb = argument.value;
-
-	return 0;
-}
-
-static int
-getBgrpArguments(JNIEnv* env, Arguments arguments, Value value, char** bgrp, char** varname, char** valueString)
-{
-	if (value.type != AIDA_STRING_TYPE) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'BGRP Set Variable requires a AValue parameter to be 'Y' or 'N'");
-		return 1;
-	}
-	*valueString = value.value.stringValue;
-	if (strcasecmp(*valueString, "Y") != 0 && strcasecmp(*valueString, "N") != 0) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'BGRP Set Variable requires a AValue parameter to be 'Y' or 'N'");
-		return 2;
-	}
-
-	Argument argument = getArgument(arguments, "bgrp");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'BGRP Set Variable requires a BGRP parameter");
-		return 3;
-	}
-	*bgrp = argument.value;
-
-	argument = getArgument(arguments, "varname");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'BGRP Set Variable requires a VARNAME parameter");
-		return 4;
-	}
-	*varname = argument.value;
-	return 0;
-}
-
