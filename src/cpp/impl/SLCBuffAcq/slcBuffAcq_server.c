@@ -31,7 +31,7 @@ static int getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments
 static int acquireBuffAcqData(JNIEnv* env,
 		int nDevices, DEVICE_NAME_TS deviceNames[3000], char* dGroupName, int bpmd, int nrpos);
 static int getBuffAcqData(JNIEnv* env,
-		char **namesData,
+		char** namesData,
 		float* xData, float* yData, float* tmitData, unsigned long* pulseIdData,
 		int2u* statsData, int2u* goodMeasData);
 static int endAcquireBuffAcq(JNIEnv* env);
@@ -298,11 +298,40 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Get arguments
-	int bpmd = 0, nrpos = 1, nDevices = 0;
+	int bpmd = 0, nrpos = 1, nBpms = 0, nDevs = 0, nDevices = 0;
+	char** bpms, ** devices;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
-	char* dGroupName;
-	if (getBuffAcqArguments(env, uri, arguments, &bpmd, &nrpos, deviceNames, &nDevices, &dGroupName)) {
+	char* dGroupName = groupNameFromUri(uri);
+
+	if (ascanf(env, &arguments, "%d %od %osa %osa %os",
+			"bpmd", &bpmd,
+			"nrpos", &nrpos,
+			"bpms", &bpms, &nBpms,
+			"devs", &devices, &nDevs
+	)) {
 		RETURN_NULL_TABLE
+	}
+
+	if (nBpms) {
+		for (int i = 0; i < nBpms; i++) {
+			pmuFromUri(bpms[i],
+					deviceNames[i].prim_s._a,
+					deviceNames[i].micr_s._a,
+					&deviceNames[i].unit_s._i);
+		}
+		nDevices += nBpms;
+		free(bpms);
+	}
+
+	if (nDevs) {
+		for (int i = 0; i < nDevs; i++) {
+			pmuFromUri(devices[i],
+					deviceNames[i].prim_s._a,
+					deviceNames[i].micr_s._a,
+					&deviceNames[i].unit_s._i);
+		}
+		nDevices += nDevs;
+		free(devices);
 	}
 
 	// Acquire Data
@@ -312,7 +341,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// To hold data
-	char *namesData[rows];
+	char* namesData[rows];
 	float xData[rows], yData[rows], tmitData[rows];
 	unsigned long pulseIdData[rows];
 	int2u statsData[rows], goodMeasData[rows];
@@ -323,21 +352,21 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// Make and output table
-	Table table = makeTable(env, rows, 7);
+	Table table = tableCreate(env, rows, 7);
 	CHECK_EXCEPTION(table)
-	addStringColumn(env, &table, namesData);
+	tableAddStringColumn(env, &table, namesData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_INTEGER_TYPE, pulseIdData);
+	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, pulseIdData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, xData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, yData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_FLOAT_TYPE, tmitData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_SHORT_TYPE, statsData);
+	tableAddColumn(env, &table, AIDA_SHORT_TYPE, statsData);
 	CHECK_EXCEPTION(table)
-	addColumn(env, &table, AIDA_SHORT_TYPE, goodMeasData);
+	tableAddColumn(env, &table, AIDA_SHORT_TYPE, goodMeasData);
 
 	// All read successfully
 	return table;
@@ -369,61 +398,6 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	UNSUPPORTED_TABLE_REQUEST
-}
-
-static int
-getBuffAcqArguments(JNIEnv* env, const char* uri, Arguments arguments, int* bpmd, int* nrpos,
-		DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS], int* nDevices, char** dGroupName)
-{
-	Argument argument;
-
-	// BPMD
-	argument = getArgument(arguments, "bpmd");
-	if (!argument.name) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'Acquisition requires a BPMD parameter");
-		return 1;
-	}
-	*bpmd = getIntegerArgument(argument);
-
-	// NRPOS
-	argument = getArgument(arguments, "nrpos");
-	if (argument.name) {
-		*nrpos = getIntegerArgument(argument);
-	}
-
-	// Get the dgroup which is the first part of the uri
-	*dGroupName = groupNameFromUri(uri);
-
-	// BPMS or DEVS
-	Value devices;
-	devices = getNamedValue(env, arguments, "bpms");
-	if (devices.type == AIDA_NO_TYPE) {
-		devices = getNamedValue(env, arguments, "devs");
-	}
-	switch (devices.type) {
-	case AIDA_STRING_TYPE:
-		pmuFromUri(devices.value.stringValue,
-				deviceNames[0].prim_s._a,
-				deviceNames[0].micr_s._a,
-				&deviceNames[0].unit_s._i);
-		*nDevices = 1;
-		break;
-	case AIDA_JSON_TYPE:
-		if (devices.value.jsonValue->type == json_array) {
-			*nDevices = (int)devices.value.jsonValue->u.array.length;
-			json_value** values = devices.value.jsonValue->u.array.values;
-			for (int i = 0; i < *nDevices; i++) {
-				pmuFromUri(values[i]->u.string.ptr,
-						deviceNames[i].prim_s._a,
-						deviceNames[i].micr_s._a,
-						&deviceNames[i].unit_s._i);
-			}
-		}
-		break;
-	}
-
-	return 0;
 }
 
 /**
@@ -473,7 +447,7 @@ static int acquireBuffAcqData(JNIEnv* env,
  */
 static int
 getBuffAcqData(JNIEnv* env,
-		char **namesData,
+		char** namesData,
 		float* xData, float* yData, float* tmitData,
 		unsigned long* pulseIdData, int2u* statsData, int2u* goodMeasData)
 {

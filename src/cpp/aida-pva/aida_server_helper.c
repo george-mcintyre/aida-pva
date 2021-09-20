@@ -420,7 +420,7 @@ void pmuStringFromUri(const char* uri, char *pmuString)
  * @param micro
  * @param unit
  */
-void pmuFromUri(const char* uri, char* primary, char* micro, int* unit)
+void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit)
 {
 	char _uri[100];
 	strcpy(_uri, uri);

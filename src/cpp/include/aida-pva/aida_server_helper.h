@@ -386,7 +386,7 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 char* groupNameFromUri(const char* uri);
 void secondaryFromUri(const char* uri, int4u *secn);
 
-void pmuFromUri(const char* uri, char* primary, char* micro, int* unit);
+void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
 
 void pmuStringFromUri(const char* uri, char *pmuString);
 
