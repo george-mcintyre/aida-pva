@@ -140,23 +140,22 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
  */
 double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	vmsstat_t status = 0;
-
+	// Check if operations are enabled?
 	if (!DPSLCMOSC_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
 				"Aida access to Master Oscillator is not currently enabled");
 		return 0.0;
 	}
 
+	// Read value
 	double meas_abs_freq;
-
-	int2u one = 1;
+	vmsstat_t status;
 	status = DPSLCMOSC_MEASMASTEROSC(&meas_abs_freq);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
 		return 0.0;
 	}
-	CVT_VMS_TO_IEEE_DBL(&meas_abs_freq, &meas_abs_freq, &one);
+	CONVERT_FROM_VMS_DOUBLE(meas_abs_freq)
 
 	return meas_abs_freq;
 }
@@ -289,57 +288,26 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-
-	vmsstat_t status = 0;
-
+	// Check if operations are enabled?
 	if (!DPSLCMOSC_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
 				"Aida access to Master Oscillator is not currently enabled");
-		return table;
+		RETURN_NULL_TABLE;
 	}
 
+	// Read the values
 	double meas_abs_freq;
-
-	int2u one = 1;
+	vmsstat_t status;
 	status = DPSLCMOSC_MEASMASTEROSC(&meas_abs_freq);
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
-		return table;
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
+		RETURN_NULL_TABLE;
 	}
-	CVT_VMS_TO_IEEE_DBL(&meas_abs_freq, &meas_abs_freq, &one);
 
 	// Now create table to return
-
-	// Set columns
-	table.columnCount = 1;
-	table.rowCount = 1;
-
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
-	}
-
-	// Allocate space for rows of data
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableDoubleColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Get all data
-	double* doubleArray;
-
-	// Secondary values
-	doubleArray = (double*)(table.ppData[0]);
-	doubleArray[0] = meas_abs_freq;
+	Table table = tableCreate(env, 1, 1);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq);
 
 	return table;
 }
@@ -369,98 +337,69 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 0;
-	vmsstat_t status = 0;
-
+	// Check if operations are enabled?
 	if (!DPSLCMOSC_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"Aida access to Master Oscillator is not currently enabled");
-		return table;
+		RETURN_NULL_TABLE;
 	}
 
-	// Get Unit, Ring and Value
+	// Get arguments
 	float floatValue;
-	double resulting_abs_freq;
 	char* units;
 	char* ring;
-
 	if (getMoscArguments(env, arguments, value, &units, &ring, &floatValue)) {
-		return table;
+		RETURN_NULL_TABLE;
 	}
 
 	// Set value
-	int2u one = 1;
+	vmsstat_t status;
+	double resulting_abs_freq; // Value read back
 	status = DPSLCMOSC_SETMASTEROSC(&floatValue, units, ring, &resulting_abs_freq);
 	if (!SUCCESS(status))
 	{
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-				"Unable to set master oscilator frequency");
-		return table;
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Unable to set Master Oscillator frequency");
+		RETURN_NULL_TABLE;
 	}
-	CVT_VMS_TO_IEEE_DBL(&resulting_abs_freq, &resulting_abs_freq, &one);
 
 	// Now create table to return
-
-	// Set columns
-	table.columnCount = 1;
-	table.rowCount = 1;
-
-	// Allocate space for table data
-	if (initTable(env, &table) == NULL) {
-		return table;
-	}
-
-	// Allocate space for rows of data
-	for (int column = 0; column < table.columnCount; column++) {
-		switch (column) {
-		case 0: // names
-			tableDoubleColumn(&table, column);
-			break;
-		default: // unsupported
-			fprintf(stderr, "Unsupported table column type: %d\n", table.types[column]);
-			break;
-		}
-	}
-
-	// Get all data
-	double* doubleArray;
-
-	// Secondary values
-	doubleArray = (double*)(table.ppData[0]);
-	doubleArray[0] = resulting_abs_freq;
+	Table table = tableCreate(env, 1, 1);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowDoubleColumn(env, &table, resulting_abs_freq);
 
 	return table;
 }
 
+/**
+ * Get all  Master Oscillator arguments
+ *
+ * @param env
+ * @param arguments
+ * @param value
+ * @param units
+ * @param ring
+ * @param floatValue
+ * @return true if successful
+ */
 static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char** units, char** ring, float* floatValue)
 {
-	if (value.type != AIDA_STRING_TYPE) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"Master Oscillator Set Variable requires a AValue parameter to set to a float");
-		return 1;
-	}
-	sscanf(value.value.stringValue, "%f", floatValue);
-
-	Argument argument = getArgument(arguments, "units");
 	*units = "FREQUENCY";
-	if (argument.name) {
-		*units = argument.value;
-	}
-
-	argument = getArgument(arguments, "ring");
 	*ring = NULL;
-	if (argument.name) {
-		*ring = argument.value;
+	if (avscanf(env, &arguments, &value, "%f %os %os",
+			"value", floatValue,
+			"units", units,
+			"ring", ring
+			)) {
+		EXIT_FAILURE;
 	}
 
+	// If the units is set to ENERGY then we *do* require the ring parameter
 	if (strcasecmp(*units, "ENERGY") == 0 && *ring == NULL ) {
 		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
 				"Master Oscillator Set Variable requires a RING parameter if the UNITS are ENERGY");
-		return 2;
+		return EXIT_FAILURE;
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
