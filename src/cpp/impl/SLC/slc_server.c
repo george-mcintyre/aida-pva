@@ -379,36 +379,10 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	// Get values
-	if (value.type != AIDA_JSON_TYPE || value.value.jsonValue == NULL || value.value.jsonValue->type != json_array) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Must set AValue to an array of floats");
+	float *data;
+	int length;
+	if ( avscanf(env, &arguments, &value, "%fa", "value", &data, &length) ) {
 		return;
-	}
-	int length = (int)value.value.jsonValue->u.array.length;
-
-	// Data to pass to JNI_DBSETFLOAT()
-	float* data = calloc(length, sizeof(float));
-	if (!data) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Unable to reserve memory for data");
-		return;
-	}
-
-	// Set data
-	for (int i = 0; i < length; i++) {
-		json_value* json_value = value.value.jsonValue->u.array.values[i];
-		switch (json_value->type) {
-		case json_integer:
-			data[i] = (float)value.value.jsonValue->u.array.values[i]->u.integer;
-			break;
-		case json_double:
-			data[i] = (float)value.value.jsonValue->u.array.values[i]->u.dbl;
-			break;
-		case json_null:
-			aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-					"Illegal floating point number was provided, could not convert to VMS float");
-			free(data);
-			return;
-		}
 	}
 
 	vmsstat_t status = JNI_DBSETFLOAT(uri, data, length);

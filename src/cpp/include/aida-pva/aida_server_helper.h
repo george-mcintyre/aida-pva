@@ -384,8 +384,16 @@ json_value* getJsonValue(Value value, char* path);
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
 char* groupNameFromUri(const char* uri);
+void secondaryFromUri(const char* uri, int4u *secn);
 
-void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
+void pmuFromUri(const char* uri, char* primary, char* micro, int* unit);
+
+void pmuStringFromUri(const char* uri, char *pmuString);
+
+#define PMU_STRING_FROM_URI(_uri, _var)  \
+	char _var[100]; \
+	pmuStringFromUri(_uri, _var);
+
 
 #ifdef __cplusplus
 }

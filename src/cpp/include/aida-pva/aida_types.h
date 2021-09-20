@@ -17,6 +17,18 @@ void CVT_VMS_TO_IEEE_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p)
 void CVT_IEEE_TO_VMS_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
 void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
 
+#define CONVERT_TO_VMS_FLOAT(_float) \
+{  \
+	int2u one = 1; \
+	CVT_IEEE_TO_VMS_FLT(&_float, &_float, &one); \
+}
+
+#define CONVERT_FROM_VMS_DOUBLE(_float) \
+{  \
+	int2u one = 1; \
+	CVT_VMS_TO_IEEE_DBL(&_float, &_float, &one); \
+}
+
 /**
  * Defines the permissible types of fields
  */
@@ -40,15 +52,16 @@ typedef enum
 	AIDA_DOUBLE_ARRAY_TYPE,
 	AIDA_STRING_ARRAY_TYPE,
 	AIDA_TABLE_TYPE,
-	AIDA_JSON_TYPE
-} Type;
+	AIDA_JSON_TYPE,
 
-/**
- * Convert Type to string
- * @param type type
- * @return string
- */
-jstring toTypeString(JNIEnv* env, Type type);
+	// Internal use only: DO NOT USE IN SERVICE IMPLEMENTATIONS!!
+	AIDA_UNSIGNED_SHORT_TYPE,
+	AIDA_UNSIGNED_INTEGER_TYPE,
+	AIDA_UNSIGNED_LONG_TYPE,
+	AIDA_UNSIGNED_SHORT_ARRAY_TYPE,
+	AIDA_UNSIGNED_INTEGER_ARRAY_TYPE,
+	AIDA_UNSIGNED_LONG_ARRAY_TYPE
+} Type;
 
 /**
  * Defines the layout of TABLES.
@@ -152,35 +165,151 @@ typedef struct
 } StringArray;
 
 /**
- * Convert Layout to string
+ * Make a table for return.  Specify the number of columns then call tableAddColumn() and tableAddStringColumn() to add
+ * columns before returning the table
+ *
+ * @param env
+ * @param columns the number of columns
+ * @return the newly created table
+ */
+Table tableCreate(JNIEnv* env, int rows, int columns);
+
+/**
+ * Add a column to a table
+ * @param env
+ * @param table
+ * @param type
+ * @param data
+ */
+void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data);
+void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data);
+void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data);
+void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
+void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
+void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data);
+void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
+void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data);
+void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
+void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
+void tableAddStringColumn(JNIEnv* env, Table* table, char** data);
+
+float valueGetFloat(Value value);
+short valueGetShort(Value value);
+
+/**
+ * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
+ *
+ * @param type type
+ * @return string
+ */
+jstring toTypeString(JNIEnv* env, Type type);
+
+/**
+ * Convert Layout to string name of Layout e.g. AIDA_ROW_MAJOR_LAYOUT returns "ROW_MAJOR"
  * @param layout layout
  * @return string
  */
 jstring toLayoutString(JNIEnv* env, Layout layout);
 
-Table makeTable(JNIEnv* env, int rows, int columns);
-void addColumn(JNIEnv* env, Table* table, Type type, void* data);
-void addSingleRowFloatColumn(JNIEnv* env, Table* table, float data);
-void addSingleRowLongColumn(JNIEnv* env, Table* table, long data);
-void addSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
-void addSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
-void addSingleRowShortColumn(JNIEnv* env, Table* table, short data);
-void addSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
-void addSingleRowDoubleColumn(JNIEnv* env, Table* table, double data);
-void addSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
-void addFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
-void addStringColumn(JNIEnv* env, Table* table, char** data);
 
-/// TODO REMOVE
-Table* initTable(JNIEnv* env, Table* table);
-void tableFloatColumn(Table* table, int columnNumber);
-void tableLongColumn(Table* table, int columnNumber);
-void tableBooleanColumn(Table* table, int columnNumber);
-void tableByteColumn(Table* table, int columnNumber);
-void tableShortColumn(Table* table, int columnNumber);
-void tableIntegerColumn(Table* table, int columnNumber);
-void tableDoubleColumn(Table* table, int columnNumber);
-void tableStringColumn(Table* table, int columnNumber, int maxStringLength);
+/**
+ * ascanf, avscanf
+ *
+ * Synopsis
+ *
+ *     int ascanf(Arguments *arguments, const char *format, ...);
+ *     int avscanf(Arguments *arguments, Value *value, const char *format, ...);
+ *
+ * Details
+ * Reads data from the given arguments and stores them according to parameter format into the locations given by the additional arguments, as if scanf was used, but reading from arguments instead of the standard input (stdin).
+ *
+ * The additional arguments should point to already allocated objects of the type specified by their corresponding format specifier.  For strings and arrays only the pointer needs to be pre-allocated.
+ *
+ * The only space allocated by this function is for the array of pointers to strings or arrays.  On return strings will point to the original string in the given arguments so the strings themselves do not need to be freed by the caller.
+ *
+ * Note, only the provided pointer needs to be freed as only one allocation is made e.g.
+ *
+ *     Arguments arguments;
+ *     int *intArray;
+ *     ascanf(arguments "%da, "fooArray", &intArray);
+ *     // Do stuff
+ *     free(intArray);
+ *
+ * Differences from scanf
+ * There are a number of other differences from scanf which are best described by example:
+ *
+ * 1. Scan into simple variable
+ *
+ *     int n;
+ *     ascanf("%d", "NPOS", &n);
+ *
+ * You must always provide the name of the variable and the pointer to the place to put the value in pairs
+ *
+ * 2. Optional arguments
+ * Optional arguments are specified with the o character before the format character.
+ *
+ *     short flag = 10;  // 10 is the default value
+ *     ascanf("%ohd", "flag", &flag);
+ *
+ * By default all arguments are considered required unless this character is specified. For optional arguments the pointer provided must point to the default value. In the case of arrays and strings this will be copied into allocated storage that will need to be freed as normal. i.e. strings themselves don't need to be freed.
+ *
+ * Variable Names
+ * 1. You can specify simple variable names
+ *     int simpleInt;
+ *     ascanf(&arguments "%d, "simple", &simpleInt);
+ *
+ * 1. You can specify simple names or you can use dot and square brace notation to refer to arguments that refer to json structures. e.g. given a variable named json and presented as
+ *
+ *     json=' { "foo": {"bar": 0} }}'
+ *
+ * You can specify the name as json.foo.bar to retrieve the 0 value *
+ *
+ * 2. Also given a variable named jsonArray and presented as
+ *     jsonArray=' [ {"foo": 10}, {"bar": 20} ]'
+ *
+ * You can specify the name as jsonArray[1].bar to retrieve the 20 value
+ *
+ * 3. Finally if you use the name value in the the avscanf() function will use the supplied value to get the data for that parameter
+ *     Arguments arguments;
+ *     Value value;
+ *     int *intArray;
+ *     avscanf(&arguments &value, "%da, "fooArray", &intArray);
+ *     // Do stuff
+ *     free(intArray);
+ *
+ * Format Specifiers
+ * Supported formats specifiers
+ * - d : int * - extract an integer into the corresponding variable (see l & h below).
+ * - u : unsigned int * - extract an unsigned integer into the corresponding variable (see l & h below)
+ * - f  : float * - extract a floating point number (see l below)
+ * - s : char * - extract a string of characters into allocated space and point the corresponding variable to it
+ * - c : char * - extract a single character into the corresponding variable
+ *
+ * Required flag
+ * - o - optional precede the format with 'o' to indicate that the argument is optional
+ *
+ * Prefixes
+ * - h - short * - preceding d will retrieve a short e.g. %hd
+ * - l - long *, double * - preceding d will retrieve a long eg. %ld, preceding f will retrieve a double eg. %lf
+ *
+ * Suffixes
+ * - a - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it. the variable will have an extra level of indirection than the non-array version e.g. "%d" "int *" becomes "%da" "int **"
+ *
+ * @param env
+ * @param arguments      arguments that the function processes as its source to retrieve the data.
+ * @param value          value that the function processes as its source to retrieve the data
+ * @param formatString   C  string that contains a format string as described above
+ * @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
+ * 						 containing pairs of names and pointers to allocated storage (except as indicated above),
+ * 						 where the interpretation of the extracted data is stored with the appropriate type.
+ *                       There should be at least as many pairs of these arguments as the number of values stored
+ *                       by the format specifiers.
+ *                       Additional arguments are ignored by the function
+ * @return true if all required arguments were read and no errors occurred
+ * @throw MissingRequiredArgument if one of the required arguments are missing
+*/
+int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
+int avscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, ...);
 
 #ifdef __cplusplus
 }
