@@ -775,7 +775,7 @@ void releaseStringArray(StringArray array)
  */
 void releaseTable(Table table)
 {
-	if (table.columnCount > 0) {
+	if (table.ppData && table.types && table.columnCount > 0) {
 		for (int column = 0; column < table.columnCount; column++) {
 			if (table.ppData[column]) {
 				free(table.ppData[column]);

@@ -400,8 +400,6 @@ char* groupNameFromUri(const char* uri)
 void secnFromUri(const char* uri, int4u *secn)
 {
 	char* secondary = strstr(uri, "//") + 2;
-
-	// TODO This seems very bizarre - copying from a string to an integer (see http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMAGNET_JNI.C)
 	memcpy(secn, secondary, sizeof(int4u));
 }
 
