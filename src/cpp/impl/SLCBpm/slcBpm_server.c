@@ -446,6 +446,8 @@ static int getBpmData(JNIEnv* env,
 	status = DPSLCBPM_GETY(&rows, yData);
 	CHECK_VMS_STATUS
 
+	int2u n = rows;
+
 	// data that return rows read
 	if (!DPSLCBPM_GETNAMES(namesData) ||
 			!DPSLCBPM_GETTMIT(tmitData) ||
@@ -457,6 +459,12 @@ static int getBpmData(JNIEnv* env,
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values");
 		return 0;
 	}
+
+	// Convert all floating point data
+	CVT_VMS_TO_IEEE_FLT(xData, xData, &n);
+	CVT_VMS_TO_IEEE_FLT(yData, yData, &n);
+	CVT_VMS_TO_IEEE_FLT(tmitData, tmitData, &n);
+	CVT_VMS_TO_IEEE_FLT(zData, zData, &n);
 
 	return endAcquireBpmData(env);
 }
