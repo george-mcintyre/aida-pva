@@ -4,11 +4,53 @@
 id: 63
 name: SLCModel
 description: SLC Modelling parameters
-config:
-  description: Modelling Value
-  type: SCALAR_ARRAY
-  fields:
-    - name: value
 channels:
   - channel: "????:????:*:twiss"
+    getterConfig:
+      description: Modelling Value
+      type: SCALAR_ARRAY
+      fields:
+        - label: "Energy"
+          name: energy
+          description: "Energy (GeV)"
+        - label: "psix"
+          name: psix
+          description: "psix"
+        - label: "betax"
+          name: betax
+          description: "betax (m)"
+        - label: "alphax"
+          name: alphax
+          description: "alphax"
+        - label: "etax"
+          name: etax
+          description: "etax (m)"
+        - label: "etax'"
+          name: etax_
+          description: "etax'"
+        - label: "psiy"
+          name: psiy
+          description: "psiy"
+        - label: "betay"
+          name: betay
+          description: "betay (m)"
+        - label: "alphay"
+          name: alphay
+          description: "alphay"
+        - label: "etay"
+          name: etay
+          description: "etay (m)"
+        - label: "etay'"
+          name: etay_
+          description: "etay'"
   - channel: "????:????:*:R"
+    getterConfig:
+      description: Modelling Value
+      type: SCALAR_ARRAY
+      fields:
+        - label: "R[1]"
+          name: r1
+          description: "r1"
+        - label: "R[2]"
+          name: r2
+          description: "r2"

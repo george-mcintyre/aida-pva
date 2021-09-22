@@ -30,14 +30,14 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv* env, jclass
  */
 JNIEXPORT jobject
 JNICALL Java_slac_aida_NativeChannelProvider_aidaChannelConfig
-		(JNIEnv* env, jobject jthis, jstring channelName)
+		(JNIEnv* env, jobject jthis, jstring channelName, jboolean forGetter)
 {
 	jobject returnValue = NULL;
 
 	const char* channel = toCString(env, channelName);
 
 	// Call the implementation
-	Config config = aidaChannelConfig(env, channel);
+	Config config = aidaChannelConfig(env, channel, forGetter);
 	CHECK_EXCEPTION_FOR_CONFIG(NULL)
 
 	// marshal results and free fields
@@ -79,7 +79,7 @@ JNIEXPORT jbyte
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByte
 		(JNIEnv* env, jobject jthis, jstring uri, jobject args)
 {
-	jbyte returnValue  = 0x0;
+	jbyte returnValue = 0x0;
 
 	const char* pv = toCString(env, uri);
 	Arguments arguments = toArguments(env, args);

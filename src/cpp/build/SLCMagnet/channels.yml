@@ -1,49 +1,57 @@
 # Channels definition file for aida-pva
 #
 # This file defines the available channels for the Buff Acq Service
+# Arguments:
+#   MICROS            : Start_micro-end_micro
+#   UNITS             : Start_unit-end_unit
+#   MAGFUNC           : TRIM, PTRB, or NOFUNC
+#   LIMITCHECK        : ALL or SOME
 id: 262
 name: SLCBuffacq
+getterConfig:
+  type: NONE
 description: SLC control system pulse synchronized "Buffered Data"
-# Arguments:
-# MICROS    : Start_micro-end_micro
-# UNITS     : Start_unit-end_unit
-# MAGFUNC   : TRIM, PTRB, or NOFUNC
-# LIMITCHECK: ALL or SOME
-config:
-  type: TABLE
-  layout: COLUMN_MAJOR
-  fields:
-    - label: name of each magnet
-      name: name
-      description: name of each magnet for specified display group and primary
-    - label: secondary values
-      name: secondary
-      description: secondary values (BDES or VDES)
 channels:
-  - channel: "MAGNETSET:BDES"
-    config:
-      type: TABLE
-      layout: COLUMN_MAJOR
-      fields:
-        - label: status
-          name: status
-          description: state of magnet device
-        - label: bact/vact
-          name: bact_vact
-          description: BACT/VACT value for each device
-  - channel: "MAGNETSET:VDES"
-    config:
-      type: TABLE
-      layout: COLUMN_MAJOR
-      fields:
-        - label: status
-          name: status
-          description: state of magnet device
-        - label: bact/vact
-          name: bact_vact
-          description: BACT/VACT value for each device
-  - channel: "MAGNETSET:BCON"
-    config:
-      type: NONE
   - channel: "*//????:BDES"
+    getterConfig:
+      type: TABLE
+      fields:
+        - label: "name of magnet"
+          name: name
+          description: "name of magnet for specified display group and primary"
+        - label: "secondary values"
+          name: secondary
+          description: "secondary values (BDES)"
   - channel: "*//????:VDES"
+    getterConfig:
+      type: TABLE
+      fields:
+        - label: "name of magnet"
+          name: name
+          description: "name of magnet for specified display group and primary"
+        - label: "secondary values"
+          name: secondary
+          description: "secondary values (VDES)"
+  - channel: "MAGNETSET:BDES"
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "status"
+          name: status
+          description: "state of magnet device"
+        - label: "bact/vact"
+          name: bact_vact
+          description: "BACT/VACT value for each device"
+  - channel: "MAGNETSET:VDES"
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "status"
+          name: status
+          description: "state of magnet device"
+        - label: "bact/vact"
+          name: bact_vact
+          description: "BACT/VACT value for each device"
+  - channel: "MAGNETSET:BCON"
+    setterConfig:
+      type: VOID

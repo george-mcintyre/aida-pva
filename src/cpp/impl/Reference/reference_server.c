@@ -25,17 +25,18 @@ void aidaServiceInit(JNIEnv* env)
 
 /**
  * Get channel configuration
- * @param channelName
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param channelName
+ * @param forGetter true to return config for getter, false for setter
  * @return the channel config.  Leave empty if you don't have any specific configuration overrides
  */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName)
+Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
 {
 	Config config;
 	memset(&config, 0, sizeof(config));
 
 	// Only modify config for attribute01
-	if (startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
+	if (forGetter && startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
 		Field* fields = calloc(1, sizeof(Field));
 		if (!fields) {
 			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate space for config field");
@@ -65,7 +66,7 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName)
 int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute01
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute01")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute01")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -184,7 +185,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute02
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute02")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute02")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -211,7 +212,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute03
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute03")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute03")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -238,7 +239,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute04
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute04")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute04")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -265,7 +266,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute05
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute05")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute05")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -292,7 +293,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute06
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute06")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute06")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -319,7 +320,7 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute07
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute07")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute07")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -346,7 +347,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute08
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute08")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute08")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 		return NULL;
 	}
@@ -389,7 +390,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute11
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute11")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute11")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -413,7 +414,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute12
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute12")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute12")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -437,7 +438,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute13
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute13")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute13")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -461,7 +462,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute14
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute14")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute14")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -485,7 +486,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute15
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute15")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute15")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -509,7 +510,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute16
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute16")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute16")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -533,7 +534,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute17
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute17")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute17")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -557,7 +558,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Only for attribute18
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute18")) {
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute18")) {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
@@ -581,16 +582,15 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	// Only for attribute20
+	if (!endsWith(uri, "//attribute32") && !endsWith(uri, "//attribute20")) {
+		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+		RETURN_NULL_TABLE;
+	}
+
 	Table table;
 	memset(&table, 0, sizeof(table));
 	table.columnCount = 8;
-
-	// Only for attribute20
-	if (!startsWith(uri, "AIDA:SAMPLE:") || !endsWith(uri, "//attribute20")) {
-		table.columnCount = 0;
-		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-		return table;
-	}
 
 	table = tableCreate(env, 1, 8);
 	CHECK_EXCEPTION(table)

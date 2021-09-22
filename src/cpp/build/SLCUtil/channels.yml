@@ -3,24 +3,23 @@
 # This file defines the available channels for the SLC Utility Service
 #
 # Arguments:
-# MKB       : File name path
-# BGRP      : The BGRP name
-# VARNAME   : A BGRP variable name for the specified BGRP
+# MKB                 : File name path
+# BGRP                : The BGRP name
+# VARNAME             : A BGRP variable name for the specified BGRP
+# BEAM                : Beam code number
 #
-#  Supply the 'AType' parameter to choose the return type, e.g. AType=FLOAT
-#  Supply the 'AValue' parameter to call setValue() e.g. AValue=set, MKB=filename
 #
 id: 122
 name: SLCUtil
 description: SLC Utility Server
-config:
-  type: ANY
-  fields:
-    - name: value
+getterConfig:
+  type: NONE
 channels:
   - channel: BGRP:VAL
-      type: NONE
+    setterConfig:
+      type: VOID
   - channel: MKB:VAL
+    setterConfig:
       type: TABLE
       fields:
         - name: name
@@ -30,8 +29,11 @@ channels:
           label: "Value"
           description: "value of each device after the knob rotation set operation"
   - channel: TRIG:*:*:TACT
+    getterConfig:
+      type: SCALAR
+    setterConfig:
       type: TABLE
       fields:
         - name: status
-          label: "Status"
-          description: "Status code for the specified trigger device on a beam"
+          label: "Status Code"
+          description: "the status code for the specified trigger device on a beam code: 0 => deactivated, 1 => activated"

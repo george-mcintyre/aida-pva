@@ -3,15 +3,22 @@
 # This file defines the available channels for the Master Oscillator Service
 #
 # Arguments:
-# UNITS     : Indicates whether the specified relative set value is in units of frequency or energy.
-# RING      : If the specified relative set value is in units of energy, this parameter is required and specifies the ring
+# UNITS               : Indicates whether the specified relative set value is in units of frequency or energy.
+# RING                : If the specified relative set value is in units of energy, this parameter is
+#                       required and specifies the ring
 #
-#  Supply the 'AType' parameter to choose the return type, e.g. AType=FLOAT
-#  Supply the 'AValue' parameter to call setValue() e.g. AValue=set, UNITS=FREQUENCY, RING=HER
+#  Supply the 'AType' parameter to choose the return type, e.g. AType=DOUBLE
+#  Supply the 'AValue' parameter to call setValue() e.g. AValue=0.328, UNITS=FREQUENCY, RING=HER
 id: 142
 name: SLCMosc
 description: Master Oscillator Service
-config:
+getterConfig:
+  type: SCALAR
+  fields:
+    - name: value
+      label: "Oscillator Value in KHz"
+      description: "Measured setting of the Master Oscillator in KHz"
+setterConfig:
   type: TABLE
   fields:
     - name: value

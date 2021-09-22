@@ -49,11 +49,12 @@ void aidaServiceInit(JNIEnv* env)
 
 /**
  * Get channel configuration
- * @param channelName
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param channelName
+ * @param forGetter true to return config for getter, false for setter
  * @return the channel config.  Leave empty if you don't have any specific configuration overrides
  */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName)
+Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
 {
 	DEFAULT_CONFIG_REQUEST
 }

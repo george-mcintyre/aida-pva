@@ -8,8 +8,14 @@
 id: 8
 name: SLC
 description: Aida SLC Data Provider
-config:
-  type: ANY
+getterConfig:
+  type: TABLE
+  fields:
+    - name: value
+      label: "Device data"
+      description: "SLC DB Device Data for named device"
+setterConfig:
+  type: VOID
 channels:
   - channel: "*:????:*:A4CN"
   - channel: "*:????:*:A4DS"

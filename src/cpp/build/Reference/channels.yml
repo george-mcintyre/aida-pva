@@ -5,84 +5,85 @@
 id: 0
 name: Sample
 description: Aida Sample Data Provider
-# The mandatory default config is used when specific config is not supplied for any of the channels included in this provider
-config:
-  # Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (eg INTEGER_ARRAY, STRING_ARRAY), TABLE
+# The mandatory default getterConfig is used when specific config is not supplied for any of the channels included in this provider
+getterConfig:
+  # Return Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (eg INTEGER_ARRAY, STRING_ARRAY), TABLE
   # ANY to allow the channel to be called with a type option that will select the type at runtime
   # or NONE if the channel will not return a value (e.g. for setValue)
   # When calling a channel with a Value argument then the channel sets this value
   type: INTEGER
+# It is not mandatory to have a setterConfig if none is provided then it will be set to NONE
 channels:
   - channel: AIDA:SAMPLE:*:attribute00
     # Test for channel not supported.  This channel is not supported by service
-    config:
+    getterConfig:
       type: BOOLEAN
   - channel: AIDA:SAMPLE:*:attribute01
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: BOOLEAN
   - channel: AIDA:SAMPLE:*:attribute02
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: BYTE
   - channel: AIDA:SAMPLE:*:attribute03
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: SHORT
   - channel: AIDA:SAMPLE:*:attribute04
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: INTEGER
   - channel: AIDA:SAMPLE:*:attribute05
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: LONG
   - channel: AIDA:SAMPLE:*:attribute06
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: FLOAT
   - channel: AIDA:SAMPLE:*:attribute07
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: DOUBLE
   - channel: AIDA:SAMPLE:*:attribute08
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: STRING
   - channel: AIDA:SAMPLE:*:attribute11
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: BOOLEAN_ARRAY
   - channel: AIDA:SAMPLE:*:attribute12
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: BYTE_ARRAY
   - channel: AIDA:SAMPLE:*:attribute13
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: SHORT_ARRAY
   - channel: AIDA:SAMPLE:*:attribute14
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: INTEGER_ARRAY
   - channel: AIDA:SAMPLE:*:attribute15
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: LONG_ARRAY
   - channel: AIDA:SAMPLE:*:attribute16
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: FLOAT_ARRAY
   - channel: AIDA:SAMPLE:*:attribute17
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: DOUBLE_ARRAY
   - channel: AIDA:SAMPLE:*:attribute18
     # Only override values that are different from the default.
-    config:
+    getterConfig:
       type: STRING_ARRAY
   - channel: AIDA:SAMPLE:*:attribute20
-    config:
+    getterConfig:
       type: TABLE
       fields:
         - name: isActive
@@ -110,13 +111,12 @@ channels:
           label: "Device Message"
           description: "Last device message"
   - channel: AIDA:SAMPLE:*:attribute30
-    # To set this value include new value as an argument
-    config:
-      type: NONE
+    # To set this value include new VALUE as an argument
+    setterConfig:
+      type: VOID
   - channel: AIDA:SAMPLE:*:attribute31
-    # To set this value include new value as an argument
-    # A table will be returned as defined below
-    config:
+    # To set this value include new VALUE as an argument
+    setterConfig:
       type: TABLE
       fields:
         - name: status
@@ -124,6 +124,32 @@ channels:
           description: "True if the value was set successfully"
   - channel: AIDA:SAMPLE:*:attribute32
     # Get arbitrary type by specifying type=<AIDA_TYPE> argument
-    config:
+    # Otherwise throw Unsupported channel exception
+    getterConfig:
       type: ANY
+      fields:
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+        - name: mode
+          label: "Device Mode Code"
+          description: "Device mode code"
+        - name: status
+          label: "Device Status Code"
+          description: "Device status code"
+        - name: nbufs
+          label: "Number of buffers allocated"
+          description: "Number of buffers currently allocated on the device"
+        - name: memory
+          label: "Device memory used"
+          description: "Total device memory used"
+        - name: sensor
+          label: "Device Sensor Reading"
+          description: "Device sensor reading"
+        - name: hisensor
+          label: "High Precision Device Sensor"
+          description: "Device sensor reading"
+        - name: message
+          label: "Device Message"
+          description: "Last device message"
 

@@ -1,16 +1,17 @@
 # Channels definition file for aida-pva
 #
 # This file defines the available channels for the SLCBPM service
+# Arguments:
+#   BPMD          : The timing profile of the acquisition
+#   CNFTYPE       : Measurement configuration to use
+#   CNFNUM        : BPM device configuration for difference
+#   N             : "N" average
+#   SORTORDER     : Sort order
 id: 102
 name: SLCBpm
 description: SLC BPM orbit data under a given measurement definition
-# Arguments:
-# BPMD      : The timing profile of the acquisition
-# CNFTYPE   : Measurement configuration to use
-# CNFNUM    : BPM device configuration for difference
-# N         : "N" average
-# SORTORDER : Sort order
-config:
+getterConfig:
+  # Heterogeneous vector of 7 homogenous congruent vectors
   type: TABLE
   layout: COLUMN_MAJOR
   fields:
