@@ -8,5 +8,6 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class AidaChannel {
     private @NonNull String channel;
-    private AidaChannelConfig config;
+    private AidaChannelConfig getterConfig;
+    private AidaChannelConfig setterConfig;
 }

@@ -3,27 +3,30 @@ package edu.stanford.slac.aida.lib.model;
 import java.util.List;
 
 public enum AidaType {
-    NONE,
-    BOOLEAN,
-    BYTE,
-    SHORT,
-    INTEGER,
-    LONG,
-    FLOAT,
-    DOUBLE,
-    STRING,
-    BOOLEAN_ARRAY,
-    BYTE_ARRAY,
-    SHORT_ARRAY,
-    INTEGER_ARRAY,
-    LONG_ARRAY,
-    FLOAT_ARRAY,
-    DOUBLE_ARRAY,
-    STRING_ARRAY,
-    TABLE,
-    SCALAR,
-   	SCALAR_ARRAY,
-   	ANY;
+    NONE,               // Means that this getter or setter is not supported
+    VOID,               // Means that this setter does not return a value (only valid for setters)
+    BOOLEAN,            // Getter or setter returns a boolean
+    BYTE,               // Getter or setter returns a byte
+    SHORT,              // Getter or setter returns a short
+    INTEGER,            // Getter or setter returns an integer
+    LONG,               // Getter or setter returns a long
+    FLOAT,              // Getter or setter returns a float
+    DOUBLE,             // Getter or setter returns a double
+    STRING,             // Getter or setter returns a string
+    BOOLEAN_ARRAY,      // Getter or setter returns a boolean array
+    BYTE_ARRAY,         // Getter or setter returns a byte array
+    SHORT_ARRAY,        // Getter or setter returns a short array
+    INTEGER_ARRAY,      // Getter or setter returns an integer array
+    LONG_ARRAY,         // Getter or setter returns a long array
+    FLOAT_ARRAY,        // Getter or setter returns a float array
+    DOUBLE_ARRAY,       // Getter or setter returns a double array
+    STRING_ARRAY,       // Getter or setter returns a string array
+    TABLE,              // Getter or setter returns a table
+
+                        // For the following types you can also provide fields in case the request is a TABLE
+    ANY,                // Getter returns any type defined by the mandatory accompanying TYPE argument
+    SCALAR,             // Constrains the TYPE parameter to be set to any scalar type or TABLE
+    SCALAR_ARRAY;       // Constrains the TYPE parameter to be set to any scalar array type or TABLE
 
     /**
      * Determine the aida type of a java object of a supported type.  Return null if type not supported
@@ -74,6 +77,7 @@ public enum AidaType {
 
     /**
      * Get the meta-type of this aida type
+     *
      * @return the meta type SCALAR, SCALAR_ARRAY, or AHY
      */
     public AidaType metaType() {

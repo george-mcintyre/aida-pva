@@ -10,6 +10,8 @@ import java.util.*;
 
 import static edu.stanford.slac.aida.lib.model.AidaTableLayout.COLUMN_MAJOR;
 import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +20,8 @@ public class AidaProvider {
     private @NonNull String name;
     private String description;
     private @NonNull Set<AidaChannel> channels = new HashSet<AidaChannel>();
-    private @NonNull AidaChannelConfig config;
+    private @NonNull AidaChannelConfig getterConfig;
+    private @NonNull AidaChannelConfig setterConfig;
     private ChannelProvider channelProvider;
 
     private final Map<String, AidaChannel> channelMap = new HashMap<String, AidaChannel>();
@@ -74,18 +77,29 @@ public class AidaProvider {
 
                 this.channelMap.put(channel, aidaChannel);
 
-                // Add legacy style channel name.  If already legacy name then don't modify.  This is to
-                // allow attributes that contain colons which don't work in the new format
+                // Add legacy style channel name as well as new style, regardless as to how it is specified in the channels file
                 int indexOfLastSeparator = channel.lastIndexOf(":");
                 int indexOfLastLegacySeparator = channel.lastIndexOf("//");
 
-                if (indexOfLastSeparator != -1 && indexOfLastLegacySeparator == -1) {
+                // If specified using legacy separator then add entry with the new style as well
+                if (indexOfLastLegacySeparator != -1) {
+                    this.channelMap.put(channel.substring(0, indexOfLastLegacySeparator) + ":" + channel.substring(indexOfLastLegacySeparator + 2), aidaChannel);
+
+                    // If specified with new naming style then add an entry with the legacy separator for backwards compatibility
+                } else if (indexOfLastSeparator != -1) {
                     this.channelMap.put(channel.substring(0, indexOfLastSeparator) + "//" + channel.substring(indexOfLastSeparator + 1), aidaChannel);
                 }
             }
         }
     }
 
+    /**
+     * Merges the given default config with the given overrides to produce a new merged config
+     *
+     * @param defaultConfig default config
+     * @param overrides     config containing overrides
+     * @return the merged config
+     */
     private AidaChannelConfig mergeConfig(AidaChannelConfig defaultConfig, AidaChannelConfig overrides) {
         AidaChannelConfig channelConfig = new AidaChannelConfig();
 
@@ -114,22 +128,37 @@ public class AidaProvider {
     }
 
     /**
-     * Add default channel configuration if not specified directly with the channel
+     * Add default channel configurations if not specified directly with the channel
+     * Bot the getter and the setter configs are copied
      *
-     * @param aidaChannel the channel to add the default configuration to
+     * @param aidaChannel the channel to add the default configurations to
      */
     private void copyConfig(AidaChannel aidaChannel) {
+        AidaChannelConfig providerConfig, channelConfig, defaultConfig, mergedConfig;
+
+        // GETTER CONFIG
         // Highest priority from provider itself
-        AidaChannelConfig providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel());
+        providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel(), TRUE);
         // Next from yaml channel
-        AidaChannelConfig channelConfig = aidaChannel.getConfig();
+        channelConfig = aidaChannel.getGetterConfig();
         // Finally from yaml global section
-        AidaChannelConfig defaultConfig = getConfig();
-
+        defaultConfig = getGetterConfig();
         // Merge all together with these priorities
-        AidaChannelConfig mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig);
-        aidaChannel.setConfig(mergedConfig);
+        mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig);
+        aidaChannel.setGetterConfig(mergedConfig);
+        // Set default labels
+        setDefaultLabels(mergedConfig.getFields());
 
+        // SETTER CONFIG
+        // Highest priority from provider itself
+        providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel(), FALSE);
+        // Next from yaml channel
+        channelConfig = aidaChannel.getGetterConfig();
+        // Finally from yaml global section
+        defaultConfig = getGetterConfig();
+        // Merge all together with these priorities
+        mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig);
+        aidaChannel.setGetterConfig(mergedConfig);
         // Set default labels
         setDefaultLabels(mergedConfig.getFields());
     }
@@ -149,6 +178,12 @@ public class AidaProvider {
         }
     }
 
+    /**
+     * Get legacy aida name
+     *
+     * @param channelName the channel name
+     * @return the legacy aida name
+     */
     public static String getAidaName(String channelName) {
         if (channelName.lastIndexOf("//") != -1) {
             return channelName;
@@ -169,7 +204,8 @@ public class AidaProvider {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", config=" + config +
+                ", getterConfig=" + getterConfig +
+                ", setterConfig=" + setterConfig +
                 ((channels.size() > 100) ? ", channels=[large set omitted!]" : ", channels=" + channels) +
                 '}';
     }

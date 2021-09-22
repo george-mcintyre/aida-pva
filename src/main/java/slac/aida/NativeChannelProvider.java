@@ -18,14 +18,15 @@ public class NativeChannelProvider {
      * AidaField
      *
      * @param channelName the channel name to provide the configuration for
+     * @param forGetter true if config is to be returned for getter otherwise setter
      * @return the channel configuration or null to use defaults from yaml
      */
-    protected native AidaChannelConfig aidaChannelConfig(String channelName);
+    protected native AidaChannelConfig aidaChannelConfig(String channelName, boolean forGetter);
 
     /**
      * Prototype to be implemented for Tables.  This is the most commonly implemented method.
      * Tables are simply a list of arbitrary objects.  The object is unpacked based on the
-     * channel config.
+     * channel getterConfig.
      *
      * @param pvUri     the uri
      * @param arguments the arguments
@@ -44,7 +45,7 @@ public class NativeChannelProvider {
     /**
      * Prototype to be implemented for setting values with a Table as a return value.
      * Tables are simply a list of arbitrary objects.  The object is unpacked based on the
-     * channel config.
+     * channel setterConfig.
      *
      * @param pvUri     the uri
      * @param arguments the arguments

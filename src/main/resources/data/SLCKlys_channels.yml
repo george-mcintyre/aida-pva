@@ -1,513 +1,72 @@
 # Channels definition file for aida-pva
 #
-# This file defines the available channels for the sample aida service
+# This file defines the available channels for the Kyystron Service
+# Arguments:
+#   type          : For TACT attribute this is either SHORT, LONG, or STRING
+#   BEAM          : Beam Code number
+#   DGRP          : Dgrp name
+#   TRIM          : Trim value (YES or NO)
 id: 162
 name: SLCKlys
-description: Klystron Server
-config:
-  description: Kylstron Value
-  type: DOUBLE
-  fields:
-    - name: value
+description: "Klystron Server"
+getterConfig:
+  type: NONE
 channels:
-  - channel: KLYS:AM00:1:ACON
-  - channel: KLYS:AM00:1:PCON
-  - channel: KLYS:AM00:2:ACON
-  - channel: KLYS:AM00:2:PCON
-  - channel: KLYS:AM00:3:ACON
-  - channel: KLYS:AM00:3:PCON
-  - channel: KLYS:AM00:4:ACON
-  - channel: KLYS:AM00:4:PCON
-  - channel: KLYS:CB02:91:ACON
-  - channel: KLYS:CB02:91:PCON
-  - channel: KLYS:DR01:1:ACON
-  - channel: KLYS:DR01:1:PCON
-  - channel: KLYS:DR03:1:ACON
-  - channel: KLYS:DR03:1:PCON
-  - channel: KLYS:DR03:2:ACON
-  - channel: KLYS:DR03:2:PCON
-  - channel: KLYS:DR13:1:ACON
-  - channel: KLYS:DR13:1:PCON
-  - channel: KLYS:DR13:2:ACON
-  - channel: KLYS:DR13:2:PCON
-  - channel: KLYS:LI00:11:ACON
-  - channel: KLYS:LI00:11:KPHR
-  - channel: KLYS:LI00:11:PCON
-  - channel: KLYS:LI00:12:ACON
-  - channel: KLYS:LI00:12:KPHR
-  - channel: KLYS:LI00:12:PCON
-  - channel: KLYS:LI00:13:ACON
-  - channel: KLYS:LI00:13:KPHR
-  - channel: KLYS:LI00:13:PCON
-  - channel: KLYS:LI00:1:ACON
-  - channel: KLYS:LI00:1:KPHR
-  - channel: KLYS:LI00:1:PCON
-  - channel: KLYS:LI00:20:ACON
-  - channel: KLYS:LI00:20:KPHR
-  - channel: KLYS:LI00:20:PCON
-  - channel: KLYS:LI00:2:ACON
-  - channel: KLYS:LI00:2:KPHR
-  - channel: KLYS:LI00:2:PCON
-  - channel: KLYS:LI00:59:ACON
-  - channel: KLYS:LI00:59:KPHR
-  - channel: KLYS:LI00:59:PCON
-  - channel: KLYS:LI00:96:ACON
-  - channel: KLYS:LI00:96:KPHR
-  - channel: KLYS:LI00:96:PCON
-  - channel: KLYS:LI00:97:ACON
-  - channel: KLYS:LI00:97:KPHR
-  - channel: KLYS:LI00:97:PCON
-  - channel: KLYS:LI00:98:ACON
-  - channel: KLYS:LI00:98:KPHR
-  - channel: KLYS:LI00:98:PCON
-  - channel: KLYS:LI00:99:ACON
-  - channel: KLYS:LI00:99:KPHR
-  - channel: KLYS:LI00:99:PCON
-  - channel: KLYS:LI01:21:ACON
-  - channel: KLYS:LI01:21:KPHR
-  - channel: KLYS:LI01:21:PCON
-  - channel: KLYS:LI01:31:ACON
-  - channel: KLYS:LI01:31:KPHR
-  - channel: KLYS:LI01:31:PCON
-  - channel: KLYS:LI01:41:ACON
-  - channel: KLYS:LI01:41:KPHR
-  - channel: KLYS:LI01:41:PCON
-  - channel: KLYS:LI01:51:ACON
-  - channel: KLYS:LI01:51:KPHR
-  - channel: KLYS:LI01:51:PCON
-  - channel: KLYS:LI01:61:ACON
-  - channel: KLYS:LI01:61:KPHR
-  - channel: KLYS:LI01:61:PCON
-  - channel: KLYS:LI02:11:ACON
-  - channel: KLYS:LI02:11:KPHR
-  - channel: KLYS:LI02:11:PCON
-  - channel: KLYS:LI02:21:ACON
-  - channel: KLYS:LI02:21:KPHR
-  - channel: KLYS:LI02:21:PCON
-  - channel: KLYS:LI02:31:ACON
-  - channel: KLYS:LI02:31:KPHR
-  - channel: KLYS:LI02:31:PCON
-  - channel: KLYS:LI02:41:ACON
-  - channel: KLYS:LI02:41:KPHR
-  - channel: KLYS:LI02:41:PCON
-  - channel: KLYS:LI02:51:ACON
-  - channel: KLYS:LI02:51:KPHR
-  - channel: KLYS:LI02:51:PCON
-  - channel: KLYS:LI02:61:ACON
-  - channel: KLYS:LI02:61:KPHR
-  - channel: KLYS:LI02:61:PCON
-  - channel: KLYS:LI02:71:ACON
-  - channel: KLYS:LI02:71:KPHR
-  - channel: KLYS:LI02:71:PCON
-  - channel: KLYS:LI02:81:ACON
-  - channel: KLYS:LI02:81:KPHR
-  - channel: KLYS:LI02:81:PCON
-  - channel: KLYS:LI02:91:ACON
-  - channel: KLYS:LI02:91:KPHR
-  - channel: KLYS:LI02:91:PCON
-  - channel: KLYS:LI03:11:ACON
-  - channel: KLYS:LI03:11:KPHR
-  - channel: KLYS:LI03:11:PCON
-  - channel: KLYS:LI03:21:ACON
-  - channel: KLYS:LI03:21:KPHR
-  - channel: KLYS:LI03:21:PCON
-  - channel: KLYS:LI03:31:ACON
-  - channel: KLYS:LI03:31:KPHR
-  - channel: KLYS:LI03:31:PCON
-  - channel: KLYS:LI03:41:ACON
-  - channel: KLYS:LI03:41:KPHR
-  - channel: KLYS:LI03:41:PCON
-  - channel: KLYS:LI03:51:ACON
-  - channel: KLYS:LI03:51:KPHR
-  - channel: KLYS:LI03:51:PCON
-  - channel: KLYS:LI03:61:ACON
-  - channel: KLYS:LI03:61:KPHR
-  - channel: KLYS:LI03:61:PCON
-  - channel: KLYS:LI03:71:ACON
-  - channel: KLYS:LI03:71:KPHR
-  - channel: KLYS:LI03:71:PCON
-  - channel: KLYS:LI03:81:ACON
-  - channel: KLYS:LI03:81:KPHR
-  - channel: KLYS:LI03:81:PCON
-  - channel: KLYS:LI04:11:ACON
-  - channel: KLYS:LI04:11:KPHR
-  - channel: KLYS:LI04:11:PCON
-  - channel: KLYS:LI04:21:ACON
-  - channel: KLYS:LI04:21:KPHR
-  - channel: KLYS:LI04:21:PCON
-  - channel: KLYS:LI04:31:ACON
-  - channel: KLYS:LI04:31:KPHR
-  - channel: KLYS:LI04:31:PCON
-  - channel: KLYS:LI04:41:ACON
-  - channel: KLYS:LI04:41:KPHR
-  - channel: KLYS:LI04:41:PCON
-  - channel: KLYS:LI04:51:ACON
-  - channel: KLYS:LI04:51:KPHR
-  - channel: KLYS:LI04:51:PCON
-  - channel: KLYS:LI04:61:ACON
-  - channel: KLYS:LI04:61:KPHR
-  - channel: KLYS:LI04:61:PCON
-  - channel: KLYS:LI04:71:ACON
-  - channel: KLYS:LI04:71:KPHR
-  - channel: KLYS:LI04:71:PCON
-  - channel: KLYS:LI04:81:ACON
-  - channel: KLYS:LI04:81:KPHR
-  - channel: KLYS:LI04:81:PCON
-  - channel: KLYS:LI05:11:ACON
-  - channel: KLYS:LI05:11:KPHR
-  - channel: KLYS:LI05:11:PCON
-  - channel: KLYS:LI05:21:ACON
-  - channel: KLYS:LI05:21:KPHR
-  - channel: KLYS:LI05:21:PCON
-  - channel: KLYS:LI05:31:ACON
-  - channel: KLYS:LI05:31:KPHR
-  - channel: KLYS:LI05:31:PCON
-  - channel: KLYS:LI05:41:ACON
-  - channel: KLYS:LI05:41:KPHR
-  - channel: KLYS:LI05:41:PCON
-  - channel: KLYS:LI05:51:ACON
-  - channel: KLYS:LI05:51:KPHR
-  - channel: KLYS:LI05:51:PCON
-  - channel: KLYS:LI05:61:ACON
-  - channel: KLYS:LI05:61:KPHR
-  - channel: KLYS:LI05:61:PCON
-  - channel: KLYS:LI05:71:ACON
-  - channel: KLYS:LI05:71:KPHR
-  - channel: KLYS:LI05:71:PCON
-  - channel: KLYS:LI05:81:ACON
-  - channel: KLYS:LI05:81:KPHR
-  - channel: KLYS:LI05:81:PCON
-  - channel: KLYS:LI06:11:ACON
-  - channel: KLYS:LI06:11:KPHR
-  - channel: KLYS:LI06:11:PCON
-  - channel: KLYS:LI06:21:ACON
-  - channel: KLYS:LI06:21:KPHR
-  - channel: KLYS:LI06:21:PCON
-  - channel: KLYS:LI06:31:ACON
-  - channel: KLYS:LI06:31:KPHR
-  - channel: KLYS:LI06:31:PCON
-  - channel: KLYS:LI06:41:ACON
-  - channel: KLYS:LI06:41:KPHR
-  - channel: KLYS:LI06:41:PCON
-  - channel: KLYS:LI06:51:ACON
-  - channel: KLYS:LI06:51:KPHR
-  - channel: KLYS:LI06:51:PCON
-  - channel: KLYS:LI06:61:ACON
-  - channel: KLYS:LI06:61:KPHR
-  - channel: KLYS:LI06:61:PCON
-  - channel: KLYS:LI06:71:ACON
-  - channel: KLYS:LI06:71:KPHR
-  - channel: KLYS:LI06:71:PCON
-  - channel: KLYS:LI06:81:ACON
-  - channel: KLYS:LI06:81:KPHR
-  - channel: KLYS:LI06:81:PCON
-  - channel: KLYS:LI07:11:ACON
-  - channel: KLYS:LI07:11:KPHR
-  - channel: KLYS:LI07:11:PCON
-  - channel: KLYS:LI07:21:ACON
-  - channel: KLYS:LI07:21:KPHR
-  - channel: KLYS:LI07:21:PCON
-  - channel: KLYS:LI07:31:ACON
-  - channel: KLYS:LI07:31:KPHR
-  - channel: KLYS:LI07:31:PCON
-  - channel: KLYS:LI07:41:KPHR
-  - channel: KLYS:LI07:51:KPHR
-  - channel: KLYS:LI07:61:KPHR
-  - channel: KLYS:LI07:71:ACON
-  - channel: KLYS:LI07:71:KPHR
-  - channel: KLYS:LI07:71:PCON
-  - channel: KLYS:LI07:81:ACON
-  - channel: KLYS:LI07:81:KPHR
-  - channel: KLYS:LI07:81:PCON
-  - channel: KLYS:LI08:11:ACON
-  - channel: KLYS:LI08:11:KPHR
-  - channel: KLYS:LI08:11:PCON
-  - channel: KLYS:LI08:21:ACON
-  - channel: KLYS:LI08:21:KPHR
-  - channel: KLYS:LI08:21:PCON
-  - channel: KLYS:LI08:31:ACON
-  - channel: KLYS:LI08:31:KPHR
-  - channel: KLYS:LI08:31:PCON
-  - channel: KLYS:LI08:41:ACON
-  - channel: KLYS:LI08:41:KPHR
-  - channel: KLYS:LI08:41:PCON
-  - channel: KLYS:LI08:51:ACON
-  - channel: KLYS:LI08:51:KPHR
-  - channel: KLYS:LI08:51:PCON
-  - channel: KLYS:LI08:61:ACON
-  - channel: KLYS:LI08:61:KPHR
-  - channel: KLYS:LI08:61:PCON
-  - channel: KLYS:LI08:71:ACON
-  - channel: KLYS:LI08:71:KPHR
-  - channel: KLYS:LI08:71:PCON
-  - channel: KLYS:LI08:81:ACON
-  - channel: KLYS:LI08:81:KPHR
-  - channel: KLYS:LI08:81:PCON
-  - channel: KLYS:LI09:11:ACON
-  - channel: KLYS:LI09:11:KPHR
-  - channel: KLYS:LI09:11:PCON
-  - channel: KLYS:LI09:21:ACON
-  - channel: KLYS:LI09:21:KPHR
-  - channel: KLYS:LI09:21:PCON
-  - channel: KLYS:LI09:31:ACON
-  - channel: KLYS:LI09:31:KPHR
-  - channel: KLYS:LI09:31:PCON
-  - channel: KLYS:LI09:41:ACON
-  - channel: KLYS:LI09:41:KPHR
-  - channel: KLYS:LI09:41:PCON
-  - channel: KLYS:LI09:51:ACON
-  - channel: KLYS:LI09:51:KPHR
-  - channel: KLYS:LI09:51:PCON
-  - channel: KLYS:LI09:61:ACON
-  - channel: KLYS:LI09:61:PCON
-  - channel: KLYS:LI09:71:ACON
-  - channel: KLYS:LI09:71:PCON
-  - channel: KLYS:LI09:81:ACON
-  - channel: KLYS:LI09:81:PCON
-  - channel: KLYS:LI09:91:ACON
-  - channel: KLYS:LI09:91:PCON
-  - channel: KLYS:LI10:11:ACON
-  - channel: KLYS:LI10:11:PCON
-  - channel: KLYS:LI10:21:ACON
-  - channel: KLYS:LI10:21:PCON
-  - channel: KLYS:LI10:31:ACON
-  - channel: KLYS:LI10:31:PCON
-  - channel: KLYS:LI10:41:ACON
-  - channel: KLYS:LI10:41:PCON
-  - channel: KLYS:LI10:51:ACON
-  - channel: KLYS:LI10:51:PCON
-  - channel: KLYS:LI10:61:ACON
-  - channel: KLYS:LI10:61:PCON
-  - channel: KLYS:LI10:71:ACON
-  - channel: KLYS:LI10:71:PCON
-  - channel: KLYS:LI10:81:ACON
-  - channel: KLYS:LI10:81:PCON
-  - channel: KLYS:LI11:11:ACON
-  - channel: KLYS:LI11:11:PCON
-  - channel: KLYS:LI11:21:ACON
-  - channel: KLYS:LI11:21:PCON
-  - channel: KLYS:LI11:22:ACON
-  - channel: KLYS:LI11:22:PCON
-  - channel: KLYS:LI11:31:ACON
-  - channel: KLYS:LI11:31:PCON
-  - channel: KLYS:LI11:41:ACON
-  - channel: KLYS:LI11:41:PCON
-  - channel: KLYS:LI11:51:ACON
-  - channel: KLYS:LI11:51:PCON
-  - channel: KLYS:LI11:61:ACON
-  - channel: KLYS:LI11:61:PCON
-  - channel: KLYS:LI11:71:ACON
-  - channel: KLYS:LI11:71:PCON
-  - channel: KLYS:LI11:81:ACON
-  - channel: KLYS:LI11:81:PCON
-  - channel: KLYS:LI12:11:ACON
-  - channel: KLYS:LI12:11:PCON
-  - channel: KLYS:LI12:21:ACON
-  - channel: KLYS:LI12:21:PCON
-  - channel: KLYS:LI12:31:ACON
-  - channel: KLYS:LI12:31:PCON
-  - channel: KLYS:LI12:41:ACON
-  - channel: KLYS:LI12:41:PCON
-  - channel: KLYS:LI12:51:ACON
-  - channel: KLYS:LI12:51:PCON
-  - channel: KLYS:LI12:61:ACON
-  - channel: KLYS:LI12:61:PCON
-  - channel: KLYS:LI12:71:ACON
-  - channel: KLYS:LI12:71:PCON
-  - channel: KLYS:LI12:81:ACON
-  - channel: KLYS:LI12:81:PCON
-  - channel: KLYS:LI13:11:ACON
-  - channel: KLYS:LI13:11:PCON
-  - channel: KLYS:LI13:21:ACON
-  - channel: KLYS:LI13:21:PCON
-  - channel: KLYS:LI13:31:ACON
-  - channel: KLYS:LI13:31:PCON
-  - channel: KLYS:LI13:41:ACON
-  - channel: KLYS:LI13:41:PCON
-  - channel: KLYS:LI13:51:ACON
-  - channel: KLYS:LI13:51:PCON
-  - channel: KLYS:LI13:61:ACON
-  - channel: KLYS:LI13:61:PCON
-  - channel: KLYS:LI13:71:ACON
-  - channel: KLYS:LI13:71:PCON
-  - channel: KLYS:LI13:81:ACON
-  - channel: KLYS:LI13:81:PCON
-  - channel: KLYS:LI14:11:ACON
-  - channel: KLYS:LI14:11:PCON
-  - channel: KLYS:LI14:21:ACON
-  - channel: KLYS:LI14:21:PCON
-  - channel: KLYS:LI14:31:ACON
-  - channel: KLYS:LI14:31:PCON
-  - channel: KLYS:LI14:41:ACON
-  - channel: KLYS:LI14:41:PCON
-  - channel: KLYS:LI14:51:ACON
-  - channel: KLYS:LI14:51:PCON
-  - channel: KLYS:LI14:61:ACON
-  - channel: KLYS:LI14:61:PCON
-  - channel: KLYS:LI14:71:ACON
-  - channel: KLYS:LI14:71:PCON
-  - channel: KLYS:LI14:81:ACON
-  - channel: KLYS:LI14:81:PCON
-  - channel: KLYS:LI15:11:ACON
-  - channel: KLYS:LI15:11:PCON
-  - channel: KLYS:LI15:21:ACON
-  - channel: KLYS:LI15:21:PCON
-  - channel: KLYS:LI15:31:ACON
-  - channel: KLYS:LI15:31:PCON
-  - channel: KLYS:LI15:41:ACON
-  - channel: KLYS:LI15:41:PCON
-  - channel: KLYS:LI15:51:ACON
-  - channel: KLYS:LI15:51:PCON
-  - channel: KLYS:LI15:61:ACON
-  - channel: KLYS:LI15:61:PCON
-  - channel: KLYS:LI15:71:ACON
-  - channel: KLYS:LI15:71:PCON
-  - channel: KLYS:LI15:81:ACON
-  - channel: KLYS:LI15:81:PCON
-  - channel: KLYS:LI16:11:ACON
-  - channel: KLYS:LI16:11:PCON
-  - channel: KLYS:LI16:21:ACON
-  - channel: KLYS:LI16:21:PCON
-  - channel: KLYS:LI16:31:ACON
-  - channel: KLYS:LI16:31:PCON
-  - channel: KLYS:LI16:41:ACON
-  - channel: KLYS:LI16:41:PCON
-  - channel: KLYS:LI16:51:ACON
-  - channel: KLYS:LI16:51:PCON
-  - channel: KLYS:LI16:61:ACON
-  - channel: KLYS:LI16:61:PCON
-  - channel: KLYS:LI16:71:ACON
-  - channel: KLYS:LI16:71:PCON
-  - channel: KLYS:LI16:81:ACON
-  - channel: KLYS:LI16:81:PCON
-  - channel: KLYS:LI17:11:ACON
-  - channel: KLYS:LI17:11:PCON
-  - channel: KLYS:LI17:21:ACON
-  - channel: KLYS:LI17:21:PCON
-  - channel: KLYS:LI17:31:ACON
-  - channel: KLYS:LI17:31:PCON
-  - channel: KLYS:LI17:41:ACON
-  - channel: KLYS:LI17:41:PCON
-  - channel: KLYS:LI17:51:ACON
-  - channel: KLYS:LI17:51:PCON
-  - channel: KLYS:LI17:61:ACON
-  - channel: KLYS:LI17:61:PCON
-  - channel: KLYS:LI17:71:ACON
-  - channel: KLYS:LI17:71:PCON
-  - channel: KLYS:LI17:81:ACON
-  - channel: KLYS:LI17:81:PCON
-  - channel: KLYS:LI18:11:ACON
-  - channel: KLYS:LI18:11:PCON
-  - channel: KLYS:LI18:21:ACON
-  - channel: KLYS:LI18:21:PCON
-  - channel: KLYS:LI18:31:ACON
-  - channel: KLYS:LI18:31:PCON
-  - channel: KLYS:LI18:41:ACON
-  - channel: KLYS:LI18:41:PCON
-  - channel: KLYS:LI18:51:ACON
-  - channel: KLYS:LI18:51:PCON
-  - channel: KLYS:LI18:61:ACON
-  - channel: KLYS:LI18:61:PCON
-  - channel: KLYS:LI18:71:ACON
-  - channel: KLYS:LI18:71:PCON
-  - channel: KLYS:LI18:81:ACON
-  - channel: KLYS:LI18:81:PCON
-  - channel: KLYS:LI18:91:ACON
-  - channel: KLYS:LI18:91:PCON
-  - channel: KLYS:LI19:11:ACON
-  - channel: KLYS:LI19:11:PCON
-  - channel: KLYS:LI19:21:ACON
-  - channel: KLYS:LI19:21:PCON
-  - channel: KLYS:LI19:31:ACON
-  - channel: KLYS:LI19:31:PCON
-  - channel: KLYS:LI19:41:ACON
-  - channel: KLYS:LI19:41:PCON
-  - channel: KLYS:LI19:51:ACON
-  - channel: KLYS:LI19:51:PCON
-  - channel: KLYS:LI19:61:ACON
-  - channel: KLYS:LI19:61:PCON
-  - channel: KLYS:LI19:81:ACON
-  - channel: KLYS:LI19:81:PCON
-  - channel: KLYS:LI19:97:ACON
-  - channel: KLYS:LI19:97:PCON
-  - channel: KLYS:LI20:21:ACON
-  - channel: KLYS:LI20:21:PCON
-  - channel: KLYS:LI20:31:ACON
-  - channel: KLYS:LI20:31:PCON
-  - channel: KLYS:LI20:41:ACON
-  - channel: KLYS:LI20:41:PCON
-  - channel: KLYS:LI20:93:ACON
-  - channel: KLYS:LI20:93:PCON
-  - channel: KLYS:LI20:94:ACON
-  - channel: KLYS:LI20:94:PCON
-  - channel: KLYS:LI20:95:ACON
-  - channel: KLYS:LI20:95:PCON
-  - channel: KLYS:LI31:11:ACON
-  - channel: KLYS:LI31:11:PCON
-  - channel: KLYS:LI31:21:ACON
-  - channel: KLYS:LI31:21:PCON
-  - channel: KLYS:LI31:31:ACON
-  - channel: KLYS:LI31:31:PCON
-  - channel: KLYS:LI32:22:ACON
-  - channel: KLYS:LI32:22:PCON
-  - channel: KLYS:LI32:32:ACON
-  - channel: KLYS:LI32:32:PCON
-  - channel: KLYS:RF00:1:ACON
-  - channel: KLYS:RF00:1:PCON
-  - channel: KLYS:RF00:2:ACON
-  - channel: KLYS:RF00:2:PCON
-  - channel: KLYS:RF00:3:ACON
-  - channel: KLYS:RF00:3:PCON
-  - channel: KLYS:RF00:4:ACON
-  - channel: KLYS:RF00:4:PCON
-  - channel: SBST:AM00:1:ACON
-  - channel: SBST:AM00:1:PCON
-  - channel: SBST:LI00:1:ACON
-  - channel: SBST:LI00:1:PCON
-  - channel: SBST:LI01:1:ACON
-  - channel: SBST:LI01:1:PCON
-  - channel: SBST:LI02:1:ACON
-  - channel: SBST:LI02:1:PCON
-  - channel: SBST:LI03:1:ACON
-  - channel: SBST:LI03:1:PCON
-  - channel: SBST:LI04:1:ACON
-  - channel: SBST:LI04:1:PCON
-  - channel: SBST:LI05:1:ACON
-  - channel: SBST:LI05:1:PCON
-  - channel: SBST:LI06:1:ACON
-  - channel: SBST:LI06:1:PCON
-  - channel: SBST:LI07:1:ACON
-  - channel: SBST:LI07:1:PCON
-  - channel: SBST:LI08:1:ACON
-  - channel: SBST:LI08:1:PCON
-  - channel: SBST:LI09:1:ACON
-  - channel: SBST:LI09:1:PCON
-  - channel: SBST:LI10:1:ACON
-  - channel: SBST:LI10:1:PCON
-  - channel: SBST:LI11:1:ACON
-  - channel: SBST:LI11:1:PCON
-  - channel: SBST:LI12:1:ACON
-  - channel: SBST:LI12:1:PCON
-  - channel: SBST:LI13:1:ACON
-  - channel: SBST:LI13:1:PCON
-  - channel: SBST:LI14:1:ACON
-  - channel: SBST:LI14:1:PCON
-  - channel: SBST:LI15:1:ACON
-  - channel: SBST:LI15:1:PCON
-  - channel: SBST:LI16:1:ACON
-  - channel: SBST:LI16:1:PCON
-  - channel: SBST:LI17:1:ACON
-  - channel: SBST:LI17:1:PCON
-  - channel: SBST:LI18:1:ACON
-  - channel: SBST:LI18:1:PCON
-  - channel: SBST:LI19:1:ACON
-  - channel: SBST:LI19:1:PCON
-  - channel: SBST:LI20:1:ACON
-  - channel: SBST:LI20:1:PCON
-  - channel: SBST:LI31:1:ACON
-  - channel: SBST:LI31:1:PCON
-  - channel: SBST:LI32:1:ACON
-  - channel: SBST:LI32:1:PCON
-  - channel: SBST:RF00:1:ACON
-  - channel: SBST:RF00:1:PCON
-
+  - channel: "KLYS:????:*:TACT"
+    getterConfig:
+      type: SCALAR
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "Status Code"
+          name: status
+          description: "Status code for the specified Klystron on a beam code"
+  - channel: "SBST:????:*:TACT"
+    getterConfig:
+      type: SCALAR
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "Status Code"
+          name: status
+          description: "Status code for the specified Klystron on a beam code"
+  - channel: "KLYS:????:*:PDES"
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "PHAS secondary value"
+          name: PHAS
+          description: "PHAS secondary value after the set PDES operation"
+  - channel: "SBST:????:*:PDES"
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "PHAS secondary value"
+          name: PHAS
+          description: "PHAS secondary value after the set PDES operation"
+  - channel: "KLYS:????:*:KPHR"
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "PHAS secondary value"
+          name: PHAS
+          description: "PHAS secondary value after the set KPHR operation"
+  - channel: "SBST:????:*:KPHR"
+    setterConfig:
+      type: TABLE
+      fields:
+        - label: "PHAS secondary value"
+          name: PHAS
+          description: "PHAS secondary value after the set KPHR operation"
+  - channel: KLYS:????:*:PCON
+    setterConfig:
+      type: VOID
+  - channel: SBST:????:*:PCON
+    setterConfig:
+      type: VOID
+  - channel: KLYS:????:*:ACON
+    setterConfig:
+      type: VOID
+  - channel: SBST:????:*:ACON
+    setterConfig:
+      type: VOID
