@@ -9,7 +9,7 @@ id: 8
 name: SLC
 description: Aida SLC Data Provider
 getterConfig:
-  type: TABLE
+  type: ANY
   fields:
     - name: value
       label: "Device data"
