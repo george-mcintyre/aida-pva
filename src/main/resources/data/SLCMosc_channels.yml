@@ -7,8 +7,8 @@
 # RING                : If the specified relative set value is in units of energy, this parameter is
 #                       required and specifies the ring
 #
-#  Supply the 'AType' parameter to choose the return type, e.g. AType=DOUBLE
-#  Supply the 'AValue' parameter to call setValue() e.g. AValue=0.328, UNITS=FREQUENCY, RING=HER
+#  Supply the 'Type' parameter to choose the return type, e.g. Type=DOUBLE
+#  Supply the 'Value' parameter to call setValue() e.g. Value=0.328, UNITS=FREQUENCY, RING=HER
 id: 142
 name: SLCMosc
 description: Master Oscillator Service

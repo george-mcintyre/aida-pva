@@ -107,10 +107,10 @@ public class AidaRPCService implements RPCService {
         String typeArgument = null;
         AidaArgument valueArgument = null;
         for (AidaArgument argument : arguments) {
-            if (argument.getName().equalsIgnoreCase("AType")) {
+            if (argument.getName().equalsIgnoreCase("Type")) {
                 typeArgument = argument.getValue().toUpperCase();
             }
-            if (argument.getName().equalsIgnoreCase("AValue")) {
+            if (argument.getName().equalsIgnoreCase("Value")) {
                 valueArgument = argument;
             }
         }
@@ -127,10 +127,10 @@ public class AidaRPCService implements RPCService {
                         ((aidaGetterType.equals(SCALAR) || aidaGetterType.equals(SCALAR_ARRAY)) && specifiedAidaType.metaType().equals(aidaGetterType.metaType()))) {
                     aidaGetterType = specifiedAidaType;
                 } else {
-                    throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
+                    throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
                 }
             } catch (IllegalArgumentException e) {
-                throw new UnsupportedChannelTypeException("The type specified by the 'AType' parameter is not a recognised AIDA type" + typeArgument);
+                throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not a recognised AIDA type" + typeArgument);
             }
         } else {
             // If no class is specified then use a default for each type class if the channel config specifies that it needs one
