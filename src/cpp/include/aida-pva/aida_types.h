@@ -20,13 +20,19 @@ void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p)
 #define CONVERT_TO_VMS_FLOAT(_float) \
 {  \
 	int2u one = 1; \
-	CVT_IEEE_TO_VMS_FLT(&_float, &_float, &one); \
+	CVT_IEEE_TO_VMS_FLT(_float, _float, &one); \
 }
 
 #define CONVERT_FROM_VMS_DOUBLE(_float) \
 {  \
 	int2u one = 1; \
-	CVT_VMS_TO_IEEE_DBL(&_float, &_float, &one); \
+	CVT_VMS_TO_IEEE_DBL(_float, _float, &one); \
+}
+
+#define CONVERT_FROM_VMS_FLOAT(_float) \
+{  \
+	int2u one = 1; \
+	CVT_VMS_TO_IEEE_FLT(_float, _float, &one); \
 }
 
 /**

@@ -397,15 +397,33 @@ char* groupNameFromUri(const char* uri)
 	return strtok(_uri, "/");
 }
 
-void secnFromUri(const char* uri, int4u *secn)
+/**
+ * Get secondary number from URI
+ * @param uri the uri
+ * @param secn pointer to an int to store the secondary as a number
+ */
+void secnFromUri(const char* uri, int4u* secn)
 {
 	char* secondary = strstr(uri, "//") + 2;
+	if ( !secondary) {
+		fprintf(stderr, "Found corrupt URI when trying to extract secn: %s\n", uri);
+		*secn = 0;
+		return;
+	}
 	memcpy(secn, secondary, sizeof(int4u));
 }
 
-void pmuStringFromUri(const char* uri, char *pmuString)
+/**
+ * Get the pmu part of a URI
+ * @param uri the uri
+ * @param pmuString the pre-allocated space to store the pmu string
+ */
+void pmuStringFromUri(const char* uri, char pmuString[MAX_PMU_LEN])
 {
-	unsigned long  pmuEnd = strcspn(uri, "/");
+	unsigned long pmuEnd = strcspn(uri, "/");
+	if (pmuEnd >= MAX_URI_LEN) {
+		pmuEnd = MAX_URI_LEN - 1;
+	}
 	strncpy(pmuString, uri, pmuEnd);
 	pmuString[pmuEnd] = 0x0;
 }
@@ -418,12 +436,47 @@ void pmuStringFromUri(const char* uri, char *pmuString)
  * @param micro
  * @param unit
  */
-void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit)
+void pmuFromUri(const char* uri, char* primary, char* micro, int4u* unit)
 {
-	char _uri[100];
-	strcpy(_uri, uri);
+	// strtok variable can't be const
+	char _uri[MAX_URI_LEN];
+	int uriLen = strlen(uri);
+	if (uriLen > MAX_URI_LEN) {
+		// Should be an error but truncate for now
+		strncpy(_uri, uri, MAX_URI_LEN - 1);
+		_uri[MAX_URI_LEN - 1] = 0x0;
+	} else {
+		strcpy(_uri, uri);
+	}
 
-	strcpy(primary, strtok(_uri, ":"));
-	strcpy(micro, strtok(NULL, ":"));
-	*unit = atoi(strtok(NULL, ":"));
+	// Copy each part to the provided variables
+	char* nextPart = strtok(_uri, ":");
+	if (nextPart) {
+		memcpy(primary, nextPart, PRIM_LEN);
+		nextPart = strtok(NULL, ":");
+		if (nextPart) {
+			memcpy(micro, nextPart, MICRO_LEN);
+			nextPart = strtok(NULL, ":");
+			if (nextPart) {
+				memcpy(unit, nextPart, sizeof(int4u));
+			}
+		}
+	}
+}
+
+/**
+ * Convert back from the primary, micro and unit into a URI
+ * @param preAllocatedUriBuffer pre-allocated buffer for uri
+ * @param primary the primary
+ * @param micro the micro
+ * @param unit the unit (int4u)
+ */
+void uriFromPmu(char preAllocatedUriBuffer[MAX_PMU_LEN], char* primary, char* micro, int4u unit)
+{
+	memcpy(preAllocatedUriBuffer, primary, PRIM_LEN);
+	preAllocatedUriBuffer[PRIM_LEN] = ':';
+	memcpy(preAllocatedUriBuffer + PRIM_LEN + 1, micro, MICRO_LEN);
+	preAllocatedUriBuffer[PRIM_LEN + 1 + MICRO_LEN] = ':';
+	memcpy(preAllocatedUriBuffer + PRIM_LEN + 1 + MICRO_LEN + 1, &unit, sizeof(int4u));
+	preAllocatedUriBuffer[PRIM_LEN + 1 + MICRO_LEN + 1 + sizeof(int4u)] = 0x0;
 }

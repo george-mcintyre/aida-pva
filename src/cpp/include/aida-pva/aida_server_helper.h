@@ -26,31 +26,95 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
 #define MISSING_REQUIRED_ARGUMENT_EXCEPTION "MissingRequiredArgumentException"
 
+#define MAX_ERROR_TEXT_LEN 100
+#define MAX_POINTERS 100
+#define MAX_PMU_LEN 18
+#define MAX_URI_LEN 30
+#define PRIM_LEN 4
+#define MICRO_LEN 4
+
+/**
+ * Create tracking variables so that memory can be freed with FREE_ALLOCATED_MEMORY
+ */
+#define TRACK_ALLOCATED_MEMORY \
+    int nAllocationsToFree = 0, nJsonValuesToFree = 0; \
+    void *memoryAllocationsToFree[MAX_POINTERS] ; \
+    json_value *jsonValuesToFree[MAX_POINTERS] ;
+
+/**
+ * Register this newly allocated memory so that it will be freed by FREE_ALLOCATED_MEMORY
+ */
+#define ALLOCATE_MEMORY(_ptr) \
+    memoryAllocationsToFree[nAllocationsToFree++] = (_ptr);
+
+/**
+ * Register this newly allocated json value so that it will be freed by FREE_JSON_MEMORY
+ */
+#define ALLOCATE_JSON_MEMORY(_ptr) \
+    jsonValuesToFree[nJsonValuesToFree++] = (_ptr);
+
+/**
+ * Free any allocated json memory
+ */
+#define FREE_JSON_MEMORY \
+{                              \
+    while ( nJsonValuesToFree-- > 0) { \
+        json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
+    } \
+}
+
+/**
+ * Free any allocated memory
+ */
+#define FREE_ALLOCATED_MEMORY \
+{                              \
+    while ( nAllocationsToFree-- > 0) { \
+        free (memoryAllocationsToFree[nAllocationsToFree]); \
+    } \
+    FREE_JSON_MEMORY \
+}
+
+#define SPRINF_ERROR(_exception, _errorText, _ref, _r) \
+{ \
+    char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
+    sprintf(error, _errorText,  _ref); \
+    aidaThrowNonOsException(env, _exception, error); \
+    return _r; \
+}
+
+#define SPRINF_ERROR_AND_FREE_MEMORY(_exception, _errorText, _ref, _r) \
+{ \
+    char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
+    sprintf(error, _errorText,  _ref); \
+    aidaThrowNonOsException(env, _exception, error); \
+    FREE_ALLOCATED_MEMORY \
+    return _r; \
+}
+
 #define RETURN_NULL_TABLE \
-	Table nullTable; \
-	nullTable.columnCount = 0; \
-	return nullTable;
+    Table nullTable; \
+    nullTable.columnCount = 0; \
+    return nullTable;
 
 #define DEFAULT_CONFIG_REQUEST \
-	Config config; \
-	memset(&config, 0, sizeof(config)); \
-	return config;
+    Config config; \
+    memset(&config, 0, sizeof(config)); \
+    return config;
 
 #define UNSUPPORTED_ARRAY_REQUEST \
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-	Array array; \
-	return array;
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    Array array; \
+    return array;
 
 #define UNSUPPORTED_STRING_ARRAY_REQUEST \
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-	StringArray stringArray; \
-	return stringArray;
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    StringArray stringArray; \
+    return stringArray;
 
 #define UNSUPPORTED_TABLE_REQUEST \
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-	Table table; \
-	return table;
-
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    Table table; \
+    return table;
 
 /**
  * Initialise the aida service.  Called once by the framework when starting up.
@@ -385,16 +449,16 @@ json_value* getJsonValue(Value value, char* path);
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
 char* groupNameFromUri(const char* uri);
-void secnFromUri(const char* uri, int4u *secn);
+void secnFromUri(const char* uri, int4u* secn);
 
 void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
+void uriFromPmu(char preAllocatedUriBuffer[18], char* primary, char* micro, int4u unit);
 
-void pmuStringFromUri(const char* uri, char *pmuString);
+void pmuStringFromUri(const char* uri, char* pmuString);
 
 #define PMU_STRING_FROM_URI(_uri, _var)  \
-	char _var[100]; \
-	pmuStringFromUri(_uri, _var);
-
+    char _var[MAX_PMU_LEN]; \
+    pmuStringFromUri(_uri, _var);
 
 #ifdef __cplusplus
 }

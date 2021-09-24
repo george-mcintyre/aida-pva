@@ -12,6 +12,12 @@ extern "C" {
         return r; \
     }
 
+#define CHECK_EXCEPTION_AND_FREE_MEMORY(r) \
+    if ((*env)->ExceptionCheck(env)) { \
+    	FREE_ALLOCATED_MEMORY \
+        return r; \
+    }
+
 #define CHECK_EXCEPTION_VOID \
     if ((*env)->ExceptionCheck(env)) { \
         return; \

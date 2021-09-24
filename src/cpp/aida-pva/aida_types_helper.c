@@ -1,15 +1,15 @@
 #include <jni.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
 #include "sysutil_proto.h"        /* for cvt_vms_to_ieee_flt */
 
 #include "aida_types.h"
 #include "aida_server_helper.h"
-
-#define MAX_ARGUMENT_NAME_LENGTH 50
 
 /// Definitions for ascanf, and avscanf
 #define FORMAT_INTEGER 'd'
@@ -26,105 +26,136 @@
 
 #define FORMAT_SUFFIX_ARRAY 'a'
 
+#define MAX_FORMAT_SPECIFIERS 20
+#define	MAX_FORMAT 8
+
 #define ARRAY_TARGET(_cType) &((_cType *)(*arrayPtr))[i]
 
 #define ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, _target) \
 { \
     _cType* ptr = (_cType*)(_target); \
     if (!isJson) {                                    \
-        sscanf(valueString, _format, ptr);\
+        sscanf(stringValue, _format, ptr);\
     } else {                                                              \
         if (jsonRoot->type == json_integer) { \
             *ptr = (_cType)jsonRoot->u.integer; \
-		} else if (jsonRoot->type == json_double) { \
+        } else if (jsonRoot->type == json_double) { \
             *ptr = (_cType)(jsonRoot->u.dbl); \
         } else {\
-			json_value_free(arrayRoot); \
-            aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName );\
-            return EXIT_FAILURE;\
+            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": %s", "<json>", EXIT_FAILURE) \
         }\
     }\
-}\
+}
+
+#define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
+{ \
+    *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
+    ALLOCATE_MEMORY(*arrayPtr) \
+    for (int i = 0; i < arrayCount; i++) { \
+        jsonRoot = arrayRoot->u.array.values[i]; \
+        ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, ARRAY_TARGET(_cType)) \
+    } \
+}
+
+#define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
+{ \
+    *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
+    ALLOCATE_MEMORY(*arrayPtr) \
+    for (int i = 0; i < arrayCount; i++) { \
+        jsonRoot = arrayRoot->u.array.values[i]; \
+        _setMacro(ARRAY_TARGET(_cType)) \
+    } \
+}
 
 #define ASCANF_SET_BOOLEAN(_targetBoolean) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetBoolean); \
     if (!isJson) {               \
-        if (isdigit(*valueString)) {\
+        if (isdigit(*stringValue)) {\
             int number;                  \
-            sscanf(valueString, "%d", &number); \
+            sscanf(stringValue, "%d", &number); \
             *ptr = (unsigned char)number; \
         } else  { \
-            *ptr = (unsigned char)!( strcasecmp(valueString, "n") ==0           \
-					|| strcasecmp(valueString, "0") ==0          \
-					|| strcasecmp(valueString, "no") ==0          \
-					|| strcasecmp(valueString, "false") ==0        \
-					|| strcasecmp(valueString, "f")==0 );  \
+            *ptr = (unsigned char)!( strcasecmp(stringValue, "n") ==0           \
+                    || strcasecmp(stringValue, "0") ==0          \
+                    || strcasecmp(stringValue, "no") ==0          \
+                    || strcasecmp(stringValue, "false") ==0        \
+                    || strcasecmp(stringValue, "f")==0 );  \
         } \
     } else {   \
         if (jsonRoot->type == json_integer) { \
             *ptr = (unsigned char)(jsonRoot->u.integer != 0); \
-		} else if (jsonRoot->type == json_double) { \
-			*ptr = (unsigned char)(jsonRoot->u.dbl != 0.0); \
-		} else if (jsonRoot->type == json_boolean) { \
-			*ptr = (unsigned char)jsonRoot->u.boolean; \
-		} else if (jsonRoot->type == json_string) { \
+        } else if (jsonRoot->type == json_double) { \
+            *ptr = (unsigned char)(jsonRoot->u.dbl != 0.0); \
+        } else if (jsonRoot->type == json_boolean) { \
+            *ptr = (unsigned char)jsonRoot->u.boolean; \
+        } else if (jsonRoot->type == json_string) { \
             *ptr = (unsigned char)!(strcasecmp(jsonRoot->u.string.ptr, "false") == 0 \
                     || strcasecmp(jsonRoot->u.string.ptr, "n") == 0 \
                     || strcasecmp(jsonRoot->u.string.ptr, "0") == 0 \
                     || strcasecmp(jsonRoot->u.string.ptr, "no") == 0 \
                     || strcasecmp(jsonRoot->u.string.ptr, "f") == 0); \
         } else {  \
-			json_value_free(arrayRoot); \
-            aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean"); \
-            return EXIT_FAILURE; \
+            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", "<json>", EXIT_FAILURE) \
         } \
     } \
 }
+
+#define ASCANF_SET_BOOLEAN_ARRAY ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(unsigned char, ASCANF_SET_BOOLEAN)
 
 #define ASCANF_SET_BYTE(_targetByte) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetByte); \
     if (!isJson) { \
-        *ptr = *valueString; \
+        *ptr = *stringValue; \
     } else {   \
         if (jsonRoot->type == json_integer) { \
             *ptr = jsonRoot->u.integer; \
-		} else if (jsonRoot->type == json_string && jsonRoot->u.string.length == 1) { \
+        } else if (jsonRoot->type == json_string && jsonRoot->u.string.length == 1) { \
             *ptr = *jsonRoot->u.string.ptr; \
         } else { \
-			json_value_free(arrayRoot); \
-            aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't convert argument to byte"); \
-            return EXIT_FAILURE; \
+            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to byte: %s", "<json>", EXIT_FAILURE) \
         } \
     } \
 }
+
+#define ASCANF_SET_BYTE_ARRAY ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(unsigned char, ASCANF_SET_BYTE)
 
 #define ASCANF_SET_STRING(_targetString) \
 { \
     char** ptr = (char**)(_targetString); \
     if (!isJson) { \
-        *ptr = valueString; \
+        *ptr = stringValue; \
     } else {  \
-		if (aidaType == AIDA_STRING_TYPE) { \
-			nextStringPosition = malloc(jsonRoot->u.string.length+1); \
-		}\
-		if (jsonRoot->type == json_string) { \
-			strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
-		} else if (jsonRoot->type == json_integer) {                \
-			sprintf(nextStringPosition, "%d", jsonRoot->u.integer); \
-		} else if (jsonRoot->type == json_double) {                 \
-			sprintf(nextStringPosition, "%g", jsonRoot->u.dbl); \
-		} else { \
-			if (aidaType == AIDA_STRING_TYPE) { \
-				free(nextStringPosition); \
-			}\
-			json_value_free(arrayRoot); \
-			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't convert argument to string"); \
-			return EXIT_FAILURE; \
-		} \
-		*ptr = nextStringPosition; \
-		nextStringPosition+=strlen(nextStringPosition)+1; \
+        if (aidaType == AIDA_STRING_TYPE) { \
+            nextStringPosition = malloc(jsonRoot->u.string.length+1); \
+        }\
+        if (jsonRoot->type == json_string) { \
+            strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
+        } else if (jsonRoot->type == json_integer) {                \
+            sprintf(nextStringPosition, "%d", jsonRoot->u.integer); \
+        } else if (jsonRoot->type == json_double) {                 \
+            sprintf(nextStringPosition, "%g", jsonRoot->u.dbl); \
+        } else { \
+            if (aidaType == AIDA_STRING_TYPE) { \
+                free(nextStringPosition); \
+            }\
+            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: %s", "<json>", EXIT_FAILURE) \
+        } \
+        *ptr = nextStringPosition; \
+        nextStringPosition+=strlen(nextStringPosition)+1; \
+    } \
+}
+
+#define ASCANF_SET_STRING_ARRAY \
+{ \
+    size_t pointerSpace = arrayCount * sizeof(char*); \
+    *arrayPtr = malloc(pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1);\
+    ALLOCATE_MEMORY(*arrayPtr); \
+    nextStringPosition = ((char*)*arrayPtr) + pointerSpace; \
+    for (int i = 0; i < arrayCount; i++) { \
+        jsonRoot = arrayRoot->u.array.values[i]; \
+        ASCANF_SET_STRING(ARRAY_TARGET(char *)) \
     } \
 }
 
@@ -133,7 +164,7 @@ static Type tableArrayTypeOf(Type type);
 static size_t tableElementSizeOfOf(Type type);
 static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, va_list argp);
 static Type fToType(JNIEnv* env, char format, short isArray, short isLong, short isShort);
-static int getJsonPathElements(char* fullJsonPath, char variableName[MAX_ARGUMENT_NAME_LENGTH], char** path);
+static int getJsonPathElements(char* fullJsonPath, char* variableName, char** path);
 
 /**
  * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
@@ -299,82 +330,104 @@ int avscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatS
 
 static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, va_list argp)
 {
-	// Remove white space and empty format strings, also don't mess with the strtok variable!
-	char localFormatString[200];
-	strcpy(localFormatString, formatString);
-	char* formatSpecifier = strtok(localFormatString, "%");
-	if (!formatSpecifier) {
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "No format specifiers found");
+	// Keep track of stuff to free
+	TRACK_ALLOCATED_MEMORY
+
+	if (!formatString) {
+		FREE_ALLOCATED_MEMORY
+		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "No format specifiers provided to ascanf");
 		return EXIT_FAILURE;
 	}
 
-	// loop over format specifiers
+	// Remove white space and empty format strings, also strtok variable must not be const!
+	char _formatString[strlen(formatString) + 1];
+	sprintf(_formatString, "- %s", formatString);
+	char* formatSpecifier = strtok(_formatString, "% ");
+	int numberOfFormatStrings = 0;
+	char formatSpecifiers[MAX_FORMAT_SPECIFIERS][MAX_FORMAT];
+	for (int i = 0; formatSpecifier ; ++i) {
+		numberOfFormatStrings++;
+		strcpy(formatSpecifiers[i], formatSpecifier);
+		formatSpecifier = strtok(NULL, "% ");
+	}
 
-	char* nextStringPosition; // used to store strings in space at end of pointers to strings
-	for (; formatSpecifier != NULL; formatSpecifier = strtok(NULL, "%")) {
-		char* thisFormatSpecifier = formatSpecifier;
-		short lenFormatSpecifier = (short)strlen(thisFormatSpecifier);
-		while (isspace(*thisFormatSpecifier)) {
-			thisFormatSpecifier++;
-			lenFormatSpecifier--;
-		}
-		if (!lenFormatSpecifier) {
+	if (!numberOfFormatStrings) {
+		FREE_ALLOCATED_MEMORY
+		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "No format specifiers provided to ascanf");
+		return EXIT_FAILURE;
+	}
+
+	// nextStringPosition: Used to store strings in space at end of pointers to strings
+	// String space is allocated as follows:
+	// +------------------------+----------+----------+----------+---------+
+	// | pointers to strings    | string 1 | string 2 | string 3 | ...     |
+	// +------------------------+----------+----------+----------+---------+
+	// So only one block of memory needs to be freed.
+	// The nextStringPosition initially points to the first position after the list of pointers
+	// to strings and is incremented by the string length each time
+	char* nextStringPosition;
+
+	// loop over format specifiers
+	for (int formatNumber = 0; formatNumber < numberOfFormatStrings; formatNumber++) {
+		formatSpecifier = formatSpecifiers[formatNumber];
+
+		char* currentPositionInFormatSpecifier = formatSpecifier;
+		short remainingFormatSpecifierCharacters = (short)strlen(formatSpecifier);
+
+		// If format specifier is empty or our artificially added prefix then silently ignore
+		if (!remainingFormatSpecifierCharacters || *currentPositionInFormatSpecifier == '-') {
 			continue;
 		}
 
-		// extract the isRequiredFlag, format, isLong, isShort, and isArray
-		short isRequiredFlag = 1, isLong = 0, isShort = 0, isArray = 0;
+		// extract the format, isRequiredFlag, isLong, isShort, and isArray
 		char format = 0x0;
+		short isRequired = true, isLong = false, isShort = false, isArray = false;
 
-		if (lenFormatSpecifier > 1 && *thisFormatSpecifier == FORMAT_OPTIONAL_FLAG) {
-			isRequiredFlag = 0;
-			lenFormatSpecifier--;
-			thisFormatSpecifier++;
+		if (remainingFormatSpecifierCharacters && *currentPositionInFormatSpecifier == FORMAT_OPTIONAL_FLAG) {
+			isRequired = false;
+			remainingFormatSpecifierCharacters--;
+			currentPositionInFormatSpecifier++;
 		}
 
-		if (lenFormatSpecifier > 1) {
-			if (*thisFormatSpecifier == FORMAT_PREFIX_SHORT) {
-				isShort = 1;
-				lenFormatSpecifier--;
-				thisFormatSpecifier++;
-			} else if (*thisFormatSpecifier == FORMAT_PREFIX_LONG) {
-				isLong = 1;
-				lenFormatSpecifier--;
-				thisFormatSpecifier++;
+		if (remainingFormatSpecifierCharacters) {
+			if (*currentPositionInFormatSpecifier == FORMAT_PREFIX_SHORT) {
+				isShort = true;
+				remainingFormatSpecifierCharacters--;
+				currentPositionInFormatSpecifier++;
+			} else if (*currentPositionInFormatSpecifier == FORMAT_PREFIX_LONG) {
+				isLong = true;
+				remainingFormatSpecifierCharacters--;
+				currentPositionInFormatSpecifier++;
 			}
 		}
 
-		if (lenFormatSpecifier > 0) {
-			format = *thisFormatSpecifier++;
-			lenFormatSpecifier--;
+		if (remainingFormatSpecifierCharacters) {
+			format = *currentPositionInFormatSpecifier++;
+			remainingFormatSpecifierCharacters--;
 		}
 
-		if (lenFormatSpecifier > 0 && *thisFormatSpecifier == FORMAT_SUFFIX_ARRAY) {
-			isArray = 1;
+		if (remainingFormatSpecifierCharacters && *currentPositionInFormatSpecifier == FORMAT_SUFFIX_ARRAY) {
+			isArray = true;
 		}
 
-		// Invalid format
+		// Invalid format - if no format was specified
 		if (!format) {
-			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
-					"incorrect format string passed to ascanf() or avscanf()");
-			return EXIT_FAILURE;
+			SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "incorrect format string: %%%s", formatSpecifier, EXIT_FAILURE)
 		}
 
-		// get argumentName, and set isJson and isValue flags appropriately
-		// Also get the valueString and json root
-		char* argumentName = va_arg (argp, char *), * valueString = NULL;
+		// get argumentName
+		// This is the name of the argument that we will get the value from
+		char* argumentName = va_arg (argp, char *);
 		if (!argumentName) {
-			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
-					"call to ascanf() missing variable to correspond to format");
-			return EXIT_FAILURE;
+			SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "missing variable to correspond to format: %%%s", formatSpecifier, EXIT_FAILURE)
 		}
 
-		short isJson = 0, isValue = 0;
-		json_value* jsonRoot = NULL;
-		json_type jsonType = json_none;
+		// Set isJson (if argument value is json) and
+		// isValue (if we need to get the value from the "value" argument)
+		short isJson = false, isValue = false;
 
 		if (strncasecmp(argumentName, "value", 5) == 0) {
-			isValue = 1;
+			isValue = true;
 		}
 
 		if (strchr(argumentName, '.') != NULL || strchr(argumentName, '[') != NULL) {
@@ -392,218 +445,185 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 		// Convert format, isArray, isLong, and isShort into an AIDA_TYPE
 		Type aidaType = fToType(env, format, isArray, isLong, isShort);
-		CHECK_EXCEPTION(EXIT_FAILURE);
+		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
 
-		char variableName[MAX_ARGUMENT_NAME_LENGTH];
-		char* path;
+		// if the argument is json then the name may contain dots and square braces,
+		// so this variable contains just the argument name part at the beginning.
+		// e.g. if the argumentName="bpms[0].name" then jsonArgumentName="bpms"
+		char jsonArgumentName[strlen(argumentName) + 1];
+
+		// The json path used to identify the element in the given json that we should use.
+		// It is the remaining part of the argument name after the jsonArgumentName has been removed.
+		// e.g. if the argumentName="bpms[0].name" then jsonPath="[0].name"
+		char* jsonPath;
+
+		// This is the value extracted from the provided argument that has been parsed for json
+		Value elementValue;
+
+		// get the valueString and jsonRoot
+		// valueString is the string representation of the argument's value and
+		// jsonRoot is the root of the parsed json version of the argument, if the argument is json
+		char* stringValue = NULL;
+		json_value* jsonRoot = NULL;
+		json_type jsonType = json_none;
 		if (!isValue) {
 			if (!isJson) {
+				// Normal string argument
 				Argument elementArgument = getArgument(*arguments, argumentName);
 				if (!elementArgument.name) {
-					if (isRequiredFlag) {
-						aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-								"Missing required argument");
-						return EXIT_FAILURE;
+					if (isRequired) {
+						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+								"Missing required argument: %s", argumentName, EXIT_FAILURE)
 					} else {
 						continue;
 					}
 				}
-				valueString = elementArgument.value;
+				stringValue = elementArgument.value;
 			} else {
-				getJsonPathElements(argumentName, variableName, &path);
-				Value elementValue = getNamedValue(env, *arguments, variableName);
-				CHECK_EXCEPTION(EXIT_FAILURE);
+				// Normal json argument
+				getJsonPathElements(argumentName, jsonArgumentName, &jsonPath);
+				elementValue = getNamedValue(env, *arguments, jsonArgumentName);
+				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
 				if (elementValue.type == AIDA_NO_TYPE) {
-					if (isRequiredFlag) {
-						aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-								"Missing required argument");
-						return EXIT_FAILURE;
+					if (isRequired) {
+						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+								"Missing required argument: %s", argumentName, EXIT_FAILURE)
 					} else {
 						continue;
 					}
 				}
-				jsonRoot = getJsonValue(elementValue, path);
+				ALLOCATE_JSON_MEMORY(elementValue.value.jsonValue)
+				jsonRoot = getJsonValue(elementValue, jsonPath);
 				jsonType = jsonRoot->type;
 			}
 		} else {
-			Value elementValue;
+			// First check if we have had the value passed to us as an argument
+			// If not then go and get it
 			if (value == NULL) {
 				elementValue = getValue(env, *arguments);
-				CHECK_EXCEPTION(EXIT_FAILURE);
+				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
 				value = &elementValue;
+				if (elementValue.type == AIDA_JSON_TYPE) {
+					ALLOCATE_JSON_MEMORY(elementValue.value.jsonValue)
+				}
 			}
 
+			// Check if the value has been properly set
 			if (value->type == AIDA_NO_TYPE) {
-				if (isRequiredFlag) {
-					aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-							"Missing required argument");
-					return EXIT_FAILURE;
+				if (isRequired) {
+					SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing required argument: %s",
+							argumentName, EXIT_FAILURE)
 				} else {
 					continue;
 				}
 			}
 
 			if (!isJson) {
-				valueString = value->value.stringValue;
+				// Value string argument
+				stringValue = value->value.stringValue;
 			} else {
-				getJsonPathElements(argumentName, variableName, &path);
-				jsonRoot = getJsonValue(*value, path);
+				// Value json argument
+				getJsonPathElements(argumentName, jsonArgumentName, &jsonPath);
+				jsonRoot = getJsonValue(*value, jsonPath);
 				jsonType = jsonRoot->type;
 			}
 		}
 
-		// If this is an array type then parse out the array from the string into the jsonRoot.
 		// Note that for strings we allocate enough memory for all the pointers and for the strings as well
 		// stored contiguously afterwards so that the caller simply frees the pointer-to-pointer to strings
-		json_value* arrayRoot;
+		// +------------------------+----------+----------+----------+---------+
+		// | pointers to strings    | string 1 | string 2 | string 3 | ...     |
+		// +------------------------+----------+----------+----------+---------+
+		// For all other arrays the allocated space is simply a contiguous set of elements of the base array type
+
+		// If this is an array type but the argument's value is a string then parse out the array from the string
+		// into the arrayRoot so that from this point forwards we can be sure that all arrays have a valid arrayRoot set.
+		json_value* arrayRoot = NULL;
 		unsigned int arrayCount;
 		if (isArray && !isJson) {
-			jsonRoot = json_parse(valueString, strlen(valueString));
-			isJson = 1;
-			if (jsonRoot == NULL || jsonRoot->type != json_array) {
-				json_value_free(jsonRoot);
-				aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't extract array from argument");
-				return EXIT_FAILURE;
+			jsonRoot = json_parse(stringValue, strlen(stringValue));
+			if (!jsonRoot) {
+				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't extract array from argument: %s",
+						stringValue, EXIT_FAILURE)
 			}
+			ALLOCATE_JSON_MEMORY(jsonRoot)
+
+			if (jsonRoot->type != json_array) {
+				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't extract array from argument: %s",
+						stringValue, EXIT_FAILURE)
+			}
+
 			jsonType = jsonRoot->u.array.values[0]->type;
 		}
+
 		if (isArray) {
 			arrayRoot = jsonRoot;
 			arrayCount = arrayRoot->u.array.length;
 		}
 
 		// Now we have a valueString or jsonRoot, a target to put the data and the type we want to extract!
-
 		// based on format process the argument and or value
 		switch (aidaType) {
 		case AIDA_BOOLEAN_TYPE: ASCANF_SET_BOOLEAN(target)
 			break;
-		case AIDA_BOOLEAN_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(unsigned char));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_BOOLEAN(ARRAY_TARGET(unsigned char))
-			}
+		case AIDA_BOOLEAN_ARRAY_TYPE: ASCANF_SET_BOOLEAN_ARRAY
 			break;
-		}
 		case AIDA_BYTE_TYPE: ASCANF_SET_BYTE(target)
 			break;
-		case AIDA_BYTE_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(unsigned char));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_BYTE(ARRAY_TARGET(unsigned char))
-			}
+		case AIDA_BYTE_ARRAY_TYPE: ASCANF_SET_BYTE_ARRAY
 			break;
-		}
 		case AIDA_SHORT_TYPE: ASCANF_SET_SCALAR("%hi", short, json_integer, "short", target)
 			break;
-		case AIDA_SHORT_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(short));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%hi", short, json_integer, "short", ARRAY_TARGET(short))
-			}
+		case AIDA_SHORT_ARRAY_TYPE: ASCANF_SET_ARRAY("%hi", short, json_integer, "short")
 			break;
-		}
 		case AIDA_UNSIGNED_SHORT_TYPE: ASCANF_SET_SCALAR("%hu", unsigned short, json_integer, "unsigned short", target)
 			break;
-		case AIDA_UNSIGNED_SHORT_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(unsigned short));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%hu", unsigned short, json_integer, "unsigned short", ARRAY_TARGET(unsigned short))
-			}
+		case AIDA_UNSIGNED_SHORT_ARRAY_TYPE: ASCANF_SET_ARRAY("%hu", unsigned short, json_integer, "unsigned short")
 			break;
-		}
 		case AIDA_INTEGER_TYPE: ASCANF_SET_SCALAR("%d", int, json_integer, "integer", target)
 			break;
-		case AIDA_INTEGER_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(int));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%d", int, json_integer, "integer", ARRAY_TARGET(int))
-			}
+		case AIDA_INTEGER_ARRAY_TYPE: ASCANF_SET_ARRAY("%d", int, json_integer, "integer")
 			break;
-		}
 		case AIDA_UNSIGNED_INTEGER_TYPE: ASCANF_SET_SCALAR("%u", unsigned int, json_integer, "unsigned integer", target)
 			break;
-		case AIDA_UNSIGNED_INTEGER_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(unsigned int));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%d", unsigned int, json_integer, "unsigned integer", ARRAY_TARGET(unsigned int))
-			}
+		case AIDA_UNSIGNED_INTEGER_ARRAY_TYPE: ASCANF_SET_ARRAY("%u", unsigned int, json_integer, "unsigned integer")
 			break;
-		}
 		case AIDA_LONG_TYPE: ASCANF_SET_SCALAR("%ld", long, json_integer, "long", target)
 			break;
-		case AIDA_LONG_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(long));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%ld", long, json_integer, "long", ARRAY_TARGET(long))
-			}
+		case AIDA_LONG_ARRAY_TYPE: ASCANF_SET_ARRAY("%ld", long, json_integer, "long")
 			break;
-		}
 		case AIDA_UNSIGNED_LONG_TYPE: ASCANF_SET_SCALAR("%lu", unsigned long, json_integer, "unsigned long", target)
 			break;
-		case AIDA_UNSIGNED_LONG_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(unsigned long));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%lu", unsigned long, json_integer, "unsigned long", ARRAY_TARGET(unsigned long))
-			}
+		case AIDA_UNSIGNED_LONG_ARRAY_TYPE: ASCANF_SET_ARRAY("%lu", unsigned long, json_integer, "unsigned long")
 			break;
-		}
 		case AIDA_FLOAT_TYPE: ASCANF_SET_SCALAR("%f", float, json_double, "float", target)
 			break;
-		case AIDA_FLOAT_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(float));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%f", float, json_double, "float", ARRAY_TARGET(float))
-			}
+		case AIDA_FLOAT_ARRAY_TYPE: ASCANF_SET_ARRAY("%f", float, json_double, "float")
 			break;
-		}
 		case AIDA_DOUBLE_TYPE: ASCANF_SET_SCALAR("%lf", double, json_double, "double", target)
 			break;
-		case AIDA_DOUBLE_ARRAY_TYPE: {
-			*arrayPtr = calloc(arrayCount, sizeof(double));
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_SCALAR("%lf", double, json_double, "double", ARRAY_TARGET(double))
-			}
+		case AIDA_DOUBLE_ARRAY_TYPE: ASCANF_SET_ARRAY("%lf", double, json_double, "double")
 			break;
-		}
 		case AIDA_STRING_TYPE: ASCANF_SET_STRING(target)
 			break;
-		case AIDA_STRING_ARRAY_TYPE: {
-			// Enough space for pointers and data
-			size_t pointerSpace = arrayCount * sizeof(char*);
-			*arrayPtr = malloc(pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1);
-			nextStringPosition = ((char*)*arrayPtr) + pointerSpace;
-			for (int i = 0; i < arrayCount; i++) {
-				jsonRoot = arrayRoot->u.array.values[i];
-				ASCANF_SET_STRING(ARRAY_TARGET(char *))
-			}
+		case AIDA_STRING_ARRAY_TYPE: ASCANF_SET_STRING_ARRAY
 			break;
-		}
+
+			// Will never happen so ignore
 		case AIDA_NO_TYPE:
+		case AIDA_VOID_TYPE:
+		case AIDA_TABLE_TYPE:
+		case AIDA_JSON_TYPE:
 		default:
-			return (EXIT_FAILURE); // Exception was raised
+			break;
 		}
 
 		if (isArray) {
 			*elementCount = arrayCount;
 		}
-
-		// Free any json that has been parsed in this iteration unless it is from the value which will be freed later
-		if (!isValue && arrayRoot) {
-			json_value_free(arrayRoot);
-		}
 	}
 
+	FREE_JSON_MEMORY
 	return EXIT_SUCCESS;
 }
 
@@ -615,7 +635,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
  * @param path
  * @return
  */
-static int getJsonPathElements(char* fullJsonPath, char variableName[MAX_ARGUMENT_NAME_LENGTH], char** path)
+static int getJsonPathElements(char* fullJsonPath, char* variableName, char** path)
 {
 	char* firstDot = strchr(fullJsonPath, '.');
 	char* firstParen = strchr(fullJsonPath, '[');
@@ -623,16 +643,13 @@ static int getJsonPathElements(char* fullJsonPath, char variableName[MAX_ARGUMEN
 							 MAX(firstDot, firstParen) :
 							 MIN(firstParen, firstDot);
 	int lenRootArgument = (int)(relativeJsonPath - fullJsonPath);
-	if (lenRootArgument < MAX_ARGUMENT_NAME_LENGTH) {
-		if (*relativeJsonPath == '.') {
-			relativeJsonPath++; // skip opening dot
-		}
-		memcpy(variableName, fullJsonPath, lenRootArgument);
-		variableName[lenRootArgument] = 0x0;
-		*path = relativeJsonPath;
-	} else {
-		return EXIT_FAILURE;
+
+	if (*relativeJsonPath == '.') {
+		relativeJsonPath++; // skip opening dot
 	}
+	memcpy(variableName, fullJsonPath, lenRootArgument);
+	variableName[lenRootArgument] = 0x0;
+	*path = relativeJsonPath;
 	return EXIT_SUCCESS;
 }
 
