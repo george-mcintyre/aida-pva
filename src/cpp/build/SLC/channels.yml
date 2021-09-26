@@ -2,8 +2,8 @@
 # Channels definition file for aida-pva: SLC data provider
 # This file defines the available channels for the SLC aida service
 #
-#  Supply the 'AType' parameter to choose the return type, e.g. AType=FLOAT
-#  Supply the 'AValue' parameter to call setValue() set a float value e.g. AValue=78.32
+#  Supply the 'Type' parameter to choose the return type, e.g. Type=FLOAT
+#  Supply the 'Value' parameter to call setValue() set a float value e.g. Value=78.32
 #
 id: 8
 name: SLC
@@ -17,6 +17,15 @@ getterConfig:
 setterConfig:
   type: VOID
 channels:
+  - channel: "ASTS:????:*:CTRL"
+    getterConfig:
+      type: STRING_ARRAY
+  - channel: "ASTS:????:*:STAT"
+    getterConfig:
+      type: STRING_ARRAY
+  - channel: "ASTS:????:*:VSTA"
+    getterConfig:
+      type: STRING_ARRAY
   - channel: "*:????:*:A4CN"
   - channel: "*:????:*:A4DS"
   - channel: "*:????:*:AACT"
