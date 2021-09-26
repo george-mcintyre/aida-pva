@@ -373,7 +373,7 @@ jobject toFloat(JNIEnv* env, jfloat data);
 jobject toDouble(JNIEnv* env, jdouble data);
 
 /**
- * Get value from the {@code AValue} argument in the provided arguments structure.
+ * Get value from the {@code Value} argument in the provided arguments structure.
  *
  * @param env env
  * @param arguments provided arguments structure

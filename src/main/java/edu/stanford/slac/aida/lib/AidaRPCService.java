@@ -130,7 +130,7 @@ public class AidaRPCService implements RPCService {
                     throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
                 }
             } catch (IllegalArgumentException e) {
-                throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not a recognised AIDA type" + typeArgument);
+                throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
             }
         } else {
             // If no class is specified then use a default for each type class if the channel config specifies that it needs one

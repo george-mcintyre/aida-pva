@@ -414,6 +414,21 @@ void secnFromUri(const char* uri, int4u* secn)
 }
 
 /**
+ * Get secondary from URI.  Just points into the URI so don't go messing with it
+ * @param uri the uri
+ * @param secn pointer to an int to store the secondary as a number
+ */
+const char *secondaryFromUri(const char* uri)
+{
+	char* secondary = strstr(uri, "//");
+	if ( !secondary ) {
+		fprintf(stderr, "Secondary not found in uri: %s\n", uri);
+		return uri;
+	}
+	return secondary+2;
+}
+
+/**
  * Get the pmu part of a URI
  * @param uri the uri
  * @param pmuString the pre-allocated space to store the pmu string

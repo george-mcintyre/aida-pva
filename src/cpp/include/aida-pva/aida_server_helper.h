@@ -450,6 +450,7 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
 char* groupNameFromUri(const char* uri);
 void secnFromUri(const char* uri, int4u* secn);
+const char *secondaryFromUri(const char* uri);
 
 void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
 void uriFromPmu(char preAllocatedUriBuffer[18], char* primary, char* micro, int4u unit);

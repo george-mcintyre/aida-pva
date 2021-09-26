@@ -350,7 +350,7 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
 }
 
 /**
- * Get value from the {@code AValue} argument in the provided arguments structure.
+ * Get value from the {@code Value} argument in the provided arguments structure.
  *
  * @param env env
  * @param arguments provided arguments structure
@@ -358,7 +358,7 @@ Arguments toArguments(JNIEnv* env, jobject jArgs)
  */
 Value getValue(JNIEnv* env, Arguments arguments)
 {
-	return getNamedValue(env, arguments, "AValue");
+	return getNamedValue(env, arguments, "Value");
 }
 
 /**
