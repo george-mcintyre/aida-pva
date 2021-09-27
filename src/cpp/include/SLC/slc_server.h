@@ -26,12 +26,6 @@ extern int JNI_DBACCESSENABLED(void);
 
 extern vmsstat_t JNI_DBSETFLOAT(const char*, float*, int length);
 
-void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri);
-
-#define TO_SLAC_NAME \
-	char slcName[MAX_URI_LEN]; \
-	uriToSlcName(slcName, uri);
-
 #ifdef __cplusplus
 }
 #endif

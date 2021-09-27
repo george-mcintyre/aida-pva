@@ -229,7 +229,9 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 	returnValue = toJString(env, string);
 
 	// Release String
-	free(string);
+	if ( string ) {
+		free(string);
+	}
 
 	// Free up arguments list
 	releaseArguments(arguments);

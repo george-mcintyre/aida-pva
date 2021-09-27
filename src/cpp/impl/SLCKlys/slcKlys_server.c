@@ -23,8 +23,9 @@ static int getBeamArgument(JNIEnv* env, Arguments arguments, char** beam);
 static int getDGrpArgument(JNIEnv* env, Arguments arguments, char** dgrp);
 static int getTrimArgument(JNIEnv* env, Arguments arguments, char** trim);
 static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, short* klys_status);
+static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);
 
-Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments);
+Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
 Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn);
 Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn);
 Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Value value, char* trim, char* pmu, char* secn);
@@ -98,7 +99,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
-	if (getKlystronStatus(env, uri, arguments, &klystronStatus) == EXIT_FAILURE) {
+	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
 		return 0;
 	}
 	return klystronStatus;
@@ -129,7 +130,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
-	if (getKlystronStatus(env, uri, arguments, &klystronStatus) == EXIT_FAILURE) {
+	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
 		return 0;
 	}
 	return (long)klystronStatus;
@@ -174,10 +175,16 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
-	if (getKlystronStatus(env, uri, arguments, &klystronStatus) == EXIT_FAILURE) {
+	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
 		return NULL;
 	}
+
 	char* stringKlystronStatus = malloc(40);
+	if (!stringKlystronStatus) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Can't allocate space for string");
+		return NULL;
+	}
+
 	if (klystronStatus) {
 		strcpy(stringKlystronStatus, "activated");
 	} else {
@@ -353,7 +360,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	PMU_STRING_FROM_URI(uri, pmu_str)
 
 	if (endsWith(uri, "TACT")) {
-		return setActivateValue(env, uri, arguments);
+		return setActivateValue(env, uri, arguments, value);
 	} else if (endsWith(uri, "PDES")) {
 		return setPdesValue(env, uri, arguments, value, pmu_str, "PDES");
 	} else if (endsWith(uri, "KPHR")) {
@@ -375,7 +382,7 @@ void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn)
 
 	// Set the value
 	vmsstat_t status;
-	CONVERT_TO_VMS_FLOAT(floatValue)
+	CONVERT_TO_VMS_FLOAT(&floatValue, 1)
 
 	status = DPSLCKLYS_SETCONFIG(pmu, &floatValue, secn);
 	if (!SUCCESS(status)) {
@@ -408,8 +415,8 @@ Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Value value, char* trim, 
 
 	// Set the value
 	float phas_value;  /* Returned in ieee format */
-	CONVERT_TO_VMS_FLOAT(secn_value_array[0])
-	vmsstat_t status  = DPSLCKLYS_SETTRIMPHASE(pmu, secn, secn_value_array, trim, &phas_value);
+	CONVERT_TO_VMS_FLOAT(&secn_value_array[0], 1)
+	vmsstat_t status = DPSLCKLYS_SETTRIMPHASE(pmu, secn, secn_value_array, trim, &phas_value);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Could not convert float");
 		RETURN_NULL_TABLE;
@@ -422,14 +429,78 @@ Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Value value, char* trim, 
 	return table;
 }
 
-Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments)
+Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	// Get the status to return it
+	// Keep track of stuff to free
+	TRACK_ALLOCATED_MEMORY
+
+	// Validate and get value
+	if (value.type != AIDA_STRING_TYPE
+			|| (strcmp(value.value.stringValue, "1") != 0 && strcmp(value.value.stringValue, "0") != 0)) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Supplied value must be 0 or 1");
+		RETURN_NULL_TABLE;
+	}
+	int isActivateOperation = (*value.value.stringValue == '1') ? 1 : 0;
+
+	// Get the arguments
+	char* beam_c;
+	char* dgrp_c = NULL;
+
+	if (ascanf(env, &arguments, "%s %os",
+			"beam", &beam_c,
+			"dgrp", &dgrp_c
+	)) {
+		RETURN_NULL_TABLE
+	}
+	PMU_STRING_FROM_URI(uri, shortSlcName)
+
+	ALLOCATE_MEMORY(beam_c)
+	if (dgrp_c)
+		ALLOCATE_MEMORY(dgrp_c)
+
+	// Get the status
 	short klys_status;
-	if (getKlystronStatus(env, uri, arguments, &klys_status) == EXIT_FAILURE) {
+	int callStatus = klystronStatus(env, shortSlcName, beam_c, dgrp_c, &klys_status);
+	if (callStatus) {
+		FREE_ALLOCATED_MEMORY
 		RETURN_NULL_TABLE
 	}
 
+	short isInAccelerateState = (short)(klys_status & LINKLYSTA_ACCEL);
+	short isInStandByState = (short)(klys_status & LINKLYSTA_STANDBY);
+
+	// If trying to activate but not in standby state
+	if ( isActivateOperation && !isInStandByState ) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Cannot reactivate klystron when not in standby state");
+		FREE_ALLOCATED_MEMORY
+		RETURN_NULL_TABLE
+	}
+
+	// If trying to deactivate but not in accelerate state
+	if ( !isActivateOperation && !isInAccelerateState ) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Cannot deactivate klystron when not in accelerate state");
+		FREE_ALLOCATED_MEMORY
+		RETURN_NULL_TABLE
+	}
+
+	// Set the new value
+	printf("Parameters: %s, %d, %s\n", shortSlcName, isActivateOperation, beam_c);
+	int status = DPSLCKLYS_SETDEACTORREACT(shortSlcName, isActivateOperation, beam_c);
+	if (!SUCCESS(status))
+	{
+		FREE_ALLOCATED_MEMORY
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Could not set activation state" );
+		RETURN_NULL_TABLE
+	}
+
+	// Get the status to return it
+	callStatus = klystronStatus(env, shortSlcName, beam_c, dgrp_c, &klys_status);
+	FREE_ALLOCATED_MEMORY
+	if (callStatus) {
+		RETURN_NULL_TABLE
+	}
+
+	// Create table for return value
 	Table table = tableCreate(env, 1, 1);
 	CHECK_EXCEPTION(table)
 	tableAddSingleRowShortColumn(env, &table, klys_status);
@@ -455,14 +526,31 @@ static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, 
 			"beam", &beam_c,
 			"dgrp", &dgrp_c
 	)) {
-		return (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
-	vmsstat_t status = DPSLCKLYS_GETSTATUS((char*)uri, beam_c, dgrp_c ? dgrp_c : "LIN_KLYS", klys_status);
+	TO_SLAC_NAME
+	int returnStatus = klystronStatus(env, slcName, beam_c, dgrp_c, klys_status);
+
 	free(beam_c);
-	if ( dgrp_c )
+	if (dgrp_c)
 		free(dgrp_c);
 
+	return returnStatus;
+}
+
+/**
+ * Get Status
+ *
+ * @param env
+ * @param uri
+ * @param arguments
+ * @param klys_status
+ * @return
+ */
+static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status)
+{
+	vmsstat_t status = DPSLCKLYS_GETSTATUS(slcName, beam_c, dgrp_c ? dgrp_c : "LIN_KLYS", klys_status);
 	if (!SUCCESS(status)) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "failed to get klystron status");
 		return EXIT_FAILURE;
@@ -470,7 +558,6 @@ static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, 
 
 	return EXIT_SUCCESS;
 }
-
 
 /**
  * Get Trim Argument

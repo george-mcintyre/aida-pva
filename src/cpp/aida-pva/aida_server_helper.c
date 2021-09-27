@@ -544,3 +544,19 @@ void uriFromPmu(char preAllocatedUriBuffer[MAX_PMU_LEN], char* primary, char* mi
 	memcpy(preAllocatedUriBuffer + PRIM_LEN + 1 + MICRO_LEN + 1, &unit, sizeof(int4u));
 	preAllocatedUriBuffer[PRIM_LEN + 1 + MICRO_LEN + 1 + sizeof(int4u)] = 0x0;
 }
+
+/**
+ * Convert all URIs to slac names before making queries
+ * @param slcName
+ * @param uri
+ * @return
+ */
+void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
+{
+	char* separator = strstr(uri, "//");
+	if (separator) {
+		memcpy(slcName, uri, separator - uri);
+		memcpy(slcName + (separator - uri), ".", 1);
+		strcpy(slcName + (separator - uri) + 1, separator + 2);
+	}
+}

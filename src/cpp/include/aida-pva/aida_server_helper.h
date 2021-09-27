@@ -462,6 +462,12 @@ void pmuStringFromUri(const char* uri, char* pmuString);
     char _var[MAX_PMU_LEN]; \
     pmuStringFromUri(_uri, _var);
 
+void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri);
+
+#define TO_SLAC_NAME \
+	char slcName[MAX_URI_LEN]; \
+	uriToSlcName(slcName, uri);
+
 #ifdef __cplusplus
 }
 #endif

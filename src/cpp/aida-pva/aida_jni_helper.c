@@ -231,6 +231,9 @@ char* toCString(JNIEnv* env, jstring string)
  */
 jstring toJString(JNIEnv* env, const char* string)
 {
+	if ( !string ) {
+		return NULL;
+	}
 	return (*env)->NewStringUTF(env, string);
 }
 
