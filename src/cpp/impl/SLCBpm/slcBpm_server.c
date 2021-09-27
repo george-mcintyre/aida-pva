@@ -303,7 +303,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE
 	}
 
-	// If set
+	// If cfnType was set then set cnftype variable appropriately
 	if (cfnTypeString != (char*)-1) {
 		if (strcasecmp(cfnTypeString, "NONE") == 0) {
 		} else if (strcasecmp(cfnTypeString, "GOLD") == 0) {
@@ -406,10 +406,24 @@ static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum,
 	}
 
 	// Acquire BPM values
+	// This often fails first time so if it fails just retry
 	status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
 	if (!$VMS_STATUS_SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making BPM acquisition");
-		return 0;
+		endAcquireBpmData(env);
+		// Retry Once
+		// Reinitialise acquisition
+		if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
+			aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing BPM acquisition");
+			return 0;
+		}
+
+		// Retry acquire BPM values
+		status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
+		if (!$VMS_STATUS_SUCCESS(status)) {
+			endAcquireBpmData(env);
+			aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making BPM acquisition");
+			return 0;
+		}
 	}
 
 	/* Reorder the BPM data by Z if that was required */
