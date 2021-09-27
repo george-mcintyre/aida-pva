@@ -299,12 +299,14 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Get arguments
-	int bpmd = 0, nrpos = 1, nBpms = 0, nDevs = 0, nDevices = 0;
+	int bpmd = 0, nrpos = 1, nDevices = 0;
+	unsigned int nBpms = 0, nDevs = 0;
 	char** bpms, ** devices;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
-	char* dGroupName = groupNameFromUri(uri);
+	char dGroupName[strlen(uri)+1];
+	groupNameFromUri(uri, dGroupName);
 
-	if (ascanf(env, &arguments, "%d %od %osa %osa %os",
+	if (ascanf(env, &arguments, "%d %od %osa %osa",
 			"bpmd", &bpmd,
 			"nrpos", &nrpos,
 			"bpms", &bpms, &nBpms,
@@ -313,20 +315,22 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE
 	}
 
-	if (nBpms) {
+	if ( nBpms && nDevs ) {
+		// Only one or the other not both
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Specify either DEVS or BPMS argument but not both");
+		RETURN_NULL_TABLE
+	} else if (nBpms) {
 		for (int i = 0; i < nBpms; i++) {
-			pmuFromUri(bpms[i],
+			pmuFromDeviceName(bpms[i],
 					deviceNames[i].prim_s._a,
 					deviceNames[i].micr_s._a,
 					&deviceNames[i].unit_s._i);
 		}
 		nDevices += nBpms;
 		free(bpms);
-	}
-
-	if (nDevs) {
+	} else if (nDevs) {
 		for (int i = 0; i < nDevs; i++) {
-			pmuFromUri(devices[i],
+			pmuFromDeviceName(devices[i],
 					deviceNames[i].prim_s._a,
 					deviceNames[i].micr_s._a,
 					&deviceNames[i].unit_s._i);
@@ -351,6 +355,11 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	if (!(rows = getBuffAcqData(env, namesData, xData, yData, tmitData, pulseIdData, statsData, goodMeasData))) {
 		RETURN_NULL_TABLE
 	}
+
+	// Convert Float Data
+	CONVERT_FROM_VMS_FLOAT(xData, rows)
+	CONVERT_FROM_VMS_FLOAT(yData, rows)
+	CONVERT_FROM_VMS_FLOAT(tmitData, rows)
 
 	// Make and output table
 	Table table = tableCreate(env, rows, 7);
@@ -426,6 +435,7 @@ static int acquireBuffAcqData(JNIEnv* env,
 	// Acquire BPM values
 	status = DPSLCBUFF_ACQ(nDevices, deviceNames, dGroupName, bpmd, nrpos);
 	if (!$VMS_STATUS_SUCCESS(status)) {
+		endAcquireBuffAcq(env);
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making Buffered Data acquisition");
 		return 0;
 	}

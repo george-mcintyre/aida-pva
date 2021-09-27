@@ -291,7 +291,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Get arguments
 	int bpmd, navg = 1, cnfnum = 1, sortOrder = SORTORDER_DISPLAY, cnftype = 0;
-	char* cfnTypeString = (char*)-1;
+	char* cfnTypeString = NULL;
 
 	if (ascanf(env, &arguments, "%d %od %od %od %os",
 			"bpmd", &bpmd,
@@ -304,7 +304,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// If cfnType was set then set cnftype variable appropriately
-	if (cfnTypeString != (char*)-1) {
+	if (cfnTypeString) {
 		if (strcasecmp(cfnTypeString, "NONE") == 0) {
 		} else if (strcasecmp(cfnTypeString, "GOLD") == 0) {
 			cnftype = 0;
@@ -475,10 +475,10 @@ static int getBpmData(JNIEnv* env,
 	}
 
 	// Convert all floating point data
-	CVT_VMS_TO_IEEE_FLT(xData, xData, &n);
-	CVT_VMS_TO_IEEE_FLT(yData, yData, &n);
-	CVT_VMS_TO_IEEE_FLT(tmitData, tmitData, &n);
-	CVT_VMS_TO_IEEE_FLT(zData, zData, &n);
+	CONVERT_FROM_VMS_FLOAT(xData, n)
+	CONVERT_FROM_VMS_FLOAT(yData, n)
+	CONVERT_FROM_VMS_FLOAT(tmitData, n)
+	CONVERT_FROM_VMS_FLOAT(zData, n)
 
 	return endAcquireBpmData(env);
 }

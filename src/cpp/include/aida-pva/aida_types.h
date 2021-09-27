@@ -17,22 +17,22 @@ void CVT_VMS_TO_IEEE_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p)
 void CVT_IEEE_TO_VMS_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
 void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
 
-#define CONVERT_TO_VMS_FLOAT(_float) \
+#define CONVERT_TO_VMS_FLOAT(_float, _count) \
 {  \
-	int2u one = 1; \
-	CVT_IEEE_TO_VMS_FLT(_float, _float, &one); \
+	int2u _n = 1; \
+	CVT_IEEE_TO_VMS_FLT(_float, _float, &_n); \
 }
 
-#define CONVERT_FROM_VMS_DOUBLE(_float) \
+#define CONVERT_FROM_VMS_DOUBLE(_float, _count) \
 {  \
-	int2u one = 1; \
-	CVT_VMS_TO_IEEE_DBL(_float, _float, &one); \
+	int2u _n = _count; \
+	CVT_VMS_TO_IEEE_DBL(_float, _float, &_n); \
 }
 
-#define CONVERT_FROM_VMS_FLOAT(_float) \
+#define CONVERT_FROM_VMS_FLOAT(_float, _count) \
 {  \
-	int2u one = 1; \
-	CVT_VMS_TO_IEEE_FLT(_float, _float, &one); \
+	int2u _n = _count; \
+	CVT_VMS_TO_IEEE_FLT(_float, _float, &_n); \
 }
 
 /**

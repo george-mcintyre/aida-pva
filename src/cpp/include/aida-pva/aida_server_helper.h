@@ -448,11 +448,12 @@ json_value* getJsonValue(Value value, char* path);
  */
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
-char* groupNameFromUri(const char* uri);
+int groupNameFromUri(const char* uri, char groupName[]);
 void secnFromUri(const char* uri, int4u* secn);
 const char *secondaryFromUri(const char* uri);
 
 void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
+void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit);
 void uriFromPmu(char preAllocatedUriBuffer[18], char* primary, char* micro, int4u unit);
 
 void pmuStringFromUri(const char* uri, char* pmuString);

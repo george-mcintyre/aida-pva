@@ -168,8 +168,16 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 			valueToParse++;
 		}
 
+		// Json arrays can only be parsed by this parser by wrapping them in a json object so we always
+		// create {"_array": [ ... ]} and when pulling out values we always replace
+		// the element "_array" by its value
+		char arrayValueToParse[strlen(valueToParse + 15)];
+		if (*valueToParse == '[') {
+			sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);
+			valueToParse = arrayValueToParse;
+		}
 		// If this is a json string then parse it otherwise just extract the string
-		if (*valueToParse == '[' || *valueToParse == '{') {
+		if (*valueToParse == '{') {
 			value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
 			if (value.value.jsonValue) {
 				value.type = AIDA_JSON_TYPE;
@@ -307,6 +315,19 @@ json_value* getJsonValue(Value value, char* path)
 
 	json_value* jsonValue = value.value.jsonValue;
 
+	// Skip root element if it is _array
+	// This is because our json parser can't process arrays at the top level and so we insert
+	// an object at the top level with an "_array" element if we find an array at the top level
+	if (jsonValue->type == json_object && jsonValue->u.object.length == 1
+			&& strcmp(jsonValue->u.object.values[0].name, "_array") == 0) {
+		jsonValue = jsonValue->u.object.values[0].value;
+	}
+
+	// If there is no path then we already have the json value
+	if ( !path || strlen(path) == 0) {
+		return jsonValue;
+	}
+
 	int len;
 	char name[256];
 	char* arrayRef;
@@ -390,11 +411,14 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 	return jsonValue;
 }
 
-char* groupNameFromUri(const char* uri)
+int groupNameFromUri(const char* uri, char groupName[])
 {
-	char _uri[100];
-	strcpy(_uri, uri);
-	return strtok(_uri, "/");
+	strcpy(groupName, uri);
+	char* groupNameEnd = strstr(groupName, "//");
+	if (groupNameEnd) {
+		*groupNameEnd = 0x0;
+	}
+	return EXIT_SUCCESS;
 }
 
 /**
@@ -405,7 +429,7 @@ char* groupNameFromUri(const char* uri)
 void secnFromUri(const char* uri, int4u* secn)
 {
 	char* secondary = strstr(uri, "//") + 2;
-	if ( !secondary) {
+	if (!secondary) {
 		fprintf(stderr, "Found corrupt URI when trying to extract secn: %s\n", uri);
 		*secn = 0;
 		return;
@@ -418,14 +442,14 @@ void secnFromUri(const char* uri, int4u* secn)
  * @param uri the uri
  * @param secn pointer to an int to store the secondary as a number
  */
-const char *secondaryFromUri(const char* uri)
+const char* secondaryFromUri(const char* uri)
 {
 	char* secondary = strstr(uri, "//");
-	if ( !secondary ) {
+	if (!secondary) {
 		fprintf(stderr, "Secondary not found in uri: %s\n", uri);
 		return uri;
 	}
-	return secondary+2;
+	return secondary + 2;
 }
 
 /**
@@ -474,6 +498,31 @@ void pmuFromUri(const char* uri, char* primary, char* micro, int4u* unit)
 			nextPart = strtok(NULL, ":");
 			if (nextPart) {
 				memcpy(unit, nextPart, sizeof(int4u));
+			}
+		}
+	}
+}
+
+/**
+ * Get primary, micro and unit from a device name
+ *
+ * @param device
+ * @param primary
+ * @param micro
+ * @param unit
+ */
+void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit)
+{
+	// Copy each part to the provided variables
+	char* nextPart = strtok(device, ":");
+	if (nextPart) {
+		strcpy(primary, nextPart);
+		nextPart = strtok(NULL, ":");
+		if (nextPart) {
+			strcpy(micro, nextPart);
+			nextPart = strtok(NULL, ":");
+			if (nextPart) {
+				*unit = atoi(nextPart);
 			}
 		}
 	}

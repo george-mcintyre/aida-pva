@@ -422,7 +422,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "missing variable to correspond to format: %%%s", formatSpecifier, EXIT_FAILURE)
 		}
 
-		// Set isJson (if argument value is json) and
+		// Set isJson (if argument name references json) and
 		// isValue (if we need to get the value from the "value" argument)
 		short isJson = false, isValue = false;
 
@@ -430,7 +430,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			isValue = true;
 		}
 
-		if (strchr(argumentName, '.') != NULL || strchr(argumentName, '[') != NULL) {
+		if (isArray || strchr(argumentName, '.') != NULL || strchr(argumentName, '[') != NULL) {
 			isJson = 1;
 		}
 
@@ -639,6 +639,14 @@ static int getJsonPathElements(char* fullJsonPath, char* variableName, char** pa
 {
 	char* firstDot = strchr(fullJsonPath, '.');
 	char* firstParen = strchr(fullJsonPath, '[');
+
+	// If there are no path elements then return whole thing as variable and an empty path
+	if (firstDot == NULL && firstParen == NULL) {
+		strcpy(variableName, fullJsonPath);
+		*path = &fullJsonPath[strlen(fullJsonPath)]; // The empty string
+		return EXIT_SUCCESS;
+	}
+
 	char* relativeJsonPath = (firstDot == NULL || firstParen == NULL) ?
 							 MAX(firstDot, firstParen) :
 							 MIN(firstParen, firstDot);
@@ -875,14 +883,14 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
 	if (type == AIDA_FLOAT_ARRAY_TYPE) {
 		int2u M = (int2u)table->rowCount;
 		float* floatArray = ((float*)(table->ppData[table->_currentColumn]));
-		CVT_VMS_TO_IEEE_FLT(floatArray, floatArray, &M);
+		CONVERT_FROM_VMS_FLOAT(floatArray, M)
 	}
 
 	// Convert double values if double array
 	if (type == AIDA_DOUBLE_ARRAY_TYPE) {
 		int2u M = (int2u)table->rowCount;
 		double* doubleArray = ((double*)(table->ppData[table->_currentColumn]));
-		CVT_VMS_TO_IEEE_DBL(doubleArray, doubleArray, &M);
+		CONVERT_FROM_VMS_DOUBLE(doubleArray, M)
 	}
 
 	// Add data to column
