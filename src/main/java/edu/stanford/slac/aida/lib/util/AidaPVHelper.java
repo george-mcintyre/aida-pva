@@ -334,7 +334,7 @@ public class AidaPVHelper {
         }
 
         // If layout is row-major then transpose the data first before processing
-        if (aidaChannelConfig.getLayout().equals(ROW_MAJOR)) {
+        if (aidaChannelConfig.getLayout() != null && aidaChannelConfig.getLayout().equals(ROW_MAJOR)) {
             values = transpose(values);
         }
 

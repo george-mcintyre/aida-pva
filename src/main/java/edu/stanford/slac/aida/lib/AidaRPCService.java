@@ -167,7 +167,7 @@ public class AidaRPCService implements RPCService {
         if (isSetterRequest) {
             System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaSetterType + ":" + (channelSetterType == null ? "" : channelSetterType));
         } else {
-            System.out.println("AIDA Request : " + channelName + arguments + " => " + aidaGetterType + ":" + (channelGetterType == null ? "" : channelGetterType));
+            System.out.println("AIDA GetValue: " + channelName + arguments + " => " + aidaGetterType + ":" + (channelGetterType == null ? "" : channelGetterType));
         }
 
         // Call entry point based on return type
@@ -176,13 +176,16 @@ public class AidaRPCService implements RPCService {
                 this.aidaChannelProvider.setValue(channelName, arguments);
                 return NT_SCALAR_EMPTY_STRUCTURE;
             } else if ( aidaSetterType.equals(TABLE) ) {
+                if ( channelSetterConfig.getFields() == null ) {
+                    throw new AidaInternalException("Table channel configured without defining fields" );
+                }
                 List<List<Object>> returnValue = this.aidaChannelProvider.setValueWithResponse(channelName, arguments);
                 return asNtTable(returnValue, channelSetterConfig);
             } else {
                 throw new UnsupportedChannelException("Setters can only be VOID or TABLE but found: " + aidaSetterType.name());
             }
         } else {
-            // Otherwise this is a regular get request
+            // Otherwise, this is a regular get request
             if (channelGetterType == null) {
                 throw new UnsupportedChannelException("Could not find return type for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
             }
@@ -194,6 +197,9 @@ public class AidaRPCService implements RPCService {
                 List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaGetterType, arguments);
                 return asScalarArray(returnValue, channelGetterConfig);
             } else {
+                if ( channelGetterConfig.getFields() == null ) {
+                    throw new AidaInternalException("Table channel configured without defining fields" );
+                }
                 List<List<Object>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
                 return asNtTable(returnValue, channelGetterConfig);
             }
