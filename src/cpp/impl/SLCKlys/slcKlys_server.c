@@ -418,7 +418,7 @@ Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Value value, char* trim, 
 	CONVERT_TO_VMS_FLOAT(&secn_value_array[0], 1)
 	vmsstat_t status = DPSLCKLYS_SETTRIMPHASE(pmu, secn, secn_value_array, trim, &phas_value);
 	if (!SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Could not convert float");
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Error setting value");
 		RETURN_NULL_TABLE;
 	}
 
