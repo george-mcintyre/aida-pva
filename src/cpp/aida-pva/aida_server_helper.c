@@ -168,7 +168,7 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 			valueToParse++;
 		}
 
-		// Json arrays can only be parsed by this parser by wrapping them in a json object so we always
+		// Json arrays can only be parsed by this parser by wrapping them in a json object, so we always
 		// create {"_array": [ ... ]} and when pulling out values we always replace
 		// the element "_array" by its value
 		char arrayValueToParse[strlen(valueToParse + 15)];

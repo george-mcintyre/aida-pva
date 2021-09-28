@@ -50,11 +50,11 @@
 #define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
 { \
     *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
-	if ( !*arrayPtr ) { \
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
+    if ( !*arrayPtr ) { \
+        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
         FREE_MEMORY \
-		return EXIT_FAILURE; \
-	} \
+        return EXIT_FAILURE; \
+    } \
     TRACK_MEMORY(*arrayPtr) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
@@ -65,11 +65,11 @@
 #define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
 { \
     *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
-	if ( !*arrayPtr ) { \
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
+    if ( !*arrayPtr ) { \
+        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
         FREE_MEMORY \
-		return EXIT_FAILURE; \
-	} \
+        return EXIT_FAILURE; \
+    } \
     TRACK_MEMORY(*arrayPtr) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
@@ -80,16 +80,16 @@
 #define ASCANF_SET_BOOLEAN(_targetBoolean) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetBoolean); \
-    if (!isJson) {               \
+    if (!isJson) {  \
         if (isdigit(*stringValue)) {\
-            int number;                  \
+            int number; \
             sscanf(stringValue, "%d", &number); \
             *ptr = (unsigned char)number; \
         } else  { \
-            *ptr = (unsigned char)!( strcasecmp(stringValue, "n") ==0           \
-                    || strcasecmp(stringValue, "0") ==0          \
-                    || strcasecmp(stringValue, "no") ==0          \
-                    || strcasecmp(stringValue, "false") ==0        \
+            *ptr = (unsigned char)!( strcasecmp(stringValue, "n") ==0  \
+                    || strcasecmp(stringValue, "0") ==0  \
+                    || strcasecmp(stringValue, "no") ==0  \
+                    || strcasecmp(stringValue, "false") ==0  \
                     || strcasecmp(stringValue, "f")==0 );  \
         } \
     } else {   \
@@ -139,11 +139,12 @@
     } else {  \
         if (aidaType == AIDA_STRING_TYPE) { \
             nextStringPosition = malloc(jsonRoot->u.string.length+1); \
-			if ( !nextStringPosition ) { \
-				aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
-				FREE_MEMORY \
-				return EXIT_FAILURE; \
-			} \
+            if ( !nextStringPosition ) { \
+                aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
+                FREE_MEMORY \
+                return EXIT_FAILURE; \
+            } \
+            TRACK_MEMORY(nextStringPosition)\
         }\
         if (jsonRoot->type == json_string) { \
             strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
@@ -166,11 +167,11 @@
 { \
     size_t pointerSpace = arrayCount * sizeof(char*); \
     *arrayPtr = malloc(pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1);\
-	if ( !*arrayPtr ) { \
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
+    if ( !*arrayPtr ) { \
+        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
         FREE_MEMORY \
-		return EXIT_FAILURE; \
-	} \
+        return EXIT_FAILURE; \
+    } \
     TRACK_MEMORY(*arrayPtr); \
     nextStringPosition = ((char*)*arrayPtr) + pointerSpace; \
     for (int i = 0; i < arrayCount; i++) { \
@@ -528,6 +529,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				value = &elementValue;
 				if (elementValue.type == AIDA_JSON_TYPE) {
 					TRACK_JSON(elementValue.value.jsonValue)
+					isJson = true;
 				}
 			}
 
@@ -543,8 +545,9 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					char* defaultString = *(char**)target;
 					if (aidaType == AIDA_STRING_TYPE && defaultString) {
 						char* allocatedString = malloc(strlen(defaultString) + 1);
-						if ( !allocatedString ) {
-							aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory for arguments");
+						if (!allocatedString) {
+							aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
+									"can't allocate memory for arguments");
 							FREE_MEMORY
 							return EXIT_FAILURE;
 						}
@@ -858,7 +861,7 @@ void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
 	for (int row = 0; row < table->rowCount; row++, data++) {
 		unsigned long len = strlen(*data);
 		stringArray[row] = malloc(len + 1);
-		if ( !stringArray[row] ) {
+		if (!stringArray[row]) {
 			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory for table strings");
 			return;
 		}
@@ -888,7 +891,7 @@ void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int w
 	char* dataPointer = (char*)data;
 	for (int row = 0; row < table->rowCount; row++, dataPointer += width) {
 		stringArray[row] = malloc(width + 1);
-		if ( !stringArray[row] ) {
+		if (!stringArray[row]) {
 			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory for table strings");
 			return;
 		}

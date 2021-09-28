@@ -545,7 +545,7 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 
 	// Get congruent list of values to set, name and value pairs
 	// value contains an object with two congruent arrays
-	if (avscanf(env, &arguments, &value, " %sa %fa",
+	if (avscanf(env, &arguments, &value, "%sa %fa",
 			"value.names", &names, &nNames,
 			"value.values", set_values, &nValues
 	)) {

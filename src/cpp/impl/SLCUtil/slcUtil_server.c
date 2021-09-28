@@ -428,7 +428,7 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	// Get arguments
 	char* mkb;
 	float floatValue;
-	if (ascanf(env, &arguments, "%f %s",
+	if (avscanf(env, &arguments, &value, "%f %s",
 			"value", &floatValue,
 			"mkb", &mkb
 	)) {
