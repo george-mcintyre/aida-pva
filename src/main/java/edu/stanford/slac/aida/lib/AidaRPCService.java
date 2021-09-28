@@ -101,7 +101,7 @@ public class AidaRPCService implements RPCService {
         }
 
         AidaType aidaGetterType = channelGetterConfig.getType();
-        AidaType aidaSetterType = channelSetterConfig.getType();
+        AidaType aidaSetterType = channelSetterConfig != null ? channelSetterConfig.getType() : VOID;
 
         // Get special arguments type and value
         String typeArgument = null;
@@ -115,7 +115,9 @@ public class AidaRPCService implements RPCService {
             }
         }
 
-        // If you've specified a type then override the getterConfig type with the specified one
+        Boolean isSetterRequest = valueArgument != null;
+
+        // If a type has been specified then override the appropriate Config's type with the specified one
         if (typeArgument != null) {
             try {
                 AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
@@ -123,42 +125,53 @@ public class AidaRPCService implements RPCService {
                 // Check that it matches the type class from the channels file
                 // if channel accepts any type or if the specified type is TABLE (which matches any configuration)
                 // or if the specified type is in the class of types allowed by the channel
-                if (aidaGetterType.equals(ANY) || specifiedAidaType.equals(TABLE) ||
-                        ((aidaGetterType.equals(SCALAR) || aidaGetterType.equals(SCALAR_ARRAY)) && specifiedAidaType.metaType().equals(aidaGetterType.metaType()))) {
-                    aidaGetterType = specifiedAidaType;
+                if ( isSetterRequest ) {
+                    if ( specifiedAidaType != TABLE && specifiedAidaType != VOID) {
+                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
+                    }
+                    if ( specifiedAidaType.equals(aidaSetterType) || aidaSetterType == ANY ) {
+                        aidaSetterType = specifiedAidaType;
+                    } else {
+                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
+                    }
                 } else {
-                    throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
+                    if (aidaGetterType.equals(ANY) ||
+                            ((aidaGetterType.equals(SCALAR) || aidaGetterType.equals(SCALAR_ARRAY)) &&
+                                    (specifiedAidaType == TABLE || specifiedAidaType.metaType().equals(aidaGetterType)))) {
+                        aidaGetterType = specifiedAidaType;
+                    } else {
+                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
+                    }
                 }
             } catch (IllegalArgumentException e) {
                 throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
             }
         } else {
-            // If no class is specified then use a default for each type class if the channel config specifies that it needs one
+            // If a class of types is set as the getter type then use appropriate defaults
             switch (aidaGetterType) {
                 case SCALAR:
-                    aidaGetterType = INTEGER;
+                    aidaGetterType = FLOAT;
                     break;
                 case SCALAR_ARRAY:
-                    aidaGetterType = INTEGER_ARRAY;
+                    aidaGetterType = FLOAT_ARRAY;
                     break;
                 case ANY:
                     aidaGetterType = TABLE;
             }
         }
 
+        // Get EPICS type from Aida Type
         Type channelGetterType = typeOf(aidaGetterType);
         Type channelSetterType = typeOf(aidaSetterType);
-        Boolean isGetterRequest;
-        if (!aidaSetterType.equals(NONE) && valueArgument != null) {
-            isGetterRequest = FALSE;
+
+        if (isSetterRequest) {
             System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaSetterType + ":" + (channelSetterType == null ? "" : channelSetterType));
         } else {
-            isGetterRequest = TRUE;
             System.out.println("AIDA Request : " + channelName + arguments + " => " + aidaGetterType + ":" + (channelGetterType == null ? "" : channelGetterType));
         }
 
         // Call entry point based on return type
-        if (!isGetterRequest) {
+        if (isSetterRequest) {
             if (aidaSetterType.equals(VOID)) {
                 this.aidaChannelProvider.setValue(channelName, arguments);
                 return NT_SCALAR_EMPTY_STRUCTURE;

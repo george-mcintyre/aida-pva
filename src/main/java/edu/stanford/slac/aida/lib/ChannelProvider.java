@@ -183,10 +183,6 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 channelConfig = channel.getGetterConfig();
             } else {
                 channelConfig = channel.getSetterConfig();
-                if (channelConfig == null) {
-                    channelConfig = new AidaChannelConfig();
-                    channelConfig.setType("NONE");
-                }
             }
         }
         return channelConfig;

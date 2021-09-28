@@ -9,7 +9,7 @@ import org.epics.pvaccess.util.WildcardMatcher;
 import java.util.*;
 
 import static edu.stanford.slac.aida.lib.model.AidaTableLayout.COLUMN_MAJOR;
-import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
+import static edu.stanford.slac.aida.lib.model.AidaType.NONE;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -34,7 +34,7 @@ public class AidaProvider {
      */
     public Set<String> getChannelNames() {
         if (this.channelMap.isEmpty()) {
-            setChannelNames();
+            cacheChannelNamesAndLoadConfig();
         }
         return this.channelMap.keySet();
     }
@@ -48,7 +48,7 @@ public class AidaProvider {
      */
     public AidaChannel getAidaChannel(String channelName) {
         if (this.channelMap.isEmpty()) {
-            setChannelNames();
+            cacheChannelNamesAndLoadConfig();
         }
 
         // Look for an exact match or a wild card match if that fails
@@ -68,12 +68,12 @@ public class AidaProvider {
     /**
      * Set the channel names based on set of instance attribute pairs
      */
-    private void setChannelNames() {
+    private void cacheChannelNamesAndLoadConfig() {
         synchronized (this.channelMap) {
             for (AidaChannel aidaChannel : getChannels()) {
                 String channel = aidaChannel.getChannel();
 
-                copyConfig(aidaChannel);
+                mergeDefaultAndProviderConfigWithChannelSpecificConfig(aidaChannel);
 
                 this.channelMap.put(channel, aidaChannel);
 
@@ -96,70 +96,82 @@ public class AidaProvider {
     /**
      * Merges the given default config with the given overrides to produce a new merged config
      *
-     * @param defaultConfig default config
-     * @param overrides     config containing overrides
+     * @param defaultConfig  default config
+     * @param overrideConfig config containing overrides
      * @return the merged config
      */
-    private AidaChannelConfig mergeConfig(AidaChannelConfig defaultConfig, AidaChannelConfig overrides) {
+    private AidaChannelConfig mergeConfig(AidaChannelConfig defaultConfig, AidaChannelConfig overrideConfig) {
         AidaChannelConfig channelConfig = new AidaChannelConfig();
 
         // If nothing to override then return the default
-        if (overrides == null) {
+        if (overrideConfig == null) {
             return defaultConfig;
         }
 
-        // Partially copy when not specified for channel
-        AidaType type = ((overrides.getType() == null) ? defaultConfig : overrides).getType();
-        if (type == null) {
-            type = STRING;
-        }
+        // Merge type
+        AidaType defaultType = defaultConfig.getType(), overrideType = overrideConfig.getType();
+        AidaType type = (overrideType != null) ? overrideType : (defaultType != null) ? defaultType : NONE;
         channelConfig.setType(type.toString());
 
-        AidaTableLayout layout = ((overrides.getLayout() == null) ? defaultConfig : overrides).getLayout();
-        if (layout == null) {
-            layout = COLUMN_MAJOR;
-        }
+        // Merge table layout
+        AidaTableLayout defaultLayout = defaultConfig.getLayout(), overrideLayout = overrideConfig.getLayout();
+        AidaTableLayout layout = (overrideLayout != null) ? overrideLayout : (defaultLayout != null) ? defaultLayout : COLUMN_MAJOR;
         channelConfig.setLayout(layout.toString());
 
-        channelConfig.setDescription(((overrides.getDescription() == null || overrides.getDescription().length() == 0) ? defaultConfig : overrides).getDescription());
-        channelConfig.setFields(((overrides.getFields() == null || overrides.getFields().isEmpty()) ? defaultConfig : overrides).getFields());
+        // Merge table description
+        String defaultDescription = defaultConfig.getDescription(), overrideDescription = overrideConfig.getDescription();
+        String description = (overrideDescription != null && overrideDescription.length() > 0) ? overrideDescription : defaultDescription;
+        channelConfig.setDescription(description);
+
+        // Override Fields if set on override
+        List<AidaField> defaultFields = defaultConfig.getFields(), overrideFields = overrideConfig.getFields();
+        List<AidaField> fields = (overrideFields != null && !overrideFields.isEmpty()) ? overrideFields : defaultFields;
+        channelConfig.setFields(fields);
 
         return channelConfig;
     }
 
     /**
-     * Add default channel configurations if not specified directly with the channel
-     * Bot the getter and the setter configs are copied
+     * Starting with the Default config specified at the top of the
+     * channels file, merge in the channel specific config that is specified against each channel
+     * in the channels file.  Finally, merge in any Provider config obtained by calling the
+     * Provider's config endpoint.  Priority is therefore Provider => Channel Specific => Default
+     * <p>
+     * Both the getter and the setter configs are merged in this way
      *
      * @param aidaChannel the channel to add the default configurations to
      */
-    private void copyConfig(AidaChannel aidaChannel) {
-        AidaChannelConfig providerConfig, channelConfig, defaultConfig, mergedConfig;
+    private void mergeDefaultAndProviderConfigWithChannelSpecificConfig(AidaChannel aidaChannel) {
+        AidaChannelConfig providerConfig, channelSpecificConfig, defaultConfig, mergedConfig;
 
         // GETTER CONFIG
-        // Highest priority from provider itself
-        providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel(), TRUE);
-        // Next from yaml channel
-        channelConfig = aidaChannel.getGetterConfig();
-        // Finally from yaml global section
+        // The Lowest priority is default config
         defaultConfig = getGetterConfig();
-        // Merge all together with these priorities
-        mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig);
+        // Next is the channel specific config
+        channelSpecificConfig = aidaChannel.getGetterConfig();
+        // The Highest priority is the  provider config
+        providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel(), TRUE);
+
+        // Merge all the configs together following these priorities
+        mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelSpecificConfig), providerConfig);
         aidaChannel.setGetterConfig(mergedConfig);
-        // Set default labels
+
+        // Set any table field-labels as well
         setDefaultLabels(mergedConfig.getFields());
 
         // SETTER CONFIG
-        // Highest priority from provider itself
+        // The Lowest priority is default config
+        defaultConfig = getSetterConfig();
+        // Next is the channel specific config
+        channelSpecificConfig = aidaChannel.getSetterConfig();
+        // The Highest priority is the  provider config
         providerConfig = this.channelProvider.getNativeChannelConfig(aidaChannel.getChannel(), FALSE);
-        // Next from yaml channel
-        channelConfig = aidaChannel.getGetterConfig();
-        // Finally from yaml global section
-        defaultConfig = getGetterConfig();
-        // Merge all together with these priorities
-        mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelConfig), providerConfig);
-        aidaChannel.setGetterConfig(mergedConfig);
-        // Set default labels
+
+        // Merge all the configs together following these priorities
+        mergedConfig = mergeConfig(mergeConfig(defaultConfig, channelSpecificConfig), providerConfig);
+        aidaChannel.setSetterConfig(mergedConfig);
+
+        // Set any table field-labels as well
         setDefaultLabels(mergedConfig.getFields());
     }
 
