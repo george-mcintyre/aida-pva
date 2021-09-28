@@ -74,6 +74,24 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
     FREE_JSON \
 }
 
+/**
+ * Free a single tracked memory allocation and remove from list
+ */
+#define FREE_TRACKED_MEMORY(_ptr) \
+{  \
+    bool found = false; \
+    for ( int i = 0 ; i < nAllocationsToFree; i++ ) { \
+        if ( _ptr == memoryAllocationsToFree[i] ) {   \
+			free (_ptr);                    \
+			found = true;                    \
+		} \
+        if ( found && i != (nAllocationsToFree-1) )   \
+			memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
+    } \
+	if ( found )   \
+		nAllocationsToFree--; \
+}
+
 #define SPRINF_ERROR(_exception, _errorText, _ref, _r) \
 { \
     char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \

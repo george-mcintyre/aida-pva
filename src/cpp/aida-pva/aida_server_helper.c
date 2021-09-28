@@ -430,7 +430,7 @@ void secnFromUri(const char* uri, int4u* secn)
 {
 	char* secondary = strstr(uri, "//") + 2;
 	if (!secondary) {
-		fprintf(stderr, "Found corrupt URI when trying to extract secn: %s\n", uri);
+		fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
 		*secn = 0;
 		return;
 	}

@@ -26,8 +26,6 @@ static int
 getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
 		char** micr_list, int** unit_list, int4u* secn, float** set_values, char** magFunc, char** limitCheck,
 		char** name_validity);
-static void magnetDataCleanUp(char* primaryList, char* microList, int* unitList, float* setValues, char* magnetFunction,
-		char* limitCheck, char* name_validity);
 static bool isAllValid(int count, const char* name_validity);
 static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity);
 
@@ -357,6 +355,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	// Get the arguments
 	int count;
 
+	TRACK_ALLOCATED_MEMORY
 	char* primaryList = NULL, * microList = NULL, * name_validity = NULL;
 	int* unitList = NULL;
 
@@ -365,22 +364,25 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 
 	if (getBaseMagnetArguments(env, uri,
 			arguments, value, &count, &primaryList, &microList, &unitList, &secn, &setValues, &name_validity)) {
-		magnetDataCleanUp(primaryList, microList, unitList, setValues, NULL, NULL, name_validity);
 		return;
 	}
+	TRACK_MEMORY(primaryList)
+	TRACK_MEMORY(microList)
+	TRACK_MEMORY(name_validity)
+	TRACK_MEMORY(unitList)
+	TRACK_MEMORY(setValues)
 
 	// set the PVs specified by the lists of primary, micros, and units
 	vmsstat_t status;
 	status = DPSLCMAGNET_SETCONFIG(count, primaryList, microList, unitList, secn, setValues);
+	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "while setting magnet values");
+		return;
 	}
 
 	// Clean up
 	DPSLCMAGNET_SETCLEANUP();
-
-	// Cleanup
-	magnetDataCleanUp(primaryList, microList, unitList, setValues, NULL, NULL, name_validity);
 }
 
 /**
@@ -410,10 +412,12 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	int* unitList;
 	float* setValues;
 	int limitCheckAll = true;
-	int getArgumentsFailed = getMagnetArguments(env, uri, arguments, value, &count,
+	if (getMagnetArguments(env, uri, arguments, value, &count,
 			&primaryList, &microList, &unitList, &secn, &setValues,
 			&magnetFunction, &limitCheck,
-			&name_validity);
+			&name_validity)) {
+		RETURN_NULL_TABLE
+	}
 	TRACK_MEMORY(primaryList)
 	TRACK_MEMORY(microList)
 	TRACK_MEMORY(unitList)
@@ -421,11 +425,6 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	TRACK_MEMORY(name_validity)
 	TRACK_MEMORY(magnetFunction)
 	TRACK_MEMORY(limitCheck)
-	if (getArgumentsFailed) {
-		magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
-		FREE_MEMORY
-		RETURN_NULL_TABLE
-	}
 
 	if (strcasecmp(magnetFunction, "TRIM") != 0 && strcasecmp(magnetFunction, "PTRB") != 0
 			&& strcasecmp(magnetFunction, "NOFUNC") != 0) {
@@ -534,6 +533,7 @@ static int
 getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
 		char** micr_list, int** unit_list, int4u* secn, float** set_values, char** name_validity)
 {
+	TRACK_ALLOCATED_MEMORY
 	*prim_list = NULL;
 	*micr_list = NULL;
 	*unit_list = NULL;
@@ -551,18 +551,40 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	)) {
 		return EXIT_FAILURE;
 	}
+	TRACK_MEMORY(names)
+	TRACK_MEMORY(set_values)
 
 	// Find out how many values were supplied and check that both lists are the same length
 	*count = (int)nNames;
 	if (nNames != nValues) {
+		FREE_MEMORY
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "supplied lists are not the same length");
 		return EXIT_FAILURE;
 	}
 
 	// Get names array - and break up names into their components for other lists
 	*prim_list = (char*)malloc((*count * PRIM_LEN) + 1);
+	if (!*prim_list ) {
+		FREE_MEMORY
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for primary list");
+		return EXIT_FAILURE;
+	}
+	TRACK_MEMORY(*prim_list)
 	*micr_list = (char*)malloc((*count * MICRO_LEN) + 1);
+	if (!*micr_list ) {
+		FREE_MEMORY
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for micro list");
+		return EXIT_FAILURE;
+	}
+	TRACK_MEMORY(*micr_list)
 	*unit_list = (int*)malloc(*count * sizeof(unsigned long));
+	if (!*unit_list ) {
+		FREE_MEMORY
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for unit list");
+		return EXIT_FAILURE;
+	}
+	TRACK_MEMORY(*unit_list)
+
 	unsigned long longUnitList[*count];
 	for (int i = 0; i < nNames; i++) {
 		pmuFromDeviceName(names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i]);
@@ -573,18 +595,24 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 
 	// Call names validate to see which names are valid
 	*name_validity = (char*)malloc((*count * MAX_VALIDITY_STRING_LEN) + 1);
+	if (!*name_validity ) {
+		FREE_MEMORY
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for name validity list");
+		return EXIT_FAILURE;
+	}
+	TRACK_MEMORY(*name_validity)
+
 	DPSLCMAGNET_SETNAMESVALIDATE(*count, *prim_list, *micr_list, *unit_list, *secn, *name_validity);
 
 	// Check if all names are valid
 	if (!isAllValid(*count, *name_validity)) {
 		char invalidNames[MAX_URI_LEN * nNames + 1];
 		getInvalidNames(invalidNames, *count, names, *name_validity);
-		free(names);
-		SPRINF_ERROR(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s", invalidNames, EXIT_FAILURE)
+		SPRINF_ERROR_AND_FREE_MEMORY(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s", invalidNames, EXIT_FAILURE)
 	}
 
 	// Free up the names as we don't need them anymore as they have been validated
-	free(names);
+	FREE_TRACKED_MEMORY(names)
 
 	// Get convert values to VMS floats
 	CONVERT_TO_VMS_FLOAT(*set_values, nValues);
@@ -633,41 +661,6 @@ getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 }
 
 /**
- * Clean up data space allocated for magnet functions
- *
- * @param primaryList
- * @param microList
- * @param unitList
- * @param setValues
- */
-static void magnetDataCleanUp(char* primaryList, char* microList, int* unitList, float* setValues, char* magnetFunction,
-		char* limitCheck, char* name_validity)
-{
-	// Clean up
-	if (primaryList) {
-		free(primaryList);
-	}
-	if (microList) {
-		free(microList);
-	}
-	if (unitList) {
-		free(unitList);
-	}
-	if (setValues) {
-		free(setValues);
-	}
-	if (magnetFunction) {
-		free(magnetFunction);
-	}
-	if (limitCheck) {
-		free(limitCheck);
-	}
-	if (name_validity) {
-		free(name_validity);
-	}
-}
-
-/**
  * Check if all the names are valid.  String will be Success if valid
  *
  * @param count
@@ -711,7 +704,5 @@ static void getInvalidNames(char* dst, int count, char* names[], const char* nam
 			}
 		}
 	}
-
-	return;
 }
 
