@@ -363,7 +363,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 
 	if (strcasecmp(valueString, "Y") != 0 && strcasecmp(valueString, "N") != 0) {
 		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-				"'BGRP Set Variable requires a AValue parameter to be 'Y' or 'N'");
+				"'BGRP Set Variable requires Value argument to be 'Y' or 'N'");
 		return;
 	}
 
@@ -421,7 +421,7 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	)) {
 		RETURN_NULL_TABLE;
 	}
-	CONVERT_TO_VMS_FLOAT(floatValue)
+	CONVERT_TO_VMS_FLOAT(&floatValue, 1)
 
 	// Set the value
 	int num_devices;
