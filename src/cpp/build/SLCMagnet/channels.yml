@@ -7,7 +7,7 @@
 #   MAGFUNC           : TRIM, PTRB, or NOFUNC
 #   LIMITCHECK        : ALL or SOME
 id: 262
-name: SLCBuffacq
+name: SLCBMagnet
 getterConfig:
   type: NONE
 description: SLC control system pulse synchronized "Buffered Data"

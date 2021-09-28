@@ -7,18 +7,14 @@
 # BGRP                : The BGRP name
 # VARNAME             : A BGRP variable name for the specified BGRP
 # BEAM                : Beam code number
-#
-#
 id: 122
 name: SLCUtil
-description: SLC Utility Server
+description: "SLC Utility Server"
 getterConfig:
   type: NONE
 channels:
-  - channel: BGRP:VAL
-    setterConfig:
-      type: VOID
-  - channel: MKB:VAL
+  - channel: "BGRP:VAL"
+  - channel: "MKB:VAL"
     setterConfig:
       type: TABLE
       fields:
@@ -28,7 +24,7 @@ channels:
         - name: value
           label: "Value"
           description: "value of each device after the knob rotation set operation"
-  - channel: TRIG:*:*:TACT
+  - channel: "TRIG:*:*:TACT"
     getterConfig:
       type: SCALAR
     setterConfig:
