@@ -34,7 +34,7 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define MICRO_LEN 4
 
 /**
- * Create tracking variables so that memory can be freed with FREE_ALLOCATED_MEMORY
+ * Create tracking variables so that memory can be freed with FREE_MEMORY
  */
 #define TRACK_ALLOCATED_MEMORY \
     int nAllocationsToFree = 0, nJsonValuesToFree = 0; \
@@ -44,19 +44,19 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 /**
  * Register this newly allocated memory so that it will be freed by FREE_ALLOCATED_MEMORY
  */
-#define ALLOCATE_MEMORY(_ptr) \
-    memoryAllocationsToFree[nAllocationsToFree++] = (_ptr);
+#define TRACK_MEMORY(_ptr) \
+    if (_ptr) memoryAllocationsToFree[nAllocationsToFree++] = (_ptr);
 
 /**
  * Register this newly allocated json value so that it will be freed by FREE_JSON_MEMORY
  */
-#define ALLOCATE_JSON_MEMORY(_ptr) \
-    jsonValuesToFree[nJsonValuesToFree++] = (_ptr);
+#define TRACK_JSON(_ptr) \
+    if (_ptr) jsonValuesToFree[nJsonValuesToFree++] = (_ptr);
 
 /**
  * Free any allocated json memory
  */
-#define FREE_JSON_MEMORY \
+#define FREE_JSON \
 {                              \
     while ( nJsonValuesToFree-- > 0) { \
         json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
@@ -66,12 +66,12 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 /**
  * Free any allocated memory
  */
-#define FREE_ALLOCATED_MEMORY \
+#define FREE_MEMORY \
 {                              \
     while ( nAllocationsToFree-- > 0) { \
         free (memoryAllocationsToFree[nAllocationsToFree]); \
     } \
-    FREE_JSON_MEMORY \
+    FREE_JSON \
 }
 
 #define SPRINF_ERROR(_exception, _errorText, _ref, _r) \
@@ -87,7 +87,7 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
     char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
     sprintf(error, _errorText,  _ref); \
     aidaThrowNonOsException(env, _exception, error); \
-    FREE_ALLOCATED_MEMORY \
+    FREE_MEMORY \
     return _r; \
 }
 

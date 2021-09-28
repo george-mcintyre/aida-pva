@@ -50,7 +50,7 @@
 #define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
 { \
     *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
-    ALLOCATE_MEMORY(*arrayPtr) \
+    TRACK_MEMORY(*arrayPtr) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
         ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, ARRAY_TARGET(_cType)) \
@@ -60,7 +60,7 @@
 #define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
 { \
     *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
-    ALLOCATE_MEMORY(*arrayPtr) \
+    TRACK_MEMORY(*arrayPtr) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
         _setMacro(ARRAY_TARGET(_cType)) \
@@ -151,7 +151,7 @@
 { \
     size_t pointerSpace = arrayCount * sizeof(char*); \
     *arrayPtr = malloc(pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1);\
-    ALLOCATE_MEMORY(*arrayPtr); \
+    TRACK_MEMORY(*arrayPtr); \
     nextStringPosition = ((char*)*arrayPtr) + pointerSpace; \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
@@ -334,7 +334,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 	TRACK_ALLOCATED_MEMORY
 
 	if (!formatString) {
-		FREE_ALLOCATED_MEMORY
+		FREE_MEMORY
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "No format specifiers provided to ascanf");
 		return EXIT_FAILURE;
 	}
@@ -352,7 +352,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 	}
 
 	if (!numberOfFormatStrings) {
-		FREE_ALLOCATED_MEMORY
+		FREE_MEMORY
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "No format specifiers provided to ascanf");
 		return EXIT_FAILURE;
 	}
@@ -445,7 +445,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 		// Convert format, isArray, isLong, and isShort into an AIDA_TYPE
 		Type aidaType = fToType(env, format, isArray, isLong, isShort);
-		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
+		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE)
 
 		// if the argument is json then the name may contain dots and square braces,
 		// so this variable contains just the argument name part at the beginning.
@@ -492,7 +492,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 						continue;
 					}
 				}
-				ALLOCATE_JSON_MEMORY(elementValue.value.jsonValue)
+				TRACK_JSON(elementValue.value.jsonValue)
 				jsonRoot = getJsonValue(elementValue, jsonPath);
 				jsonType = jsonRoot->type;
 			}
@@ -504,7 +504,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
 				value = &elementValue;
 				if (elementValue.type == AIDA_JSON_TYPE) {
-					ALLOCATE_JSON_MEMORY(elementValue.value.jsonValue)
+					TRACK_JSON(elementValue.value.jsonValue)
 				}
 			}
 
@@ -546,7 +546,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't extract array from argument: %s",
 						stringValue, EXIT_FAILURE)
 			}
-			ALLOCATE_JSON_MEMORY(jsonRoot)
+			TRACK_JSON(jsonRoot)
 
 			if (jsonRoot->type != json_array) {
 				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't extract array from argument: %s",
@@ -623,7 +623,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		}
 	}
 
-	FREE_JSON_MEMORY
+	FREE_JSON
 	return EXIT_SUCCESS;
 }
 

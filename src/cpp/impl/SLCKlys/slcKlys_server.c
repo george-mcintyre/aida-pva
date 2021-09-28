@@ -454,15 +454,15 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	}
 	PMU_STRING_FROM_URI(uri, shortSlcName)
 
-	ALLOCATE_MEMORY(beam_c)
+	TRACK_MEMORY(beam_c)
 	if (dgrp_c)
-		ALLOCATE_MEMORY(dgrp_c)
+		TRACK_MEMORY(dgrp_c)
 
 	// Get the status
 	short klys_status;
 	int callStatus = klystronStatus(env, shortSlcName, beam_c, dgrp_c, &klys_status);
 	if (callStatus) {
-		FREE_ALLOCATED_MEMORY
+		FREE_MEMORY
 		RETURN_NULL_TABLE
 	}
 
@@ -472,14 +472,14 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	// If trying to activate but not in standby state
 	if ( isActivateOperation && !isInStandByState ) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Cannot reactivate klystron when not in standby state");
-		FREE_ALLOCATED_MEMORY
+		FREE_MEMORY
 		RETURN_NULL_TABLE
 	}
 
 	// If trying to deactivate but not in accelerate state
 	if ( !isActivateOperation && !isInAccelerateState ) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Cannot deactivate klystron when not in accelerate state");
-		FREE_ALLOCATED_MEMORY
+		FREE_MEMORY
 		RETURN_NULL_TABLE
 	}
 
@@ -488,14 +488,14 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	int status = DPSLCKLYS_SETDEACTORREACT(shortSlcName, isActivateOperation, beam_c);
 	if (!SUCCESS(status))
 	{
-		FREE_ALLOCATED_MEMORY
+		FREE_MEMORY
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Could not set activation state" );
 		RETURN_NULL_TABLE
 	}
 
 	// Get the status to return it
 	callStatus = klystronStatus(env, shortSlcName, beam_c, dgrp_c, &klys_status);
-	FREE_ALLOCATED_MEMORY
+	FREE_MEMORY
 	if (callStatus) {
 		RETURN_NULL_TABLE
 	}

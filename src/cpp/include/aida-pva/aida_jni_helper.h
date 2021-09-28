@@ -14,7 +14,7 @@ extern "C" {
 
 #define CHECK_EXCEPTION_AND_FREE_MEMORY(r) \
     if ((*env)->ExceptionCheck(env)) { \
-    	FREE_ALLOCATED_MEMORY \
+    	FREE_MEMORY \
         return r; \
     }
 

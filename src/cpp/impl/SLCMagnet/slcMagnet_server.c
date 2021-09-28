@@ -29,7 +29,7 @@ getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 static void magnetDataCleanUp(char* primaryList, char* microList, int* unitList, float* setValues, char* magnetFunction,
 		char* limitCheck, char* name_validity);
 static bool isAllValid(int count, const char* name_validity);
-static void getInvalidNames(char *dst, int count, char *names[], const char* name_validity);
+static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity);
 
 /**
  * Initialise the service
@@ -394,6 +394,9 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
+	// Keep track of stuff to free
+	TRACK_ALLOCATED_MEMORY
+
 	if (!DPSLCMAGNET_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"Aida magnet set operations are not currently enabled");
@@ -402,29 +405,39 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 
 	// Get arguments
 	int count;
-	int4u secondary;
+	int4u secn;
 	char* primaryList, * microList, * magnetFunction, * limitCheck, * name_validity;
 	int* unitList;
 	float* setValues;
 	int limitCheckAll = true;
-	if (getMagnetArguments(env, uri, arguments, value, &count, &primaryList, &microList, &unitList, &secondary,
-			&setValues,
-			&magnetFunction, &limitCheck, &name_validity)) {
-		 magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
-		RETURN_NULL_TABLE;
+	int getArgumentsFailed = getMagnetArguments(env, uri, arguments, value, &count,
+			&primaryList, &microList, &unitList, &secn, &setValues,
+			&magnetFunction, &limitCheck,
+			&name_validity);
+	TRACK_MEMORY(primaryList)
+	TRACK_MEMORY(microList)
+	TRACK_MEMORY(unitList)
+	TRACK_MEMORY(setValues)
+	TRACK_MEMORY(name_validity)
+	TRACK_MEMORY(magnetFunction)
+	TRACK_MEMORY(limitCheck)
+	if (getArgumentsFailed) {
+		magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
+		FREE_MEMORY
+		RETURN_NULL_TABLE
 	}
 
 	if (strcasecmp(magnetFunction, "TRIM") != 0 && strcasecmp(magnetFunction, "PTRB") != 0
 			&& strcasecmp(magnetFunction, "NOFUNC") != 0) {
-		 magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "MAGFUNC parameter must be TRIM, PTRB or NOFUNC");
-		RETURN_NULL_TABLE;
+		FREE_MEMORY
+		RETURN_NULL_TABLE
 	}
 
 	if (limitCheck && strcasecmp(limitCheck, "ALL") != 0 && strcasecmp(magnetFunction, "SOME") != 0) {
-		 magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "LIMITCHECK parameter must be ALL or SOME");
-		RETURN_NULL_TABLE;
+		FREE_MEMORY
+		RETURN_NULL_TABLE
 	}
 
 	if (limitCheck) {
@@ -432,11 +445,11 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	}
 
 	// Check limits
-	bool withinLimits[count], allSetValuesWithinLimits;  // true if within limits
+	bool withinLimits[count], allSetValuesWithinLimits = true;  // true if within limits
 	int numPairsWithinLimits = 0;
 	float magnetLimits[count * 2];
 	DPSLCMAGNET_RET_MAGLIMITS(count, &magnetLimits[0]);
-	CONVERT_FROM_VMS_FLOAT(&magnetLimits[0])
+	CONVERT_FROM_VMS_FLOAT(&magnetLimits[0], 1)
 	for (int i = 0; i < count; i++) {
 		float lowerLimit = magnetLimits[i * 2];
 		float upperLimit = magnetLimits[i * 2 + 1];
@@ -449,23 +462,23 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 		}
 	}
 	if (!allSetValuesWithinLimits && limitCheckAll || !numPairsWithinLimits) {
-		magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
 				"Some or all of the set values are outside of the limits");
-		RETURN_NULL_TABLE;
+		FREE_MEMORY
+		RETURN_NULL_TABLE
 	}
 
 	// Use only the values that are within limits
-	char limitedPrimList[(numPairsWithinLimits * MAX_PRIM_NAME_LEN) + 1];
-	char limitedMicrList[(numPairsWithinLimits * MAX_PRIM_NAME_LEN) + 1];
+	char limitedPrimList[(numPairsWithinLimits * PRIM_LEN) + 1];
+	char limitedMicrList[(numPairsWithinLimits * MICRO_LEN) + 1];
 	int limitedUnitList[numPairsWithinLimits];
 	float limitedValuesList[numPairsWithinLimits];
 
 	int limitedCounter = 0;
 	for (int i = 0; i < count; i++) {
 		if (withinLimits[i]) {
-			strcpy((limitedPrimList + limitedCounter * MAX_PRIM_NAME_LEN), (primaryList + i * MAX_PRIM_NAME_LEN));
-			strcpy((limitedMicrList + limitedCounter * MAX_PRIM_NAME_LEN), (microList + i * MAX_PRIM_NAME_LEN));
+			memcpy(limitedPrimList + limitedCounter * PRIM_LEN, primaryList + i * PRIM_LEN, PRIM_LEN);
+			memcpy(limitedMicrList + limitedCounter * MICRO_LEN, microList + i * MICRO_LEN, MICRO_LEN);
 			limitedUnitList[limitedCounter] = unitList[i];
 			limitedValuesList[limitedCounter] = setValues[i];
 			limitedCounter++;
@@ -474,9 +487,9 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 
 	// set the PVs specified by the lists of primary, micros, and units
 	vmsstat_t status;
-	status = DPSLCMAGNET_SET(numPairsWithinLimits, limitedPrimList, limitedMicrList, limitedUnitList, secondary,
+	status = DPSLCMAGNET_SET(numPairsWithinLimits, limitedPrimList, limitedMicrList, limitedUnitList, secn,
 			limitedValuesList, magnetFunction);
-	magnetDataCleanUp(primaryList, microList, unitList, setValues, magnetFunction, limitCheck, name_validity);
+	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "while setting magnet values");
 		RETURN_NULL_TABLE;
@@ -547,12 +560,12 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	}
 
 	// Get names array - and break up names into their components for other lists
-	*prim_list = (char*)malloc((*count * MAX_PRIM_NAME_LEN) + 1);
-	*micr_list = (char*)malloc((*count * MAX_MICR_NAME_LEN) + 1);
+	*prim_list = (char*)malloc((*count * PRIM_LEN) + 1);
+	*micr_list = (char*)malloc((*count * MICRO_LEN) + 1);
 	*unit_list = (int*)malloc(*count * sizeof(unsigned long));
 	unsigned long longUnitList[*count];
 	for (int i = 0; i < nNames; i++) {
-		pmuFromUri(names[i], *prim_list + i * MAX_PRIM_NAME_LEN, *micr_list + i * MAX_PRIM_NAME_LEN, &longUnitList[i]);
+		pmuFromDeviceName(names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i]);
 		((int*)*unit_list)[i] = (int)longUnitList[i];
 	}
 	// Secondary name
@@ -574,9 +587,7 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	free(names);
 
 	// Get convert values to VMS floats
-	for (int i = 0; i < nValues; i++) {
-		CONVERT_TO_VMS_FLOAT(set_values[i]);
-	}
+	CONVERT_TO_VMS_FLOAT(*set_values, nValues);
 
 	return EXIT_SUCCESS;
 }
@@ -605,6 +616,7 @@ getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 {
 	*magFunc = NULL;
 	*limitCheck = NULL;
+
 	if (getBaseMagnetArguments(env, uri, arguments, value, count, prim_list, micr_list, unit_list, secn, set_values,
 			name_validity)) {
 		return EXIT_FAILURE;
@@ -669,7 +681,7 @@ bool isAllValid(int count, const char* name_validity)
 	}
 
 	for (int i = 0; i < count; i++) {
-		if (strncasecmp(name_validity + (i * MAX_VALIDITY_STRING_LEN), "Success", strlen("Success")) != 0) {
+		if (strncasecmp(name_validity + (i * MAX_VALIDITY_STRING_LEN), "Success", sizeof("Success") - 1) != 0) {
 			return false;
 		}
 	}
@@ -684,16 +696,17 @@ bool isAllValid(int count, const char* name_validity)
  * @param names the array of pointers to names
  * @param name_validity the name validity structure returned from the back end
  */
-static void getInvalidNames(char *dst, int count, char *names[], const char* name_validity)
+static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity)
 {
-	if (!name_validity || !names ) {
+	if (!name_validity || !names) {
 		return;
 	}
 
+	*dst = 0x0; // null terminate initial string
 	for (int i = 0; i < count; i++) {
-		if (strncasecmp(name_validity + (i * MAX_VALIDITY_STRING_LEN), "Success", strlen("Success")) != 0) {
+		if (strncasecmp(name_validity + (i * MAX_VALIDITY_STRING_LEN), "Success", sizeof("Success") - 1) != 0) {
 			strcat(dst, names[i]);
-			if ( i != count-1 ) {
+			if (i != count - 1) {
 				strcat(dst, ", ");
 			}
 		}
