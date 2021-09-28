@@ -107,6 +107,9 @@ public class AidaProvider {
         if (overrideConfig == null) {
             return defaultConfig;
         }
+        if (defaultConfig == null) {
+            return channelConfig;
+        }
 
         // Merge type
         AidaType defaultType = defaultConfig.getType(), overrideType = overrideConfig.getType();
@@ -125,7 +128,7 @@ public class AidaProvider {
 
         // Override Fields if set on override
         List<AidaField> defaultFields = defaultConfig.getFields(), overrideFields = overrideConfig.getFields();
-        List<AidaField> fields = (overrideFields != null && !overrideFields.isEmpty()) ? overrideFields : defaultFields;
+        List<AidaField> fields = (overrideFields != null && !overrideFields.isEmpty()) ? overrideFields : defaultFields != null ? defaultFields : new ArrayList<AidaField>();
         channelConfig.setFields(fields);
 
         return channelConfig;
@@ -157,7 +160,9 @@ public class AidaProvider {
         aidaChannel.setGetterConfig(mergedConfig);
 
         // Set any table field-labels as well
-        setDefaultLabels(mergedConfig.getFields());
+        if (mergedConfig != null) {
+            setDefaultLabels(mergedConfig.getFields());
+        }
 
         // SETTER CONFIG
         // The Lowest priority is default config
@@ -172,7 +177,9 @@ public class AidaProvider {
         aidaChannel.setSetterConfig(mergedConfig);
 
         // Set any table field-labels as well
-        setDefaultLabels(mergedConfig.getFields());
+        if (mergedConfig != null) {
+            setDefaultLabels(mergedConfig.getFields());
+        }
     }
 
     /**

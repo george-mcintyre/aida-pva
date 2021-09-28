@@ -43,6 +43,9 @@ public abstract class ChannelProvider extends NativeChannelProvider {
 
         // Log the configuration of the channel we just created
         logHostedChannels();
+
+        // Call initialisation for the channel provider
+        aidaServiceInit();
     }
 
     /**

@@ -2,8 +2,6 @@ package edu.stanford.slac.aida.impl;
 
 import edu.stanford.slac.aida.lib.AidaProviderRunner;
 
-import static slac.aida.NativeChannelProvider.aidaServiceInit;
-
 public class AidaService {
     private final static String AIDA_PVA_LIB_NAME = "aida-pva";
     static {
@@ -15,9 +13,6 @@ public class AidaService {
         }
 
         System.loadLibrary(aidaPvaLibName);
-
-        // Call initialisation for the channel provider
-        aidaServiceInit();
     }
 
     public static void main(String[] args) {
