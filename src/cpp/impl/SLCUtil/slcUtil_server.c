@@ -203,6 +203,11 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Return the value
 	char* string = malloc(15);
+	if ( !string) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Could not allocate space for string");
+		return NULL;
+	}
+
 	if (trig_status) {
 		strcpy(string, "activated");
 	} else {
@@ -343,6 +348,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
+	TRACK_ALLOCATED_MEMORY
+
 	vmsstat_t status = 0;
 	char* bgrp, * varname, * valueString;
 
@@ -361,7 +368,12 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		return;
 	}
 
+	TRACK_MEMORY(bgrp)
+	TRACK_MEMORY(varname)
+	TRACK_MEMORY(valueString)
+
 	if (strcasecmp(valueString, "Y") != 0 && strcasecmp(valueString, "N") != 0) {
+		FREE_MEMORY
 		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION,
 				"'BGRP Set Variable requires Value argument to be 'Y' or 'N'");
 		return;
@@ -369,6 +381,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 
 	// Set the value
 	status = DPSLCUTIL_BGRP_SETVAR(bgrp, varname, valueString);
+	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Failed to set data");
 	}
@@ -427,6 +440,7 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	int num_devices;
 	vmsstat_t status;
 	status = DPSLCUTIL_DO_MKB(mkb, &floatValue, &num_devices);
+	free(mkb);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
 		RETURN_NULL_TABLE;
@@ -487,14 +501,15 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 
 	// Set the trigger value
 	vmsstat_t status;
-	status = DPSLCUTIL_TRIG_SETDEACTORREACT((char*)uri, flag, beam);
+	TO_SIMPLE_SLAC_NAME
+	status = DPSLCUTIL_TRIG_SETDEACTORREACT(slcName, flag, beam);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
 		RETURN_NULL_TABLE;
 	}
 
 	// Read back status
-	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &flag);
+	status = DPSLCUTIL_TRIG_GETSTATUS(slcName, beam, &flag);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to read-back value");
 		RETURN_NULL_TABLE;

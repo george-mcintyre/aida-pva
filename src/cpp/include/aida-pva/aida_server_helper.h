@@ -468,6 +468,10 @@ void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri);
 	char slcName[MAX_URI_LEN]; \
 	uriToSlcName(slcName, uri);
 
+#define TO_SIMPLE_SLAC_NAME \
+	char slcName[MAX_URI_LEN]; \
+	groupNameFromUri(uri, slcName);
+
 #ifdef __cplusplus
 }
 #endif

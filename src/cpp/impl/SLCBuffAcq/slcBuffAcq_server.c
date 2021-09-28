@@ -303,8 +303,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	unsigned int nBpms = 0, nDevs = 0;
 	char** bpms, ** devices;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
-	char dGroupName[strlen(uri)+1];
-	groupNameFromUri(uri, dGroupName);
+	TO_SIMPLE_SLAC_NAME
 
 	if (ascanf(env, &arguments, "%d %od %osa %osa",
 			"bpmd", &bpmd,
@@ -341,7 +340,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Acquire Data
 	int rows;
-	if ((rows = acquireBuffAcqData(env, nDevices, deviceNames, dGroupName, bpmd, nrpos)) == 0) {
+	if ((rows = acquireBuffAcqData(env, nDevices, deviceNames, slcName, bpmd, nrpos)) == 0) {
 		RETURN_NULL_TABLE
 	}
 
