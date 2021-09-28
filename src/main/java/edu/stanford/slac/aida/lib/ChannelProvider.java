@@ -192,7 +192,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
     }
 
     /**
-     * Called retrieves the native channel getterConfig if any is available
+     * Retrieves the native channel getterConfig if any is available
      *
      * @param channelName the channel for which getterConfig is to be returned
      * @param forGetter   true for getter otherwise setter
@@ -202,11 +202,11 @@ public abstract class ChannelProvider extends NativeChannelProvider {
         AidaChannelConfig config = channelConfigMap.get(configMapIndex(channelName, forGetter));
         if (config == null) {
             try {
-                channelConfigMap.put(configMapIndex(channelName, forGetter), config);
+                config = aidaChannelConfig(channelName, forGetter);
             } catch (UnsatisfiedLinkError unsatisfiedLinkError) {
                 System.err.println("Warning! Unsatisfied Link for native call.  Returning empty getterConfig");
-                config = new AidaChannelConfig();
             }
+            channelConfigMap.put(configMapIndex(channelName, forGetter), config);
         }
         return config;
     }

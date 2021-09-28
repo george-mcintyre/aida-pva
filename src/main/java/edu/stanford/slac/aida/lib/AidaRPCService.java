@@ -42,36 +42,53 @@ public class AidaRPCService implements RPCService {
      *                                          but is not yet supported in the service implementation
      */
     public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
-        // Check that the parameter is always a normative type
-        String type = pvUri.getStructure().getID();
-        if (!NTURI.is_a(pvUri.getStructure())) {
-            String msg = "Unable to get data, unexpected request type: " + type;
-            throw new RPCRequestException(Status.StatusType.ERROR, msg);
-        }
-
-        // Retrieve the PV name
-        PVString pvPathField = pvUri.getStringField("path");
-        if (pvPathField == null) {
-            throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: " + pvUri);
-        }
-        String channelName = pvPathField.get();
-        if (channelName == null || channelName.length() == 0) {
-            throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: <blank>");
-        }
-
-        // Convert the channelName to old AIDA format including '//' before the attribute name
-        // So that services can use simple matching to decode the pvName
-        channelName = getAidaName(channelName);
-
-        // Retrieve arguments, if any given to this RPC PV channel.
-        PVStructure pvUriQuery = pvUri.getStructureField("query");
-        List<AidaArgument> arguments = getArguments(pvUriQuery);
-
-        // Make sure that only one request occurs at a time because
-        // the implementations are not thread safe.
         PVStructure retVal;
-        synchronized (this) {
-            retVal = request(channelName, arguments);
+        try {
+            // Check that the parameter is always a normative type
+            String type = pvUri.getStructure().getID();
+            if (!NTURI.is_a(pvUri.getStructure())) {
+                String msg = "Unable to get data, unexpected request type: " + type;
+                throw new RPCRequestException(Status.StatusType.ERROR, msg);
+            }
+
+            // Retrieve the PV name
+            PVString pvPathField = pvUri.getStringField("path");
+            if (pvPathField == null) {
+                throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: " + pvUri);
+            }
+            String channelName = pvPathField.get();
+            if (channelName == null || channelName.length() == 0) {
+                throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: <blank>");
+            }
+
+            // Convert the channelName to old AIDA format including '//' before the attribute name
+            // So that services can use simple matching to decode the pvName
+            channelName = getAidaName(channelName);
+
+            // Retrieve arguments, if any given to this RPC PV channel.
+            PVStructure pvUriQuery = pvUri.getStructureField("query");
+            List<AidaArgument> arguments = getArguments(pvUriQuery);
+
+            // Make sure that only one request occurs at a time because
+            // the implementations are not thread safe.
+            synchronized (this) {
+                retVal = request(channelName, arguments);
+            }
+        } catch (RPCRequestException e) {
+            throw e;
+        } catch (UnableToGetDataException e) {
+            throw e;
+        } catch (UnsupportedChannelException e) {
+            throw e;
+        } catch (UnableToSetDataException e) {
+            throw e;
+        } catch (AidaInternalException e) {
+            throw e;
+        } catch (MissingRequiredArgumentException e) {
+            throw e;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw new AidaInternalException("Internal Error");
         }
 
         return retVal;
@@ -125,22 +142,22 @@ public class AidaRPCService implements RPCService {
                 // Check that it matches the type class from the channels file
                 // if channel accepts any type or if the specified type is TABLE (which matches any configuration)
                 // or if the specified type is in the class of types allowed by the channel
-                if ( isSetterRequest ) {
-                    if ( specifiedAidaType != TABLE && specifiedAidaType != VOID) {
+                if (isSetterRequest) {
+                    if (!TABLE.equals(specifiedAidaType) && !VOID.equals(specifiedAidaType)) {
                         throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
                     }
-                    if ( specifiedAidaType.equals(aidaSetterType) || aidaSetterType == ANY ) {
+                    if (specifiedAidaType.equals(aidaSetterType) || ANY.equals(aidaSetterType)) {
                         aidaSetterType = specifiedAidaType;
                     } else {
                         throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
                     }
                 } else {
-                    if (aidaGetterType.equals(ANY) ||
-                            ((aidaGetterType.equals(SCALAR) || aidaGetterType.equals(SCALAR_ARRAY)) &&
-                                    (specifiedAidaType == TABLE || specifiedAidaType.metaType().equals(aidaGetterType)))) {
+                    if (ANY.equals(aidaGetterType) ||
+                            ((SCALAR.equals(aidaGetterType) || SCALAR_ARRAY.equals(aidaGetterType)) &&
+                                    (TABLE.equals(specifiedAidaType) || specifiedAidaType.metaType().equals(aidaGetterType)))) {
                         aidaGetterType = specifiedAidaType;
                     } else {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + (aidaGetterType != null ? aidaGetterType : "<unspecified>") + ", but you specified " + specifiedAidaType);
                     }
                 }
             } catch (IllegalArgumentException e) {
@@ -159,6 +176,13 @@ public class AidaRPCService implements RPCService {
                     aidaGetterType = TABLE;
             }
         }
+        if (aidaGetterType == null) {
+            aidaGetterType = NONE;
+        }
+
+        if (aidaSetterType == null) {
+            aidaSetterType = NONE;
+        }
 
         // Get EPICS type from Aida Type
         Type channelGetterType = typeOf(aidaGetterType);
@@ -175,9 +199,9 @@ public class AidaRPCService implements RPCService {
             if (aidaSetterType.equals(VOID)) {
                 this.aidaChannelProvider.setValue(channelName, arguments);
                 return NT_SCALAR_EMPTY_STRUCTURE;
-            } else if ( aidaSetterType.equals(TABLE) ) {
-                if ( channelSetterConfig.getFields() == null ) {
-                    throw new AidaInternalException("Table channel configured without defining fields" );
+            } else if (aidaSetterType.equals(TABLE)) {
+                if (channelSetterConfig.getFields() == null) {
+                    throw new AidaInternalException("Table channel configured without defining fields");
                 }
                 List<List<Object>> returnValue = this.aidaChannelProvider.setValueWithResponse(channelName, arguments);
                 return asNtTable(returnValue, channelSetterConfig);
@@ -197,8 +221,8 @@ public class AidaRPCService implements RPCService {
                 List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaGetterType, arguments);
                 return asScalarArray(returnValue, channelGetterConfig);
             } else {
-                if ( channelGetterConfig.getFields() == null ) {
-                    throw new AidaInternalException("Table channel configured without defining fields" );
+                if (channelGetterConfig.getFields() == null) {
+                    throw new AidaInternalException("Table channel configured without defining fields");
                 }
                 List<List<Object>> returnValue = this.aidaChannelProvider.requestTable(channelName, arguments);
                 return asNtTable(returnValue, channelGetterConfig);

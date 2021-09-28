@@ -21,7 +21,7 @@ public class AidaProvider {
     private String description;
     private @NonNull Set<AidaChannel> channels = new HashSet<AidaChannel>();
     private @NonNull AidaChannelConfig getterConfig;
-    private @NonNull AidaChannelConfig setterConfig;
+    private AidaChannelConfig setterConfig;
     private ChannelProvider channelProvider;
 
     private final Map<String, AidaChannel> channelMap = new HashMap<String, AidaChannel>();
@@ -108,12 +108,12 @@ public class AidaProvider {
             return defaultConfig;
         }
         if (defaultConfig == null) {
-            return channelConfig;
+            return overrideConfig;
         }
 
         // Merge type
         AidaType defaultType = defaultConfig.getType(), overrideType = overrideConfig.getType();
-        AidaType type = (overrideType != null) ? overrideType : (defaultType != null) ? defaultType : NONE;
+        AidaType type = (overrideType != null) ? overrideType : defaultType;
         channelConfig.setType(type.toString());
 
         // Merge table layout
