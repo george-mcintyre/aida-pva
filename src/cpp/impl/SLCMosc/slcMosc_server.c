@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <descrip.h>              /*  for definition of $DESCRIPTOR  */
-#include <stdbool.h>
 
 #include "aida_server_helper.h"
 #include "json.h"
@@ -156,7 +155,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
 		return 0.0;
 	}
-	CONVERT_FROM_VMS_DOUBLE(meas_abs_freq)
+	CONVERT_FROM_VMS_DOUBLE(&meas_abs_freq, 1)
 
 	return meas_abs_freq;
 }
@@ -289,27 +288,18 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	// Check if operations are enabled?
-	if (!DPSLCMOSC_ACCESSENABLED()) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Aida access to Master Oscillator is not currently enabled");
-		RETURN_NULL_TABLE;
-	}
-
-	// Read the values
-	double meas_abs_freq;
-	vmsstat_t status;
-	status = DPSLCMOSC_MEASMASTEROSC(&meas_abs_freq);
-	if (!SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get oscillator frequency");
-		RETURN_NULL_TABLE;
-	}
-
-	// Now create table to return
+	// Create table to return value
 	Table table = tableCreate(env, 1, 1);
 	CHECK_EXCEPTION(table)
+
+	// Get the value
+	double meas_abs_freq = aidaRequestDouble(env, uri, arguments);
+	CHECK_EXCEPTION(table)
+
+	// Add value to table
 	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq);
 
+	// Return table
 	return table;
 }
 
@@ -338,6 +328,9 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
+	// Keep track of stuff to free
+	TRACK_ALLOCATED_MEMORY
+
 	// Check if operations are enabled?
 	if (!DPSLCMOSC_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
@@ -349,19 +342,27 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	float floatValue;
 	char* units;
 	char* ring;
-	if (getMoscArguments(env, arguments, value, &units, &ring, &floatValue)) {
-		RETURN_NULL_TABLE;
+	int getArgStatus =  getMoscArguments(env, arguments, value, &units, &ring, &floatValue);
+	TRACK_MEMORY(units)
+	TRACK_MEMORY(ring)
+	if (getArgStatus) {
+		FREE_MEMORY
+		RETURN_NULL_TABLE
 	}
 
 	// Set value
 	vmsstat_t status;
 	double resulting_abs_freq; // Value read back
+	CONVERT_TO_VMS_FLOAT(&floatValue, 1)
 	status = DPSLCMOSC_SETMASTEROSC(&floatValue, units, ring, &resulting_abs_freq);
+	FREE_MEMORY
 	if (!SUCCESS(status))
 	{
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Unable to set Master Oscillator frequency");
-		RETURN_NULL_TABLE;
+		RETURN_NULL_TABLE
 	}
+
+	CONVERT_FROM_VMS_DOUBLE(&resulting_abs_freq, 1)
 
 	// Now create table to return
 	Table table = tableCreate(env, 1, 1);
@@ -391,7 +392,7 @@ static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char*
 			"units", units,
 			"ring", ring
 			)) {
-		EXIT_FAILURE;
+		return EXIT_FAILURE;
 	}
 
 	// If the units is set to ENERGY then we *do* require the ring parameter
