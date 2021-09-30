@@ -8,7 +8,9 @@ import org.epics.nt.NTURI;
 import org.epics.pvaccess.server.rpc.RPCRequestException;
 import org.epics.pvaccess.server.rpc.RPCService;
 import org.epics.pvdata.pv.*;
+import org.epics.util.array.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -246,7 +248,8 @@ public class AidaRPCService implements RPCService {
                 if (name == null) {
                     throw new RPCRequestException(Status.StatusType.ERROR, "Invalid argument name: <blank>");
                 }
-                String value = pvUriQuery.getStringField(name).get();
+                // TODO handle floats and doubles as scalar, arrays and structure elements
+                String value = fieldToString(field);
                 if (value == null) {
                     throw new RPCRequestException(Status.StatusType.ERROR, "Invalid argument value: <blank>");
                 }
@@ -254,5 +257,209 @@ public class AidaRPCService implements RPCService {
             }
         }
         return arguments;
+    }
+
+    /**
+     * Extract the value from the argument field
+     *
+     * @param field the field
+     * @return the extracted value
+     * @throws RPCRequestException of the field type is unsupported
+     */
+    private String fieldToString(PVField field) throws RPCRequestException {
+        String value;
+        if (field instanceof PVBoolean) {
+            value = Boolean.toString(((PVBoolean) field).get());
+        } else if (field instanceof PVByte) {
+            value = Byte.toString(((PVByte) field).get());
+        } else if (field instanceof PVUByte) {
+            value = Byte.toString(((PVUByte) field).get());
+        } else if (field instanceof PVDouble) {
+            value = Double.toString(((PVDouble) field).get());
+        } else if (field instanceof PVFloat) {
+            value = Float.toString(((PVFloat) field).get());
+        } else if (field instanceof PVInt) {
+            value = Integer.toString(((PVInt) field).get());
+        } else if (field instanceof PVLong) {
+            value = Long.toString(((PVLong) field).get());
+        } else if (field instanceof PVShort) {
+            value = Short.toString(((PVShort) field).get());
+        } else if (field instanceof PVString) {
+            value = ((PVString) field).get();
+        } else if (field instanceof PVStructure) {
+            // For structures then we need to recurse for each field
+            PVStructure structure = ((PVStructure) field);
+            StringBuilder structureBuilder = new StringBuilder();
+            structureBuilder.append("{");
+            boolean firstTime = true;
+            for (PVField subField : structure.getPVFields()) {
+                String elementName = subField.getFieldName();
+                String elementValue = fieldToString(subField);
+                if (!firstTime) {
+                    structureBuilder.append(", ");
+                }
+                firstTime = false;
+
+                structureBuilder.append("\"");
+                structureBuilder.append(elementName);
+                structureBuilder.append("\": ");
+                if (subField instanceof PVString) {
+                    structureBuilder.append("\"");
+                }
+                structureBuilder.append(elementValue);
+                if (subField instanceof PVString) {
+                    structureBuilder.append("\"");
+                }
+            }
+            structureBuilder.append("}");
+            value = structureBuilder.toString();
+        } else if (field instanceof PVArray) {
+            PVArray array = ((PVArray) field);
+            StringBuilder arrayBuilder = new StringBuilder();
+            arrayBuilder.append("[");
+            boolean firstTime = true;
+            for (String subValue : arrayFields(array)) {
+                if (!firstTime) {
+                    arrayBuilder.append(", ");
+                }
+                firstTime = false;
+                arrayBuilder.append(subValue);
+            }
+            arrayBuilder.append("]");
+            value = arrayBuilder.toString();
+        } else {
+            throw new RPCRequestException(Status.StatusType.ERROR, "Invalid argument value: can only accept scalar, scalar array, structure or structure array");
+        }
+        return value;
+    }
+
+    /**
+     * Extract array fields to supply to {@link #fieldToString(PVField)}
+     *
+     * @param array any PV array
+     * @return the list of strings for this array
+     * @throws RPCRequestException when there is an unsupported type
+     */
+    private List<String> arrayFields(PVArray array) throws RPCRequestException {
+        List<String> arrayList = new ArrayList<String>();
+
+        if (array instanceof PVBooleanArray) {
+            // For boolean arrays
+            BooleanArrayData data = new BooleanArrayData();
+            int offset = 0, len = array.getLength();
+            while (offset < len) {
+                int num = ((PVBooleanArray) array).get(offset, (len - offset), data);
+                for (int i = 0; i < num; i++) {
+                    arrayList.add(Boolean.toString(data.data[offset + i]));
+                }
+                offset += num;
+            }
+        } else if (array instanceof PVByteArray) {
+            // For byte arrays
+            IteratorByte it = ((PVByteArray) array).get().iterator();
+            while (it.hasNext()) {
+                arrayList.add(Byte.toString(it.nextByte()));
+            }
+        } else if (array instanceof PVDoubleArray) {
+            // For double arrays
+            IteratorDouble it = ((PVDoubleArray) array).get().iterator();
+            while (it.hasNext()) {
+                arrayList.add(Double.toString(it.nextDouble()));
+            }
+        } else if (array instanceof PVFloatArray) {
+            // For float arrays
+            IteratorFloat it = ((PVFloatArray) array).get().iterator();
+            while (it.hasNext()) {
+                arrayList.add(Float.toString(it.nextFloat()));
+            }
+        } else if (array instanceof PVIntArray) {
+            // For integer arrays
+            IteratorInteger it = ((PVIntArray) array).get().iterator();
+            while (it.hasNext()) {
+                arrayList.add(Integer.toString(it.nextInt()));
+            }
+        } else if (array instanceof PVLongArray) {
+            // For long arrays
+            IteratorLong it = ((PVLongArray) array).get().iterator();
+            while (it.hasNext()) {
+                arrayList.add(Long.toString(it.nextLong()));
+            }
+        } else if (array instanceof PVShortArray) {
+            // For short arrays
+            IteratorShort it = ((PVShortArray) array).get().iterator();
+            while (it.hasNext()) {
+                arrayList.add(Short.toString(it.nextShort()));
+            }
+        } else if (array instanceof PVStringArray) {
+            // For string arrays
+            StringArrayData data = new StringArrayData();
+            int offset = 0, len = array.getLength();
+            while (offset < len) {
+                int num = ((PVStringArray) array).get(offset, (len - offset), data);
+                for (int i = 0; i < num; i++) {
+                    String string = data.data[offset + i];
+                    // Only add quotes around real strings
+                    if (isNumeric(string)) {
+                        arrayList.add(string);
+                    } else {
+                        arrayList.add("\"" + string + "\"");
+                    }
+                }
+                offset += num;
+            }
+        } else if (array instanceof PVStructureArray) {
+            // For structure arrays then recurse to unpack each field
+            StructureArrayData data = new StructureArrayData();
+            int offset = 0, len = array.getLength();
+            while (offset < len) {
+                int num = ((PVStructureArray) array).get(offset, (len - offset), data);
+                for (int i = 0; i < num; i++) {
+                    arrayList.add(fieldToString((data.data[offset + i])));
+                }
+                offset += num;
+            }
+        }
+        return arrayList;
+    }
+
+    /**
+     * Is the given string numeric
+     * Test by trying to convert to all numeric types and if any succeeds then return true
+     *
+     * @param strNum the string to check
+     * @return true if the string is a number false otherwise
+     */
+    private boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+
+        try {
+            Integer.parseInt(strNum);
+            return true;
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Float.parseFloat(strNum);
+            return true;
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            Double.parseDouble(strNum);
+            return true;
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            Long.parseLong(strNum);
+            return true;
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            new BigInteger(strNum);
+            return true;
+        } catch (NumberFormatException ignored) {
+        }
+        return false;
     }
 }
