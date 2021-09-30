@@ -7,7 +7,7 @@ name: Sample
 description: Aida Sample Data Provider
 # The mandatory default getterConfig is used when specific config is not supplied for any of the channels included in this provider
 getterConfig:
-  # Return Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (eg INTEGER_ARRAY, STRING_ARRAY), TABLE
+  # Return Type can be scalar (e.g. BOOLEAN, BYTE, ..), scalar arrays (e.g. INTEGER_ARRAY, STRING_ARRAY), TABLE
   # ANY to allow the channel to be called with a type option that will select the type at runtime
   # or NONE if the channel will not return a value (e.g. for setValue)
   # When calling a channel with a Value argument then the channel sets this value

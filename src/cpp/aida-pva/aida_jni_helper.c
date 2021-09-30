@@ -264,18 +264,6 @@ jmethodID getConstructorMethodId(JNIEnv* env, jclass cls)
 }
 
 /**
- * Get the method ID of the constructor of the given class for ArrayLists
- *
- * @param env env
- * @param cls given class
- * @return the constructor method id
- */
-jmethodID getArrayListConstructorMethodId(JNIEnv* env, jclass cls)
-{
-	return getMethodId(env, cls, "<init>", "(I)V");
-}
-
-/**
  * Get c arguments structure from a java arguments list - List<AidaArgument>
  *
  *
@@ -363,6 +351,18 @@ Value getValue(JNIEnv* env, Arguments arguments)
 {
 	return getNamedValue(env, arguments, "Value");
 }
+
+/**
+ * Get an array value from the Value argument.  Even if the argument is not
+ * an array it will create a one element array to put it in
+ * @param env env
+ * @param arguments provided arguments structure
+ * @return the extracted array Value that will contain parsed json
+ */
+Value getArrayValue(JNIEnv* env, Arguments arguments) {
+	return getNamedArrayValue(env, arguments, "Value");
+}
+
 
 /**
  * Free the json value in a Value structure.

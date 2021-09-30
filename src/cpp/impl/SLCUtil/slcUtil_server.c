@@ -22,6 +22,24 @@
 
 static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
 static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
+static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments);
+
+// API Stubs
+REQUEST_STUB_CHANNEL_CONFIG
+REQUEST_STUB_BOOLEAN
+REQUEST_STUB_BYTE
+REQUEST_STUB_LONG
+REQUEST_STUB_FLOAT
+REQUEST_STUB_DOUBLE
+REQUEST_STUB_BOOLEAN_ARRAY
+REQUEST_STUB_BYTE_ARRAY
+REQUEST_STUB_SHORT_ARRAY
+REQUEST_STUB_INTEGER_ARRAY
+REQUEST_STUB_LONG_ARRAY
+REQUEST_STUB_FLOAT_ARRAY
+REQUEST_STUB_DOUBLE_ARRAY
+REQUEST_STUB_STRING_ARRAY
+REQUEST_STUB_TABLE
 
 /**
  * Initialise the service
@@ -30,53 +48,10 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	vmsstat_t status;
-	if (!SUCCESS(status = DPSLCUTIL_DB_INIT())) {
-		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Utility Service");
-		return;
-	}
-
-	printf("Aida Utility Service Initialised\n");
-}
-
-/**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
-{
-	DEFAULT_CONFIG_REQUEST
-}
-
-/**
- * Get a boolean
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean
- */
-int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a byte
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte
- */
-char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0x0;
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCUTIL", "Utility",
+			true,        // db init
+			false,       // query init
+			false)       // set init
 }
 
 /**
@@ -89,21 +64,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
  */
 short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	// Get the arguments
-	int beam;
-	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
-		return 0;
-	}
-
-	// Read the status
-	vmsstat_t status;
-	short trig_status;
-	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
-	if (!SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
-	}
-
-	return trig_status;
+	return getTrigStatus(env, uri, arguments);
 }
 
 /**
@@ -116,63 +77,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
  */
 int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	// Get the arguments
-	int beam;
-	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
-		return 0;
-	}
-
-	// Read the status
-	vmsstat_t status;
-	short trig_status;
-	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
-	if (!SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
-	}
-
-	return (int)trig_status;
-}
-
-/**
- * Get a long
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long
- */
-long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a float
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float
- */
-float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0f;
-}
-
-/**
- * Get a double
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double
- */
-double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0;
+	return (int)getTrigStatus(env, uri, arguments);
 }
 
 /**
@@ -185,153 +90,15 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
  */
 char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	// Get the arguments
-	int beam;
-
-	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
-		return NULL;
-	}
-
 	// Read the status
-	vmsstat_t status;
-	short trig_status;
-	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
-	if (!SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
-		return NULL;
-	}
-
-	// Return the value
-	char* string = malloc(15);
-	if ( !string) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Could not allocate space for string");
-		return NULL;
-	}
+	short trig_status = getTrigStatus(env, uri, arguments);
+	CHECK_EXCEPTION(NULL)
 
 	if (trig_status) {
-		strcpy(string, "activated");
+		return ALLOCATE_STRING(env, "activated","string");
 	} else {
-		strcpy(string, "deactivated");
+		return ALLOCATE_STRING(env, "deactivated", "string");
 	}
-
-	return string;
-}
-
-/**
- * Get a boolean array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean array
- */
-Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a byte array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte array
- */
-Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a short array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the short array
- */
-Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a integer array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer array
- */
-Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a long array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long array
- */
-Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a float array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float array
- */
-Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a double array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double array
- */
-Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a string array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the string array
- */
-StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_STRING_ARRAY_REQUEST
-}
-
-/**
- * Get a table of data
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the table
- */
-Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_TABLE_REQUEST
 }
 
 /**
@@ -501,15 +268,15 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 
 	// Set the trigger value
 	vmsstat_t status;
-	TO_SIMPLE_SLAC_NAME
-	status = DPSLCUTIL_TRIG_SETDEACTORREACT(slcName, flag, beam);
+	TO_DGROUP(uri, dGroupName)
+	status = DPSLCUTIL_TRIG_SETDEACTORREACT(dGroupName, flag, beam);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
 		RETURN_NULL_TABLE;
 	}
 
 	// Read back status
-	status = DPSLCUTIL_TRIG_GETSTATUS(slcName, beam, &flag);
+	status = DPSLCUTIL_TRIG_GETSTATUS(dGroupName, beam, &flag);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to read-back value");
 		RETURN_NULL_TABLE;
@@ -521,4 +288,31 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 	tableAddSingleRowShortColumn(env, &table, flag);
 
 	return table;
+}
+
+/**
+ * Read the trig status and return the value
+ *
+ * @param env to report errors
+ * @param uri the uri
+ * @param arguments the arguments
+ * @return the beam status
+ */
+static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments)
+{
+	// Get the arguments
+	int beam;
+
+	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
+		return 0;
+	}
+
+	// Read the status
+	vmsstat_t status;
+	short trig_status;
+	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
+	if (!SUCCESS(status)) {
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
+	}
+	return trig_status;
 }

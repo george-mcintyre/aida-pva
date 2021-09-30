@@ -34,7 +34,7 @@
 #define ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, _target) \
 { \
     _cType* ptr = (_cType*)(_target); \
-    if (!isJson) {                                    \
+    if (!valueShouldBeJson) {                                    \
         sscanf(stringValue, _format, ptr);\
     } else {                                                              \
         if (jsonRoot->type == json_integer) { \
@@ -49,13 +49,7 @@
 
 #define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
 { \
-    *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
-    if ( !*arrayPtr ) { \
-        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
-        FREE_MEMORY \
-        return EXIT_FAILURE; \
-    } \
-    TRACK_MEMORY(*arrayPtr) \
+	ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
         ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, ARRAY_TARGET(_cType)) \
@@ -64,13 +58,7 @@
 
 #define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
 { \
-    *arrayPtr = calloc(arrayCount, sizeof(_cType)); \
-    if ( !*arrayPtr ) { \
-        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
-        FREE_MEMORY \
-        return EXIT_FAILURE; \
-    } \
-    TRACK_MEMORY(*arrayPtr) \
+	ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
         _setMacro(ARRAY_TARGET(_cType)) \
@@ -80,7 +68,7 @@
 #define ASCANF_SET_BOOLEAN(_targetBoolean) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetBoolean); \
-    if (!isJson) {  \
+    if (!valueShouldBeJson) {  \
         if (isdigit(*stringValue)) {\
             int number; \
             sscanf(stringValue, "%d", &number); \
@@ -116,7 +104,7 @@
 #define ASCANF_SET_BYTE(_targetByte) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetByte); \
-    if (!isJson) { \
+    if (!valueShouldBeJson) { \
         *ptr = *stringValue; \
     } else {   \
         if (jsonRoot->type == json_integer) { \
@@ -134,17 +122,11 @@
 #define ASCANF_SET_STRING(_targetString) \
 { \
     char** ptr = (char**)(_targetString); \
-    if (!isJson) { \
+    if (!valueShouldBeJson) { \
         *ptr = stringValue; \
     } else {  \
         if (aidaType == AIDA_STRING_TYPE) { \
-            nextStringPosition = malloc(jsonRoot->u.string.length+1); \
-            if ( !nextStringPosition ) { \
-                aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
-                FREE_MEMORY \
-                return EXIT_FAILURE; \
-            } \
-            TRACK_MEMORY(nextStringPosition)\
+			ALLOCATE_AND_TRACK_MEMORY(env, nextStringPosition, jsonRoot->u.string.length+1, "string arguments", EXIT_FAILURE) \
         }\
         if (jsonRoot->type == json_string) { \
             strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
@@ -166,13 +148,7 @@
 #define ASCANF_SET_STRING_ARRAY \
 { \
     size_t pointerSpace = arrayCount * sizeof(char*); \
-    *arrayPtr = malloc(pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1);\
-    if ( !*arrayPtr ) { \
-        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory arguments"); \
-        FREE_MEMORY \
-        return EXIT_FAILURE; \
-    } \
-    TRACK_MEMORY(*arrayPtr); \
+	ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1, "string array arguments", EXIT_FAILURE) \
     nextStringPosition = ((char*)*arrayPtr) + pointerSpace; \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
@@ -180,12 +156,12 @@
     } \
 }
 
-static void tableColumn(Table* table, int columnNumber, Type aidaType, size_t elementSize);
+static void allocateTableColumn(JNIEnv* env, Table* table, Type aidaType, size_t elementSize);
 static Type tableArrayTypeOf(Type type);
 static size_t tableElementSizeOfOf(Type type);
 static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, va_list argp);
-static Type fToType(JNIEnv* env, char format, short isArray, short isLong, short isShort);
-static int getJsonPathElements(char* fullJsonPath, char* variableName, char** path);
+static Type formatStringComponentsToType(JNIEnv* env, char format, short isArray, short isLong, short isShort);
+static void getJsonPathElements(char* fullJsonPath, char* variableName, char** path);
 
 /**
  * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
@@ -445,16 +421,16 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					formatSpecifier, EXIT_FAILURE)
 		}
 
-		// Set isJson (if argument name references json) and
+		// Set valueShouldBeJson (if argument name should reference json) and
 		// isValue (if we need to get the value from the "value" argument)
-		short isJson = false, isValue = false;
+		short valueShouldBeJson = false, isValue = false;
 
 		if (strncasecmp(argumentName, "value", 5) == 0) {
 			isValue = true;
 		}
 
 		if (isArray || strchr(argumentName, '.') != NULL || strchr(argumentName, '[') != NULL) {
-			isJson = 1;
+			valueShouldBeJson = true;
 		}
 
 		// Get target variable pointer
@@ -467,7 +443,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		}
 
 		// Convert format, isArray, isLong, and isShort into an AIDA_TYPE
-		Type aidaType = fToType(env, format, isArray, isLong, isShort);
+		Type aidaType = formatStringComponentsToType(env, format, isArray, isLong, isShort);
 		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE)
 
 		// if the argument is json then the name may contain dots and square braces,
@@ -490,46 +466,34 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		json_value* jsonRoot = NULL;
 		json_type jsonType = json_none;
 
-		if (!isValue) {
-			if (!isJson) {
-				// Normal string argument
-				Argument elementArgument = getArgument(*arguments, argumentName);
-				if (!elementArgument.name) {
-					if (isRequired) {
-						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-								"Missing required argument: %s", argumentName, EXIT_FAILURE)
-					} else {
-						continue;
-					}
-				}
-				stringValue = elementArgument.value;
-			} else {
-				// Normal json argument
-				getJsonPathElements(argumentName, jsonArgumentName, &jsonPath);
-				elementValue = getNamedValue(env, *arguments, jsonArgumentName);
-				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
-				if (elementValue.type == AIDA_NO_TYPE) {
-					if (isRequired) {
-						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
-								"Missing required argument: %s", argumentName, EXIT_FAILURE)
-					} else {
-						continue;
-					}
-				}
-				TRACK_JSON(elementValue.value.jsonValue)
-				jsonRoot = getJsonValue(elementValue, jsonPath);
-				jsonType = jsonRoot->type;
-			}
-		} else {
+		if (valueShouldBeJson) {
+			getJsonPathElements(argumentName, jsonArgumentName, &jsonPath);
+		}
+
+		// Is using value argument
+		if (isValue) {
 			// First check if we have had the value passed to us as an argument
 			// If not then go and get it
-			if (value == NULL) {
-				elementValue = getValue(env, *arguments);
+			if (value) {
+				if (isArray && value->type == AIDA_STRING_TYPE) {
+
+					// ignore passed in value if we need an array but the user didn't give us an array
+					// Just take the string and wrap it as an array
+					elementValue = asArrayValue(value->value.stringValue);
+					value = &elementValue;
+					TRACK_JSON(elementValue.value.jsonValue)
+				}
+			} else {
+				if (isArray && !*jsonPath) {
+					elementValue = getArrayValue(env, *arguments);
+				} else {
+					elementValue = getValue(env, *arguments);
+				}
 				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
 				value = &elementValue;
 				if (elementValue.type == AIDA_JSON_TYPE) {
 					TRACK_JSON(elementValue.value.jsonValue)
-					isJson = true;
+					valueShouldBeJson = true;
 				}
 			}
 
@@ -544,30 +508,53 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					// so that callers can uniformly free all strings
 					char* defaultString = *(char**)target;
 					if (aidaType == AIDA_STRING_TYPE && defaultString) {
-						char* allocatedString = malloc(strlen(defaultString) + 1);
-						if (!allocatedString) {
-							aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
-									"can't allocate memory for arguments");
-							FREE_MEMORY
-							return EXIT_FAILURE;
-						}
-						TRACK_MEMORY(allocatedString)
-						strcpy(allocatedString, defaultString);
+						char * allocatedString;
+						ALLOCATE_AND_TRACK_STRING(env, allocatedString, defaultString, "default arguments", EXIT_FAILURE)
 						*(char**)target = allocatedString;
 					}
-
 					continue;
 				}
 			}
 
-			if (!isJson) {
-				// Value string argument
-				stringValue = value->value.stringValue;
-			} else {
-				// Value json argument
-				getJsonPathElements(argumentName, jsonArgumentName, &jsonPath);
+			if (valueShouldBeJson) {
 				jsonRoot = getJsonValue(*value, jsonPath);
 				jsonType = jsonRoot->type;
+			} else {
+				stringValue = value->value.stringValue;
+			}
+		} else {
+			// Is not using value argument
+			if (valueShouldBeJson) {
+				// Should be a normal json argument
+				if ( isArray && !*jsonPath) {
+					elementValue = getNamedArrayValue(env, *arguments, jsonArgumentName);
+				} else {
+					elementValue = getNamedValue(env, *arguments, jsonArgumentName);
+				}
+				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
+				if (elementValue.type != AIDA_JSON_TYPE) {
+					if (isRequired) {
+						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+								"Missing required argument: %s", argumentName, EXIT_FAILURE)
+					} else {
+						continue;
+					}
+				}
+				TRACK_JSON(elementValue.value.jsonValue)
+				jsonRoot = getJsonValue(elementValue, jsonPath);
+				jsonType = jsonRoot->type;
+			} else {
+				// Normal string argument
+				Argument elementArgument = getArgument(*arguments, argumentName);
+				if (!elementArgument.name) {
+					if (isRequired) {
+						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+								"Missing required argument: %s", argumentName, EXIT_FAILURE)
+					} else {
+						continue;
+					}
+				}
+				stringValue = elementArgument.value;
 			}
 		}
 
@@ -578,33 +565,16 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		// +------------------------+----------+----------+----------+---------+
 		// For all other arrays the allocated space is simply a contiguous set of elements of the base array type
 
-		// If this is an array type but the argument's value is a string then parse out the array from the string
-		// into the arrayRoot so that from this point forwards we can be sure that all arrays have a valid arrayRoot set.
+		// From this point forwards we can be sure that all arrays have a valid arrayRoot set.
 		json_value* arrayRoot = NULL;
 		unsigned int arrayCount;
-		if (isArray && !isJson) {
-			jsonRoot = json_parse(stringValue, strlen(stringValue));
-			if (!jsonRoot) {
-				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't extract array from argument: %s",
-						stringValue, EXIT_FAILURE)
-			}
-			TRACK_JSON(jsonRoot)
-
-			if (jsonRoot->type != json_array) {
-				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't extract array from argument: %s",
-						stringValue, EXIT_FAILURE)
-			}
-
-			jsonType = jsonRoot->u.array.values[0]->type;
-		}
-
 		if (isArray) {
 			arrayRoot = jsonRoot;
 			arrayCount = arrayRoot->u.array.length;
 		}
 
 		// Now we have a valueString or jsonRoot, a target to put the data and the type we want to extract!
-		// based on format process the argument and or value
+		// based on format process the argument and/or value
 		switch (aidaType) {
 		case AIDA_BOOLEAN_TYPE: ASCANF_SET_BOOLEAN(target)
 			break;
@@ -670,14 +640,18 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 }
 
 /**
- * Break a json path into the initial variable name and the remaining path
+ * Break a json path into the initial variable name and the remaining path.
+ * e.g.
+ *     value.names[1]
+ * is broken into
+ *     variableName = value
+ *     path = names[1]
  *
- * @param fullJsonPath
- * @param variableName
- * @param path
- * @return
+ * @param fullJsonPath the full json path to break
+ * @param variableName to store the variable name
+ * @param path to store the extracted path
  */
-static int getJsonPathElements(char* fullJsonPath, char* variableName, char** path)
+static void getJsonPathElements(char* fullJsonPath, char* variableName, char** path)
 {
 	char* firstDot = strchr(fullJsonPath, '.');
 	char* firstParen = strchr(fullJsonPath, '[');
@@ -686,7 +660,7 @@ static int getJsonPathElements(char* fullJsonPath, char* variableName, char** pa
 	if (firstDot == NULL && firstParen == NULL) {
 		strcpy(variableName, fullJsonPath);
 		*path = &fullJsonPath[strlen(fullJsonPath)]; // The empty string
-		return EXIT_SUCCESS;
+		return;
 	}
 
 	char* relativeJsonPath = (firstDot == NULL || firstParen == NULL) ?
@@ -700,61 +674,21 @@ static int getJsonPathElements(char* fullJsonPath, char* variableName, char** pa
 	memcpy(variableName, fullJsonPath, lenRootArgument);
 	variableName[lenRootArgument] = 0x0;
 	*path = relativeJsonPath;
-	return EXIT_SUCCESS;
 }
 
 /**
- * Depending on the combination of options specified in an element of a format string determine the target aida type
+ * Depending on the combination of options specified in a format string determine the target aida type
  *
- * @param env
- * @param format
- * @param isArray
- * @param isLong
- * @param isShort
- * @return
+ * @param env jni env for throwing errors
+ * @param format the format character of the format string
+ * @param isArray true if the array indicator is set
+ * @param isLong true if the long indicator is set
+ * @param isShort true if the short indicator is set
+ * @return the target aida type
  */
-static Type fToType(JNIEnv* env, char format, short isArray, short isLong, short isShort)
+static Type formatStringComponentsToType(JNIEnv* env, char format, short isArray, short isLong, short isShort)
 {
-	if (!isArray) {
-		if (isLong) {
-			switch (format) {
-			case FORMAT_INTEGER:
-				return AIDA_LONG_TYPE;
-			case FORMAT_UNSIGNED_INTEGER:
-				return AIDA_UNSIGNED_LONG_TYPE;
-			case FORMAT_FLOAT:
-				return AIDA_DOUBLE_TYPE;
-			default:
-				break;
-			}
-		} else if (isShort) {
-			switch (format) {
-			case FORMAT_INTEGER:
-				return AIDA_SHORT_TYPE;
-			case FORMAT_UNSIGNED_INTEGER:
-				return AIDA_UNSIGNED_SHORT_TYPE;
-			default:
-				break;
-			}
-		} else {
-			switch (format) {
-			case FORMAT_INTEGER:
-				return AIDA_INTEGER_TYPE;
-			case FORMAT_UNSIGNED_INTEGER:
-				return AIDA_UNSIGNED_INTEGER_TYPE;
-			case FORMAT_FLOAT:
-				return AIDA_FLOAT_TYPE;
-			case FORMAT_STRING:
-				return AIDA_STRING_TYPE;
-			case FORMAT_BYTE:
-				return AIDA_BYTE_TYPE;
-			case FORMAT_BOOLEAN:
-				return AIDA_BOOLEAN_TYPE;
-			default:
-				break;
-			}
-		}
-	} else {
+	if (isArray) {
 		if (isLong) {
 			switch (format) {
 			case FORMAT_INTEGER:
@@ -793,6 +727,45 @@ static Type fToType(JNIEnv* env, char format, short isArray, short isLong, short
 				break;
 			}
 		}
+	} else {
+		if (isLong) {
+			switch (format) {
+			case FORMAT_INTEGER:
+				return AIDA_LONG_TYPE;
+			case FORMAT_UNSIGNED_INTEGER:
+				return AIDA_UNSIGNED_LONG_TYPE;
+			case FORMAT_FLOAT:
+				return AIDA_DOUBLE_TYPE;
+			default:
+				break;
+			}
+		} else if (isShort) {
+			switch (format) {
+			case FORMAT_INTEGER:
+				return AIDA_SHORT_TYPE;
+			case FORMAT_UNSIGNED_INTEGER:
+				return AIDA_UNSIGNED_SHORT_TYPE;
+			default:
+				break;
+			}
+		} else {
+			switch (format) {
+			case FORMAT_INTEGER:
+				return AIDA_INTEGER_TYPE;
+			case FORMAT_UNSIGNED_INTEGER:
+				return AIDA_UNSIGNED_INTEGER_TYPE;
+			case FORMAT_FLOAT:
+				return AIDA_FLOAT_TYPE;
+			case FORMAT_STRING:
+				return AIDA_STRING_TYPE;
+			case FORMAT_BYTE:
+				return AIDA_BYTE_TYPE;
+			case FORMAT_BOOLEAN:
+				return AIDA_BOOLEAN_TYPE;
+			default:
+				break;
+			}
+		}
 	}
 
 	aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "incorrect format string passed to ascanf() or avscanf()");
@@ -800,10 +773,11 @@ static Type fToType(JNIEnv* env, char format, short isArray, short isLong, short
 }
 
 /**
- * Make a table for return.  Specify the number of columns then call tableAddColumn() and tableAddStringColumn() to add
+ * Make a table for return.  Specify the number of rows and columns, then call tableAddColumn() and tableAddStringColumn() to add
  * columns before returning the table
  *
- * @param env
+ * @param env jni env for throwing errors
+ * @param rows the number of rows
  * @param columns the number of columns
  * @return the newly created table
  */
@@ -819,37 +793,21 @@ Table tableCreate(JNIEnv* env, int rows, int columns)
 		return table;
 	}
 
-	// Allocate space for the table columns
-	table.ppData = calloc(columns, sizeof(void*));
-	if (!table.ppData) {
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table: %ld", columns * sizeof(void*));
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, errorString);
-		return table;
-	}
-
-	// Allocate space for the column types
-	table.types = calloc(columns, sizeof(Type*));
-	if (!table.types) {
-		free(table.ppData);
-		char errorString[BUFSIZ];
-		sprintf(errorString, "Unable to allocate memory for table types: %ld", columns * sizeof(Type*));
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, errorString);
-		return table;
-	}
-
+	// Allocate space for the table columns and column types
+	ALLOCATE_MEMORY_OR_RETURN(env, table.ppData, columns * sizeof(void*), "table columns", table)
+	ALLOCATE_MEMORY_OR_RETURN(env, table.types, columns * sizeof(Type*), "table column types", table)
 	table.rowCount = rows;
 	table.columnCount = columns;
 	return table;
 }
 
 /**
- * This reads data from an that is itself a list of pointers to strings
+ * This reads data from a buffer that is itself a list of pointers to strings
  * We allocate just enough space to store the strings in our table
  *
- * @param env
- * @param table
- * @param data
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
  */
 void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
 {
@@ -859,13 +817,7 @@ void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
 	// allocate data for each string too
 	char** stringArray = table->ppData[table->_currentColumn];
 	for (int row = 0; row < table->rowCount; row++, data++) {
-		unsigned long len = strlen(*data);
-		stringArray[row] = malloc(len + 1);
-		if (!stringArray[row]) {
-			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory for table strings");
-			return;
-		}
-		strncpy(stringArray[row], *data, len + 1);
+		ALLOCATE_STRING_OR_RETURN_VOID(env, stringArray[row], *data, "table strings")
 	}
 
 	table->_currentColumn++;
@@ -876,10 +828,10 @@ void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
  * Though the strings are null terminated if there is space, there is no guarantee so an exact number of
  * bytes is copied.  Each string in the table is allocated maximally.
  *
- * @param env
- * @param table
- * @param data
- * @param width
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column, a buffer of width * table->rowCount size
+ * @param width the width of the strings
  */
 void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width)
 {
@@ -890,18 +842,23 @@ void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int w
 	char** stringArray = table->ppData[table->_currentColumn];
 	char* dataPointer = (char*)data;
 	for (int row = 0; row < table->rowCount; row++, dataPointer += width) {
-		stringArray[row] = malloc(width + 1);
-		if (!stringArray[row]) {
-			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "can't allocate memory for table strings");
-			return;
-		}
-		strncpy(stringArray[row], dataPointer, width);
+		ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(env, stringArray[row], dataPointer, width+1, "table strings")
 		stringArray[row][width] = 0x0;
 	}
 
 	table->_currentColumn++;
 }
 
+/**
+ * Add a column of arbitrary type to a table.  Add the given data to the
+ * column assuming that the data has the correct number of rows for the
+ * table define by table->rowCount.  Don't call this for string types!
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param type the type of this table column
+ * @param data the data to add to this column, a buffer of sizeof(type) * table->rowCount size
+ */
 void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
 {
 	// Table full?
@@ -922,7 +879,8 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
 	type = tableArrayTypeOf(type);
 
 	// Set column type, and allocate space
-	tableColumn(table, table->_currentColumn, type, tableElementSizeOfOf(type));
+	allocateTableColumn(env, table, type, tableElementSizeOfOf(type));
+	CHECK_EXCEPTION_VOID
 
 	// Rest of processing for strings is done in addStringColumn
 	if (type == AIDA_STRING_ARRAY_TYPE) {
@@ -931,16 +889,12 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
 
 	// Convert float values if float array
 	if (type == AIDA_FLOAT_ARRAY_TYPE) {
-		int2u M = (int2u)table->rowCount;
-		float* floatArray = ((float*)(table->ppData[table->_currentColumn]));
-		CONVERT_FROM_VMS_FLOAT(floatArray, M)
+		CONVERT_FROM_VMS_FLOAT(((float*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
 	}
 
 	// Convert double values if double array
 	if (type == AIDA_DOUBLE_ARRAY_TYPE) {
-		int2u M = (int2u)table->rowCount;
-		double* doubleArray = ((double*)(table->ppData[table->_currentColumn]));
-		CONVERT_FROM_VMS_DOUBLE(doubleArray, M)
+		CONVERT_FROM_VMS_DOUBLE(((double*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
 	}
 
 	// Add data to column
@@ -976,50 +930,202 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
 	table->_currentColumn++;
 }
 
+/**
+ * Add a float column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data)
 {
 	tableAddColumn(env, table, AIDA_FLOAT_TYPE, &data);
 }
 
+/**
+ * Add a long column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data)
 {
 	tableAddColumn(env, table, AIDA_LONG_TYPE, &data);
 }
 
+/**
+ * Add a boolean column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data)
 {
 	tableAddColumn(env, table, AIDA_BOOLEAN_TYPE, &data);
 }
 
+/**
+ * Add a byte column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data)
 {
 	tableAddColumn(env, table, AIDA_BYTE_TYPE, &data);
 }
 
+/**
+ * Add a short column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data)
 {
 	tableAddColumn(env, table, AIDA_SHORT_TYPE, &data);
 }
 
+/**
+ * Add a integer column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data)
 {
 	tableAddColumn(env, table, AIDA_INTEGER_TYPE, &data);
 }
 
+/**
+ * Add a double column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data)
 {
 	tableAddColumn(env, table, AIDA_DOUBLE_TYPE, &data);
 }
 
+/**
+ * Add a string column to a table with only one row
+ *
+ * @param env jni env for throwing errors
+ * @param table the table to add the column to
+ * @param data the data to add to this column
+ */
 void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data)
 {
 	tableAddStringColumn(env, table, &data);
 }
 
-static void tableColumn(Table* table, int columnNumber, Type aidaType, size_t elementSize)
+/**
+ * Get a float from a given value
+ *
+ * @param value the value to extract the float from
+ * @return the float
+ */
+float valueGetFloat(Value value)
 {
-	table->types[columnNumber] = aidaType;
-	table->ppData[columnNumber] = calloc(table->rowCount, elementSize);
+	float floatValue;
+	sscanf(value.value.stringValue, "%f", &floatValue);
+	return floatValue;
+}
+
+/**
+ * Get a short from a given value
+ *
+ * @param value the value to extract the short from
+ * @return the short
+ */
+short valueGetShort(Value value)
+{
+	short shortValue;
+	sscanf(value.value.stringValue, "%hi", &shortValue);
+	return shortValue;
+}
+
+/**
+ * Make a single entry json_value array from a string.  Use getJsonRoot() to get a
+ * pointer to the array element directly.
+ *
+ * @param stringValue the string to add as the single entry in the json_value array
+ * @return the single entry json_value array
+ */
+Value asArrayValue(char* stringValue)
+{
+	char arrayValueToParse[strlen(stringValue + 17)];
+	if (isdigit(*stringValue)) {
+		sprintf(arrayValueToParse, "{\"_array\": [%s]}", stringValue);
+	} else {
+		sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", stringValue);
+	}
+	Value value;
+	value.type = AIDA_JSON_TYPE;
+	value.value.jsonValue = json_parse(arrayValueToParse, strlen(arrayValueToParse));
+	return value;
+}
+
+/**
+ * Convert Layout to string name of Layout e.g. AIDA_ROW_MAJOR_LAYOUT returns "ROW_MAJOR"
+ * @param layout layout
+ * @return string
+ */
+jstring toLayoutString(JNIEnv* env, Layout layout)
+{
+	switch (layout) {
+	case AIDA_ROW_MAJOR_LAYOUT:
+		return (*env)->NewStringUTF(env, "ROW_MAJOR");
+	case AIDA_COLUMN_MAJOR_LAYOUT:
+	default:
+		return (*env)->NewStringUTF(env, "COLUMN_MAJOR");
+	}
+}
+
+/**
+ * Return the corresponding array type of the given type
+ *
+ * @param type the given type
+ * @return the corresponding array type
+ */
+static Type tableArrayTypeOf(Type type)
+{
+	switch (type) {
+	case AIDA_BOOLEAN_TYPE:
+		type = AIDA_BOOLEAN_ARRAY_TYPE;
+		break;
+	case AIDA_BYTE_TYPE:
+		type = AIDA_BYTE_ARRAY_TYPE;
+		break;
+	case AIDA_SHORT_TYPE:
+		type = AIDA_SHORT_ARRAY_TYPE;
+		break;
+	case AIDA_INTEGER_TYPE:
+		type = AIDA_INTEGER_ARRAY_TYPE;
+		break;
+	case AIDA_LONG_TYPE:
+		type = AIDA_LONG_ARRAY_TYPE;
+		break;
+	case AIDA_FLOAT_TYPE:
+		type = AIDA_FLOAT_ARRAY_TYPE;
+		break;
+	case AIDA_DOUBLE_TYPE:
+		type = AIDA_DOUBLE_ARRAY_TYPE;
+		break;
+	case AIDA_STRING_TYPE:
+		type = AIDA_STRING_ARRAY_TYPE;
+		break;
+	default:
+		break;
+	}
+	return type;
 }
 
 /**
@@ -1071,70 +1177,14 @@ static size_t tableElementSizeOfOf(Type type)
 }
 
 /**
- * Return the corresponding array type of the given type
+ * Add a column to a table specifying the type and element size
  *
- * @param type the given type
- * @return the corresponding array type
+ * @param table the table to add the column to
+ * @param aidaType the type of the column to add
+ * @param elementSize the size of each element
  */
-static Type tableArrayTypeOf(Type type)
+static void allocateTableColumn(JNIEnv* env, Table* table, Type aidaType, size_t elementSize)
 {
-	switch (type) {
-	case AIDA_BOOLEAN_TYPE:
-		type = AIDA_BOOLEAN_ARRAY_TYPE;
-		break;
-	case AIDA_BYTE_TYPE:
-		type = AIDA_BYTE_ARRAY_TYPE;
-		break;
-	case AIDA_SHORT_TYPE:
-		type = AIDA_SHORT_ARRAY_TYPE;
-		break;
-	case AIDA_INTEGER_TYPE:
-		type = AIDA_INTEGER_ARRAY_TYPE;
-		break;
-	case AIDA_LONG_TYPE:
-		type = AIDA_LONG_ARRAY_TYPE;
-		break;
-	case AIDA_FLOAT_TYPE:
-		type = AIDA_FLOAT_ARRAY_TYPE;
-		break;
-	case AIDA_DOUBLE_TYPE:
-		type = AIDA_DOUBLE_ARRAY_TYPE;
-		break;
-	case AIDA_STRING_TYPE:
-		type = AIDA_STRING_ARRAY_TYPE;
-		break;
-	default:
-		break;
-	}
-	return type;
-}
-
-float valueGetFloat(Value value)
-{
-	float floatValue;
-	sscanf(value.value.stringValue, "%f", &floatValue);
-	return floatValue;
-}
-
-short valueGetShort(Value value)
-{
-	short shortValue;
-	sscanf(value.value.stringValue, "%hi", &shortValue);
-	return shortValue;
-}
-
-/**
- * Convert Layout to string name of Layout e.g. AIDA_ROW_MAJOR_LAYOUT returns "ROW_MAJOR"
- * @param layout layout
- * @return string
- */
-jstring toLayoutString(JNIEnv* env, Layout layout)
-{
-	switch (layout) {
-	case AIDA_ROW_MAJOR_LAYOUT:
-		return (*env)->NewStringUTF(env, "ROW_MAJOR");
-	case AIDA_COLUMN_MAJOR_LAYOUT:
-	default:
-		return (*env)->NewStringUTF(env, "COLUMN_MAJOR");
-	}
+	table->types[table->_currentColumn] = aidaType;
+	table->ppData[table->_currentColumn] = ALLOCATE_MEMORY(env, table->rowCount *elementSize , "table data");
 }

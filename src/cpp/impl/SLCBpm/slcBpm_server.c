@@ -29,6 +29,27 @@ static int getBpmData(JNIEnv* env,
 		unsigned long* hstasData, unsigned long* statsData);
 static int endAcquireBpmData(JNIEnv* env);
 
+// API Stubs
+REQUEST_STUB_CHANNEL_CONFIG
+REQUEST_STUB_BOOLEAN
+REQUEST_STUB_BYTE
+REQUEST_STUB_SHORT
+REQUEST_STUB_INTEGER
+REQUEST_STUB_LONG
+REQUEST_STUB_FLOAT
+REQUEST_STUB_DOUBLE
+REQUEST_STUB_STRING
+REQUEST_STUB_BOOLEAN_ARRAY
+REQUEST_STUB_BYTE_ARRAY
+REQUEST_STUB_SHORT_ARRAY
+REQUEST_STUB_INTEGER_ARRAY
+REQUEST_STUB_LONG_ARRAY
+REQUEST_STUB_FLOAT_ARRAY
+REQUEST_STUB_DOUBLE_ARRAY
+REQUEST_STUB_STRING_ARRAY
+SET_STUB_VOID
+SET_STUB_TABLE
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -36,242 +57,10 @@ static int endAcquireBpmData(JNIEnv* env);
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	vmsstat_t status;
-
-	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_INIT())) {
-		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC BPM Service");
-		return;
-	}
-
-	printf("Aida BPM Service Initialised\n");
-}
-
-/**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
-{
-	DEFAULT_CONFIG_REQUEST
-}
-
-/**
- * Get a boolean
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean
- */
-int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a byte
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte
- */
-char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0x0;
-}
-
-/**
- * Get a short
- *
- * @param uri the uri
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param arguments the arguments
- * @return the short
- */
-short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a integer
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer
- */
-int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a long
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long
- */
-long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a float
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float
- */
-float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0f;
-}
-
-/**
- * Get a double
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double
- */
-double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0;
-}
-
-/**
- * Get a string.  Allocate memory for string and it will be freed for you by framework
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the string
- */
-char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return NULL;
-}
-
-/**
- * Get a boolean array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean array
- */
-Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a byte array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte array
- */
-Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a short array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the short array
- */
-Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a integer array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer array
- */
-Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a long array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long array
- */
-Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a float array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float array
- */
-Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a double array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double array
- */
-Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a string array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the string array
- */
-StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_STRING_ARRAY_REQUEST
+	DO_GENERAL_INIT("AIDA-PVA_DPSLCBPM", AIDAPVA_SLCBPMID, "BPM",
+			true,       // msg init
+			true        // slac net init
+	)
 }
 
 /**
@@ -306,14 +95,17 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// If cfnType was set then set cnftype variable appropriately
 	if (cfnTypeString) {
 		if (strcasecmp(cfnTypeString, "NONE") == 0) {
-		} else if (strcasecmp(cfnTypeString, "GOLD") == 0) {
 			cnftype = 0;
-		} else if (strcasecmp(cfnTypeString, "LOADED") == 0) {
+		} else if (strcasecmp(cfnTypeString, "GOLD") == 0) {
 			cnftype = 1;
-		} else if (strcasecmp(cfnTypeString, "SCRATCH") == 0) {
+		} else if (strcasecmp(cfnTypeString, "LOADED") == 0) {
 			cnftype = 2;
+		} else if (strcasecmp(cfnTypeString, "SCRATCH") == 0) {
+			cnftype = 3;
 		} else if (strcasecmp(cfnTypeString, "NORMAL") == 0) {
 			cnftype = 4;
+		} else if (strcasecmp(cfnTypeString, "TEMPORARY") == 0) {
+			cnftype = 5;
 		}
 		free(cfnTypeString);
 	}
@@ -330,7 +122,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	unsigned long hstasData[rows], statsData[rows];
 
 	// Get BPM data
-	if (!(rows = getBpmData(env, namesData, xData, yData, tmitData, zData, hstasData, statsData))) {
+	if (getBpmData(env, namesData, xData, yData, tmitData, zData, hstasData, statsData)) {
 		RETURN_NULL_TABLE
 	}
 
@@ -347,40 +139,12 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, zData);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_LONG_TYPE, hstasData);
+	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, hstasData);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_LONG_TYPE, statsData);
+	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, statsData);
 
 	// All read successfully
 	return table;
-}
-
-/**
- * Set a value
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @param value to set
- * @return the table
- */
-void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-}
-
-/**
- * Set a value and return a table as a response
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @param value to set
- * @return a table
- */
-Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
-{
-	UNSUPPORTED_TABLE_REQUEST
 }
 
 /**
@@ -449,7 +213,7 @@ static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum,
  */
 static int getBpmData(JNIEnv* env,
 		char namesData[MAX_DGRP_BPMS][NAME_SIZE], float* xData, float* yData, float* tmitData, float* zData,
-		unsigned long* hstasData, unsigned long* statsData)
+		int4u* hstasData, int4u* statsData)
 {
 	vmsstat_t status;
 	int4u rows;
@@ -471,7 +235,7 @@ static int getBpmData(JNIEnv* env,
 			) {
 		endAcquireBpmData(env);
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values");
-		return 0;
+		return EXIT_FAILURE;
 	}
 
 	// Convert all floating point data
@@ -496,9 +260,9 @@ static int endAcquireBpmData(JNIEnv* env)
 	// Terminate the acquisition
 	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQTERM())) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while terminating BPM acquisition");
-		return 0;
+		return EXIT_FAILURE;
 	}
 
-	return 1;
+	return EXIT_SUCCESS;
 }
 

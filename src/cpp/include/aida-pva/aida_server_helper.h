@@ -5,12 +5,18 @@ extern "C" {
 #endif
 
 #include <jni.h>
+#include <descrip.h>              /* for definition of $DESCRIPTOR  */
+#include <stdbool.h>
+#include <stsdef.h>               /* Macros for handling VMS status */
 #include "aida_jni_helper.h"
 
 #include "slc_macros.h"
+#include "msg_proto.h"            /* for standalone_init */
 #include "errtranslate.h"
 #include "aida_types.h"
 #include "json.h"
+#include "ref.h"                  /* passing by reference macros */
+#include "process_parm.h"
 
 // Override prototypes of externals to uppercase names, since compile.com
 // adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
@@ -33,6 +39,73 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define PRIM_LEN 4
 #define MICRO_LEN 4
 
+/* Override prototypes of externals to uppercase names since
+compile.com adds cc/name=UPPERCASE on compiles by default.
+-------------------------------------------------------------*/
+extern unsigned long int STANDALONE_INIT(
+		const struct dsc$descriptor_s* name,
+		const long int* dbinit,
+		const struct msginit* msginit,
+		const long int* query,
+		const long int* set
+);
+
+extern unsigned long int GENERAL_INIT( /*  General standalone initialization         */
+		const unsigned long int proc_id,
+		const struct dsc$descriptor_s *proc_name_pd,
+		const unsigned long int proc_priority,
+		const unsigned long int res_wait_flag,
+		const struct msginit *msg_init_ps,
+		const unsigned short int mbx_msg_size,
+		const unsigned long int  *mbs_msg_p,
+		const unsigned long int num_event_flags,
+		const unsigned long int  *set_event_flag_p,
+		unsigned long int  *event_flag_p,
+		unsigned long int  *event_flag_mask_p
+) ;
+
+#define standalone_init(__a,  __b,  __c,  __d,  __e) STANDALONE_INIT(__a,  __b,  __c,  __d,  __e)
+#define general_init(__a,  __b,  __c,  __d,  __e, __f, __g, __h, __i, __j, __k) GENERAL_INIT(__a,  __b,  __c,  __d,  __e, __f, __g, __h, __i, __j, __k)
+
+
+#define DO_STANDALONE_INIT(_procesName, _serviceName, _msginit, _slcnetinit, _dbinit, _query, _set) { \
+    REF_DECLARE; \
+    vmsstat_t status; \
+    const $DESCRIPTOR(process_name, _procesName); \
+    const struct msginit msgInit = {_msginit, _slcnetinit}; \
+\
+    status = standalone_init(&process_name, (const long*)REFINT4U_1(_dbinit), &msgInit, (const long*)REFINT4U_3(_query), (const long*)REFINT4U_4(_set)); \
+    if (!SUCCESS(status)) { \
+        aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising " _serviceName " Service"); \
+    } \
+    printf("Aida SLC " _serviceName "  Service Initialised\n"); \
+}
+
+#define DO_STANDALONE_INIT_NO_MSG(_procesName, _serviceName, _dbinit, _query, _set) { \
+    REF_DECLARE; \
+    vmsstat_t status; \
+    const $DESCRIPTOR(process_name, _procesName); \
+\
+    status = standalone_init(&process_name, (const long*)REFINT4U_1(_dbinit), NULL, (const long*)REFINT4U_3(_query), (const long*)REFINT4U_4(_set)); \
+    if (!SUCCESS(status)) { \
+        aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising " _serviceName " Service"); \
+    } \
+    printf("Aida SLC " _serviceName "  Service Initialised\n"); \
+}
+
+#define DO_GENERAL_INIT(_procesName, _processId, _serviceName, _msginit, _slcnetinit) { \
+    vmsstat_t status; \
+    REF_DECLARE; \
+    $DESCRIPTOR (process_name, _procesName); \
+    const struct msginit msgInit = {_msginit, _slcnetinit}; \
+    status = general_init( _processId, &process_name, 1, 0, &msgInit, NETVAXMSGLEN,  NULL,  0,  NULL,  NULL, NULL); \
+    if (! $VMS_STATUS_SUCCESS(status) ) { \
+        aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "while initializing " _serviceName " service"); \
+        return; \
+    } \
+    printf("Aida " _serviceName " Service Initialised\n"); \
+}
+
 /**
  * Create tracking variables so that memory can be freed with FREE_MEMORY
  */
@@ -42,7 +115,7 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
     json_value *jsonValuesToFree[MAX_POINTERS] ;
 
 /**
- * Register this newly allocated memory so that it will be freed by FREE_ALLOCATED_MEMORY
+ * Register this newly allocated memory so that it will be freed by FREE_MEMORY
  */
 #define TRACK_MEMORY(_ptr) \
     if (_ptr) memoryAllocationsToFree[nAllocationsToFree++] = (_ptr);
@@ -52,6 +125,80 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
  */
 #define TRACK_JSON(_ptr) \
     if (_ptr) jsonValuesToFree[nJsonValuesToFree++] = (_ptr);
+
+#define ALLOCATE_MEMORY(_env, _size, _purpose) allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose)
+#define ALLOCATE_MEMORY_OR_RETURN(_env, _var, _size, _purpose, _r) { \
+    void * _aptr = allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose); \
+    if (!_aptr) \
+        return _r; \
+    (_var) = _aptr; \
+}
+
+#define ALLOCATE_AND_SET_MEMORY(_env, _source, _size, _purpose) allocateMemory(_env, _source, _size, false, "Could not allocate space for " _purpose)
+#define ALLOCATE_AND_SET_MEMORY_OR_RETURN_VOID(_env, _var, _source, _size, _purpose) \
+if (!( (_var) = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, false, _purpose))) { \
+    return; \
+}
+
+#define ALLOCATE_STRING(_env, _string, _purpose) ALLOCATE_AND_SET_MEMORY(_env, _string, strlen(_string)+1, _purpose)
+#define ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose) allocateMemory(_env, _string, _size, true, "Could not allocate space for " _purpose)
+#define ALLOCATE_STRING_OR_RETURN_VOID(_env, _var, _string, _purpose) \
+if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
+    return; \
+}
+#define ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(_env, _var, _string, _size, _purpose) \
+if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) { \
+    return; \
+}
+
+#define ALLOCATE_STRING_OR_RETURN(_env, _var, _string, _purpose, _r) \
+if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
+    return _r; \
+}
+
+#define ALLOCATE_AND_TRACK_MEMORY(_env, _var, _size, _purpose, _r) \
+{ \
+    void *_aptr = ALLOCATE_MEMORY(_env, _size, _purpose); \
+    if ( !_aptr ) { \
+        FREE_MEMORY \
+        return _r; \
+    } \
+    TRACK_MEMORY(_aptr) \
+    (_var) = _aptr; \
+}
+
+#define ALLOCATE_SET_AND_TRACK_MEMORY(_env, _var, _source, _size, _purpose, _r) \
+{ \
+    void *_aptr = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, _purpose); \
+    if ( !_aptr ) { \
+        FREE_MEMORY \
+        return _r; \
+    } \
+    TRACK_MEMORY(_aptr) \
+    (_var) = _aptr; \
+}
+
+#define ALLOCATE_AND_TRACK_STRING(_env, _var, _string, _purpose, _r) \
+{ \
+    void *_aptr = ALLOCATE_STRING(_env, _string, _purpose); \
+    if ( !_aptr ) { \
+        FREE_MEMORY \
+        return _r; \
+    } \
+    TRACK_MEMORY(_aptr) \
+    (_var) = _aptr; \
+}
+
+#define ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(_env, _var, _string, _size, _purpose, _r) \
+{ \
+    void *_aptr = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose); \
+    if ( !_aptr ) { \
+        FREE_MEMORY \
+        return _r; \
+    } \
+    TRACK_MEMORY(_aptr) \
+    (_var) = _aptr; \
+}
 
 /**
  * Free any allocated json memory
@@ -81,17 +228,20 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 {  \
     bool found = false; \
     for ( int i = 0 ; i < nAllocationsToFree; i++ ) { \
-        if ( _ptr == memoryAllocationsToFree[i] ) {   \
-			free (_ptr);                    \
-			found = true;                    \
-		} \
+        if ( (_ptr) == memoryAllocationsToFree[i] ) {   \
+            free (_ptr);                    \
+            found = true;                    \
+        } \
         if ( found && i != (nAllocationsToFree-1) )   \
-			memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
+            memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
     } \
-	if ( found )   \
-		nAllocationsToFree--; \
+    if ( found )   \
+        nAllocationsToFree--; \
 }
 
+/**
+ * Format an error message, throw it in an exception, and return the error code
+ */
 #define SPRINF_ERROR(_exception, _errorText, _ref, _r) \
 { \
     char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
@@ -100,6 +250,9 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
     return _r; \
 }
 
+/**
+ * Format an error message, throw it in an exception, free any allocated memory and return the error code
+ */
 #define SPRINF_ERROR_AND_FREE_MEMORY(_exception, _errorText, _ref, _r) \
 { \
     char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
@@ -109,30 +262,182 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
     return _r; \
 }
 
+/**
+ * Return an empty table response
+ */
 #define RETURN_NULL_TABLE \
     Table nullTable; \
     nullTable.columnCount = 0; \
     return nullTable;
 
+/**
+ * Return an empty config response
+ */
 #define DEFAULT_CONFIG_REQUEST \
     Config config; \
     memset(&config, 0, sizeof(config)); \
     return config;
 
+/**
+ * Throw unsupported channel exception and return a blank array
+ */
 #define UNSUPPORTED_ARRAY_REQUEST \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
     Array array; \
     return array;
 
+/**
+ * Throw an unsupported channel exception and return an empty string array
+ */
 #define UNSUPPORTED_STRING_ARRAY_REQUEST \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
     StringArray stringArray; \
     return stringArray;
 
+/**
+ * Throw an unsupported channel exception and return an empty table
+ */
 #define UNSUPPORTED_TABLE_REQUEST \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
     Table table; \
     return table;
+
+/**
+ * Get a PMU (Primary-Micro-Unit) string from the supplied URI
+ * @param _uri the uri to pull the pmu string from
+ * @param _var the name of the variable to store the resulting pmu string
+ */
+#define PMU_STRING_FROM_URI(_uri, _var)  \
+    char _var[MAX_PMU_LEN]; \
+    pmuStringFromUri(_uri, _var);
+
+/**
+ * Get a slcName from the provided uri and store it in the given variable name
+ * A slcName is the URI with the '//' converted to a dot
+ *
+ * @param _uri the uri to pull the slcName from
+ * @param _var the name of the variable to store the resulting slcName in
+ */
+#define TO_SLC_NAME(_uri, _var)\
+    char _var[MAX_URI_LEN]; \
+    uriToSlcName(_var, _uri);
+
+/**
+ * Get a display group name from the provided uri and store it in the given variable name
+ * A display group name  is the the part of the URI before the '//'
+ *
+ * @param _uri the uri to pull the dgroup from
+ * @param _var the name of the variable to store the resulting dgroup in
+ */
+#define TO_DGROUP(_uri, _var) \
+    char _var[MAX_URI_LEN]; \
+    groupNameFromUri(_uri, _var);
+
+#define REQUEST_STUB_ARRAY(_api) \
+Array _api(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    UNSUPPORTED_ARRAY_REQUEST \
+}
+
+#define REQUEST_STUB_CHANNEL_CONFIG \
+Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter) \
+{ \
+    DEFAULT_CONFIG_REQUEST \
+}
+
+#define REQUEST_STUB_BOOLEAN \
+int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0; \
+}
+
+#define REQUEST_STUB_BYTE \
+char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0x0; \
+}
+
+#define REQUEST_STUB_SHORT \
+short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0; \
+}
+
+#define REQUEST_STUB_INTEGER \
+int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0; \
+}
+
+#define REQUEST_STUB_LONG \
+long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0; \
+}
+
+#define REQUEST_STUB_FLOAT \
+float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0.0f; \
+}
+
+#define REQUEST_STUB_DOUBLE \
+double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return 0.0; \
+}
+
+#define REQUEST_STUB_STRING \
+char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return NULL; \
+}
+
+#define REQUEST_STUB_BOOLEAN_ARRAY REQUEST_STUB_ARRAY(aidaRequestBooleanArray)
+
+#define REQUEST_STUB_BYTE_ARRAY REQUEST_STUB_ARRAY(aidaRequestByteArray)
+
+#define REQUEST_STUB_SHORT_ARRAY REQUEST_STUB_ARRAY(aidaRequestShortArray)
+
+#define REQUEST_STUB_INTEGER_ARRAY REQUEST_STUB_ARRAY(aidaRequestIntegerArray)
+
+#define REQUEST_STUB_LONG_ARRAY REQUEST_STUB_ARRAY(aidaRequestLongArray)
+
+#define REQUEST_STUB_FLOAT_ARRAY REQUEST_STUB_ARRAY(aidaRequestFloatArray)
+
+#define REQUEST_STUB_DOUBLE_ARRAY REQUEST_STUB_ARRAY(aidaRequestDoubleArray)
+
+#define REQUEST_STUB_STRING_ARRAY \
+StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    UNSUPPORTED_STRING_ARRAY_REQUEST \
+}
+
+#define REQUEST_STUB_TABLE \
+Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    UNSUPPORTED_TABLE_REQUEST \
+}
+
+#define SET_STUB_VOID \
+void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+}
+
+#define SET_STUB_TABLE \
+Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value) \
+{ \
+    UNSUPPORTED_TABLE_REQUEST \
+}
 
 /**
  * Initialise the aida service.  Called once by the framework when starting up.
@@ -445,7 +750,7 @@ double getDoubleArgument(Argument argument);
  * @param env
  * @param value
  */
-void printValue(JNIEnv* env, Value value);
+void printValue(Value value);
 
 /**
  * Get the json value from the given value identified by the path
@@ -466,29 +771,94 @@ json_value* getJsonValue(Value value, char* path);
  */
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name);
 
-int groupNameFromUri(const char* uri, char groupName[]);
-void secnFromUri(const char* uri, int4u* secn);
-const char *secondaryFromUri(const char* uri);
+/**
+ * Get array value from a named  argument in the provided arguments structure.
+ *
+ * @param env env
+ * @param arguments provided arguments structure
+ * @param name provided name
+ * @return the extracted Value
+ */
+Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name);
 
+/**
+ * 	Skip root element if it is _array otherwise return unchanged
+ *
+ * 	This is because our json parser can't process arrays at the top level and so we insert
+ * 	an object at the top level with an "_array" element if we find an array at the top level
+ *
+ * @param jsonValue
+ * @return
+ */
+json_value* getJsonRoot(json_value* jsonValue);
+
+/**
+ * Get the Display group name from a URI
+ * @param uri
+ * @param groupName
+ * @return
+ */
+int groupNameFromUri(const char* uri, char groupName[]);
+
+/**
+ * Get secondary number from URI
+ * @param uri the uri
+ * @param secn pointer to an int to store the secondary as a number
+ */
+void secnFromUri(const char* uri, int4u* secn);
+
+/**
+ * Get secondary from URI.  Just points into the URI so don't go messing with it
+ * @param uri the uri
+ * @param secn pointer to an int to store the secondary as a number
+ */
+const char* secondaryFromUri(const char* uri);
+
+/**
+ * Get primary, micro and unit from a uri
+ *
+ * @param uri
+ * @param primary
+ * @param micro
+ * @param unit
+ */
 void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
+
+/**
+ * Get primary, micro and unit from a device name
+ *
+ * @param device
+ * @param primary
+ * @param micro
+ * @param unit
+ */
 void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit);
+
+/**
+ * Convert back from the primary, micro and unit into a URI
+ * @param preAllocatedUriBuffer pre-allocated buffer for uri
+ * @param primary the primary
+ * @param micro the micro
+ * @param unit the unit (int4u)
+ */
 void uriFromPmu(char preAllocatedUriBuffer[18], char* primary, char* micro, int4u unit);
 
+/**
+ * Get the pmu part of a URI
+ * @param uri the uri
+ * @param pmuString the pre-allocated space to store the pmu string
+ */
 void pmuStringFromUri(const char* uri, char* pmuString);
 
-#define PMU_STRING_FROM_URI(_uri, _var)  \
-    char _var[MAX_PMU_LEN]; \
-    pmuStringFromUri(_uri, _var);
-
+/**
+ * Convert all URIs to slac names before making queries
+ * @param slcName
+ * @param uri
+ * @return
+ */
 void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri);
 
-#define TO_SLAC_NAME \
-	char slcName[MAX_URI_LEN]; \
-	uriToSlcName(slcName, uri);
-
-#define TO_SIMPLE_SLAC_NAME \
-	char slcName[MAX_URI_LEN]; \
-	groupNameFromUri(uri, slcName);
+void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message);
 
 #ifdef __cplusplus
 }

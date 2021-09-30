@@ -20,6 +20,10 @@
 
 #include "slc_server.h"
 
+// API Stubs
+REQUEST_STUB_CHANNEL_CONFIG
+SET_STUB_TABLE
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -27,25 +31,11 @@
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	vmsstat_t status;
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCDB", "Database",
+			true,        // db init
+			false,       // query init
+			false)       // set init
 
-	if (!SUCCESS(status = DB_INIT())) {
-		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Service");
-	} else {
-		printf("Aida SLC Database Service Initialised\n");
-	}
-}
-
-/**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
-{
-	DEFAULT_CONFIG_REQUEST
 }
 
 /**
@@ -59,7 +49,7 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
 int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	int val = 0;
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETINT(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -81,7 +71,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	unsigned char val = 0;
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETBYTE(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -102,7 +92,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short int val = 0;
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETSHORT(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -123,7 +113,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	int val = 0;
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETINT(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -144,7 +134,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	int val = 0;
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETINT(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -165,7 +155,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	float val = 0.0f; /* Returned in ieee format */
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETFLOAT(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -186,7 +176,7 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	float val = 0.0f; /* Returned in ieee format */
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETFLOAT(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -207,7 +197,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	char* val = NULL;
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETSTRING(slcName, &val);
 
 	if (!SUCCESS(status)) {
@@ -231,7 +221,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 	booleanArray.count = 0;
 	booleanArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETINTA(slcName, (int**)(&booleanArray.items));
 
 	if (!SUCCESS(status)) {
@@ -262,7 +252,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 	byteArray.count = 0;
 	byteArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETBYTEA(slcName, (unsigned char**)(&byteArray.items));
 
 	if (!SUCCESS(status)) {
@@ -283,14 +273,17 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
 	Array shortArray;
 	shortArray.count = 0;
 	shortArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETSHORTA(slcName, (short**)(&shortArray.items));
+	TRACK_MEMORY(shortArray.items)
 
 	if (!SUCCESS(status)) {
+		FREE_MEMORY
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "getting SLC db short array device data");
 	}
 
@@ -298,11 +291,10 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 	shortArray.count = (int)*((short*)shortArray.items);
 
 	// Copy shorts to new short array and free up returned short array
-	short* shortData = calloc(shortArray.count, sizeof(short));
-	for (int i = 0; i < shortArray.count; i++) {
-		shortData[i] = ((short*)shortArray.items)[i + 1];
-	}
-	free(shortArray.items);
+	short* shortData;
+	ALLOCATE_SET_AND_TRACK_MEMORY(env, shortData, &((short*)shortArray.items)[1], shortArray.count * sizeof(short),
+			"SLC db short array device data", shortArray)
+	FREE_TRACKED_MEMORY(shortArray.items)
 	shortArray.items = shortData;
 	return shortArray;
 }
@@ -317,14 +309,17 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
 	Array integerArray;
 	integerArray.count = 0;
 	integerArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETINTA(slcName, (int**)(&integerArray.items));
+	TRACK_MEMORY(integerArray.items)
 
 	if (!SUCCESS(status)) {
+		FREE_MEMORY
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "getting SLC db int array device data");
 	}
 
@@ -332,11 +327,10 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 	integerArray.count = *((int*)integerArray.items);
 
 	// Copy integers to new integer array and free up returned integer array
-	int* integerData = calloc(integerArray.count, sizeof(int));
-	for (int i = 0; i < integerArray.count; i++) {
-		integerData[i] = ((int*)integerArray.items)[i + 1];
-	}
-	free(integerArray.items);
+	int* integerData;
+	ALLOCATE_SET_AND_TRACK_MEMORY(env, integerData, &((int*)integerArray.items)[1], integerArray.count * sizeof(int),
+			"SLC db integer array device data", integerArray)
+	FREE_TRACKED_MEMORY(integerArray.items)
 	integerArray.items = integerData;
 	return integerArray;
 }
@@ -351,14 +345,17 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
 	Array longArray;
 	longArray.count = 0;
 	longArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETINTA(slcName, (int**)(&longArray.items));
+	TRACK_MEMORY(longArray.items)
 
 	if (!SUCCESS(status)) {
+		FREE_MEMORY
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "getting SLC db long array device data");
 	}
 
@@ -366,11 +363,12 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 	longArray.count = *((int*)longArray.items);
 
 	// Copy integers to new long array and free up returned integer array
-	long* longData = calloc(longArray.count, sizeof(long));
+	long* longData;
+	ALLOCATE_AND_TRACK_MEMORY(env, longData, longArray.count * sizeof(long), "SLC db long array device data", longArray)
 	for (int i = 0; i < longArray.count; i++) {
 		longData[i] = (long)((int*)longArray.items)[i + 1];
 	}
-	free(longArray.items);
+	FREE_TRACKED_MEMORY(longArray.items)
 	longArray.items = longData;
 	return longArray;
 }
@@ -385,14 +383,17 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
 	Array floatArray;
 	floatArray.count = 0;
 	floatArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETFLOATA(slcName, (float**)(&floatArray.items));
+	TRACK_MEMORY(floatArray.items)
 
 	if (!SUCCESS(status)) {
+		FREE_MEMORY
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "getting SLC db float array device data");
 	}
 
@@ -400,11 +401,10 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 	floatArray.count = (int)*((float*)floatArray.items);
 
 	// Copy floats to new float array and free up returned float array
-	float* floatData = calloc(floatArray.count, sizeof(float));
-	for (int i = 0; i < floatArray.count; i++) {
-		floatData[i] = ((float*)floatArray.items)[i + 1];
-	}
-	free(floatArray.items);
+	float* floatData;
+	ALLOCATE_SET_AND_TRACK_MEMORY(env, floatData, &((float*)floatArray.items)[1], floatArray.count * sizeof(float),
+			"SLC db float array device data", floatArray)
+	FREE_TRACKED_MEMORY(floatArray.items)
 	floatArray.items = floatData;
 	return floatArray;
 }
@@ -419,14 +419,17 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
 	Array doubleArray;
 	doubleArray.count = 0;
 	doubleArray.items = NULL;
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	vmsstat_t status = JNI_DBGETFLOATA(slcName, (float**)(&doubleArray.items));
+	TRACK_MEMORY(doubleArray.items)
 
 	if (!SUCCESS(status)) {
+		FREE_MEMORY
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "getting SLC db double array device data");
 	}
 
@@ -434,11 +437,13 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 	doubleArray.count = (int)*((float*)doubleArray.items);
 
 	// Copy floats to new double array and free up returned float array
-	double* doubleData = calloc(doubleArray.count, sizeof(double));
+	double* doubleData;
+	ALLOCATE_AND_TRACK_MEMORY(env, doubleData, doubleArray.count * sizeof(double), "SLC db float array device data",
+			doubleArray)
 	for (int i = 0; i < doubleArray.count; i++) {
 		doubleData[i] = ((float*)doubleArray.items)[i + 1];
 	}
-	free(doubleArray.items);
+	FREE_TRACKED_MEMORY(doubleArray.items)
 	doubleArray.items = doubleData;
 
 	return doubleArray;
@@ -463,9 +468,11 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 #define FLAG_SUBSTRING 1
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	const char * secondary = secondaryFromUri(uri);
+	TRACK_ALLOCATED_MEMORY
+	const char* secondary = secondaryFromUri(uri);
 	// If not ASTS and CTRL, STAT or VSTA
-	if (!startsWith(uri, "ASTS") || (strcasecmp(secondary, "CTRL") != 0 && strcasecmp(secondary, "STAT") != 0 && strcasecmp(secondary, "VSTA") != 0 )) {
+	if (!startsWith(uri, "ASTS") || (strcasecmp(secondary, "CTRL") != 0 && strcasecmp(secondary, "STAT") != 0
+			&& strcasecmp(secondary, "VSTA") != 0)) {
 		UNSUPPORTED_STRING_ARRAY_REQUEST
 	}
 	StringArray stringArray;
@@ -473,7 +480,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 
 	char* colorString = aidaRequestString(env, uri, arguments);
 	CHECK_EXCEPTION(stringArray)
-
+	TRACK_MEMORY(colorString)
 
 	//	  The substring returned by aidaRequestString is 19
 	//	  characters long and contains the text substring
@@ -482,21 +489,19 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 	//	  character position 18.
 
 	stringArray.count = 3;
-	stringArray.items = calloc(3, sizeof(char*));
-	((char**)(stringArray.items))[0] = malloc(TEXT_SUBSTRING + 1); // text substring
-	((char**)(stringArray.items))[1] = malloc(COLOR_SUBSTRING + 1); // color substring
-	((char**)(stringArray.items))[2] = malloc(FLAG_SUBSTRING + 1); // flag
+	char** strings = ((char**)(stringArray.items)), * colorStringPart = colorString;
+	ALLOCATE_AND_TRACK_MEMORY(env, stringArray.items, stringArray.count * sizeof(char*),
+			"color string array", stringArray)
+	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[0],
+			colorStringPart, TEXT_SUBSTRING + 1, "text substring in color string array", stringArray)
+	colorStringPart += TEXT_SUBSTRING + 1;
+	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[1],
+			colorStringPart, COLOR_SUBSTRING + 1, "color substring in color string array", stringArray)
+	colorStringPart += COLOR_SUBSTRING + 1;
+	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[2],
+			colorStringPart, FLAG_SUBSTRING + 1, "flag substring in color string array", stringArray)
 
-	memcpy(((char**)(stringArray.items))[0], colorString, TEXT_SUBSTRING);
-	(((char**)(stringArray.items))[0])[TEXT_SUBSTRING] = 0x0;
-
-	memcpy(((char**)(stringArray.items))[1], colorString + TEXT_SUBSTRING + 1, COLOR_SUBSTRING);
-	(((char**)(stringArray.items))[1])[COLOR_SUBSTRING] = 0x0;
-
-	memcpy(((char**)(stringArray.items))[2], colorString + TEXT_SUBSTRING + 1 + COLOR_SUBSTRING + 1, FLAG_SUBSTRING);
-	(((char**)(stringArray.items))[2])[FLAG_SUBSTRING] = 0x0;
-
-	free(colorString);
+	FREE_TRACKED_MEMORY(colorString)
 
 	return stringArray;
 }
@@ -660,25 +665,12 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		return;
 	}
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
+	CONVERT_TO_VMS_FLOAT(data, length)
 	vmsstat_t status = JNI_DBSETFLOAT(slcName, data, (int)length);
 	free(data);
 
 	if (!SUCCESS(status)) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "setting SLC db float array device data");
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "setting SLC db float array device data");
 	}
-}
-
-/**
- * Set a value and return a table as a response
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @param value to set
- * @return a table
- */
-Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
-{
-	UNSUPPORTED_TABLE_REQUEST
 }

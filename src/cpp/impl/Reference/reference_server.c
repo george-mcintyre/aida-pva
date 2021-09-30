@@ -20,7 +20,11 @@
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	printf("Aida Service Initialised\n");
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_REFERENCE", "Reference",
+			true,        // db init
+			false,       // query init
+			false)       // set init
+
 }
 
 /**
@@ -37,11 +41,8 @@ Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
 
 	// Only modify config for attribute01
 	if (forGetter && startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
-		Field* fields = calloc(1, sizeof(Field));
-		if (!fields) {
-			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate space for config field");
-			return config;
-		}
+		Field* fields;
+		ALLOCATE_MEMORY_OR_RETURN(env, fields, sizeof(Field), "config field", config)
 		fields[0].name = "isActive";
 		fields[0].label = "Device is active?";
 		fields[0].description = "Device activity status.  Active if true";
@@ -363,11 +364,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// allocate and return
-	item = malloc(strlen(data) + strlen(arg) + 3);
-	if (!item) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "unable to allocate memory for string");
-		return NULL;
-	}
+	ALLOCATE_MEMORY_OR_RETURN(env, item, strlen(data) + strlen(arg) + 3, "string", NULL)
 
 	if (!strlen(arg)) {
 		sprintf(item, "%s", data);
@@ -396,7 +393,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array booleanArray;
 	booleanArray.count = 1;
-	booleanArray.items = calloc(1, sizeof(unsigned char));
+	ALLOCATE_MEMORY_OR_RETURN(env, booleanArray.items, sizeof(unsigned char), "boolean array", booleanArray)
 	((unsigned char*)(booleanArray.items))[0] = 1;
 
 	// Return the boolean array
@@ -420,7 +417,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array byteArray;
 	byteArray.count = 1;
-	byteArray.items = calloc(1, sizeof(unsigned char));
+	ALLOCATE_MEMORY_OR_RETURN(env, byteArray.items, sizeof(unsigned char), "byte array", byteArray)
 	((unsigned char*)(byteArray.items))[0] = 12;
 
 	// Return the byte array
@@ -444,7 +441,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array shortArray;
 	shortArray.count = 1;
-	shortArray.items = calloc(1, sizeof(short));
+	ALLOCATE_MEMORY_OR_RETURN(env, shortArray.items, sizeof(short), "short array", shortArray)
 	((short*)(shortArray.items))[0] = 13;
 
 	// Return the short array
@@ -468,7 +465,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array integerArray;
 	integerArray.count = 1;
-	integerArray.items = calloc(1, sizeof(int));
+	ALLOCATE_MEMORY_OR_RETURN(env, integerArray.items, sizeof(int), "integer array", integerArray)
 	((int*)(integerArray.items))[0] = 14;
 
 	// Return the integer array
@@ -492,7 +489,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array longArray;
 	longArray.count = 1;
-	longArray.items = calloc(1, sizeof(long));
+	ALLOCATE_MEMORY_OR_RETURN(env, longArray.items, sizeof(long), "long array", longArray)
 	((long*)(longArray.items))[0] = 15;
 
 	// Return the long array
@@ -516,7 +513,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array floatArray;
 	floatArray.count = 1;
-	floatArray.items = calloc(1, sizeof(float));
+	ALLOCATE_MEMORY_OR_RETURN(env, floatArray.items, sizeof(float), "float array", floatArray)
 	((float*)(floatArray.items))[0] = 16.6f;
 
 	// Return the float array
@@ -540,7 +537,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	Array doubleArray;
 	doubleArray.count = 1;
-	doubleArray.items = calloc(1, sizeof(double));
+	ALLOCATE_MEMORY_OR_RETURN(env, doubleArray.items, sizeof(double), "double array", doubleArray)
 	((double*)(doubleArray.items))[0] = 17.7;
 
 	// Return the double array
@@ -564,9 +561,8 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 
 	StringArray stringArray;
 	stringArray.count = 1;
-	stringArray.items = calloc(1, sizeof(char*));
-	((char**)(stringArray.items))[0] = malloc(9); // one character string
-	strcpy(((char**)(stringArray.items))[0], "eighteen");
+	ALLOCATE_MEMORY_OR_RETURN(env, stringArray.items, sizeof(char*), "string array", stringArray);
+	ALLOCATE_STRING_OR_RETURN(env, stringArray.items, "eighteen", "string in string array", stringArray);
 
 	// Return the string array
 	return stringArray;
@@ -626,7 +622,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	// Do set value logic ...
-	printValue(env, value);
+	printValue(value);
 
 	char path[] = "foo[0].bar";
 	json_value* jsonValue = getJsonValue(value, path);
@@ -647,7 +643,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	// Do set value logic ...
-	printValue(env, value);
+	printValue(value);
 
 	char path[] = "foo[0].bar";
 	json_value* jsonValue = getJsonValue(value, path);

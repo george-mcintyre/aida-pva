@@ -19,14 +19,20 @@ void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p)
 
 #define CONVERT_TO_VMS_FLOAT(_float, _count) \
 {  \
-	int2u _n = 1; \
+	int2u _n = _count; \
 	CVT_IEEE_TO_VMS_FLT(_float, _float, &_n); \
 }
 
-#define CONVERT_FROM_VMS_DOUBLE(_float, _count) \
+#define CONVERT_TO_VMS_DOUBLE(_double, _count) \
 {  \
 	int2u _n = _count; \
-	CVT_VMS_TO_IEEE_DBL(_float, _float, &_n); \
+	CVT_IEEE_TO_VMS_DBL(_double, _double, &_n); \
+}
+
+#define CONVERT_FROM_VMS_DOUBLE(_double, _count) \
+{  \
+	int2u _n = _count; \
+	CVT_VMS_TO_IEEE_DBL(_double, _double, &_n); \
 }
 
 #define CONVERT_FROM_VMS_FLOAT(_float, _count) \
@@ -219,6 +225,14 @@ jstring toTypeString(JNIEnv* env, Type type);
  */
 jstring toLayoutString(JNIEnv* env, Layout layout);
 
+
+/**
+ * Make a single entry json_value array from a string.
+ *
+ * @param stringValue the string to add as the single entry in the json_value array
+ * @return the Value
+ */
+Value asArrayValue(char * stringValue);
 
 /**
  * ascanf, avscanf

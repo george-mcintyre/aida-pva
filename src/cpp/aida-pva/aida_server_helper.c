@@ -14,6 +14,8 @@
 static json_value* navigateToArrayElement(json_value* jsonValue, int index);
 static json_value* navigateToObjectElement(json_value* jsonValue, const char* name);
 static json_value* processArrayReference(json_value* jsonValue, const char* arrayRef);
+static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool forArray);
+
 /**
  * To log any non-OS exceptions and throw back to java
  *
@@ -81,7 +83,7 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
 	exceptionClass = (*env)->FindClass(env, classToCreate);
 	if (!exceptionClass) {
 		fprintf(stderr, "FATAL: Failed to create object of class: %s\n", classToCreate);
-		exit(status);
+		exit((int)status);
 	}
 
 	// 	Throw the given exception to Java server code, giving the
@@ -147,15 +149,7 @@ Argument getArgument(Arguments arguments, char* name)
 	return noArgument;
 }
 
-/**
- * Get value from a named  argument in the provided arguments structure.
- *
- * @param env env
- * @param arguments provided arguments structure
- * @param name provided name
- * @return the extracted Value
- */
-Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
+static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool forArray)
 {
 	Value value;
 	value.type = AIDA_NO_TYPE;
@@ -171,11 +165,16 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 		// Json arrays can only be parsed by this parser by wrapping them in a json object, so we always
 		// create {"_array": [ ... ]} and when pulling out values we always replace
 		// the element "_array" by its value
-		char arrayValueToParse[strlen(valueToParse + 15)];
+		char arrayValueToParse[strlen(valueToParse + 30)];
+
 		if (*valueToParse == '[') {
 			sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);
 			valueToParse = arrayValueToParse;
+		} else if (forArray) {
+			sprintf(arrayValueToParse, "{\"_array\": [%s]}", valueToParse);
+			valueToParse = arrayValueToParse;
 		}
+
 		// If this is a json string then parse it otherwise just extract the string
 		if (*valueToParse == '{') {
 			value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
@@ -192,6 +191,32 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 	}
 
 	return value;
+}
+
+/**
+ * Get value from a named  argument in the provided arguments structure.
+ *
+ * @param env env
+ * @param arguments provided arguments structure
+ * @param name provided name
+ * @return the extracted Value
+ */
+Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
+{
+	return _getNamedValue(env, arguments, name, false);
+}
+
+/**
+ * Get value from a named  argument in the provided arguments structure.
+ *
+ * @param env env
+ * @param arguments provided arguments structure
+ * @param name provided name
+ * @return the extracted Value
+ */
+Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
+{
+	return _getNamedValue(env, arguments, name, true);
 }
 
 /**
@@ -213,7 +238,6 @@ int getBooleanArgument(Argument argument)
  */
 char getByteArgument(Argument argument)
 {
-	char item = 0;
 	int scannedValue = 0;
 
 	if (!strncmp("0x", argument.value, 2)) {
@@ -221,9 +245,8 @@ char getByteArgument(Argument argument)
 	} else {
 		sscanf(argument.value, "%d", &scannedValue);
 	}
-	item = (char)scannedValue;
 
-	return item;
+	return (char)scannedValue;
 }
 
 /**
@@ -288,10 +311,9 @@ double getDoubleArgument(Argument argument)
 
 /**
  * Print a value to standard output
- * @param env
  * @param value
  */
-void printValue(JNIEnv* env, Value value)
+void printValue(Value value)
 {
 	if (value.type == AIDA_STRING_TYPE) {
 		printf("%s\n", value.value.stringValue);
@@ -313,18 +335,10 @@ json_value* getJsonValue(Value value, char* path)
 		return NULL;
 	}
 
-	json_value* jsonValue = value.value.jsonValue;
-
-	// Skip root element if it is _array
-	// This is because our json parser can't process arrays at the top level and so we insert
-	// an object at the top level with an "_array" element if we find an array at the top level
-	if (jsonValue->type == json_object && jsonValue->u.object.length == 1
-			&& strcmp(jsonValue->u.object.values[0].name, "_array") == 0) {
-		jsonValue = jsonValue->u.object.values[0].value;
-	}
+	json_value* jsonValue = getJsonRoot(value.value.jsonValue);
 
 	// If there is no path then we already have the json value
-	if ( !path || strlen(path) == 0) {
+	if (!path || strlen(path) == 0) {
 		return jsonValue;
 	}
 
@@ -356,6 +370,24 @@ json_value* getJsonValue(Value value, char* path)
 		token = strtok(NULL, ".");
 	}
 
+	return jsonValue;
+}
+
+/**
+ * 	Skip root element if it is _array otherwise return unchanged
+ *
+ * 	This is because our json parser can't process arrays at the top level and so we insert
+ * 	an object at the top level with an "_array" element if we find an array at the top level
+ *
+ * @param jsonValue
+ * @return
+ */
+json_value* getJsonRoot(json_value* jsonValue)
+{
+	if (jsonValue->type == json_object && jsonValue->u.object.length == 1
+			&& strcmp(jsonValue->u.object.values[0].name, "_array") == 0) {
+		jsonValue = jsonValue->u.object.values[0].value;
+	}
 	return jsonValue;
 }
 
@@ -411,6 +443,12 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 	return jsonValue;
 }
 
+/**
+ * Get the Display group name from a URI
+ * @param uri
+ * @param groupName
+ * @return
+ */
 int groupNameFromUri(const char* uri, char groupName[])
 {
 	strcpy(groupName, uri);
@@ -479,7 +517,7 @@ void pmuFromUri(const char* uri, char* primary, char* micro, int4u* unit)
 {
 	// strtok variable can't be const
 	char _uri[MAX_URI_LEN];
-	int uriLen = strlen(uri);
+	unsigned long uriLen = strlen(uri);
 	if (uriLen > MAX_URI_LEN) {
 		// Should be an error but truncate for now
 		strncpy(_uri, uri, MAX_URI_LEN - 1);
@@ -560,3 +598,30 @@ void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
 		strcpy(slcName + (separator - uri) + 1, separator + 2);
 	}
 }
+
+/**
+ * Allocate memory, copy data from source while checking for errors
+ *
+ * @param env to throw errors
+ * @param source source data
+ * @param size size of data
+ * @param message message to display if fails
+ * @return the allocated data or null if fails
+ */
+void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message)
+{
+	void* data = malloc(size);
+	if (!data) {
+		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, message);
+		return NULL;
+	}
+	if (source) {
+		memcpy(data, source, size - (nullTerminate ? 1 : 0));
+		if (nullTerminate) {
+			*(char*)((char*)data + size - 1) = 0x0;
+		}
+	}
+	return data;
+}
+
+

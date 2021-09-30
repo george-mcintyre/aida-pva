@@ -173,15 +173,6 @@ jmethodID getMethodId(JNIEnv* env, jclass cls, char* methodName, char* methodSig
 jmethodID getConstructorMethodId(JNIEnv* env, jclass cls);
 
 /**
- * Get the method ID of the constructor of the given class for ArrayLists only
- *
- * @param env env
- * @param cls given class
- * @return the constructor method id
- */
-jmethodID getArrayListConstructorMethodId(JNIEnv* env, jclass cls);
-
-/**
  * Call setter on a given object with a string argument
  *
  * @param env environment
@@ -380,6 +371,7 @@ jobject toDouble(JNIEnv* env, jdouble data);
  * @return the extracted Value
  */
 Value getValue(JNIEnv* env, Arguments arguments);
+Value getArrayValue(JNIEnv* env, Arguments arguments);
 
 /**
  * Print a value to standard output

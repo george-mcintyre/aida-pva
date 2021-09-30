@@ -12,6 +12,7 @@ $!
 $! Global option file
 $ GLB_OPT:= global_symbol_option
 $ LIB_OPT:= library_option
+$ AIDAPVA_OPT:= [-]AIDAPVA
 $ DELETE GLOBAL_SYMBOL_OPTION.OPT;*
 $ @java$jni_example:scan_globals_for_option *.OBJ 'GLB_OPT'.OPT
 $
@@ -21,8 +22,8 @@ $ LINK -
    /MAP/SHARE=AIDA-PVA.EXE -
    'GLB_OPT' /OPT, -
    'LIB_OPT' /OPT, -
-   SLCLIBS:AIDASHRLIB/LIB, -
-   SLCOPT:DBSYMBOL.OPT /OPT
+   'AIDAPVA_OPT' /OPT, -
+   SLCLIBS:AIDASHRLIB/LIB
 $!
 $ COPY AIDA-PVA.EXE [---.lib.SLCBUFFACQ]
 $ COPY CHANNELS.YML [---.lib.SLCBUFFACQ]

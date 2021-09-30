@@ -19,17 +19,35 @@
 
 #include "slcKlys_server.h"
 
-static int getBeamArgument(JNIEnv* env, Arguments arguments, char** beam);
-static int getDGrpArgument(JNIEnv* env, Arguments arguments, char** dgrp);
 static int getTrimArgument(JNIEnv* env, Arguments arguments, char** trim);
 static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, short* klys_status);
 static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);
 
 Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
-Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn);
-Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn);
-Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Value value, char* trim, char* pmu, char* secn);
+Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+		char* pmu, char* secn);
+Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+		char* pmu, char* secn);
+Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+		char* trim, char* pmu, char* secn);
 void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn);
+
+// API Stubs
+REQUEST_STUB_CHANNEL_CONFIG
+REQUEST_STUB_BOOLEAN
+REQUEST_STUB_BYTE
+REQUEST_STUB_INTEGER
+REQUEST_STUB_FLOAT
+REQUEST_STUB_DOUBLE
+REQUEST_STUB_BOOLEAN_ARRAY
+REQUEST_STUB_BYTE_ARRAY
+REQUEST_STUB_SHORT_ARRAY
+REQUEST_STUB_INTEGER_ARRAY
+REQUEST_STUB_LONG_ARRAY
+REQUEST_STUB_FLOAT_ARRAY
+REQUEST_STUB_DOUBLE_ARRAY
+REQUEST_STUB_STRING_ARRAY
+REQUEST_STUB_TABLE
 
 /**
  * Initialise the service
@@ -38,54 +56,10 @@ void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn);
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	vmsstat_t status;
-
-	if (!SUCCESS(status = DPSLCKLYS_DB_INIT())) {
-		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Klystron Service");
-		return;
-	}
-
-	printf("Aida Klystron Service Initialised\n");
-}
-
-/**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
-{
-	DEFAULT_CONFIG_REQUEST
-}
-
-/**
- * Get a boolean
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean
- */
-int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a byte
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte
- */
-char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0x0;
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCKLYS", "Klystron",
+			true,        // db init
+			false,       // query init
+			false)       // set init
 }
 
 /**
@@ -106,20 +80,6 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 }
 
 /**
- * Get a integer
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer
- */
-int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
  * Get a long
  *
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -137,34 +97,6 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 }
 
 /**
- * Get a float
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float
- */
-float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0f;
-}
-
-/**
- * Get a double
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double
- */
-double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0;
-}
-
-/**
  * Get a string.  Allocate memory for string and it will be freed for you by framework
  *
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
@@ -179,136 +111,11 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 		return NULL;
 	}
 
-	char* stringKlystronStatus = malloc(40);
-	if (!stringKlystronStatus) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Can't allocate space for string");
-		return NULL;
-	}
-
 	if (klystronStatus) {
-		strcpy(stringKlystronStatus, "activated");
+		return ALLOCATE_STRING(env, "activated", "string");
 	} else {
-		strcpy(stringKlystronStatus, "deactivated");
+		return ALLOCATE_STRING(env, "deactivated", "string");
 	}
-
-	return stringKlystronStatus;
-}
-
-/**
- * Get a boolean array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean array
- */
-Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a byte array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte array
- */
-Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a short array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the short array
- */
-Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a integer array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer array
- */
-Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a long array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long array
- */
-Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a float array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float array
- */
-Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a double array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double array
- */
-Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a string array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the string array
- */
-StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_STRING_ARRAY_REQUEST
-}
-
-/**
- * Get a table of data
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the table
- */
-Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_TABLE_REQUEST
 }
 
 /**
@@ -392,7 +199,7 @@ void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn)
 
 Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
 {
-	return setPdesOrKphrValue(env, uri, value, NULL, pmu, secn);
+	return setPdesOrKphrValue(env, uri, arguments, value, NULL, pmu, secn);
 }
 
 Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
@@ -400,23 +207,25 @@ Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 	char* trim = NULL;
 
 	getTrimArgument(env, arguments, &trim);
-	return setPdesOrKphrValue(env, uri, value, trim ? trim : "NO", pmu, secn);
+	return setPdesOrKphrValue(env, uri, arguments, value, trim ? trim : "NO", pmu, secn);
 }
 
-Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Value value, char* trim, char* pmu, char* secn)
+Table
+setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* trim, char* pmu, char* secn)
 {
-	float secn_value_array[1];
-
 	if (value.type != AIDA_STRING_TYPE) {
 		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing value to PDES or KPHR value");
 		RETURN_NULL_TABLE
 	}
-	secn_value_array[0] = valueGetShort(value);
+
+	// Get the value to set
+	float secnValue;
+	avscanf(env, &arguments, &value, "%f", &secnValue);
 
 	// Set the value
 	float phas_value;  /* Returned in ieee format */
-	CONVERT_TO_VMS_FLOAT(&secn_value_array[0], 1)
-	vmsstat_t status = DPSLCKLYS_SETTRIMPHASE(pmu, secn, secn_value_array, trim, &phas_value);
+	CONVERT_TO_VMS_FLOAT(&secnValue, 1)
+	vmsstat_t status = DPSLCKLYS_SETTRIMPHASE(pmu, secn, &secnValue, trim, &phas_value);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Error setting value");
 		RETURN_NULL_TABLE;
@@ -470,15 +279,17 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	short isInStandByState = (short)(klys_status & LINKLYSTA_STANDBY);
 
 	// If trying to activate but not in standby state
-	if ( isActivateOperation && !isInStandByState ) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Cannot reactivate klystron when not in standby state");
+	if (isActivateOperation && !isInStandByState) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+				"Cannot reactivate klystron when not in standby state");
 		FREE_MEMORY
 		RETURN_NULL_TABLE
 	}
 
 	// If trying to deactivate but not in accelerate state
-	if ( !isActivateOperation && !isInAccelerateState ) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Cannot deactivate klystron when not in accelerate state");
+	if (!isActivateOperation && !isInAccelerateState) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+				"Cannot deactivate klystron when not in accelerate state");
 		FREE_MEMORY
 		RETURN_NULL_TABLE
 	}
@@ -486,10 +297,9 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	// Set the new value
 	printf("Parameters: %s, %d, %s\n", shortSlcName, isActivateOperation, beam_c);
 	int status = DPSLCKLYS_SETDEACTORREACT(shortSlcName, isActivateOperation, beam_c);
-	if (!SUCCESS(status))
-	{
+	if (!SUCCESS(status)) {
 		FREE_MEMORY
-		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Could not set activation state" );
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "Could not set activation state");
 		RETURN_NULL_TABLE
 	}
 
@@ -529,7 +339,7 @@ static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, 
 		return EXIT_FAILURE;
 	}
 
-	TO_SLAC_NAME
+	TO_SLC_NAME(uri, slcName)
 	int returnStatus = klystronStatus(env, slcName, beam_c, dgrp_c, klys_status);
 
 	free(beam_c);

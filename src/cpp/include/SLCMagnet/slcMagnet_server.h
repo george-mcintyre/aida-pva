@@ -6,9 +6,6 @@ extern "C" {
 
 #include "aida_types.h"
 
-#define MAX_PRIM_NAME_LEN 4
-#define MAX_MICR_NAME_LEN 4
-#define MAX_SECN_NAME_LEN 4
 #define MAX_PMU_STRING_LEN 15
 #define MAX_STATE_NAME_LEN 9
 #define MAX_VALIDITY_STRING_LEN 40

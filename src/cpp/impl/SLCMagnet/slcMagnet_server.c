@@ -19,15 +19,34 @@
 #include "msg_proto.h"     /* for standalone_init */
 #include "sysutil_proto.h" /* for cvt_vms_to_ieee_flt */
 
-static int
-getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
+static int getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+		int* count, char** prim_list,
 		char** micr_list, int** unit_list, int4u* secn, float** set_values, char** name_validity);
-static int
-getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
+static int getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+		int* count, char** prim_list,
 		char** micr_list, int** unit_list, int4u* secn, float** set_values, char** magFunc, char** limitCheck,
 		char** name_validity);
 static bool isAllValid(int count, const char* name_validity);
 static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity);
+
+// API Stubs
+REQUEST_STUB_CHANNEL_CONFIG
+REQUEST_STUB_BOOLEAN
+REQUEST_STUB_BYTE
+REQUEST_STUB_SHORT
+REQUEST_STUB_INTEGER
+REQUEST_STUB_LONG
+REQUEST_STUB_FLOAT
+REQUEST_STUB_DOUBLE
+REQUEST_STUB_STRING
+REQUEST_STUB_BOOLEAN_ARRAY
+REQUEST_STUB_BYTE_ARRAY
+REQUEST_STUB_SHORT_ARRAY
+REQUEST_STUB_INTEGER_ARRAY
+REQUEST_STUB_LONG_ARRAY
+REQUEST_STUB_FLOAT_ARRAY
+REQUEST_STUB_DOUBLE_ARRAY
+REQUEST_STUB_STRING_ARRAY
 
 /**
  * Initialise the service
@@ -36,241 +55,10 @@ static void getInvalidNames(char* dst, int count, char* names[], const char* nam
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	vmsstat_t status;
-	if (!SUCCESS(status = DPSLCMAGNET_DB_INIT())) {
-		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Magnet Service");
-		return;
-	}
-
-	printf("Aida Magnet Service Initialised\n");
-}
-
-/**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
-{
-	DEFAULT_CONFIG_REQUEST
-}
-
-/**
- * Get a boolean
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean
- */
-int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a byte
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte
- */
-char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0x0;
-}
-
-/**
- * Get a short
- *
- * @param uri the uri
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param arguments the arguments
- * @return the short
- */
-short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a integer
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer
- */
-int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a long
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long
- */
-long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0;
-}
-
-/**
- * Get a float
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float
- */
-float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0f;
-}
-
-/**
- * Get a double
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double
- */
-double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return 0.0;
-}
-
-/**
- * Get a string.  Allocate memory for string and it will be freed for you by framework
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the string
- */
-char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
-	return NULL;
-}
-
-/**
- * Get a boolean array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the boolean array
- */
-Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a byte array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the byte array
- */
-Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a short array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the short array
- */
-Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a integer array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the integer array
- */
-Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a long array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the long array
- */
-Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a float array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the float array
- */
-Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a double array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the double array
- */
-Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_ARRAY_REQUEST
-}
-
-/**
- * Get a string array
- *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @return the string array
- */
-StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
-{
-	UNSUPPORTED_STRING_ARRAY_REQUEST
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMAGNET", "Magnet",
+			true,        // db init
+			false,       // query init
+			false)       // set init
 }
 
 /**
@@ -563,28 +351,9 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	}
 
 	// Get names array - and break up names into their components for other lists
-	*prim_list = (char*)malloc((*count * PRIM_LEN) + 1);
-	if (!*prim_list ) {
-		FREE_MEMORY
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for primary list");
-		return EXIT_FAILURE;
-	}
-	TRACK_MEMORY(*prim_list)
-	*micr_list = (char*)malloc((*count * MICRO_LEN) + 1);
-	if (!*micr_list ) {
-		FREE_MEMORY
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for micro list");
-		return EXIT_FAILURE;
-	}
-	TRACK_MEMORY(*micr_list)
-	*unit_list = (int*)malloc(*count * sizeof(unsigned long));
-	if (!*unit_list ) {
-		FREE_MEMORY
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for unit list");
-		return EXIT_FAILURE;
-	}
-	TRACK_MEMORY(*unit_list)
-
+	ALLOCATE_AND_TRACK_MEMORY(env, *prim_list, (*count * PRIM_LEN) + 1, "primary list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY(env, *micr_list, (*count * MICRO_LEN) + 1, "micro list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY(env, *unit_list, *count * sizeof(unsigned long), "unit list", EXIT_FAILURE)
 	unsigned long longUnitList[*count];
 	for (int i = 0; i < nNames; i++) {
 		pmuFromDeviceName(names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i]);
@@ -594,21 +363,15 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	secnFromUri(uri, secn);
 
 	// Call names validate to see which names are valid
-	*name_validity = (char*)malloc((*count * MAX_VALIDITY_STRING_LEN) + 1);
-	if (!*name_validity ) {
-		FREE_MEMORY
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "unable to allocate memory for name validity list");
-		return EXIT_FAILURE;
-	}
-	TRACK_MEMORY(*name_validity)
-
+	ALLOCATE_AND_TRACK_MEMORY(env, *name_validity, (*count * MAX_VALIDITY_STRING_LEN) + 1, "name validity list", EXIT_FAILURE)
 	DPSLCMAGNET_SETNAMESVALIDATE(*count, *prim_list, *micr_list, *unit_list, *secn, *name_validity);
 
 	// Check if all names are valid
 	if (!isAllValid(*count, *name_validity)) {
 		char invalidNames[MAX_URI_LEN * nNames + 1];
 		getInvalidNames(invalidNames, *count, names, *name_validity);
-		SPRINF_ERROR_AND_FREE_MEMORY(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s", invalidNames, EXIT_FAILURE)
+		SPRINF_ERROR_AND_FREE_MEMORY(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s", invalidNames,
+				EXIT_FAILURE)
 	}
 
 	// Free up the names as we don't need them anymore as they have been validated
