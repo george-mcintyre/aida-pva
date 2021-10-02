@@ -29,6 +29,7 @@ extern vmsstat_t JNI_DBSETFLOAT(const char*, float*, int length);
 #define TEXT_SUBSTRING 8
 #define COLOR_SUBSTRING 8
 #define FLAG_SUBSTRING 1
+#define TOTAL_PSEUDO_SECONDARY_LEN (TEXT_SUBSTRING+COLOR_SUBSTRING+FLAG_SUBSTRING)
 
 #ifdef __cplusplus
 }

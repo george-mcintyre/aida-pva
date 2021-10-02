@@ -100,12 +100,12 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
 int endsWith(const char* str, char* suffix)
 {
 	if (!str || !suffix) {
-		return 0;
+		return false;
 	}
 	size_t lenstr = strlen(str);
 	size_t lenSuffix = strlen(suffix);
 	if (lenSuffix > lenstr)
-		return 0;
+		return false;
 	return !strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix);
 }
 
@@ -118,12 +118,12 @@ int endsWith(const char* str, char* suffix)
 int startsWith(const char* str, char* prefix)
 {
 	if (!str || !prefix) {
-		return 0;
+		return false;
 	}
 	size_t lenstr = strlen(str);
 	size_t lenPrefix = strlen(prefix);
 	if (lenPrefix > lenstr)
-		return 0;
+		return false;
 	return !strncasecmp(str, prefix, lenPrefix);
 }
 

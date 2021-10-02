@@ -206,7 +206,8 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 #define FREE_JSON \
 {                              \
     while ( nJsonValuesToFree-- > 0) { \
-        json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
+        if ( jsonValuesToFree[nJsonValuesToFree] ) \
+        	json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
     } \
 }
 
@@ -216,7 +217,8 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 #define FREE_MEMORY \
 {                              \
     while ( nAllocationsToFree-- > 0) { \
-        free (memoryAllocationsToFree[nAllocationsToFree]); \
+        if ( memoryAllocationsToFree[nAllocationsToFree])  \
+        	free (memoryAllocationsToFree[nAllocationsToFree]); \
     } \
     FREE_JSON \
 }
@@ -225,18 +227,21 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * Free a single tracked memory allocation and remove from list
  */
 #define FREE_TRACKED_MEMORY(_ptr) \
-{  \
-    bool found = false; \
-    for ( int i = 0 ; i < nAllocationsToFree; i++ ) { \
-        if ( (_ptr) == memoryAllocationsToFree[i] ) {   \
-            free (_ptr);                    \
-            found = true;                    \
-        } \
-        if ( found && i != (nAllocationsToFree-1) )   \
-            memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
-    } \
-    if ( found )   \
-        nAllocationsToFree--; \
+{ \
+    if ( _ptr) {  \
+    \
+        bool found = false; \
+        for ( int i = 0 ; i < nAllocationsToFree; i++ ) { \
+			if ( (_ptr) == memoryAllocationsToFree[i] ) {   \
+				free (_ptr);                    \
+				found = true;                    \
+			} \
+			if ( found && i != (nAllocationsToFree-1) )   \
+				memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
+	    } \
+    	if ( found )   \
+        	nAllocationsToFree--;     \
+    }\
 }
 
 /**

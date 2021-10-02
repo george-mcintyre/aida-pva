@@ -485,21 +485,30 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 	//	  characters 9-16, and the flag substring in
 	//	  character position 18.
 
+	// Space for pointers for each string
 	stringArray.count = 3;
-	char** strings = ((char**)(stringArray.items)), * colorStringPart = colorString;
 	ALLOCATE_AND_TRACK_MEMORY(env, stringArray.items, stringArray.count * sizeof(char*),
 			"color string array", stringArray)
+	char** strings = ((char**)(stringArray.items));
+
+	//Create a local version of the string and free the original
+	char localColorString[TOTAL_PSEUDO_SECONDARY_LEN + 1];
+	memset(localColorString, ' ', TOTAL_PSEUDO_SECONDARY_LEN);
+	if (colorString) {
+		memcpy(localColorString, colorString, strlen(colorString));
+		localColorString[TOTAL_PSEUDO_SECONDARY_LEN] = 0x0;
+		FREE_TRACKED_MEMORY(colorString)
+	}
+
 	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[0],
-			colorStringPart, TEXT_SUBSTRING + 1, "text substring in color string array", stringArray)
-	colorStringPart += TEXT_SUBSTRING + 1;
+			localColorString,
+			TEXT_SUBSTRING + 1, "text substring in color string array", stringArray)
 	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[1],
-			colorStringPart, COLOR_SUBSTRING + 1, "color substring in color string array", stringArray)
-	colorStringPart += COLOR_SUBSTRING + 1;
+			&localColorString[TEXT_SUBSTRING + 1],
+			COLOR_SUBSTRING + 1, "color substring in color string array", stringArray)
 	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[2],
-			colorStringPart, FLAG_SUBSTRING + 1, "flag substring in color string array", stringArray)
-
-	FREE_TRACKED_MEMORY(colorString)
-
+			&localColorString[TEXT_SUBSTRING + COLOR_SUBSTRING + 2],
+			FLAG_SUBSTRING + 1, "flag substring in color string array", stringArray)
 	return stringArray;
 }
 

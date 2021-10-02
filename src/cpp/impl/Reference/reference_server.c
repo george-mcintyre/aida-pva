@@ -562,7 +562,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 	StringArray stringArray;
 	stringArray.count = 1;
 	ALLOCATE_MEMORY_OR_RETURN(env, stringArray.items, sizeof(char*), "string array", stringArray);
-	ALLOCATE_STRING_OR_RETURN(env, stringArray.items, "eighteen", "string in string array", stringArray);
+	ALLOCATE_STRING_OR_RETURN(env, stringArray.items[0], "eighteen", "string in string array", stringArray);
 
 	// Return the string array
 	return stringArray;
