@@ -57,10 +57,16 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_GENERAL_INIT("AIDA-PVA_DPSLCBPM", AIDAPVA_SLCBPMID, "BPM",
-			true,       // msg init
-			true        // slac net init
-	)
+//	DO_GENERAL_INIT("AIDA-PVA_DPSLCBPM", AIDAPVA_SLCBPMID, "BPM",
+//			true,       // msg init
+//			true        // slac net init
+//	)
+	DO_STANDALONE_INIT("AIDA-PVA_DPSLCBPM", "BPM",
+			true,        // msg init
+			true,        // slac net init
+			true,        // db init
+			false,       // query init
+			false)       // set init
 }
 
 /**

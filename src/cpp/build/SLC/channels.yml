@@ -17,15 +17,6 @@ getterConfig:
 setterConfig:
   type: VOID
 channels:
-  - channel: "ASTS:????:*:CTRL"
-    getterConfig:
-      type: STRING_ARRAY
-  - channel: "ASTS:????:*:STAT"
-    getterConfig:
-      type: STRING_ARRAY
-  - channel: "ASTS:????:*:VSTA"
-    getterConfig:
-      type: STRING_ARRAY
   - channel: "*:????:*:A4CN"
   - channel: "*:????:*:A4DS"
   - channel: "*:????:*:AACT"

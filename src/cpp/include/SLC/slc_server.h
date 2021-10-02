@@ -26,6 +26,10 @@ extern int JNI_DBACCESSENABLED(void);
 
 extern vmsstat_t JNI_DBSETFLOAT(const char*, float*, int length);
 
+#define TEXT_SUBSTRING 8
+#define COLOR_SUBSTRING 8
+#define FLAG_SUBSTRING 1
+
 #ifdef __cplusplus
 }
 #endif

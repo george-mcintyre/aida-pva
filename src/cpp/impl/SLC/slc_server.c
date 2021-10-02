@@ -463,9 +463,6 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the string array
  */
-#define TEXT_SUBSTRING 8
-#define COLOR_SUBSTRING 8
-#define FLAG_SUBSTRING 1
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	TRACK_ALLOCATED_MEMORY

@@ -49,7 +49,7 @@
 
 #define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
 { \
-	ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
+    ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
         ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, ARRAY_TARGET(_cType)) \
@@ -58,7 +58,7 @@
 
 #define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
 { \
-	ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
+    ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
         _setMacro(ARRAY_TARGET(_cType)) \
@@ -126,7 +126,7 @@
         *ptr = stringValue; \
     } else {  \
         if (aidaType == AIDA_STRING_TYPE) { \
-			ALLOCATE_AND_TRACK_MEMORY(env, nextStringPosition, jsonRoot->u.string.length+1, "string arguments", EXIT_FAILURE) \
+            ALLOCATE_AND_TRACK_MEMORY(env, nextStringPosition, jsonRoot->u.string.length+1, "string arguments", EXIT_FAILURE) \
         }\
         if (jsonRoot->type == json_string) { \
             strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
@@ -148,7 +148,7 @@
 #define ASCANF_SET_STRING_ARRAY \
 { \
     size_t pointerSpace = arrayCount * sizeof(char*); \
-	ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1, "string array arguments", EXIT_FAILURE) \
+    ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1, "string array arguments", EXIT_FAILURE) \
     nextStringPosition = ((char*)*arrayPtr) + pointerSpace; \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
@@ -160,9 +160,12 @@ static void allocateTableColumn(JNIEnv* env, Table* table, Type aidaType, size_t
 static Type tableArrayTypeOf(Type type);
 static size_t tableElementSizeOfOf(Type type);
 static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, va_list argp);
-static Type formatStringComponentsToType(JNIEnv* env, char format, short isArray, short isLong, short isShort);
+static Type getAidaType(JNIEnv* env, char format, short isArray, short isLong, short isShort);
 static void getJsonPathElements(char* fullJsonPath, char* variableName, char** path);
-
+static void parseFormatString(char* formatString, short formatCharsToProcess, char* format,
+		short* isRequired, short* isLong, short* isShort, short* isArray);
+static void expectingJsonOrValue(const char* argumentName, short isArray, short* isValue,
+		short* valueShouldBeJson);
 /**
  * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
  *
@@ -368,11 +371,10 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 	for (int formatNumber = 0; formatNumber < numberOfFormatStrings; formatNumber++) {
 		formatSpecifier = formatSpecifiers[formatNumber];
 
-		char* currentPositionInFormatSpecifier = formatSpecifier;
-		short remainingFormatSpecifierCharacters = (short)strlen(formatSpecifier);
+		short formatSpecifierLength = (short)strlen(formatSpecifier);
 
 		// If format specifier is empty or our artificially added prefix then silently ignore
-		if (!remainingFormatSpecifierCharacters || *currentPositionInFormatSpecifier == '-') {
+		if (!formatSpecifierLength || *formatSpecifier == '-') {
 			continue;
 		}
 
@@ -380,32 +382,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		char format = 0x0;
 		short isRequired = true, isLong = false, isShort = false, isArray = false;
 
-		if (remainingFormatSpecifierCharacters && *currentPositionInFormatSpecifier == FORMAT_OPTIONAL_FLAG) {
-			isRequired = false;
-			remainingFormatSpecifierCharacters--;
-			currentPositionInFormatSpecifier++;
-		}
-
-		if (remainingFormatSpecifierCharacters) {
-			if (*currentPositionInFormatSpecifier == FORMAT_PREFIX_SHORT) {
-				isShort = true;
-				remainingFormatSpecifierCharacters--;
-				currentPositionInFormatSpecifier++;
-			} else if (*currentPositionInFormatSpecifier == FORMAT_PREFIX_LONG) {
-				isLong = true;
-				remainingFormatSpecifierCharacters--;
-				currentPositionInFormatSpecifier++;
-			}
-		}
-
-		if (remainingFormatSpecifierCharacters) {
-			format = *currentPositionInFormatSpecifier++;
-			remainingFormatSpecifierCharacters--;
-		}
-
-		if (remainingFormatSpecifierCharacters && *currentPositionInFormatSpecifier == FORMAT_SUFFIX_ARRAY) {
-			isArray = true;
-		}
+		parseFormatString(formatSpecifier, formatSpecifierLength, &format, &isRequired, &isLong, &isShort, &isArray);
 
 		// Invalid format - if no format was specified
 		if (!format) {
@@ -421,17 +398,11 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					formatSpecifier, EXIT_FAILURE)
 		}
 
-		// Set valueShouldBeJson (if argument name should reference json) and
-		// isValue (if we need to get the value from the "value" argument)
+		// Set valueShouldBeJson (if argument name should reference json
+		// or if we are expecting an array or if the argument name has json path in it
+		// Set isValue (if we need to get the value from the "value" argument)
 		short valueShouldBeJson = false, isValue = false;
-
-		if (strncasecmp(argumentName, "value", 5) == 0) {
-			isValue = true;
-		}
-
-		if (isArray || strchr(argumentName, '.') != NULL || strchr(argumentName, '[') != NULL) {
-			valueShouldBeJson = true;
-		}
+		expectingJsonOrValue(argumentName, isArray, &isValue, &valueShouldBeJson);
 
 		// Get target variable pointer
 		void* target = va_arg (argp, void *);
@@ -443,7 +414,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		}
 
 		// Convert format, isArray, isLong, and isShort into an AIDA_TYPE
-		Type aidaType = formatStringComponentsToType(env, format, isArray, isLong, isShort);
+		Type aidaType = getAidaType(env, format, isArray, isLong, isShort);
 		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE)
 
 		// if the argument is json then the name may contain dots and square braces,
@@ -454,7 +425,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		// The json path used to identify the element in the given json that we should use.
 		// It is the remaining part of the argument name after the jsonArgumentName has been removed.
 		// e.g. if the argumentName="bpms[0].name" then jsonPath="[0].name"
-		char* jsonPath;
+		char* jsonPath = "";
 
 		// This is the value extracted from the provided argument that has been parsed for json
 		Value elementValue;
@@ -497,6 +468,12 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				}
 			}
 
+			if ( !value ) {
+				// This should never, ever, ever happen!
+				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "For some reason I can't see the value you entered: %s",
+						argumentName, EXIT_FAILURE)
+			}
+
 			// Check if the value has been properly set
 			if (value->type == AIDA_NO_TYPE) {
 				if (isRequired) {
@@ -508,8 +485,9 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					// so that callers can uniformly free all strings
 					char* defaultString = *(char**)target;
 					if (aidaType == AIDA_STRING_TYPE && defaultString) {
-						char * allocatedString;
-						ALLOCATE_AND_TRACK_STRING(env, allocatedString, defaultString, "default arguments", EXIT_FAILURE)
+						char* allocatedString;
+						ALLOCATE_AND_TRACK_STRING(env, allocatedString, defaultString, "default arguments",
+								EXIT_FAILURE)
 						*(char**)target = allocatedString;
 					}
 					continue;
@@ -526,7 +504,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Is not using value argument
 			if (valueShouldBeJson) {
 				// Should be a normal json argument
-				if ( isArray && !*jsonPath) {
+				if (isArray && !*jsonPath) {
 					elementValue = getNamedArrayValue(env, *arguments, jsonArgumentName);
 				} else {
 					elementValue = getNamedValue(env, *arguments, jsonArgumentName);
@@ -640,6 +618,68 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 }
 
 /**
+ * Determine if we are expecting json and/or whether we are expecting a value argument to have been provided
+ *
+ * @param argumentName
+ * @param isArray
+ * @param isValue
+ * @param valueShouldBeJson
+ */
+static void expectingJsonOrValue(const char* argumentName, short isArray, short* isValue,
+		short* valueShouldBeJson)
+{
+	if (strncasecmp(argumentName, "value", 5) == 0) {
+		(*isValue) = true;
+	}
+
+	if (isArray || strchr(argumentName, '.') != NULL || strchr(argumentName, '[') != NULL) {
+		(*valueShouldBeJson) = true;
+	}
+}
+
+/**
+ * Parse out the format from the format specifier
+ *
+ * @param formatString the pointer to the format string
+ * @param formatCharsToProcess count of format characters to process
+ * @param format will store the one character format code
+ * @param isRequired will store if this argument is required
+ * @param isLong will store if the argument type is a long type
+ * @param isShort will store if the argument type is a short type
+ * @param isArray will store if this argument expecting an array
+ */
+static void parseFormatString(char* formatString, short formatCharsToProcess, char* format,
+		short* isRequired, short* isLong, short* isShort, short* isArray)
+{
+	if (formatCharsToProcess && *formatString == FORMAT_OPTIONAL_FLAG) {
+		(*isRequired) = false;
+		formatCharsToProcess--;
+		formatString++;
+	}
+
+	if (formatCharsToProcess) {
+		if (*formatString == FORMAT_PREFIX_SHORT) {
+			(*isShort) = true;
+			formatCharsToProcess--;
+			formatString++;
+		} else if (*formatString == FORMAT_PREFIX_LONG) {
+			(*isLong) = true;
+			formatCharsToProcess--;
+			formatString++;
+		}
+	}
+
+	if (formatCharsToProcess) {
+		(*format) = *formatString++;
+		formatCharsToProcess--;
+	}
+
+	if (formatCharsToProcess && *formatString == FORMAT_SUFFIX_ARRAY) {
+		(*isArray) = true;
+	}
+}
+
+/**
  * Break a json path into the initial variable name and the remaining path.
  * e.g.
  *     value.names[1]
@@ -686,7 +726,7 @@ static void getJsonPathElements(char* fullJsonPath, char* variableName, char** p
  * @param isShort true if the short indicator is set
  * @return the target aida type
  */
-static Type formatStringComponentsToType(JNIEnv* env, char format, short isArray, short isLong, short isShort)
+static Type getAidaType(JNIEnv* env, char format, short isArray, short isLong, short isShort)
 {
 	if (isArray) {
 		if (isLong) {
@@ -842,7 +882,7 @@ void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int w
 	char** stringArray = table->ppData[table->_currentColumn];
 	char* dataPointer = (char*)data;
 	for (int row = 0; row < table->rowCount; row++, dataPointer += width) {
-		ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(env, stringArray[row], dataPointer, width+1, "table strings")
+		ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(env, stringArray[row], dataPointer, width + 1, "table strings")
 		stringArray[row][width] = 0x0;
 	}
 
@@ -1186,5 +1226,5 @@ static size_t tableElementSizeOfOf(Type type)
 static void allocateTableColumn(JNIEnv* env, Table* table, Type aidaType, size_t elementSize)
 {
 	table->types[table->_currentColumn] = aidaType;
-	table->ppData[table->_currentColumn] = ALLOCATE_MEMORY(env, table->rowCount *elementSize , "table data");
+	table->ppData[table->_currentColumn] = ALLOCATE_MEMORY(env, table->rowCount * elementSize, "table data");
 }
