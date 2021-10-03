@@ -373,6 +373,7 @@ void releaseValue(Value value)
 	// Only free json values because the string values will be freed with the arguments directly
 	if (value.type == AIDA_JSON_TYPE) {
 		json_value_free(value.value.jsonValue);
+		value.type = AIDA_NO_TYPE;
 	}
 }
 

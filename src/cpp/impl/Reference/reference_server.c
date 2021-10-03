@@ -625,7 +625,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	printValue(value);
 
 	char path[] = "foo[0].bar";
-	json_value* jsonValue = getJsonValue(value, path);
+	json_value* jsonValue = getJsonValue(&value, path);
 	if (jsonValue) {
 		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
 	}
@@ -646,7 +646,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	printValue(value);
 
 	char path[] = "foo[0].bar";
-	json_value* jsonValue = getJsonValue(value, path);
+	json_value* jsonValue = getJsonValue(&value, path);
 	if (jsonValue) {
 		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
 	}

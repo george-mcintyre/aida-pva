@@ -171,7 +171,11 @@ static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool f
 			sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);
 			valueToParse = arrayValueToParse;
 		} else if (forArray) {
-			sprintf(arrayValueToParse, "{\"_array\": [%s]}", valueToParse);
+			if (isdigit(*valueToParse)) {
+				sprintf(arrayValueToParse, "{\"_array\": [%s]}", valueToParse);
+			} else {
+				sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", valueToParse);
+			}
 			valueToParse = arrayValueToParse;
 		}
 
@@ -329,18 +333,22 @@ void printValue(Value value)
  * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection.[0].name
  * @return pointer to the json_value
  */
-json_value* getJsonValue(Value value, char* path)
+json_value* getJsonValue(Value *value, char* passedInPath)
 {
-	if (value.type != AIDA_JSON_TYPE) {
+	if (value->type != AIDA_JSON_TYPE || !value->value.jsonValue ) {
 		return NULL;
 	}
 
-	json_value* jsonValue = getJsonRoot(value.value.jsonValue);
+	json_value* jsonValue = getJsonRoot(value->value.jsonValue);
 
 	// If there is no path then we already have the json value
-	if (!path || strlen(path) == 0) {
+	if (!passedInPath || strlen(passedInPath) == 0) {
 		return jsonValue;
 	}
+
+	// can't use const for strtok
+	char path[strlen(passedInPath)+1] ;
+	strcpy(path, passedInPath);
 
 	int len;
 	char name[256];

@@ -451,6 +451,10 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					// ignore passed in value if we need an array but the user didn't give us an array
 					// Just take the string and wrap it as an array
 					elementValue = asArrayValue(value->value.stringValue);
+					if ( elementValue.type != AIDA_JSON_TYPE ) {
+						SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "Unable to make array of: %s",
+								value->value.stringValue, EXIT_FAILURE)
+					}
 					value = &elementValue;
 					TRACK_JSON(elementValue.value.jsonValue)
 				}
@@ -466,12 +470,6 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					TRACK_JSON(elementValue.value.jsonValue)
 					valueShouldBeJson = true;
 				}
-			}
-
-			if ( !value ) {
-				// This should never, ever, ever happen!
-				SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "For some reason I can't see the value you entered: %s",
-						argumentName, EXIT_FAILURE)
 			}
 
 			// Check if the value has been properly set
@@ -495,7 +493,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			}
 
 			if (valueShouldBeJson) {
-				jsonRoot = getJsonValue(*value, jsonPath);
+				jsonRoot = getJsonValue(value, jsonPath);
 				jsonType = jsonRoot->type;
 			} else {
 				stringValue = value->value.stringValue;
@@ -519,7 +517,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					}
 				}
 				TRACK_JSON(elementValue.value.jsonValue)
-				jsonRoot = getJsonValue(elementValue, jsonPath);
+				jsonRoot = getJsonValue(&elementValue, jsonPath);
 				jsonType = jsonRoot->type;
 			} else {
 				// Normal string argument
@@ -1108,8 +1106,10 @@ Value asArrayValue(char* stringValue)
 		sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", stringValue);
 	}
 	Value value;
-	value.type = AIDA_JSON_TYPE;
 	value.value.jsonValue = json_parse(arrayValueToParse, strlen(arrayValueToParse));
+	if ( value.value.jsonValue ) {
+		value.type = AIDA_JSON_TYPE;
+	}
 	return value;
 }
 

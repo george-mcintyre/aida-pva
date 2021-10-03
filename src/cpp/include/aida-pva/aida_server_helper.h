@@ -764,7 +764,7 @@ void printValue(Value value);
  * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection[0].name
  * @return the json_value
  */
-json_value* getJsonValue(Value value, char* path);
+json_value* getJsonValue(Value *value, char* path);
 
 /**
  * Get value from a named  argument in the provided arguments structure.
