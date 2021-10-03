@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static edu.stanford.slac.aida.lib.model.AidaTableLayout.ROW_MAJOR;
-import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
+import static edu.stanford.slac.aida.lib.model.AidaType.STRING_ARRAY;
 import static edu.stanford.slac.aida.lib.model.AidaType.aidaTypeOf;
 import static org.epics.pvdata.pv.ScalarType.pvString;
 
@@ -239,8 +239,9 @@ public class AidaPVHelper {
             }
             case STRING_ARRAY: {
                 String[] primitiveArray = new String[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
+                for (int i = 0; i < valuesCount; i++) {
                     primitiveArray[i] = (String) valuesArray[i];
+                }
 
                 ((PVStringArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
                 break;
@@ -368,7 +369,7 @@ public class AidaPVHelper {
                                 .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, topFields));
 
         // Set the field labels
-        setValues(retVal, NT_LABELS_NAME, labels, STRING);
+        setValues(retVal, NT_LABELS_NAME, labels, STRING_ARRAY);
 
         // Set array values
         for (int i = 0; i < fieldNames.size(); i++) {
