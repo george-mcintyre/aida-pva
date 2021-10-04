@@ -19,8 +19,7 @@ AIDA-PVA provides a framework for providers to serve requests for services that 
 
 
 EPICS pvaccess and pvdata libraries are used to provide the protocol and transport as well as normative types used for data
-
-![Aida-PVA Topology](aida-pva.png)
+![Aida-PVA Topology](images/aida-pva-system-components.png)
 
 ## Normative Types
 
@@ -31,6 +30,8 @@ Normative Types, each peer in the network should be able to understand all the d
 syntactically, and be able to take processing steps appropriate to that data.
 
 AIDA-PVA uses `NTScalar`, `NTScalarArray` and `NTTable` to represent its data types
+
+![Normative Type Usage in AIDA-PVA](images/nt_types.png)
 
 See [EPICS V4 Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t%20timeStamp%20%3A%20opt-,Description%20of%20Normative%20Types,include%20descriptor%2C%20alarm%20and%20timestamp.) for more information
 

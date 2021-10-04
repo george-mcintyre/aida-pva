@@ -9,7 +9,7 @@ In order for the AIDA-PVA framework to function on legacy system including OpenV
 
 Finally the AIDA service providers have been reimplemented into this new framework and there are significant changes in the way they integrate and are deployed.
 
-![System Diagram](docs/images/aida-pva-system-components.png)
+![System Diagram](docs/images/aida-pva.png)
 
 For more information:
 * [AIDA-PVA User Guide](docs/UserGuide.md)
