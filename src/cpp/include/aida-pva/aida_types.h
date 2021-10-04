@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdbool.h>
 #include "json.h"
 
 #ifndef _Included_aida_types
@@ -195,14 +196,14 @@ Table tableCreate(JNIEnv* env, int rows, int columns);
  * @param type
  * @param data
  */
-void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data);
-void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data);
+void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat);
+void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat);
 void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data);
 void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
 void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
 void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data);
 void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
-void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data);
+void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble);
 void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
 void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
 void tableAddStringColumn(JNIEnv* env, Table* table, char** data);

@@ -31,11 +31,18 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCDB", "Database",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCDB", "Database",
+//			true,        // db init
+//			false,       // query init
+//			false)       // set init
+//
+	vmsstat_t status;
 
+	if (!SUCCESS(status = DB_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Service");
+	} else {
+		printf("Aida SLC Database Service Initialised\n");
+	}
 }
 
 /**
@@ -541,14 +548,14 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, 1, 1);
 		CHECK_EXCEPTION(table)
-		tableAddSingleRowFloatColumn(env, &table, value);
+		tableAddSingleRowFloatColumn(env, &table, value, true);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "DOUBLE") == 0) {
 		double value = aidaRequestDouble(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, 1, 1);
 		CHECK_EXCEPTION(table)
-		tableAddSingleRowDoubleColumn(env, &table, value);
+		tableAddSingleRowDoubleColumn(env, &table, true, false);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "BYTE") == 0) {
 		char value = aidaRequestByte(env, uri, arguments);
@@ -598,49 +605,49 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_FLOAT_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_FLOAT_ARRAY_TYPE, value.items, true);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "DOUBLE_ARRAY") == 0) {
 		Array value = aidaRequestDoubleArray(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_DOUBLE_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_DOUBLE_ARRAY_TYPE, value.items, true);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "BYTE_ARRAY") == 0) {
 		Array value = aidaRequestByteArray(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_BYTE_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_BYTE_ARRAY_TYPE, value.items, false);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "SHORT_ARRAY") == 0) {
 		Array value = aidaRequestShortArray(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_SHORT_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_SHORT_ARRAY_TYPE, value.items, false);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "INTEGER_ARRAY") == 0) {
 		Array value = aidaRequestIntegerArray(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_INTEGER_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_INTEGER_ARRAY_TYPE, value.items, false);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "LONG_ARRAY") == 0) {
 		Array value = aidaRequestLongArray(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_LONG_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_LONG_ARRAY_TYPE, value.items, false);
 		CHECK_EXCEPTION(table)
 	} else if (strcasecmp(specifiedType, "BOOLEAN_ARRAY") == 0) {
 		Array value = aidaRequestBooleanArray(env, uri, arguments);
 		CHECK_EXCEPTION(table)
 		table = tableCreate(env, value.count, 1);
 		CHECK_EXCEPTION(table)
-		tableAddColumn(env, &table, AIDA_BOOLEAN_ARRAY_TYPE, value.items);
+		tableAddColumn(env, &table, AIDA_BOOLEAN_ARRAY_TYPE, value.items, false);
 		CHECK_EXCEPTION(table)
 	}
 

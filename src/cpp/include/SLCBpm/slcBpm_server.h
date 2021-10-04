@@ -16,7 +16,7 @@ extern "C" {
 if (!$VMS_STATUS_SUCCESS(status)) { \
     endAcquireBpmData(env); \
 	aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values"); \
-	return 0; \
+	return EXIT_FAILURE; \
 } \
 
 #ifdef __cplusplus

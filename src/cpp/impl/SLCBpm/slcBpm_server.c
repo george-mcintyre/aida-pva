@@ -22,8 +22,7 @@
 
 #include "slcBpm_server.h"
 
-static int acquireBpmData(JNIEnv* env,
-		int bpmd, int n, int cnftype, int cnfnum, int sortOrder);
+static int acquireBpmData(JNIEnv* env, int* rows, int bpmd, int n, int cnftype, int cnfnum, int sortOrder);
 static int getBpmData(JNIEnv* env,
 		char namesData[MAX_DGRP_BPMS][NAME_SIZE], float* xData, float* yData, float* tmitData, float* zData,
 		unsigned long* hstasData, unsigned long* statsData);
@@ -61,12 +60,21 @@ void aidaServiceInit(JNIEnv* env)
 //			true,       // msg init
 //			true        // slac net init
 //	)
-	DO_STANDALONE_INIT("AIDA-PVA_DPSLCBPM", "BPM",
-			true,        // msg init
-			true,        // slac net init
-			true,        // db init
-			false,       // query init
-			false)       // set init
+//	DO_STANDALONE_INIT("AIDA-PVA_DPSLCBPM", "BPM",
+//			true,        // msg init
+//			true,        // slac net init
+//			true,        // db init
+//			false,       // query init
+//			false)       // set init
+
+	vmsstat_t status;
+
+	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC BPM Service");
+		return;
+	}
+
+	printf("Aida BPM Service Initialised\n");
 }
 
 /**
@@ -85,7 +93,7 @@ void aidaServiceInit(JNIEnv* env)
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Get arguments
-	int bpmd, navg = 1, cnfnum = 1, sortOrder = SORTORDER_DISPLAY, cnftype = 0;
+	int bpmd, navg = 1, cnfnum = 0, sortOrder = SORTORDER_DISPLAY, cnftype = 0;
 	char* cfnTypeString = NULL;
 
 	if (ascanf(env, &arguments, "%d %od %od %od %os",
@@ -112,20 +120,73 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 			cnftype = 4;
 		} else if (strcasecmp(cfnTypeString, "TEMPORARY") == 0) {
 			cnftype = 5;
+		} else {
+			free(cfnTypeString);
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "CNFTYPE argument not recognised");
+			RETURN_NULL_TABLE
 		}
+
+		// Check that if a cnftype that requires a config number to be given
+		// that one was given.
+		if ((strcasecmp(cfnTypeString, "SCRATCH") == 0 ||
+				strcasecmp(cfnTypeString, "NORMAL") == 0 ||
+				strcasecmp(cfnTypeString, "TEMPORARY") == 0) && cnfnum <= 0) {
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+					"A CNFNUM argument (>0) is required with the CFNTYPE argument given");
+			RETURN_NULL_TABLE
+		}
+
 		free(cfnTypeString);
+	}
+
+	// Check parameters
+	if (bpmd <= 0) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"(+ve) BPMD param is required for acq of BPM orbits");
+		RETURN_NULL_TABLE
+	}
+
+	// Check n is rational
+	if (navg <= 0 || navg > 10000) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "N argument (N avg / N turns) is out of range");
+		RETURN_NULL_TABLE
+	}
+
+	// Check config number. 0 was the init rogue value and is therefore
+	// a permitted value now (meaning an absolute orbit is wanted). If
+	// a value was given it must be > 0.
+	if (cnfnum < 0) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "CNFNUM argument out of range");
+		RETURN_NULL_TABLE
+	}
+
+	// Check sort order
+	if (sortOrder != SORTORDER_Z && sortOrder != SORTORDER_DISPLAY) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "SORTORDER argument is not a recognised value");
+		RETURN_NULL_TABLE
 	}
 
 	// Acquire BPM Data
 	int rows;
-	if ((rows = acquireBpmData(env, bpmd, navg, cnftype, cnfnum, sortOrder)) == 0) {
+	if (acquireBpmData(env, &rows, bpmd, navg, cnftype, cnfnum, sortOrder)) {
+		RETURN_NULL_TABLE
+	}
+
+	// No rows
+	if (!rows) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "No rows were retrieved for your query");
+		RETURN_NULL_TABLE
+	}
+
+	if ( rows > MAX_DGRP_BPMS ) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Too many rows returned by this query");
 		RETURN_NULL_TABLE
 	}
 
 	// To hold data
 	char namesData[MAX_DGRP_BPMS][NAME_SIZE];
-	float xData[rows], yData[rows], tmitData[rows], zData[rows];
-	unsigned long hstasData[rows], statsData[rows];
+	float xData[MAX_DGRP_BPMS], yData[MAX_DGRP_BPMS], tmitData[MAX_DGRP_BPMS], zData[MAX_DGRP_BPMS];
+	unsigned long hstasData[MAX_DGRP_BPMS], statsData[MAX_DGRP_BPMS];
 
 	// Get BPM data
 	if (getBpmData(env, namesData, xData, yData, tmitData, zData, hstasData, statsData)) {
@@ -137,26 +198,27 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, NAME_SIZE);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, false);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, false);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData, false);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, zData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, zData, false);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, hstasData);
+	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, hstasData, false);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, statsData);
+	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, statsData, false);
 
 	// All read successfully
 	return table;
 }
 
 /**
- * Acquire BPM Data and return the number of readings returned
+ * Acquire BPM Data and return the number of readings returned in rows
  *
  * @param env
+ * @param rows
  * @param bpmd
  * @param n
  * @param cnftype
@@ -164,7 +226,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  * @param sortOrder
  * @return
  */
-static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum, int sortOrder)
+static int acquireBpmData(JNIEnv* env, int* rows, int bpmd, int n, int cnftype, int cnfnum, int sortOrder)
 {
 	vmsstat_t status = 0;
 	int4u bpmCount = 0;
@@ -172,7 +234,7 @@ static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum,
 	// Initialise acquisition
 	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing BPM acquisition");
-		return 0;
+		return EXIT_FAILURE;
 	}
 
 	// Acquire BPM values
@@ -180,20 +242,22 @@ static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum,
 	status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
 	if (!$VMS_STATUS_SUCCESS(status)) {
 		endAcquireBpmData(env);
-		// Retry Once
-		// Reinitialise acquisition
-		if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
-			aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing BPM acquisition");
-			return 0;
-		}
-
-		// Retry acquire BPM values
-		status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
-		if (!$VMS_STATUS_SUCCESS(status)) {
-			endAcquireBpmData(env);
-			aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making BPM acquisition");
-			return 0;
-		}
+		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making BPM acquisition");
+		return EXIT_FAILURE;
+//		// Retry Once
+//		// Reinitialise acquisition
+//		if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_ACQINIT())) {
+//			aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while initializing BPM acquisition");
+//			return EXIT_FAILURE;
+//		}
+//
+//		// Retry acquire BPM values
+//		status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
+//		if (!$VMS_STATUS_SUCCESS(status)) {
+//			endAcquireBpmData(env);
+//			aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making BPM acquisition");
+//			return EXIT_FAILURE;
+//		}
 	}
 
 	/* Reorder the BPM data by Z if that was required */
@@ -201,7 +265,11 @@ static int acquireBpmData(JNIEnv* env, int bpmd, int n, int cnftype, int cnfnum,
 		DPSLCBPM_SORTBYZ(bpmCount);
 	}
 
-	return (int)bpmCount;
+	*rows = bpmCount;
+	if ( bpmCount == 0 ) {
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
 }
 
 /**
@@ -222,33 +290,35 @@ static int getBpmData(JNIEnv* env,
 		int4u* hstasData, int4u* statsData)
 {
 	vmsstat_t status;
-	int4u rows;
+	int4u rows, rowsy;
+	int2u rowsnames, rowsz, rowstmit, rowshsta, rowsstat;
 
 	// data that returns a status
 	status = DPSLCBPM_GETX(&rows, xData);
 	CHECK_VMS_STATUS
-	status = DPSLCBPM_GETY(&rows, yData);
+	status = DPSLCBPM_GETY(&rowsy, yData);
 	CHECK_VMS_STATUS
 
 	int2u n = rows;
 
 	// data that return rows read
-	if (!DPSLCBPM_GETNAMES(namesData) ||
-			!DPSLCBPM_GETTMIT(tmitData) ||
-			!DPSLCBPM_GETZ(zData) ||
-			!DPSLCBPM_GETHSTA(hstasData) ||
-			!DPSLCBPM_GETSTAT(statsData)
+	if (!(rowsnames = DPSLCBPM_GETNAMES(namesData)) ||
+			!(rowstmit = DPSLCBPM_GETTMIT(tmitData)) ||
+			!(rowsz = DPSLCBPM_GETZ(zData)) ||
+			!(rowshsta = DPSLCBPM_GETHSTA(hstasData)) ||
+			!(rowsstat = DPSLCBPM_GETSTAT(statsData))
 			) {
 		endAcquireBpmData(env);
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values");
 		return EXIT_FAILURE;
 	}
 
-	// Convert all floating point data
-	CONVERT_FROM_VMS_FLOAT(xData, n)
-	CONVERT_FROM_VMS_FLOAT(yData, n)
-	CONVERT_FROM_VMS_FLOAT(tmitData, n)
-	CONVERT_FROM_VMS_FLOAT(zData, n)
+	// If rows are not homogenous
+	if (!( rows == rowsy && rowsy == rowsnames && rowsnames == rowsz && rowsz == rowstmit && rowstmit == rowshsta && rowshsta == rowsstat )) {
+		endAcquireBpmData(env);
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "non-homologous vectors of data returned");
+		return EXIT_FAILURE;
+	}
 
 	return endAcquireBpmData(env);
 }

@@ -600,9 +600,9 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION(table)
 	tableAddSingleRowLongColumn(env, &table, 5);
 	CHECK_EXCEPTION(table)
-	tableAddSingleRowFloatColumn(env, &table, 6.6f);
+	tableAddSingleRowFloatColumn(env, &table,  6.6f, false);
 	CHECK_EXCEPTION(table)
-	tableAddSingleRowDoubleColumn(env, &table, 7.7);
+	tableAddSingleRowDoubleColumn(env, &table, 7.7, false);
 	CHECK_EXCEPTION(table)
 	tableAddSingleRowStringColumn(env, &table, "eight");
 

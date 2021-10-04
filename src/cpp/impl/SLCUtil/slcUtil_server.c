@@ -48,10 +48,18 @@ REQUEST_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCUTIL", "Utility",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCUTIL", "Utility",
+//			true,        // db init
+//			false,       // query init
+//			false)       // set init
+
+	vmsstat_t status;
+	if (!SUCCESS(status = DPSLCUTIL_DB_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Utility Service");
+		return;
+	}
+
+	printf("Aida Utility Service Initialised\n");
 }
 
 /**
@@ -233,7 +241,7 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	CHECK_EXCEPTION(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_DEVICE_STRING_LEN);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValuesData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValuesData, false);
 
 	return table;
 }
@@ -304,7 +312,7 @@ static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments)
 	int beam;
 
 	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
-		return 0;
+		return EXIT_FAILURE;
 	}
 
 	// Read the status

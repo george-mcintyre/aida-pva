@@ -451,7 +451,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					// ignore passed in value if we need an array but the user didn't give us an array
 					// Just take the string and wrap it as an array
 					elementValue = asArrayValue(value->value.stringValue);
-					if ( elementValue.type != AIDA_JSON_TYPE ) {
+					if (elementValue.type != AIDA_JSON_TYPE) {
 						SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "Unable to make array of: %s",
 								value->value.stringValue, EXIT_FAILURE)
 					}
@@ -849,7 +849,7 @@ Table tableCreate(JNIEnv* env, int rows, int columns)
  */
 void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
 {
-	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data);
+	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
 	CHECK_EXCEPTION_VOID
 
 	// allocate data for each string too
@@ -873,7 +873,7 @@ void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
  */
 void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width)
 {
-	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data);
+	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
 	CHECK_EXCEPTION_VOID
 
 	// allocate data for each string too
@@ -896,8 +896,9 @@ void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int w
  * @param table the table to add the column to
  * @param type the type of this table column
  * @param data the data to add to this column, a buffer of sizeof(type) * table->rowCount size
+ * @param ieeeFormat true if the data provided is already in ieee format
  */
-void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
+void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat)
 {
 	// Table full?
 	if (table->_currentColumn == table->columnCount) {
@@ -925,14 +926,16 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
 		return;
 	}
 
-	// Convert float values if float array
-	if (type == AIDA_FLOAT_ARRAY_TYPE) {
-		CONVERT_FROM_VMS_FLOAT(((float*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
-	}
+	if (!ieeeFormat) {
+		// Convert float values if float array
+		if (type == AIDA_FLOAT_ARRAY_TYPE) {
+			CONVERT_FROM_VMS_FLOAT(((float*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
+		}
 
-	// Convert double values if double array
-	if (type == AIDA_DOUBLE_ARRAY_TYPE) {
-		CONVERT_FROM_VMS_DOUBLE(((double*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
+		// Convert double values if double array
+		if (type == AIDA_DOUBLE_ARRAY_TYPE) {
+			CONVERT_FROM_VMS_DOUBLE(((double*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
+		}
 	}
 
 	// Add data to column
@@ -975,9 +978,9 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data)
  * @param table the table to add the column to
  * @param data the data to add to this column
  */
-void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data)
+void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat)
 {
-	tableAddColumn(env, table, AIDA_FLOAT_TYPE, &data);
+	tableAddColumn(env, table, AIDA_FLOAT_TYPE, &data, ieeeFloat);
 }
 
 /**
@@ -989,7 +992,7 @@ void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data)
  */
 void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data)
 {
-	tableAddColumn(env, table, AIDA_LONG_TYPE, &data);
+	tableAddColumn(env, table, AIDA_LONG_TYPE, &data, false);
 }
 
 /**
@@ -1001,7 +1004,7 @@ void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data)
  */
 void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data)
 {
-	tableAddColumn(env, table, AIDA_BOOLEAN_TYPE, &data);
+	tableAddColumn(env, table, AIDA_BOOLEAN_TYPE, &data, false);
 }
 
 /**
@@ -1013,7 +1016,7 @@ void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char dat
  */
 void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data)
 {
-	tableAddColumn(env, table, AIDA_BYTE_TYPE, &data);
+	tableAddColumn(env, table, AIDA_BYTE_TYPE, &data, false);
 }
 
 /**
@@ -1025,7 +1028,7 @@ void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data)
  */
 void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data)
 {
-	tableAddColumn(env, table, AIDA_SHORT_TYPE, &data);
+	tableAddColumn(env, table, AIDA_SHORT_TYPE, &data, false);
 }
 
 /**
@@ -1037,7 +1040,7 @@ void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data)
  */
 void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data)
 {
-	tableAddColumn(env, table, AIDA_INTEGER_TYPE, &data);
+	tableAddColumn(env, table, AIDA_INTEGER_TYPE, &data, false);
 }
 
 /**
@@ -1047,9 +1050,9 @@ void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data)
  * @param table the table to add the column to
  * @param data the data to add to this column
  */
-void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data)
+void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble)
 {
-	tableAddColumn(env, table, AIDA_DOUBLE_TYPE, &data);
+	tableAddColumn(env, table, AIDA_DOUBLE_TYPE, &data, ieeeDouble);
 }
 
 /**
@@ -1107,7 +1110,7 @@ Value asArrayValue(char* stringValue)
 	}
 	Value value;
 	value.value.jsonValue = json_parse(arrayValueToParse, strlen(arrayValueToParse));
-	if ( value.value.jsonValue ) {
+	if (value.value.jsonValue) {
 		value.type = AIDA_JSON_TYPE;
 	}
 	return value;

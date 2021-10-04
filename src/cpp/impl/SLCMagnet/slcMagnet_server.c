@@ -55,10 +55,18 @@ REQUEST_STUB_STRING_ARRAY
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMAGNET", "Magnet",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMAGNET", "Magnet",
+//			true,        // db init
+//			false,       // query init
+//			false)       // set init
+
+	vmsstat_t status;
+	if (!SUCCESS(status = DPSLCMAGNET_DB_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Magnet Service");
+		return;
+	}
+
+	printf("Aida Magnet Service Initialised\n");
 }
 
 /**
@@ -113,7 +121,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_PMU_STRING_LEN);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValues);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValues, false);
 
 	// All read successfully
 	return table;
@@ -298,7 +306,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	CHECK_EXCEPTION(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_STATE_NAME_LEN);
 	CHECK_EXCEPTION(table)
-	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, bactData);
+	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, bactData, false);
 
 	return table;
 }

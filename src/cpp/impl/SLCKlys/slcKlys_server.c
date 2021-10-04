@@ -19,7 +19,7 @@
 
 #include "slcKlys_server.h"
 
-static int getTrimArgument(JNIEnv* env, Arguments arguments, char** trim);
+static void getTrimArgument(JNIEnv* env, Arguments arguments, char** trim);
 static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, short* klys_status);
 static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);
 
@@ -56,10 +56,19 @@ REQUEST_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCKLYS", "Klystron",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCKLYS", "Klystron",
+//			true,        // db init
+//			false,       // query init
+//			false)       // set init
+
+	vmsstat_t status;
+
+	if (!SUCCESS(status = DPSLCKLYS_DB_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Klystron Service");
+		return;
+	}
+
+	printf("Aida Klystron Service Initialised\n");
 }
 
 /**
@@ -74,7 +83,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
 	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
-		return 0;
+		return EXIT_FAILURE;
 	}
 	return klystronStatus;
 }
@@ -91,7 +100,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
 	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
-		return 0;
+		return EXIT_FAILURE;
 	}
 	return (long)klystronStatus;
 }
@@ -220,7 +229,7 @@ setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 
 	// Get the value to set
 	float secnValue;
-	avscanf(env, &arguments, &value, "%f", &secnValue);
+	avscanf(env, &arguments, &value, "%f", "value", &secnValue);
 
 	// Set the value
 	float phas_value;  /* Returned in ieee format */
@@ -233,7 +242,7 @@ setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 
 	Table table = tableCreate(env, 1, 1);
 	CHECK_EXCEPTION(table)
-	tableAddSingleRowFloatColumn(env, &table, phas_value);
+	tableAddSingleRowFloatColumn(env, &table, phas_value, false);
 
 	return table;
 }
@@ -377,13 +386,11 @@ static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgr
  * @param trim
  * @return
  */
-static int getTrimArgument(JNIEnv* env, Arguments arguments, char** trim)
+static void getTrimArgument(JNIEnv* env, Arguments arguments, char** trim)
 {
 	Argument argument = getArgument(arguments, "trim");
 	if (argument.name) {
 		*trim = argument.value;
 	}
-
-	return 0;
 }
 

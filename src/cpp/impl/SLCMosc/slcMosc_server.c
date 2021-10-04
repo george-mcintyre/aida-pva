@@ -43,11 +43,20 @@ SET_STUB_VOID
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMOSC", "Master Oscillator",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMOSC", "Master Oscillator",
+//			true,        // db init
+//			false,       // query init
+//			false)       // set init
+//	vmsstat_t status;
+
 	vmsstat_t status;
+
+	if (!SUCCESS(status = DPSLCMOSC_DB_INIT())) {
+		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Master Oscillator Service");
+		return;
+	}
+
+	printf("Aida Master Oscillator Service Initialised\n");
 }
 
 /**
@@ -99,7 +108,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION(table)
 
 	// Add value to table
-	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq);
+	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq, false);
 
 	// Return table
 	return table;
@@ -150,12 +159,10 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 		RETURN_NULL_TABLE
 	}
 
-	CONVERT_FROM_VMS_DOUBLE(&resulting_abs_freq, 1)
-
 	// Now create table to return
 	Table table = tableCreate(env, 1, 1);
 	CHECK_EXCEPTION(table)
-	tableAddSingleRowDoubleColumn(env, &table, resulting_abs_freq);
+	tableAddSingleRowDoubleColumn(env, &table, resulting_abs_freq, false);
 
 	return table;
 }
