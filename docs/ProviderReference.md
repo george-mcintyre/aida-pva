@@ -148,7 +148,7 @@ channels:
 ## Creating a `Channel Provider`
 Thanks to the `AIDA-PVA Module` creating a service provider is easy.  There is only one file to write and here is the code template.
 
-```java
+```c
 #include <string.h>
 #include <stdlib.h>
 
@@ -203,35 +203,35 @@ The `AIDA-PVA Module` is a module contained in the `AIDASHR` shared library that
 ```c
 typedef enum
 {
-    AIDA_NO_TYPE,						// Used to indicate that no type was provided as an argument
-    AIDA_VOID_TYPE,						// Used when no return value is to be returned from a channel
+    AIDA_NO_TYPE,                        // Used to indicate that no type was provided as an argument
+    AIDA_VOID_TYPE,                      // Used when no return value is to be returned from a channel
 
-    AIDA_BOOLEAN_TYPE,					// Represents a boolean
-    AIDA_BYTE_TYPE,						// Represents a byte
-    AIDA_SHORT_TYPE,					// Represents a short
-    AIDA_INTEGER_TYPE,					// Represents an integer
-    AIDA_LONG_TYPE,						// Represents a long
-    AIDA_FLOAT_TYPE,					// Represents a float
-    AIDA_DOUBLE_TYPE,					// Represents a double
-    AIDA_STRING_TYPE,					// Represents a string
-    AIDA_BOOLEAN_ARRAY_TYPE,			// Represents a boolean array
-    AIDA_BYTE_ARRAY_TYPE,				// Represents a byte array
-    AIDA_SHORT_ARRAY_TYPE,				// Represents a short array
-    AIDA_INTEGER_ARRAY_TYPE,			// Represents an integer array
-    AIDA_LONG_ARRAY_TYPE,				// Represents a long array
-    AIDA_FLOAT_ARRAY_TYPE,				// Represents a float array
-    AIDA_DOUBLE_ARRAY_TYPE,				// Represents a double array
-    AIDA_STRING_ARRAY_TYPE,				// Represents a string array
-    AIDA_TABLE_TYPE,					// Represents a table
-    AIDA_JSON_TYPE,						// Argument was provided as JSON text
+    AIDA_BOOLEAN_TYPE,                   // Represents a boolean
+    AIDA_BYTE_TYPE,                      // Represents a byte
+    AIDA_SHORT_TYPE,                     // Represents a short
+    AIDA_INTEGER_TYPE,                   // Represents an integer
+    AIDA_LONG_TYPE,                      // Represents a long
+    AIDA_FLOAT_TYPE,                     // Represents a float
+    AIDA_DOUBLE_TYPE,                    // Represents a double
+    AIDA_STRING_TYPE,                    // Represents a string
+    AIDA_BOOLEAN_ARRAY_TYPE,             // Represents a boolean array
+    AIDA_BYTE_ARRAY_TYPE,                // Represents a byte array
+    AIDA_SHORT_ARRAY_TYPE,               // Represents a short array
+    AIDA_INTEGER_ARRAY_TYPE,             // Represents an integer array
+    AIDA_LONG_ARRAY_TYPE,                // Represents a long array
+    AIDA_FLOAT_ARRAY_TYPE,               // Represents a float array
+    AIDA_DOUBLE_ARRAY_TYPE,              // Represents a double array
+    AIDA_STRING_ARRAY_TYPE,              // Represents a string array
+    AIDA_TABLE_TYPE,                     // Represents a table
+    AIDA_JSON_TYPE,                      // Argument was provided as JSON text
 
     // Internal use only: DO NOT USE IN SERVICE IMPLEMENTATIONS!!
-    AIDA_UNSIGNED_SHORT_TYPE,			// Represents an internal type of unsigned short
-    AIDA_UNSIGNED_INTEGER_TYPE,			// Represents an internal type of unsigned integer
-    AIDA_UNSIGNED_LONG_TYPE,			// Represents an internal type of unsigned long
-    AIDA_UNSIGNED_SHORT_ARRAY_TYPE,		// Represents an internal type of unsigned short array
-    AIDA_UNSIGNED_INTEGER_ARRAY_TYPE,	// Represents an internal type of unsigned integer array
-    AIDA_UNSIGNED_LONG_ARRAY_TYPE		// Represents an internal type of unsigned long array
+    AIDA_UNSIGNED_SHORT_TYPE,            // Represents an internal type of unsigned short
+    AIDA_UNSIGNED_INTEGER_TYPE,          // Represents an internal type of unsigned integer
+    AIDA_UNSIGNED_LONG_TYPE,             // Represents an internal type of unsigned long
+    AIDA_UNSIGNED_SHORT_ARRAY_TYPE,      // Represents an internal type of unsigned short array
+    AIDA_UNSIGNED_INTEGER_ARRAY_TYPE,    // Represents an internal type of unsigned integer array
+    AIDA_UNSIGNED_LONG_ARRAY_TYPE        // Represents an internal type of unsigned long array
 } Type;
 ```
 ###### Layout
