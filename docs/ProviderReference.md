@@ -564,7 +564,7 @@ _Required flag_
 _Prefixes_
 
 - `h` - `short *` - preceding `d` will retrieve a short e.g. `%hd`
-- l - `long *`, double * - preceding d will retrieve a long e.g. `%ld`, preceding `f` will retrieve a double e.g. `%lf`
+- `l` - `long *`, double * - preceding d will retrieve a long e.g. `%ld`, preceding `f` will retrieve a double e.g. `%lf`
 
 _Suffixes_
 
