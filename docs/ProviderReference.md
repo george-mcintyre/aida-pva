@@ -146,6 +146,55 @@ channels:
 ```
 
 ## Creating a Channel Service Provider
+Thanks to the AIDA-PVA Module creating a service provider is easy.  There is only one file to write and here is the code template.
+
+```java
+#include <string.h>
+#include <stdlib.h>
+
+#include "aida_server_helper.h"
+#include "json.h"
+
+#include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
+
+// API Stubs
+REQUEST_STUB_CHANNEL_CONFIG
+REQUEST_STUB_BOOLEAN
+REQUEST_STUB_BYTE
+REQUEST_STUB_SHORT
+REQUEST_STUB_INTEGER
+REQUEST_STUB_LONG
+REQUEST_STUB_FLOAT
+REQUEST_STUB_DOUBLE
+REQUEST_STUB_STRING
+REQUEST_STUB_BOOLEAN_ARRAY
+REQUEST_STUB_BYTE_ARRAY
+REQUEST_STUB_SHORT_ARRAY
+REQUEST_STUB_INTEGER_ARRAY
+REQUEST_STUB_LONG_ARRAY
+REQUEST_STUB_FLOAT_ARRAY
+REQUEST_STUB_DOUBLE_ARRAY
+REQUEST_STUB_STRING_ARRAY
+REQUEST_STUB_TABLE
+SET_STUB_VOID
+SET_STUB_TABLE
+
+/**
+ * Initialise the service
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @throws ServerInitialisationException if the service fails to initialise
+ */
+void aidaServiceInit(JNIEnv* env)
+{
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMMODEL", "Model",
+			true,        // db init
+			false,       // query init
+			false)       // set init
+}
+```
+
+For any of the types that your service will support you need to remove the STUB line and replace it with the implementation.  You'll find the prototypes below:
+
 
 ## Building your Shared Service
 ## Writing and running tests 
