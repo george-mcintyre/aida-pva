@@ -584,11 +584,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE;
 	}
 
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table.columnCount = 8;
-
-	table = tableCreate(env, 1, 8);
+	Table table = tableCreate(env, 1, 8);
 	CHECK_EXCEPTION(table)
 	tableAddSingleRowBooleanColumn(env, &table, 1);
 	CHECK_EXCEPTION(table)

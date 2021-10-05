@@ -248,15 +248,15 @@ Value asArrayValue(char * stringValue);
  *
  * The additional arguments should point to already allocated objects of the type specified by their corresponding format specifier.  For strings and arrays only the pointer needs to be pre-allocated.
  *
- * The only space allocated by this function is for the array of pointers to strings or arrays.  On return strings will point to the original string in the given arguments so the strings themselves do not need to be freed by the caller.
+ * The only space allocated by this function is for strings, or arrays.  You need to free those when you're done
  *
  * Note, only the provided pointer needs to be freed as only one allocation is made e.g.
  *
  *     Arguments arguments;
+ *     float theFloat;
  *     int *intArray;
- *     ascanf(arguments "%da, "fooArray", &intArray);
+ *     ascanf(arguments "$of, %da", "f", &theFloat, "fooArray", &intArray);
  *     // Do stuff
- *     free(intArray);
  *
  * Differences from scanf
  * There are a number of other differences from scanf which are best described by example:

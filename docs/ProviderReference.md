@@ -186,7 +186,7 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMMODEL", "Model",
+	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMYPROVIDER", "My Provider",
 			true,        // db init
 			false,       // query init
 			false)       // set init
@@ -199,7 +199,11 @@ For any of the types that your `Channel Provider` will support you need to remov
 The `AIDA-PVA Module` is a module contained in the `AIDASHR` shared library that provides all the boilerplate functionality needed to respond to `get` and `set` requests, marshal and unmarshal objects, and simple types across the JNI boundary and between your `Channel Provider` and VMS and the Channel Provider module in `AIDASHR`. 
 
 #### Types
+These are defined in `aida_types.h` but are automatically loaded by including `aida_server_helper.c`.
+
 ##### Type
+This enumerated type will be used throughout your code to identify the data types you are manipulating. 
+
 ```c
 typedef enum
 {
@@ -234,19 +238,302 @@ typedef enum
     AIDA_UNSIGNED_LONG_ARRAY_TYPE        // Represents an internal type of unsigned long array
 } Type;
 ```
-###### Layout
-###### Field
-###### Config
-###### Arguments
-###### Argument
-###### Value
-###### Table
-###### Array
-###### StringArray
+###### _aidaChannelConfig_ endpoint
+Normally you will never implement this endpoint but if you want to, you will need these three types:
+1. `Config`
+2. `Layout`
+3. `Field`
 
+_Config_
+As you can see this type allows you to specify everything you need to configure either a getter or a setter for a channel. 
+```c
+typedef struct
+{
+	Type type;
+	char* description;
+	Layout layout;
+	int fieldCount;
+	Field* fields;
+} Config;
+```
+
+_Layout_
+
+The `Layout` allows you to specify table orientation in the rare case you don't want the default `COLUMN_MAJOR` table orientation.
+
+```c
+typedef enum
+{
+	AIDA_NO_LAYOUT,
+	AIDA_COLUMN_MAJOR_LAYOUT,  // Each top level array entry is a column containing row data
+	AIDA_ROW_MAJOR_LAYOUT      // Each top level array entry is a row containing column data
+} Layout;
+```
+
+_Field_
+
+The `Field` allows you to specify any fields in any table you define.
+```c
+typedef struct
+{
+	char* name;
+	char* label;
+	char* description;
+	char* units;
+} Field;
+```
+
+
+###### Arguments and Values
+When your endpoints are called, the framework passes them Arguments and Values.  The following types are defined for you.  The helper functions presented later make knowledge of these details irrelevant but here they are for your edification.
+
+_Arguments_
+
+```c
+typedef struct
+{
+	int argumentCount;
+	Argument* arguments;
+} Arguments;
+```
+
+
+_Argument_
+
+```c
+typedef struct
+{
+	char* name;
+	char* value;
+} Argument;
+```
+
+_Value_
+This is passed to you when one of the arguments name is `VALUE`.  It will contain the value as specified in the argument field but also a pre-parsed json structure if the argument value was properly formatted json.
+
+```c
+typedef struct
+{
+	Type type;    // AIDA_STRING_TYPE or AIDA_JSON_TYPE
+	ValueContents value;
+} Value;
+```
+
+```c
+typedef union
+{
+	char* stringValue;
+	json_value* jsonValue;
+} ValueContents;
+```
+
+###### Table
+This structure is used when processing requests that require tables. 
+
+```c 
+typedef struct
+{
+	int columnCount;
+	int rowCount;
+	Type* types;
+	void** ppData;
+	int _currentColumn; // For internal use by addColumn() etc
+} Table;
+```
+
+###### Arrays
+To process data in any scalar array endpoint you need to use the following structures.  As with other data types you won't need to manipulate them directly as helper functions obviate the need.
+
+_Array_
+
+```c
+typedef struct
+{
+	int count;
+	void* items;
+} Array;
+```
+
+_StringArray_
+
+```c 
+typedef struct
+{
+	int count;
+	char** items;
+} StringArray;
+```
 
 #### Macros
-#### Functions
+This section describes the macros that are defined to make your life easier.  
+##### General
+##### Exceptions
+##### Data Conversion
+##### Memory Management
+
+#### Helper Functions
+#### Argument processing
+
+##### ascanf, avscanf
+
+Synopsis
+
+```c 
+int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
+int avscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, ...);
+```
+
+Details
+
+Reads data from the given arguments and stores them according to parameter format into the locations given by the additional arguments, as if scanf was used, but reading from arguments instead of the standard input (stdin).
+
+The additional arguments should point to already allocated objects of the type specified by their corresponding format specifier.  For strings and arrays only the pointer needs to be pre-allocated.
+
+The only space allocated by this function is for strings, or arrays.  You need to free those when you're done.
+
+Note, in this example, only the provided pointer needs to be freed as only one allocation is made e.g.
+
+```c 
+     Arguments arguments;
+     float theFloat;
+     int *intArray;
+     ascanf(arguments "$of, %da", "f", &theFloat, "fooArray", &intArray);
+
+     // Do stuff
+     free(intArray);
+```  
+
+ Differences from scanf
+ There are a number of other differences from scanf which are best described by example:
+
+ 1. Scan into simple variable
+
+     int n;
+     ascanf("%d", "NPOS", &n);
+
+ You must always provide the name of the variable and the pointer to the place to put the value in pairs
+
+ 2. Optional arguments
+ Optional arguments are specified with the o character before the format character.
+
+     short flag = 10;  // 10 is the default value
+     ascanf("%ohd", "flag", &flag);
+
+ By default all arguments are considered required unless this character is specified. For optional arguments the pointer provided must point to the default value. In the case of arrays and strings this will be copied into allocated storage that will need to be freed as normal. i.e. strings themselves don't need to be freed.
+
+ Variable Names
+ 1. You can specify simple variable names
+     int simpleInt;
+     ascanf(&arguments "%d, "simple", &simpleInt);
+
+ 1. You can specify simple names or you can use dot and square brace notation to refer to arguments that refer to json structures. e.g. given a variable named json and presented as
+
+     json=' { "foo": {"bar": 0} }}'
+
+ You can specify the name as json.foo.bar to retrieve the 0 value *
+
+ 2. Also given a variable named jsonArray and presented as
+     jsonArray=' [ {"foo": 10}, {"bar": 20} ]'
+
+ You can specify the name as jsonArray[1].bar to retrieve the 20 value
+
+ 3. Finally if you use the name value in the the avscanf() function will use the supplied value to get the data for that parameter
+     Arguments arguments;
+     Value value;
+     int *intArray;
+     avscanf(&arguments &value, "%da, "fooArray", &intArray);
+     // Do stuff
+     free(intArray);
+
+ Format Specifiers
+ Supported formats specifiers
+ - d : int * - extract an integer into the corresponding variable (see l & h below).
+ - u : unsigned int * - extract an unsigned integer into the corresponding variable (see l & h below)
+ - f  : float * - extract a floating point number (see l below)
+ - s : char * - extract a string of characters into allocated space and point the corresponding variable to it
+ - c : char * - extract a single character into the corresponding variable
+
+ Required flag
+ - o - optional precede the format with 'o' to indicate that the argument is optional
+
+ Prefixes
+ - h - short * - preceding d will retrieve a short e.g. %hd
+ - l - long *, double * - preceding d will retrieve a long eg. %ld, preceding f will retrieve a double eg. %lf
+
+ Suffixes
+ - a - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it. the variable will have an extra level of indirection than the non-array version e.g. "%d" "int *" becomes "%da" "int **"
+
+ @param env
+ @param arguments      arguments that the function processes as its source to retrieve the data.
+ @param value          value that the function processes as its source to retrieve the data
+ @param formatString   C  string that contains a format string as described above
+ @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
+ 						 containing pairs of names and pointers to allocated storage (except as indicated above),
+ 						 where the interpretation of the extracted data is stored with the appropriate type.
+                       There should be at least as many pairs of these arguments as the number of values stored
+                       by the format specifiers.
+                       Additional arguments are ignored by the function
+ @return true if all required arguments were read and no errors occurred
+ @throw MissingRequiredArgument if one of the required arguments are missing
+
+
+
+##### Table Manipulation
+If order to return a table you need to do the following.
+```c 
+	Table table = tableCreate(env, 1, 8);
+	CHECK_EXCEPTION(table)
+
+    // Call one or more of the tableAdd functions to add data to the table
+	tableAddSingleRowBooleanColumn(env, &table, 1);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowStringColumn(env, &table, "eight");
+
+	// Return the table
+	return table;
+
+```
+
+These are the list of table manipuation functions:
+
+```c 
+// Create a table and set the number of rows and columns
+Table tableCreate(JNIEnv* env, int rows, int columns);
+
+// Add a column of arbitrary type (except string) to the table
+void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat);
+
+// Add a string column of arbitrary length to the table
+void tableAddStringColumn(JNIEnv* env, Table* table, char** data);
+
+// Add a single row of float data to the table
+void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat);
+
+// Add a single row of long data to the table
+void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data);
+
+// Add a single row of boolean data to the table
+void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
+
+// Adda a single row of byte data to the table
+void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
+
+// Add a single row of short data to the table
+void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data);
+
+// Add a single row of int data to the table
+void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
+
+// Add a single row of double data to the table
+void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble);
+
+// Add a single row of string data to the table
+void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
+
+// Add a single row of fixed width string data to the table
+void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
+
+```
 
 ## Building your Shared Service
 ## Writing and running tests 
