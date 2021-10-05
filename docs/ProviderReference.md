@@ -1,51 +1,66 @@
 # Writing an AIDA-PVA Service - Programmers Reference Manual
-## Overview 
 
-`AIDA-PVA` provides a framework for `Channel Providers` to service requests for `Channels` that they support.  A `Channel` is an EPICS term, co-opted by AIDA-PVA, to mean _any identifiable source of data in any `Channel Data Source` on the `SLAC Network`_.  All AIDA-PVA Channels use a standard notation. 
+## Overview
+
+`AIDA-PVA` provides a framework for `Channel Providers` to service requests for `Channels` that they support.
+A `Channel` is an EPICS term, co-opted by AIDA-PVA, to mean _any identifiable source of data in
+any `Channel Data Source` on the `SLAC Network`_. All AIDA-PVA Channels use a standard notation.
 
 The framework has five main features.
-* **Routing** client `Channel Requests` using EPICS' `PVAccess`, through the `AIDA-PVA Service` to the registered `Channel Provider` endpoints.
+
+* **Routing** client `Channel Requests` using EPICS' `PVAccess`, through the `AIDA-PVA Service` to the
+  registered `Channel Provider` endpoints.
 * Bi-directionally **Marshalling, Transporting, and Converting** arguments and data.
 * Raising, and **Propagating Exceptions** throughout the framework, back to clients, and on to logging services
 * Providing **AIDA-PVA utilities** that implement the boilerplate functions required to service channel requests
-* Providing access to `AIDASHR`, to allow `Channel Provider` code to leverage legacy **Channel Provider Modules** for accessing devices, databases and other services from `Channel Data Sources` on the `SLAC Network`.
+* Providing access to `AIDASHR`, to allow `Channel Provider` code to leverage legacy **Channel Provider Modules** for
+  accessing devices, databases and other services from `Channel Data Sources` on the `SLAC Network`.
 
 ## How it works
-1. When your `Channel Provider` starts up, the `AIDA-PVA` process that started it will read the `CHANNELS.YML` file that you've provided to determine which EPICS search requests it should respond to.
-2. Subsequently, when clients send requests containing references to one of those **Channels**, 
-3. and EPICS seach request is propagated across the EPICS network 
-4. The `EPICS Forwarder` that is constantly listening for requests will forward it to all the AIDA-PVA processes running in VMS. 
-5. When your AIDA-PVA recognizes the channel and the request it will respond positively to the search request on your behalf,
+
+1. When your `Channel Provider` starts up, the `AIDA-PVA` process that started it will read the `CHANNELS.YML` file that
+   you've provided to determine which EPICS search requests it should respond to.
+2. Subsequently, when clients send requests containing references to one of those **Channels**,
+3. and EPICS seach request is propagated across the EPICS network
+4. The `EPICS Forwarder` that is constantly listening for requests will forward it to all the AIDA-PVA processes running
+   in VMS.
+5. When your AIDA-PVA recognizes the channel and the request it will respond positively to the search request on your
+   behalf,
 6. Opening a direct communications channel to the client once the client accepts the response.
 7. Now the AIDA-PVA will ask your `Channel Provider` to service the request and will return the results you give it.
-8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel Data source, you can service those requests.
-
+8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel
+   Data source, you can service those requests.
 
 ![Usine a gaz with annotations](images/usine-a-gaz-wa.png)
 
 As an AIDA-PVA Service Provider writer you will be responsible for:
+
 * Creating the AIDA-PVA `Channel Provider` Shared Library.
-* Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA `Channels` that your `Channel Provider` will support.
+* Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA `Channels` that
+  your `Channel Provider` will support.
 
 ### Components
+
 * The **Provider Code** => produces `SLC<provider_name>.EXE` shared Library
 * The **AIDA-PVA** - `aida-pva.jar`, that loads the Provider Code
 * The **AIDA-PVA Module** - extensions to AIDASHR that provide helper functions for the Provider Code
 * The **back-ported EPICS 7** libraries
-  * `epics-pvaccess.jar` 
-  * `epics-pvdata.jar `
-* The **EPICS forwarder** - `epics-forwarder.jar`  
+    * `epics-pvaccess.jar`
+    * `epics-pvdata.jar `
+* The **EPICS forwarder** - `epics-forwarder.jar`
 
 ## Topology
+
 ![Aida-PVA Topology](images/aida-pva-system-components.png)
 
 ## Normative Types
-EPICS `PVAccess`is used to provide the protocol and transport for the `AIDA-PVA` framework.
-EPICS `PVData` is used to provide the `Normative Types` functionality used for data encapsulation.
 
-`Normative Types` are a set of software designs for high-level composite data types
-suitable for the application-level data exchange between EPICS V4+ network endpoints.  In particular, they are intended
-for use in online scientific data services. The intention is that where the endpoints in an EPICS V4+ network use only
+EPICS `PVAccess`is used to provide the protocol and transport for the `AIDA-PVA` framework. EPICS `PVData` is used to
+provide the `Normative Types` functionality used for data encapsulation.
+
+`Normative Types` are a set of software designs for high-level composite data types suitable for the application-level
+data exchange between EPICS V4+ network endpoints. In particular, they are intended for use in online scientific data
+services. The intention is that where the endpoints in an EPICS V4+ network use only
 `Normative Types`, each peer in the network should be able to understand all the data transmitted to it, at least
 syntactically, and be able to take processing steps appropriate to that data.
 
@@ -53,46 +68,85 @@ AIDA-PVA uses `NTTable`, `NTScalarArray` and `NTScalar` `Normative Types` to rep
 
 ![Normative Type Usage in AIDA-PVA](images/nt_types.png)
 
-See [EPICS Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t%20timeStamp%20%3A%20opt-,Description%20of%20Normative%20Types,include%20descriptor%2C%20alarm%20and%20timestamp.) for more information
+See [EPICS Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t%20timeStamp%20%3A%20opt-,Description%20of%20Normative%20Types,include%20descriptor%2C%20alarm%20and%20timestamp.)
+for more information
 
 ## Supported Data Types
+
 ### Scalar Types
-* **BOOLEAN**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVBoolean`
-* **BYTE**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVByte`.  Note there is no CHAR so clients are required to use BYTE and marshal the results appropriately
-* **SHORT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVShort`
-* **INTEGER**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVInteger`
-* **LONG**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVLong`
-* **FLOAT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVFloat`
-* **DOUBLE**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVDouble`
-* **STRING**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVString`
+
+* **BOOLEAN**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVBoolean`
+* **BYTE**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVByte`. Note there is no CHAR so clients are required to use BYTE and marshal the results
+  appropriately
+* **SHORT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVShort`
+* **INTEGER**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVInteger`
+* **LONG**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVLong`
+* **FLOAT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVFloat`
+* **DOUBLE**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVDouble`
+* **STRING**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
+  containing a single `PVString`
+
 ### Scalar Array Types
-* **BOOLEAN_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVBooleanArray` array
-* **BYTE_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVByteArray` array.  Note there is no CHAR_ARRAY so clients are required to use BYTE_ARRAY and marshal the results appropriately
-* **SHORT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVShortArray` array
-* **INTEGER_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVIntegerArray` array
-* **LONG_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVLongArray` array
-* **FLOAT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVFloatArray` array
-* **DOUBLE_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVDoubleArray` array
-* **STRING_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVStringArray` array
+
+* **BOOLEAN_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVBooleanArray` array
+* **BYTE_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVByteArray` array. Note there is no CHAR_ARRAY so clients are required to use BYTE_ARRAY and marshal
+  the results appropriately
+* **SHORT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVShortArray` array
+* **INTEGER_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVIntegerArray` array
+* **LONG_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVLongArray` array
+* **FLOAT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVFloatArray` array
+* **DOUBLE_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVDoubleArray` array
+* **STRING_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
+  containing a `PVStringArray` array
+
 ### Structures
-* **TABLE**              - Getter or setter returns a `PVStructure` that conforms to the `NTTable` norm containing a set of homogenous congruent vectors which can be any of the `PVScalarArray` types supported under Scalar Array Types above.
+
+* **TABLE**              - Getter or setter returns a `PVStructure` that conforms to the `NTTable` norm containing a set
+  of homogenous congruent vectors which can be any of the `PVScalarArray` types supported under Scalar Array Types
+  above.
+
 ### Special configuration only types.
+
 * **NONE**               - Means that this getter or setter is not supported
 * **VOID**               - Means that this setter does not return a value (only valid for setters)
-* **ANY**                - Getter or setter returns any type defined by the mandatory accompanying `TYPE` argument, for setters this can only be VOID or TABLE
+* **ANY**                - Getter or setter returns any type defined by the mandatory accompanying `TYPE` argument, for
+  setters this can only be VOID or TABLE
 * **SCALAR**             - Constrains the `TYPE` parameter to be set to any scalar type or `TABLE`
 * **SCALAR_ARRAY**       - Constrains the `TYPE` parameter to be set to any scalar array type or `TABLE`
 
 # Implementation
+
 ## Overview
+
 There are three things to write before you can compile, run, test and deploy your service. Here
+
 * Write a `CHANNELS.YML` file
 * Create a `Channel Provider`
 * Create some tests
-## Creating an `CHANNELS.YML` file
-Definition of the `Channels` supported by your `Channel Service Provider` is done in the `CHANNELS.YML` file.  If you're unfamiliar with the the YAML format you can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading further.
 
-Please read [documentation on the CHANNELS.YML](Channels.md) file for information on how to create one.  An example configuration file is shown below:
+## Creating an `CHANNELS.YML` file
+
+Definition of the `Channels` supported by your `Channel Service Provider` is done in the `CHANNELS.YML` file. If you're
+unfamiliar with the the YAML format you
+can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading
+further.
+
+Please read [documentation on the CHANNELS.YML](Channels.md) file for information on how to create one. An example
+configuration file is shown below:
 
 ```yaml
 !!edu.stanford.slac.aida.lib.model.AidaProvider
@@ -105,12 +159,12 @@ getterConfig:
 setterConfig:
   type: TABLE
     fields:
-      - name: isActive
-        label: "Device is active?"
-        description: "Device activity status.  Active if true"
-      - name: mode
-        label: "Device Mode Code"
-        description: "Device mode code"
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+          - name: mode
+            label: "Device Mode Code"
+            description: "Device mode code"
 channels:
   - channel: AIDA:CHAN:*:INT
   - channel: AIDA:CHAN:P01:BOOL
@@ -146,7 +200,9 @@ channels:
 ```
 
 ## Creating a `Channel Provider`
-Thanks to the `AIDA-PVA Module` creating a service provider is easy.  There is only one file to write and here is the code template.
+
+Thanks to the `AIDA-PVA Module` creating a service provider is easy. There is only one file to write and here is the
+code template.
 
 ```c
 #include <string.h>
@@ -193,16 +249,22 @@ void aidaServiceInit(JNIEnv* env)
 }
 ```
 
-For any of the types that your `Channel Provider` will support you need to remove the corresponding _STUB_ line and replace it with the implementation.  You'll find the prototypes below:
+For any of the types that your `Channel Provider` will support you need to remove the corresponding _STUB_ line and
+replace it with the implementation. You'll find the prototypes below:
 
 ### AIDA-PVA Module
-The `AIDA-PVA Module` is a module contained in the `AIDASHR` shared library that provides all the boilerplate functionality needed to respond to `get` and `set` requests, marshal and unmarshal objects, and simple types across the JNI boundary and between your `Channel Provider` and VMS and the Channel Provider module in `AIDASHR`. 
+
+The `AIDA-PVA Module` is a module contained in the `AIDASHR` shared library that provides all the boilerplate
+functionality needed to respond to `get` and `set` requests, marshal and unmarshal objects, and simple types across the
+JNI boundary and between your `Channel Provider` and VMS and the Channel Provider module in `AIDASHR`.
 
 #### Types
+
 These are defined in `aida_types.h` but are automatically loaded by including `aida_server_helper.c`.
 
 ##### Type
-This enumerated type will be used throughout your code to identify the data types you are manipulating. 
+
+This enumerated type will be used throughout your code to identify the data types you are manipulating.
 
 ```c
 typedef enum
@@ -238,14 +300,19 @@ typedef enum
     AIDA_UNSIGNED_LONG_ARRAY_TYPE        // Represents an internal type of unsigned long array
 } Type;
 ```
+
 ###### _aidaChannelConfig_ endpoint
+
 Normally you will never implement this endpoint but if you want to, you will need these three types:
+
 1. `Config`
 2. `Layout`
 3. `Field`
 
 _Config_
-As you can see this type allows you to specify everything you need to configure either a getter or a setter for a channel. 
+As you can see this type allows you to specify everything you need to configure either a getter or a setter for a
+channel.
+
 ```c
 typedef struct
 {
@@ -259,7 +326,8 @@ typedef struct
 
 _Layout_
 
-The `Layout` allows you to specify table orientation in the rare case you don't want the default `COLUMN_MAJOR` table orientation.
+The `Layout` allows you to specify table orientation in the rare case you don't want the default `COLUMN_MAJOR` table
+orientation.
 
 ```c
 typedef enum
@@ -273,6 +341,7 @@ typedef enum
 _Field_
 
 The `Field` allows you to specify any fields in any table you define.
+
 ```c
 typedef struct
 {
@@ -283,9 +352,10 @@ typedef struct
 } Field;
 ```
 
-
 ###### Arguments and Values
-When your endpoints are called, the framework passes them Arguments and Values.  The following types are defined for you.  The helper functions presented later make knowledge of these details irrelevant but here they are for your edification.
+
+When your endpoints are called, the framework passes them Arguments and Values. The following types are defined for you.
+The helper functions presented later make knowledge of these details irrelevant but here they are for your edification.
 
 _Arguments_
 
@@ -296,7 +366,6 @@ typedef struct
 	Argument* arguments;
 } Arguments;
 ```
-
 
 _Argument_
 
@@ -309,7 +378,8 @@ typedef struct
 ```
 
 _Value_
-This is passed to you when one of the arguments name is `VALUE`.  It will contain the value as specified in the argument field but also a pre-parsed json structure if the argument value was properly formatted json.
+This is passed to you when one of the arguments name is `VALUE`. It will contain the value as specified in the argument
+field but also a pre-parsed json structure if the argument value was properly formatted json.
 
 ```c
 typedef struct
@@ -328,7 +398,8 @@ typedef union
 ```
 
 ###### Table
-This structure is used when processing requests that require tables. 
+
+This structure is used when processing requests that require tables.
 
 ```c 
 typedef struct
@@ -342,7 +413,9 @@ typedef struct
 ```
 
 ###### Arrays
-To process data in any scalar array endpoint you need to use the following structures.  As with other data types you won't need to manipulate them directly as helper functions obviate the need.
+
+To process data in any scalar array endpoint you need to use the following structures. As with other data types you
+won't need to manipulate them directly as helper functions obviate the need.
 
 _Array_
 
@@ -365,13 +438,19 @@ typedef struct
 ```
 
 #### Macros
-This section describes the macros that are defined to make your life easier.  
+
+This section describes the macros that are defined to make your life easier.
+
 ##### General
+
 ##### Exceptions
+
 ##### Data Conversion
+
 ##### Memory Management
 
 #### Helper Functions
+
 #### Argument processing
 
 ##### ascanf, avscanf
@@ -385,13 +464,16 @@ int avscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatS
 
 Details
 
-Reads data from the given arguments and stores them according to parameter format into the locations given by the additional arguments, as if scanf was used, but reading from arguments instead of the standard input (stdin).
+Reads data from the given arguments and stores them according to parameter format into the locations given by the
+additional arguments, as if `scanf` was used, but reading from arguments instead of the standard input (stdin).
 
-The additional arguments should point to already allocated objects of the type specified by their corresponding format specifier.  For strings and arrays only the pointer needs to be pre-allocated.
+The additional arguments should point to already allocated objects of the type specified by their corresponding format
+specifier. For strings and arrays only the pointer needs to be pre-allocated - not the data that the pointer will
+reference.
 
-The only space allocated by this function is for strings, or arrays.  You need to free those when you're done.
+The only space allocated by this function is for strings, and arrays. You need to free those when you're done.
 
-Note, in this example, only the provided pointer needs to be freed as only one allocation is made e.g.
+In this example, only the provided pointer needs to be freed as only one allocation is made:
 
 ```c 
      Arguments arguments;
@@ -403,83 +485,108 @@ Note, in this example, only the provided pointer needs to be freed as only one a
      free(intArray);
 ```  
 
- Differences from scanf
- There are a number of other differences from scanf which are best described by example:
+There are a number of other differences from scanf which are best described by example:
 
- 1. Scan into simple variable
+_Scan into simple variable_
 
+```c 
      int n;
      ascanf("%d", "NPOS", &n);
+```
 
- You must always provide the name of the variable and the pointer to the place to put the value in pairs
+You must always provide the name of the variable and the pointer to the place to put the value in pairs
 
- 2. Optional arguments
- Optional arguments are specified with the o character before the format character.
+_Optional arguments_
+Optional arguments are specified with the o character before the format character.
 
+```c 
      short flag = 10;  // 10 is the default value
      ascanf("%ohd", "flag", &flag);
+```
 
- By default all arguments are considered required unless this character is specified. For optional arguments the pointer provided must point to the default value. In the case of arrays and strings this will be copied into allocated storage that will need to be freed as normal. i.e. strings themselves don't need to be freed.
+By default all arguments are considered required unless this character is specified. For optional arguments the pointer
+provided must point to the default value. In the case of arrays and strings this will be copied into allocated storage
+that will need to be freed as normal. i.e. strings themselves don't need to be freed.
 
- Variable Names
- 1. You can specify simple variable names
+_Variable Names_
+
+1. You can specify simple variable names
+
+ ```c 
      int simpleInt;
      ascanf(&arguments "%d, "simple", &simpleInt);
+ ```
 
- 1. You can specify simple names or you can use dot and square brace notation to refer to arguments that refer to json structures. e.g. given a variable named json and presented as
+2. You can specify simple names or you can use dot and square brace notation to refer to arguments that refer to json
+   structures. e.g. given a variable named json and presented as
 
+```c 
      json=' { "foo": {"bar": 0} }}'
+```
 
- You can specify the name as json.foo.bar to retrieve the 0 value *
+You can specify the name as `json.foo.bar` to retrieve the `0` value *
 
- 2. Also given a variable named jsonArray and presented as
+3. Also given a variable named jsonArray and presented as
+
+```c 
      jsonArray=' [ {"foo": 10}, {"bar": 20} ]'
+```
 
- You can specify the name as jsonArray[1].bar to retrieve the 20 value
+You can specify the name as `jsonArray[1].bar` to retrieve the `20` value
 
- 3. Finally if you use the name value in the the avscanf() function will use the supplied value to get the data for that parameter
-     Arguments arguments;
-     Value value;
-     int *intArray;
-     avscanf(&arguments &value, "%da, "fooArray", &intArray);
-     // Do stuff
-     free(intArray);
+4. Finally, if you use the variable name `value` in the call, the `avscanf()` function will use the supplied `value` to
+   get the data for that parameter
 
- Format Specifiers
- Supported formats specifiers
- - d : int * - extract an integer into the corresponding variable (see l & h below).
- - u : unsigned int * - extract an unsigned integer into the corresponding variable (see l & h below)
- - f  : float * - extract a floating point number (see l below)
- - s : char * - extract a string of characters into allocated space and point the corresponding variable to it
- - c : char * - extract a single character into the corresponding variable
+```c 
+    Arguments arguments;
+    Value value;
+    int *intArray;
+    avscanf(&arguments &value, "%da", fooArray", &intArray);
 
- Required flag
- - o - optional precede the format with 'o' to indicate that the argument is optional
+    // Do stuff
+    free(intArray);
+```
 
- Prefixes
- - h - short * - preceding d will retrieve a short e.g. %hd
- - l - long *, double * - preceding d will retrieve a long eg. %ld, preceding f will retrieve a double eg. %lf
+Format Specifiers
 
- Suffixes
- - a - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it. the variable will have an extra level of indirection than the non-array version e.g. "%d" "int *" becomes "%da" "int **"
+_Supported formats specifiers_
 
- @param env
- @param arguments      arguments that the function processes as its source to retrieve the data.
- @param value          value that the function processes as its source to retrieve the data
- @param formatString   C  string that contains a format string as described above
- @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
- 						 containing pairs of names and pointers to allocated storage (except as indicated above),
- 						 where the interpretation of the extracted data is stored with the appropriate type.
-                       There should be at least as many pairs of these arguments as the number of values stored
-                       by the format specifiers.
-                       Additional arguments are ignored by the function
- @return true if all required arguments were read and no errors occurred
- @throw MissingRequiredArgument if one of the required arguments are missing
+- `d` : `int *` - extract an integer into the corresponding variable (see `l` & `h` below).
+- `u` : `unsigned int *` - extract an unsigned integer into the corresponding variable (see `l` & `h` below)
+- `f`  : ``float *` - extract a floating point number (see `l` below)
+- `s` : ``char *` - extract a string of characters into allocated space and point the corresponding variable to it
+- `c` : ``char *` - extract a single character into the corresponding variable
 
+_Required flag_
 
+- `o` - optional precede the format with `o` to indicate that the argument is optional
+
+_Prefixes_
+
+- `h` - `short *` - preceding `d` will retrieve a short e.g. `%hd`
+- l - `long *`, double * - preceding d will retrieve a long e.g. `%ld`, preceding `f` will retrieve a double e.g. `%lf`
+
+_Suffixes_
+
+- `a` - extract an array of the preceding type into a block of allocated space and point the corresponding variable to
+  it. the variable will have an extra level of indirection than the non-array version e.g. `%d`, `int *` becomes `%da`
+  , `int **`
+
+Parameters:
+
+- `env` - just pass in the `env` parameter that your endpoint was given by the framework
+- `arguments` - arguments that the function processes as its source to retrieve the data.
+- `value` value that the function processes as its source to retrieve the data
+- `formatString` C string that contains a format string as described above
+- `...` Depending on the format string, the function may expect a sequence of additional arguments, containing pairs of names and pointers to allocated storage (except as indicated above), where the interpretation of the extracted data is
+  stored with the appropriate type. There should be at least as many pairs of these arguments as the number of values
+  stored by the format specifiers. Additional arguments are ignored by the function @return true if all required
+  arguments were read and no errors occurred @throw MissingRequiredArgument if one of the required arguments are missing
 
 ##### Table Manipulation
+
 If order to return a table you need to do the following.
+
 ```c 
 	Table table = tableCreate(env, 1, 8);
 	CHECK_EXCEPTION(table)
@@ -536,16 +643,21 @@ void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int w
 ```
 
 ## Building your Shared Service
-## Writing and running tests 
+
+## Writing and running tests
+
 ## Deploying a Service Provider
 
-To implement a service (`yourService`) simply duplicate the `Reference` directories under `src/cpp/build`, `src/cpp/impl`
+To implement a service (`yourService`) simply duplicate the `Reference` directories under `src/cpp/build`
+, `src/cpp/impl`
 and `src/cpp/include` and implement your code as appropriate to your service.
 
 You will also need to provide a yaml file (`channels.yaml`) containing the channel definition which you'll place in you
 new `src/cpp/build{yourService}` directory.
 
-From the `src/cpp/build{yourService}` directory, compile up the service using the `build` script which will deploy the library (`AIDA.EXE`) in the `lib/{yourService}` directory and copy the `channels.yml` file to the appropriate location.
+From the `src/cpp/build{yourService}` directory, compile up the service using the `build` script which will deploy the
+library (`AIDA.EXE`) in the `lib/{yourService}` directory and copy the `channels.yml` file to the appropriate location.
+
 ```shell
 MCCDEV> src
 Default:= DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC]
@@ -558,7 +670,8 @@ DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]NATIVECHANNELPROVIDE
 DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]REFERENCE_SERVER.OBJ;7
 ```
 
-From the `lib/{yourlibrary}` directory start the service with `java -jar "-Djava.library.path=./" ../aida-pva.jar` where {yourLibrary} is the name of the library.
+From the `lib/{yourlibrary}` directory start the service with `java -jar "-Djava.library.path=./" ../aida-pva.jar` where
+{yourLibrary} is the name of the library.
 `
 e.g.
 
