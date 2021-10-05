@@ -14,27 +14,27 @@ The framework has five main features.
 1. When your `Channel Provider` starts up, the `AIDA-PVA` process that started it will read the `CHANNELS.YML` file that you've provided to determine which EPICS search requests it should respond to.
 2. Subsequently, when clients send requests containing references to one of those **Channels**, 
 3. and EPICS seach request is propagated across the EPICS network 
-4. The `EPICS Forwarder` that is constantly listening for requests will forward it all of the AIDA-PVA processes running in VMS. 
-5. When your Channel Provider recognizes the channel and the request it will respond positively to the search request,
+4. The `EPICS Forwarder` that is constantly listening for requests will forward it to all the AIDA-PVA processes running in VMS. 
+5. When your AIDA-PVA recognizes the channel and the request it will respond positively to the search request on your behalf,
 6. Opening a direct communications channel to the client once the client accepts the response.
-7. Now the request can be serviced and results returned,
-8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel Data source.
+7. Now the AIDA-PVA will ask your `Channel Provider` to service the request and will return the results you give it.
+8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel Data source, you can service those requests.
 
 
-![Usine a gaz](images/usine-a-gaz-wa.png)
+![Usine a gaz with annotations](images/usine-a-gaz-wa.png)
 
 As an AIDA-PVA Service Provider writer you will be responsible for:
 * Creating the AIDA-PVA `Channel Provider` Shared Library.
 * Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA `Channels` that your `Channel Provider` will support.
 
 ### Components
-* The Provider Code - Creates a separate shared library
-* The AIDA-PVA jar file that loads the Provider Code
-* The AIDA-PVA extensions to AIDASHR that provide helper functions for the Provider Code
-* The backported EPICS 7 libraries
-  * epics-pvaccess.jar 
-  * epics-pvdata.jar 
-* The EPICS forwarder - epics-forwarder.jar  
+* The **Provider Code** => produces `SLC<provider_name>.EXE` shared Library
+* The **AIDA-PVA** - `aida-pva.jar`, that loads the Provider Code
+* The **AIDA-PVA Module** - extensions to AIDASHR that provide helper functions for the Provider Code
+* The **back-ported EPICS 7** libraries
+  * `epics-pvaccess.jar` 
+  * `epics-pvdata.jar `
+* The **EPICS forwarder** - `epics-forwarder.jar`  
 
 ## Topology
 ![Aida-PVA Topology](images/aida-pva-system-components.png)
@@ -85,21 +85,71 @@ See [EPICS Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeT
 
 # Implementation
 ## Overview
-There are two things to write before you can compile, run, test and deploy your service. Here
-* Write a CHANNELS.YML file
-* Create a Channel Service Provider
+There are three things to write before you can compile, run, test and deploy your service. Here
+* Write a `CHANNELS.YML` file
+* Create a `Channel Provider`
+* Create some tests
 ## Creating an `CHANNELS.YML` file
 Definition of the `Channels` supported by your `Channel Service Provider` is done in the `CHANNELS.YML` file.  If you're unfamiliar with the the YAML format you can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading further.
 
-Please read [documentation on the CHANNELS.YML](Channels.md) file for information on how to create one.
+Please read [documentation on the CHANNELS.YML](Channels.md) file for information on how to create one.  An example configuration file is shown below:
 
-[![Anatomy of CHANNELS.YML](images/channels.png)](Channels.md)
+```yaml
+!!edu.stanford.slac.aida.lib.model.AidaProvider
+# Sample Channel Provider
+id: 42
+name: Channel Provider
+description: Your Channel Provider
+getterConfig:
+  type: INTEGER
+setterConfig:
+  type: TABLE
+    fields:
+      - name: isActive
+        label: "Device is active?"
+        description: "Device activity status.  Active if true"
+      - name: mode
+        label: "Device Mode Code"
+        description: "Device mode code"
+channels:
+  - channel: AIDA:CHAN:*:INT
+  - channel: AIDA:CHAN:P01:BOOL
+    getterConfig:
+      type: BOOLEAN
+  - channel: AIDA:CHAN:???:FLT
+    getterConfig:
+      type: FLOAT
+  - channel: AIDA:CHAN:P01:STRA
+    getterConfig:
+      type: STRING_ARRAY
+  - channel: AIDA:CHAN:P01:TABL
+    getterConfig:
+      type: TABLE
+      fields:
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+        - name: mode
+          label: "Device Mode Code"
+          description: "Device mode code"
+  - channel: AIDA:CHAN:S01:VOID
+    setterConfig:
+      type: VOID
+  - channel: AIDA:CHAN:S01:DEFA
+  - channel: AIDA:CHAN:S01:TABL
+    setterConfig:
+      type: TABLE
+      fields:
+        - name: status
+          label: "Result of setting value"
+          description: "True if the value was set successfully"
+```
 
 ## Creating a Channel Service Provider
 
 ## Building your Shared Service
+## Writing and running tests 
 ## Deploying a Service Provider
-
 
 To implement a service (`yourService`) simply duplicate the `Reference` directories under `src/cpp/build`, `src/cpp/impl`
 and `src/cpp/include` and implement your code as appropriate to your service.
