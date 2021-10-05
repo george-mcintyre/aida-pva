@@ -1,10 +1,31 @@
-# Deploying AIDA-PVA - A DevOps Guide
+# Writing an AIDA-PVA Service - Programmers Reference Manual
 ## Overview 
-AIDA-PVA provides a framework for providers to serve requests for services that the provider provides.  This largely focuses on three main areas.
-* Routing requests with EPICS PV-Access to the registered service endpoints
-* Bi-directionally marshalling, transporting and converting arguments and data
-* Raising and propagating exceptions through the framework, back to the clients and logging services
-* Access to AIDASHR to access library functions for accessing devices and leveraging existing code
+
+`AIDA-PVA` provides a framework for `Channel Providers` to service requests for `Channels` that they support.  A `Channel` is an EPICS term, co-opted by AIDA-PVA, to mean _any identifiable source of data in any `Channel Data Source` on the `SLAC Network`_.  All AIDA-PVA Channels use a standard notation. 
+
+The framework has five main features.
+* **Routing** client `Channel Requests` using EPICS' `PVAccess`, through the `AIDA-PVA Service` to the registered `Channel Provider` endpoints.
+* Bi-directionally **Marshalling, Transporting, and Converting** arguments and data.
+* Raising, and **Propagating Exceptions** throughout the framework, back to clients, and on to logging services
+* Providing **AIDA-PVA utilities** that implement the boilerplate functions required to service channel requests
+* Providing access to `AIDASHR`, to allow `Channel Provider` code to leverage legacy **Channel Provider Modules** for accessing devices, databases and other services from `Channel Data Sources` on the `SLAC Network`.
+
+## How it works
+1. When your `Channel Provider` starts up, the `AIDA-PVA` process that started it will read the `CHANNELS.YML` file that you've provided to determine which EPICS search requests it should respond to.
+2. Subsequently, when clients send requests containing references to one of those **Channels**, 
+3. and EPICS seach request is propagated across the EPICS network 
+4. The `EPICS Forwarder` that is constantly listening for requests will forward it all of the AIDA-PVA processes running in VMS. 
+5. When your Channel Provider recognizes the channel and the request it will respond positively to the search request,
+6. Opening a direct communications channel to the client once the client accepts the response.
+7. Now the request can be serviced and results returned,
+8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel Data source.
+
+
+![Usine a gaz](images/usine-a-gaz-wa.png)
+
+As an AIDA-PVA Service Provider writer you will be responsible for:
+* Creating the AIDA-PVA `Channel Provider` Shared Library.
+* Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA `Channels` that your `Channel Provider` will support.
 
 ### Components
 * The Provider Code - Creates a separate shared library
@@ -16,78 +37,69 @@ AIDA-PVA provides a framework for providers to serve requests for services that 
 * The EPICS forwarder - epics-forwarder.jar  
 
 ## Topology
-
-
-EPICS pvaccess and pvdata libraries are used to provide the protocol and transport as well as normative types used for data
 ![Aida-PVA Topology](images/aida-pva-system-components.png)
 
 ## Normative Types
+EPICS `PVAccess`is used to provide the protocol and transport for the `AIDA-PVA` framework.
+EPICS `PVData` is used to provide the `Normative Types` functionality used for data encapsulation.
 
-Normative Types are a set of software designs for high-level composite data types
-suitable for the application-level data exchange between EPICS V4 network endpoints. In particular, they are intended
-for use in online scientific data services. The intention is that where the endpoints in an EPICS V4 network use only
-Normative Types, each peer in the network should be able to understand all the data transmitted to it, at least
+`Normative Types` are a set of software designs for high-level composite data types
+suitable for the application-level data exchange between EPICS V4+ network endpoints.  In particular, they are intended
+for use in online scientific data services. The intention is that where the endpoints in an EPICS V4+ network use only
+`Normative Types`, each peer in the network should be able to understand all the data transmitted to it, at least
 syntactically, and be able to take processing steps appropriate to that data.
 
-AIDA-PVA uses `NTScalar`, `NTScalarArray` and `NTTable` to represent its data types
+AIDA-PVA uses `NTTable`, `NTScalarArray` and `NTScalar` `Normative Types` to represent its data.
 
 ![Normative Type Usage in AIDA-PVA](images/nt_types.png)
 
-See [EPICS V4 Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t%20timeStamp%20%3A%20opt-,Description%20of%20Normative%20Types,include%20descriptor%2C%20alarm%20and%20timestamp.) for more information
+See [EPICS Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t%20timeStamp%20%3A%20opt-,Description%20of%20Normative%20Types,include%20descriptor%2C%20alarm%20and%20timestamp.) for more information
 
 ## Supported Data Types
-
-AIDA-PVA supports the same range of data types as classic AIDA except that it uses `NTScalar`, `NTScalarArray` and `NTTable`.
-
 ### Scalar Types
-
-Scalar types represent simple C types which are converted to their equivalent boxed Java types in consuming
-applications.
-
-#### Boolean
-
-In the service this is represented as a simple `int`.
-
-#### Byte
-
-In the service this is represented by an `unsigned char`
-
-#### Short
-
-In the service this is represented by a `short`
-
-#### Integer
-
-In the service this is represented by an `int`
-
-#### Long
-
-In the service this is represented by a `long`
-
-#### Float
-
-In the service this is represented by a `float`
-
-#### Double
-
-In the service this is represented by a `double`
-
-#### String
-
-In the service this is represented by an `char *`.  Note that you will allocate space for this string before returning it.  The framework will take care of freeing up any memory you allocate.
-
+* **BOOLEAN**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVBoolean`
+* **BYTE**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVByte`.  Note there is no CHAR so clients are required to use BYTE and marshal the results appropriately
+* **SHORT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVShort`
+* **INTEGER**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVInteger`
+* **LONG**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVLong`
+* **FLOAT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVFloat`
+* **DOUBLE**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVDouble`
+* **STRING**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm containing a single `PVString`
 ### Scalar Array Types
-For all array types you need to allocate space for the array and, if it is an array of strings you also need to allocate space for each of the strings.  The framework will take care of freeing up the memory for you.
-
-The scalar array types mirror the scalar types except that they are arrays.
-
-### NTTable
-
-The NTTable is a special type that contains an array of arrays.  The arrays can be either `COLUMN_MAJOR` (default) or `ROW_MAJOR` indicating whether it contains set of columns each containing rows or a set of rows each containing columns.  
-
-In the implementation you will simply allocate the space for the data and fill it as per the scheme, and the framework will use the channel configuration to extract the data and populate the NTTable appropriately.
+* **BOOLEAN_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVBooleanArray` array
+* **BYTE_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVByteArray` array.  Note there is no CHAR_ARRAY so clients are required to use BYTE_ARRAY and marshal the results appropriately
+* **SHORT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVShortArray` array
+* **INTEGER_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVIntegerArray` array
+* **LONG_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVLongArray` array
+* **FLOAT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVFloatArray` array
+* **DOUBLE_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVDoubleArray` array
+* **STRING_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm containing a `PVStringArray` array
+### Structures
+* **TABLE**              - Getter or setter returns a `PVStructure` that conforms to the `NTTable` norm containing a set of homogenous congruent vectors which can be any of the `PVScalarArray` types supported under Scalar Array Types above.
+### Special configuration only types.
+* **NONE**               - Means that this getter or setter is not supported
+* **VOID**               - Means that this setter does not return a value (only valid for setters)
+* **ANY**                - Getter or setter returns any type defined by the mandatory accompanying `TYPE` argument, for setters this can only be VOID or TABLE
+* **SCALAR**             - Constrains the `TYPE` parameter to be set to any scalar type or `TABLE`
+* **SCALAR_ARRAY**       - Constrains the `TYPE` parameter to be set to any scalar array type or `TABLE`
 
 # Implementation
+## Overview
+There are two things to write before you can compile, run, test and deploy your service. Here
+* Write a CHANNELS.YML file
+* Create a Channel Service Provider
+## Creating an `CHANNELS.YML` file
+Definition of the `Channels` supported by your `Channel Service Provider` is done in the `CHANNELS.YML` file.  If you're unfamiliar with the the YAML format you can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading further.
+
+Please read [documentation on the CHANNELS.YML](Channels.md) file for information on how to create one.
+
+[![Anatomy of CHANNELS.YML](images/channels.png)](Channels.md)
+
+## Creating a Channel Service Provider
+
+## Building your Shared Service
+## Deploying a Service Provider
+
 
 To implement a service (`yourService`) simply duplicate the `Reference` directories under `src/cpp/build`, `src/cpp/impl`
 and `src/cpp/include` and implement your code as appropriate to your service.

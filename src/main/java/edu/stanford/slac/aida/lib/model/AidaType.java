@@ -5,26 +5,26 @@ import java.util.List;
 public enum AidaType {
     NONE,               // Means that this getter or setter is not supported
     VOID,               // Means that this setter does not return a value (only valid for setters)
-    BOOLEAN,            // Getter or setter returns a boolean
-    BYTE,               // Getter or setter returns a byte
-    SHORT,              // Getter or setter returns a short
-    INTEGER,            // Getter or setter returns an integer
-    LONG,               // Getter or setter returns a long
-    FLOAT,              // Getter or setter returns a float
-    DOUBLE,             // Getter or setter returns a double
-    STRING,             // Getter or setter returns a string
-    BOOLEAN_ARRAY,      // Getter or setter returns a boolean array
-    BYTE_ARRAY,         // Getter or setter returns a byte array
-    SHORT_ARRAY,        // Getter or setter returns a short array
-    INTEGER_ARRAY,      // Getter or setter returns an integer array
-    LONG_ARRAY,         // Getter or setter returns a long array
-    FLOAT_ARRAY,        // Getter or setter returns a float array
-    DOUBLE_ARRAY,       // Getter or setter returns a double array
-    STRING_ARRAY,       // Getter or setter returns a string array
+    BOOLEAN,            // Getter returns a boolean
+    BYTE,               // Getter returns a byte
+    SHORT,              // Getter returns a short
+    INTEGER,            // Getter returns an integer
+    LONG,               // Getter returns a long
+    FLOAT,              // Getter returns a float
+    DOUBLE,             // Getter returns a double
+    STRING,             // Getter returns a string
+    BOOLEAN_ARRAY,      // Getter returns a boolean array
+    BYTE_ARRAY,         // Getter returns a byte array
+    SHORT_ARRAY,        // Getter returns a short array
+    INTEGER_ARRAY,      // Getter returns an integer array
+    LONG_ARRAY,         // Getter returns a long array
+    FLOAT_ARRAY,        // Getter returns a float array
+    DOUBLE_ARRAY,       // Getter returns a double array
+    STRING_ARRAY,       // Getter returns a string array
     TABLE,              // Getter or setter returns a table
 
                         // For the following types you can also provide fields in case the request is a TABLE
-    ANY,                // Getter returns any type defined by the mandatory accompanying TYPE argument
+    ANY,                // Getter or setter returns any type defined by the mandatory accompanying TYPE argument, for setters this can only be VOID or TABLE
     SCALAR,             // Constrains the TYPE parameter to be set to any scalar type or TABLE
     SCALAR_ARRAY;       // Constrains the TYPE parameter to be set to any scalar array type or TABLE
 
