@@ -48,11 +48,6 @@ REQUEST_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCUTIL", "Utility",
-//			true,        // db init
-//			false,       // query init
-//			false)       // set init
-
 	vmsstat_t status;
 	if (!SUCCESS(status = DPSLCUTIL_DB_INIT())) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Utility Service");
@@ -312,7 +307,7 @@ static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments)
 	int beam;
 
 	if (ascanf(env, &arguments, "%d", "beam", &beam)) {
-		return EXIT_FAILURE;
+		return -1;
 	}
 
 	// Read the status

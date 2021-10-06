@@ -56,11 +56,6 @@ REQUEST_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCKLYS", "Klystron",
-//			true,        // db init
-//			false,       // query init
-//			false)       // set init
-
 	vmsstat_t status;
 
 	if (!SUCCESS(status = DPSLCKLYS_DB_INIT())) {

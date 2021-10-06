@@ -64,48 +64,6 @@ extern unsigned long int GENERAL_INIT( /*  General standalone initialization    
 		unsigned long int  *event_flag_mask_p
 ) ;
 
-#define standalone_init(__a,  __b,  __c,  __d,  __e) STANDALONE_INIT(__a,  __b,  __c,  __d,  __e)
-#define general_init(__a,  __b,  __c,  __d,  __e, __f, __g, __h, __i, __j, __k) GENERAL_INIT(__a,  __b,  __c,  __d,  __e, __f, __g, __h, __i, __j, __k)
-
-
-#define DO_STANDALONE_INIT(_procesName, _serviceName, _msginit, _slcnetinit, _dbinit, _query, _set) { \
-    REF_DECLARE; \
-    vmsstat_t status; \
-    const $DESCRIPTOR(process_name, _procesName); \
-    const struct msginit msgInit = {_msginit, _slcnetinit}; \
-\
-    status = standalone_init(&process_name, (const long*)REFINT4U_1(_dbinit), &msgInit, (const long*)REFINT4U_3(_query), (const long*)REFINT4U_4(_set)); \
-    if (!SUCCESS(status)) { \
-        aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising " _serviceName " Service"); \
-    } \
-    printf("Aida SLC " _serviceName "  Service Initialised\n"); \
-}
-
-#define DO_STANDALONE_INIT_NO_MSG(_procesName, _serviceName, _dbinit, _query, _set) { \
-    REF_DECLARE; \
-    vmsstat_t status; \
-    const $DESCRIPTOR(process_name, _procesName); \
-\
-    status = standalone_init(&process_name, (const long*)REFINT4U_1(_dbinit), NULL, (const long*)REFINT4U_3(_query), (const long*)REFINT4U_4(_set)); \
-    if (!SUCCESS(status)) { \
-        aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising " _serviceName " Service"); \
-    } \
-    printf("Aida SLC " _serviceName "  Service Initialised\n"); \
-}
-
-#define DO_GENERAL_INIT(_procesName, _processId, _serviceName, _msginit, _slcnetinit) { \
-    vmsstat_t status; \
-    REF_DECLARE; \
-    $DESCRIPTOR (process_name, _procesName); \
-    const struct msginit msgInit = {_msginit, _slcnetinit}; \
-    status = general_init( _processId, &process_name, 1, 0, &msgInit, NETVAXMSGLEN,  NULL,  0,  NULL,  NULL, NULL); \
-    if (! $VMS_STATUS_SUCCESS(status) ) { \
-        aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "while initializing " _serviceName " service"); \
-        return; \
-    } \
-    printf("Aida " _serviceName " Service Initialised\n"); \
-}
-
 /**
  * Create tracking variables so that memory can be freed with FREE_MEMORY
  */

@@ -20,11 +20,7 @@
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_REFERENCE", "Reference",
-			true,        // db init
-			false,       // query init
-			false)       // set init
-
+	printf("Aida SLC Reference Service Initialised\n");
 }
 
 /**

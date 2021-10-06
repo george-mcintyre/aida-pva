@@ -40,8 +40,5 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMMODEL", "Model",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+	printf("Aida SLC Model Service Initialised\n");
 }

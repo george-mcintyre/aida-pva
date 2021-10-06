@@ -64,12 +64,6 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-//	DO_STANDALONE_INIT("AIDA-PVA_SLCBUFFACQ", "Buffered BPM Acquisition",
-//			true,        // msg init
-//			true,        // slac net init
-//			true,        // db init
-//			false,       // query init
-//			false)       // set init
 	vmsstat_t status;
 
 	if (!$VMS_STATUS_SUCCESS(status = DPSLCBUFF_INIT())) {

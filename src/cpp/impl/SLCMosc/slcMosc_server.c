@@ -43,12 +43,6 @@ SET_STUB_VOID
  */
 void aidaServiceInit(JNIEnv* env)
 {
-//	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMOSC", "Master Oscillator",
-//			true,        // db init
-//			false,       // query init
-//			false)       // set init
-//	vmsstat_t status;
-
 	vmsstat_t status;
 
 	if (!SUCCESS(status = DPSLCMOSC_DB_INIT())) {
