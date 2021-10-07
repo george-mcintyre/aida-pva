@@ -27,7 +27,7 @@ public class AidaProvider {
     private final Map<String, AidaChannel> channelMap = new HashMap<String, AidaChannel>();
 
     /**
-     * Get the set of supported channels.  Aida providers
+     * Get the set of supported channels.  AIDA providers
      * support both EPICs and legacy AIDA names for their channels
      *
      * @return the list of supported channel names

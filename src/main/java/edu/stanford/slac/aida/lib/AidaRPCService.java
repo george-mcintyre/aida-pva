@@ -19,6 +19,7 @@ import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 import static org.epics.pvdata.pv.Type.scalar;
 import static org.epics.pvdata.pv.Type.scalarArray;
 
@@ -50,17 +51,17 @@ public class AidaRPCService implements RPCService {
             String type = pvUri.getStructure().getID();
             if (!NTURI.is_a(pvUri.getStructure())) {
                 String msg = "Unable to get data, unexpected request type: " + type;
-                throw new RPCRequestException(Status.StatusType.ERROR, msg);
+                throw new RPCRequestException(ERROR, msg);
             }
 
             // Retrieve the PV name
             PVString pvPathField = pvUri.getStringField("path");
             if (pvPathField == null) {
-                throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: " + pvUri);
+                throw new RPCRequestException(ERROR, "unable to determine the channel from the request specified: " + pvUri);
             }
             String channelName = pvPathField.get();
             if (channelName == null || channelName.length() == 0) {
-                throw new RPCRequestException(Status.StatusType.ERROR, "unable to determine the channel from the request specified: <blank>");
+                throw new RPCRequestException(ERROR, "unable to determine the channel from the request specified: <blank>");
             }
 
             // Convert the channelName to old AIDA format including '//' before the attribute name
@@ -79,18 +80,17 @@ public class AidaRPCService implements RPCService {
         } catch (RPCRequestException e) {
             throw e;
         } catch (UnableToGetDataException e) {
-            throw e;
+            throw new RPCRequestException(ERROR, e.getMessage(), e);
         } catch (UnsupportedChannelException e) {
-            throw e;
+            throw new RPCRequestException(ERROR, e.getMessage(), e);
         } catch (UnableToSetDataException e) {
-            throw e;
+            throw new RPCRequestException(ERROR, e.getMessage(), e);
         } catch (AidaInternalException e) {
-            throw e;
+            throw new RPCRequestException(ERROR, e.getMessage(), e);
         } catch (MissingRequiredArgumentException e) {
-            throw e;
+            throw new RPCRequestException(ERROR, e.getMessage(), e);
         } catch (Throwable e) {
-            e.printStackTrace();
-            throw new AidaInternalException("Internal Error");
+            throw new RPCRequestException(ERROR, e.getMessage(), e);
         }
 
         return retVal;
@@ -120,7 +120,7 @@ public class AidaRPCService implements RPCService {
         }
 
         AidaType aidaGetterType = channelGetterConfig.getType();
-        AidaType aidaSetterType = channelSetterConfig != null ? channelSetterConfig.getType() : VOID;
+        AidaType aidaSetterType = channelSetterConfig == null ? NONE : channelSetterConfig.getType();
 
         // Get special arguments type and value
         String typeArgument = null;
@@ -136,6 +136,13 @@ public class AidaRPCService implements RPCService {
 
         Boolean isSetterRequest = valueArgument != null;
 
+        // See if the request type is supported for the channel
+        if (isSetterRequest && NONE.equals(aidaGetterType)) {
+            throw new UnsupportedChannelTypeException(channelName + arguments + ".  Set requests are not supported for this channel");
+        } else if (!isSetterRequest && NONE.equals(aidaGetterType)) {
+            throw new UnsupportedChannelTypeException(channelName + arguments + ".  Get requests are not supported for this channel");
+        }
+
         // If a type has been specified then override the appropriate Config's type with the specified one
         if (typeArgument != null) {
             try {
@@ -146,12 +153,12 @@ public class AidaRPCService implements RPCService {
                 // or if the specified type is in the class of types allowed by the channel
                 if (isSetterRequest) {
                     if (!TABLE.equals(specifiedAidaType) && !VOID.equals(specifiedAidaType)) {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
                     }
                     if (specifiedAidaType.equals(aidaSetterType) || ANY.equals(aidaSetterType)) {
                         aidaSetterType = specifiedAidaType;
                     } else {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
                     }
                 } else {
                     if (ANY.equals(aidaGetterType) ||
@@ -159,11 +166,11 @@ public class AidaRPCService implements RPCService {
                                     (TABLE.equals(specifiedAidaType) || specifiedAidaType.metaType().equals(aidaGetterType)))) {
                         aidaGetterType = specifiedAidaType;
                     } else {
-                        throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter must be a " + (aidaGetterType != null ? aidaGetterType : "<unspecified>") + ", but you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter must be a " + (aidaGetterType != null ? aidaGetterType : "<unspecified>") + ", but you specified " + specifiedAidaType);
                     }
                 }
             } catch (IllegalArgumentException e) {
-                throw new UnsupportedChannelTypeException("The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
+                throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
             }
         } else {
             // If a class of types is set as the getter type then use appropriate defaults
@@ -189,6 +196,12 @@ public class AidaRPCService implements RPCService {
         // Get EPICS type from Aida Type
         Type channelGetterType = typeOf(aidaGetterType);
         Type channelSetterType = typeOf(aidaSetterType);
+
+        // If channelName contains a service (<service>::channelName) then remove the service part before calling the service implementation
+        int serviceDelimiter = channelName.indexOf("::");
+        if (serviceDelimiter != -1) {
+            channelName = channelName.substring(serviceDelimiter + 2);
+        }
 
         if (isSetterRequest) {
             System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaSetterType + ":" + (channelSetterType == null ? "" : channelSetterType));
@@ -246,12 +259,12 @@ public class AidaRPCService implements RPCService {
             for (PVField field : pvFields) {
                 String name = field.getFieldName();
                 if (name == null) {
-                    throw new RPCRequestException(Status.StatusType.ERROR, "Invalid argument name: <blank>");
+                    throw new RPCRequestException(ERROR, "Invalid argument name: <blank>");
                 }
                 // TODO handle floats and doubles as scalar, arrays and structure elements
                 String value = fieldToString(field);
                 if (value == null) {
-                    throw new RPCRequestException(Status.StatusType.ERROR, "Invalid argument value: <blank>");
+                    throw new RPCRequestException(ERROR, "Invalid argument value: <blank>");
                 }
                 arguments.add(new AidaArgument(name, value));
             }
@@ -276,9 +289,8 @@ public class AidaRPCService implements RPCService {
             value = Byte.toString(((PVUByte) field).get());
         } else if (field instanceof PVDouble) {
             value = Double.toString(((PVDouble) field).get());
-        } else if (field instanceof PVFloat) {
-            value = Float.toString(((PVFloat) field).get());
-        } else if (field instanceof PVInt) {
+        } else if (field instanceof PVFloat) value = Float.toString(((PVFloat) field).get());
+        else if (field instanceof PVInt) {
             value = Integer.toString(((PVInt) field).get());
         } else if (field instanceof PVLong) {
             value = Long.toString(((PVLong) field).get());
@@ -328,7 +340,7 @@ public class AidaRPCService implements RPCService {
             arrayBuilder.append("]");
             value = arrayBuilder.toString();
         } else {
-            throw new RPCRequestException(Status.StatusType.ERROR, "Invalid argument value: can only accept scalar, scalar array, structure or structure array");
+            throw new RPCRequestException(ERROR, "Invalid argument value: can only accept scalar, scalar array, structure or structure array");
         }
         return value;
     }
