@@ -78,7 +78,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
 	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
-		return EXIT_FAILURE;
+		return -1;
 	}
 	return klystronStatus;
 }
@@ -95,7 +95,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;
 	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
-		return EXIT_FAILURE;
+		return -1;
 	}
 	return (long)klystronStatus;
 }

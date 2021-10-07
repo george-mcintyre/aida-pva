@@ -17,4 +17,4 @@ getterConfig:
 setterConfig:
   type: VOID
 channels:
-  - channel: "DB::*:????:*:*"
+  - channel: "DB/*:????:*:*"
