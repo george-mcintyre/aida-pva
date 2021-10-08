@@ -24,35 +24,6 @@ void aidaServiceInit(JNIEnv* env)
 }
 
 /**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config.  Leave empty if you don't have any specific configuration overrides
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter)
-{
-	Config config;
-	memset(&config, 0, sizeof(config));
-
-	// Only modify config for attribute01
-	if (forGetter && startsWith(channelName, "AIDA:SAMPLE:") && endsWith(channelName, "//attribute01")) {
-		Field* fields;
-		ALLOCATE_MEMORY_OR_RETURN(env, fields, sizeof(Field), "config field", config)
-		fields[0].name = "isActive";
-		fields[0].label = "Device is active?";
-		fields[0].description = "Device activity status.  Active if true";
-
-		config.type = AIDA_BOOLEAN_TYPE;
-		config.fields = fields;
-		config.fieldCount = 1;
-	}
-
-	// Return the config
-	return config;
-}
-
-/**
  * Get a boolean
  *
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()

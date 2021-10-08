@@ -9,27 +9,35 @@
 # BEAM                : Beam code number
 id: 122
 name: SLCUtil
-description: "SLC Utility Server"
+description: SLC Utility Server
 getterConfig:
   type: NONE
-channels:
-  - channel: "BGRP:VAL"
-  - channel: "MKB:VAL"
+configurations:
+  - configuration:
+    name: BGRP and MKB Config
+    getterConfig:
+      type: NONE
     setterConfig:
       type: TABLE
       fields:
         - name: name
-          label: "Device Name"
-          description: "name of each device referenced in the specified multiknob file"
+          label: Device Name
+          description: name of each referenced device
         - name: value
-          label: "Value"
-          description: "value of each device after the knob rotation set operation"
-  - channel: "TRIG:*:*:TACT"
+          label: Value
+          description: value of each device after the set operation
+    channels:
+      - channel: BGRP:VAL
+      - channel: MKB:VAL
+  - configuration:
+    name: Trigger Config
     getterConfig:
       type: SCALAR
     setterConfig:
       type: TABLE
       fields:
         - name: status
-          label: "Status Code"
-          description: "the status code for the specified trigger device on a beam code: 0 => deactivated, 1 => activated"
+          label: Status Code
+          description: the status code for the specified trigger device on a beam code: 0 => deactivated, 1 => activated
+    channels:
+      - channel: TRIG:*:*:TACT

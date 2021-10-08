@@ -14,7 +14,7 @@ extern "C" {
 
 #define CHECK_EXCEPTION_AND_FREE_MEMORY(r) \
     if ((*env)->ExceptionCheck(env)) { \
-    	FREE_MEMORY \
+        FREE_MEMORY \
         return r; \
     }
 
@@ -45,14 +45,6 @@ extern "C" {
 #define CHECK_EXCEPTION_FOR_STRING_COLUMN(r) \
     if ((*env)->ExceptionCheck(env)) { \
         if ( string ) free(string); \
-        return r; \
-    }
-
-#define CHECK_EXCEPTION_FOR_CONFIG(r) \
-    if ((*env)->ExceptionCheck(env)) { \
-	    if (config.fields && config.fieldCount) { \
-    	    free(&(config.fields)); \
-    	} \
         return r; \
     }
 
@@ -110,22 +102,6 @@ typedef struct
 } ClassAndMethod;
 
 JavaObject newObject(JNIEnv* env, char* classToCreate);
-
-/**
- * Get an aida channel config jni object from Config
- * @param env env
- * @param config config
- * @return aida channel config jni object
- */
-jobject aidaChannelConfigToJObject(JNIEnv* env, Config config);
-
-/**
- * Get an aida field jni object from a Field
- * @param env env
- * @param field  field
- * @return aida jni field object
- */
-jobject getAidaField(JNIEnv* env, Field field);
 
 /**
  * Look up class in environment and create a new object

@@ -25,7 +25,6 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments);
 
 // API Stubs
-REQUEST_STUB_CHANNEL_CONFIG
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_LONG

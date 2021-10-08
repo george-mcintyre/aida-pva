@@ -18,7 +18,6 @@
 static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char** units, char** ring, float* floatValue);
 
 // API Stubs
-REQUEST_STUB_CHANNEL_CONFIG
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT

@@ -21,7 +21,6 @@
 #include "slc_server.h"
 
 // API Stubs
-REQUEST_STUB_CHANNEL_CONFIG
 SET_STUB_TABLE
 
 /**

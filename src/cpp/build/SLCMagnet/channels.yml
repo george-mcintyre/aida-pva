@@ -8,50 +8,43 @@
 #   LIMITCHECK        : ALL or SOME
 id: 262
 name: SLCBMagnet
-getterConfig:
-  type: NONE
-description: SLC control system pulse synchronized "Buffered Data"
-channels:
-  - channel: "*//????:BDES"
+description: SLC control system pulse synchronized Buffered Data
+configurations:
+  - configuration:
+    name: Get Secondary Values
     getterConfig:
       type: TABLE
       fields:
-        - label: "name of magnet"
+        - label: name of magnet
           name: name
-          description: "name of magnet for specified display group and primary"
-        - label: "secondary values"
+          description: name of magnet for specified display group and primary
+        - label: secondary values
           name: secondary
-          description: "secondary values (BDES)"
-  - channel: "*//????:VDES"
+          description: secondary values
+    channels:
+      - channel: "*//????:BDES"
+      - channel: "*//????:VDES"
+  - configuration:
+    name: Set BACT/VACT values
     getterConfig:
-      type: TABLE
-      fields:
-        - label: "name of magnet"
-          name: name
-          description: "name of magnet for specified display group and primary"
-        - label: "secondary values"
-          name: secondary
-          description: "secondary values (VDES)"
-  - channel: "MAGNETSET:BDES"
+      type: NONE
     setterConfig:
       type: TABLE
       fields:
-        - label: "status"
+        - label: status
           name: status
-          description: "state of magnet device"
-        - label: "bact/vact"
+          description: state of magnet device
+        - label: bact/vact
           name: bact_vact
-          description: "BACT/VACT value for each device"
-  - channel: "MAGNETSET:VDES"
-    setterConfig:
-      type: TABLE
-      fields:
-        - label: "status"
-          name: status
-          description: "state of magnet device"
-        - label: "bact/vact"
-          name: bact_vact
-          description: "BACT/VACT value for each device"
-  - channel: "MAGNETSET:BCON"
+          description: BACT/VACT value for each device
+      channels:
+        - channel: MAGNETSET:BDES
+        - channel: MAGNETSET:VDES
+  - configuration:
+    name: BCON
+    getterConfig:
+      type: NONE
     setterConfig:
       type: VOID
+      channels:
+        - channel: MAGNETSET:BCON

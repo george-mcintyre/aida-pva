@@ -33,7 +33,6 @@ Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn);
 
 // API Stubs
-REQUEST_STUB_CHANNEL_CONFIG
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_INTEGER

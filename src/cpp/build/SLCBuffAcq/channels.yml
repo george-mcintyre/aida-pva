@@ -8,31 +8,34 @@
 #   DEVS            : An array of device names
 id: 262
 name: SLCBuffacq
-description: SLC control system pulse synchronized "Buffered Data"
-getterConfig:
-  type: TABLE
-  layout: COLUMN_MAJOR
-  fields:
-    - label: "BPM Name"
-      name: name
-      description: "Name of BPM"
-    - label: "pulse id"
-      name: id
-      description: "pulse id"
-    - label: "x offset (mm)"
-      name: x
-      description: "BPM x offset"
-    - label: "y offset (mm)"
-      name: y
-      description: "BPM y offset"
-    - label: "num particles (coulomb)"
-      name: tmits
-      description: "Number of particles"
-    - label: "STAT"
-      name: STAT
-      description: "32 bit field"
-    - label: "good measurement"
-      name: goodmeas
-      description: "Good Measurement"
-channels:
-  - channel: "*:BUFFACQ"
+description: SLC control system pulse synchronized Buffered Data
+configurations:
+  - configuration:
+    name: Standard Configuration
+    getterConfig:
+      type: TABLE
+      layout: COLUMN_MAJOR
+      fields:
+        - label: BPM Name
+          name: name
+          description: Name of BPM
+        - label: pulse id
+          name: id
+          description: pulse id
+        - label: x offset (mm)
+          name: x
+          description: BPM x offset
+        - label: y offset (mm)
+          name: y
+          description: BPM y offset
+        - label: num particles (coulomb)
+          name: tmits
+          description: Number of particles
+        - label: STAT
+          name: STAT
+          description: 32 bit field
+        - label: good measurement
+          name: goodmeas
+          description: Good Measurement
+    channels:
+      - channel: *:BUFFACQ

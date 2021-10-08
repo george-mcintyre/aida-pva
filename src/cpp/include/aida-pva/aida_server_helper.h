@@ -39,31 +39,6 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define PRIM_LEN 4
 #define MICRO_LEN 4
 
-/* Override prototypes of externals to uppercase names since
-compile.com adds cc/name=UPPERCASE on compiles by default.
--------------------------------------------------------------*/
-extern unsigned long int STANDALONE_INIT(
-		const struct dsc$descriptor_s* name,
-		const long int* dbinit,
-		const struct msginit* msginit,
-		const long int* query,
-		const long int* set
-);
-
-extern unsigned long int GENERAL_INIT( /*  General standalone initialization         */
-		const unsigned long int proc_id,
-		const struct dsc$descriptor_s *proc_name_pd,
-		const unsigned long int proc_priority,
-		const unsigned long int res_wait_flag,
-		const struct msginit *msg_init_ps,
-		const unsigned short int mbx_msg_size,
-		const unsigned long int  *mbs_msg_p,
-		const unsigned long int num_event_flags,
-		const unsigned long int  *set_event_flag_p,
-		unsigned long int  *event_flag_p,
-		unsigned long int  *event_flag_mask_p
-) ;
-
 /**
  * Create tracking variables so that memory can be freed with FREE_MEMORY
  */
@@ -234,14 +209,6 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return nullTable;
 
 /**
- * Return an empty config response
- */
-#define DEFAULT_CONFIG_REQUEST \
-    Config config; \
-    memset(&config, 0, sizeof(config)); \
-    return config;
-
-/**
  * Throw unsupported channel exception and return a blank array
  */
 #define UNSUPPORTED_ARRAY_REQUEST \
@@ -300,12 +267,6 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 Array _api(JNIEnv* env, const char* uri, Arguments arguments) \
 { \
     UNSUPPORTED_ARRAY_REQUEST \
-}
-
-#define REQUEST_STUB_CHANNEL_CONFIG \
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter) \
-{ \
-    DEFAULT_CONFIG_REQUEST \
 }
 
 #define REQUEST_STUB_BOOLEAN \
@@ -407,15 +368,6 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  */
 void aidaServiceInit(JNIEnv* env);
-
-/**
- * Get channel configuration
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param channelName
- * @param forGetter true to return config for getter, false for setter
- * @return the channel config
- */
-Config aidaChannelConfig(JNIEnv* env, const char* channelName, short forGetter);
 
 /**
  * Get a table of data

@@ -37,7 +37,6 @@ static int getBuffAcqData(JNIEnv* env,
 static int endAcquireBuffAcq(JNIEnv* env);
 
 // API Stubs
-REQUEST_STUB_CHANNEL_CONFIG
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT

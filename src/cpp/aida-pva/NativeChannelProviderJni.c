@@ -20,33 +20,6 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv* env, jclass
 	aidaServiceInit(env);
 }
 
-
-/*
- * Get channel configuration for the specified channel
- *
- * Class:     slac_aida_NativeChannelProvider
- * Method:    aidaChannelConfig
- * Signature: (Ljava/lang/String;)Ledu/stanford/slac/aida/lib/model/AidaChannelConfig;
- */
-JNIEXPORT jobject
-JNICALL Java_slac_aida_NativeChannelProvider_aidaChannelConfig
-		(JNIEnv* env, jobject jthis, jstring channelName, jboolean forGetter)
-{
-	jobject returnValue = NULL;
-
-	const char* channel = toCString(env, channelName);
-
-	// Call the implementation
-	Config config = aidaChannelConfig(env, channel, forGetter);
-	CHECK_EXCEPTION_FOR_CONFIG(NULL)
-
-	// marshal results and free fields
-	returnValue = aidaChannelConfigToJObject(env, config);
-	CHECK_EXCEPTION_FOR_CONFIG(NULL)
-
-	return returnValue;
-}
-
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestBoolean

@@ -30,7 +30,6 @@ static bool isAllValid(int count, const char* name_validity);
 static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity);
 
 // API Stubs
-REQUEST_STUB_CHANNEL_CONFIG
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT

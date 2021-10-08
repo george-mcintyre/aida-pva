@@ -5,37 +5,40 @@
 #   BPMD          : The timing profile of the acquisition
 #   CNFTYPE       : Measurement configuration to use
 #   CNFNUM        : BPM device configuration for difference
-#   N             : "N" average
+#   N             : N average
 #   SORTORDER     : Sort order
 id: 102
 name: SLCBpm
 description: SLC BPM orbit data under a given measurement definition
-getterConfig:
-  # Heterogeneous vector of 7 homogenous congruent vectors
-  type: TABLE
-  layout: COLUMN_MAJOR
-  fields:
-    - label: "BPM Name"
-      name: name
-      description: "Name of BPM"
-    - label: "x offset (mm)"
-      name: x
-      description: "BPM x offset"
-    - label: "y offset (mm)"
-      name: y
-      description: "BPM y offset"
-    - label: num particles (coulomb)
-      name: "tmits"
-      description: "Number of particles"
-    - label: "z position (meters)"
-      name: z
-      description: "BPM z position"
-    - label: "HSTA"
-      name: HSTA
-      description: "32 bit field"
-    - label: "STATS"
-      name: STATS
-      description: "32 bit field"
-channels:
-  - channel: "????????:BPMS"
-  - channel: "???????:BPMS"
+configurations:
+  - configuration:
+    name: Standard Configuration
+    getterConfig:
+      # Heterogeneous vector of 7 homogenous congruent vectors
+      type: TABLE
+      layout: COLUMN_MAJOR
+      fields:
+        - label: BPM Name
+          name: name
+          description: Name of BPM
+        - label: x offset (mm)
+          name: x
+          description: BPM x offset
+        - label: y offset (mm)
+          name: y
+          description: BPM y offset
+        - label: num particles (coulomb)
+          name: tmits
+          description: Number of particles
+        - label: z position (meters)
+          name: z
+          description: BPM z position
+        - label: HSTA
+          name: HSTA
+          description: 32 bit field
+        - label: STATS
+          name: STATS
+          description: 32 bit field
+    channels:
+      - channel: ????????:BPMS
+      - channel: ???????:BPMS

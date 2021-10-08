@@ -78,49 +78,6 @@ typedef enum
 	AIDA_UNSIGNED_LONG_ARRAY_TYPE		// Represents an internal type of unsigned long array
 } Type;
 
-/**
- * Defines the layout of TABLES.
- */
-typedef enum
-{
-	AIDA_NO_LAYOUT,
-	AIDA_COLUMN_MAJOR_LAYOUT,  // Each top level array entry is a column containing row data
-	AIDA_ROW_MAJOR_LAYOUT      // Each top level array entry is a row containing column data
-} Layout;
-
-/**
- * Definition of a field in a channel configuration
- *  name:           the name of the field
- *  label:          the field label
- *  description:    the description
- *  units;          the units e.g. cm, mm, nm ...
- */
-typedef struct
-{
-	char* name;
-	char* label;
-	char* description;
-	char* units;
-} Field;
-
-/**
- * Definition of the Channel Configuration structure
- *  type:           the type to be returned in this field
- *  description:    the description of the field
- *  layout:         for TABLES only, this determines whether you'll be returning data COLUMN_MAJOR or ROW_MAJOR
- *  fieldCount:     the number of fields
- *  fields:         field descriptions.  Here we limit the number of fields that can be described to 10.  If you
- *                  want more then use yaml configuration files on the java side
- */
-typedef struct
-{
-	Type type;
-	char* description;
-	Layout layout;
-	int fieldCount;
-	Field* fields;
-} Config;
-
 typedef struct
 {
 	char* name;
@@ -218,14 +175,6 @@ short valueGetShort(Value value);
  * @return string
  */
 jstring toTypeString(JNIEnv* env, Type type);
-
-/**
- * Convert Layout to string name of Layout e.g. AIDA_ROW_MAJOR_LAYOUT returns "ROW_MAJOR"
- * @param layout layout
- * @return string
- */
-jstring toLayoutString(JNIEnv* env, Layout layout);
-
 
 /**
  * Make a single entry json_value array from a string.

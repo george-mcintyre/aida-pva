@@ -1117,22 +1117,6 @@ Value asArrayValue(char* stringValue)
 }
 
 /**
- * Convert Layout to string name of Layout e.g. AIDA_ROW_MAJOR_LAYOUT returns "ROW_MAJOR"
- * @param layout layout
- * @return string
- */
-jstring toLayoutString(JNIEnv* env, Layout layout)
-{
-	switch (layout) {
-	case AIDA_ROW_MAJOR_LAYOUT:
-		return (*env)->NewStringUTF(env, "ROW_MAJOR");
-	case AIDA_COLUMN_MAJOR_LAYOUT:
-	default:
-		return (*env)->NewStringUTF(env, "COLUMN_MAJOR");
-	}
-}
-
-/**
  * Return the corresponding array type of the given type
  *
  * @param type the given type

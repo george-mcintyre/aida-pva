@@ -8,65 +8,44 @@
 #   TRIM          : Trim value (YES or NO)
 id: 162
 name: SLCKlys
-description: "Klystron Server"
-getterConfig:
-  type: NONE
-channels:
-  - channel: "KLYS:????:*:TACT"
+description: Klystron Server
+configurations:
+  - configuration:
+    name: TACT Getter and Setter
     getterConfig:
       type: SCALAR
     setterConfig:
       type: TABLE
       fields:
-        - label: "Status Code"
+        - label: Status Code
           name: status
-          description: "Status code for the specified Klystron on a beam code"
-  - channel: "SBST:????:*:TACT"
+          description: Status code for the specified Klystron on a beam code
+    channels:
+      - channel: KLYS:????:*:TACT
+      - channel: SBST:????:*:TACT
+  - configuration:
+    name: Setter Returning Table
     getterConfig:
-      type: SCALAR
+      type: NONE
     setterConfig:
       type: TABLE
       fields:
-        - label: "Status Code"
-          name: status
-          description: "Status code for the specified Klystron on a beam code"
-  - channel: "KLYS:????:*:PDES"
-    setterConfig:
-      type: TABLE
-      fields:
-        - label: "PHAS secondary value"
+        - label: PHAS secondary value
           name: PHAS
-          description: "PHAS secondary value after the set PDES operation"
-  - channel: "SBST:????:*:PDES"
-    setterConfig:
-      type: TABLE
-      fields:
-        - label: "PHAS secondary value"
-          name: PHAS
-          description: "PHAS secondary value after the set PDES operation"
-  - channel: "KLYS:????:*:KPHR"
-    setterConfig:
-      type: TABLE
-      fields:
-        - label: "PHAS secondary value"
-          name: PHAS
-          description: "PHAS secondary value after the set KPHR operation"
-  - channel: "SBST:????:*:KPHR"
-    setterConfig:
-      type: TABLE
-      fields:
-        - label: "PHAS secondary value"
-          name: PHAS
-          description: "PHAS secondary value after the set KPHR operation"
-  - channel: KLYS:????:*:PCON
+          description: PHAS secondary value after the set operation
+    channels:
+      - channel: KLYS:????:*:PDES
+      - channel: SBST:????:*:PDES
+      - channel: KLYS:????:*:KPHR
+      - channel: SBST:????:*:KPHR
+  - configuration:
+    name: Setter With No Return
+    getterConfig:
+      type: NONE
     setterConfig:
       type: VOID
-  - channel: SBST:????:*:PCON
-    setterConfig:
-      type: VOID
-  - channel: KLYS:????:*:ACON
-    setterConfig:
-      type: VOID
-  - channel: SBST:????:*:ACON
-    setterConfig:
-      type: VOID
+    channels:
+      - channel: KLYS:????:*:PCON
+      - channel: SBST:????:*:PCON
+      - channel: KLYS:????:*:ACON
+      - channel: SBST:????:*:ACON

@@ -8,75 +8,6 @@
 #include "aida_jni_helper.h"
 
 /**
- * Empty config block for null comparison.  Static variables are automatically initialised to zero
- */
-static const Config EMPTY_CONFIG = { 0 };
-
-/**
- * Get an aida channel config jni object from Config.
- * This mutates the config object, freeing up any fields so it can't be used anymore afterwards
- *
- * @param env env
- * @param config config
- * @return aida channel config jni object
- */
-jobject aidaChannelConfigToJObject(JNIEnv* env, Config config)
-{
-	if (!memcmp(&config, &EMPTY_CONFIG, sizeof config)) {
-		return NULL;
-	}
-
-	// Get a java object reference
-	JavaObject javaObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaChannelConfig");
-	CHECK_EXCEPTION(NULL)
-
-	jobject configObject = javaObject.object;
-	jclass cls = javaObject.class;
-	if (!configObject || !cls) {
-		aidaThrowNonOsException(env, SERVER_INITIALISATION_EXCEPTION, "Failed to create AidaChannelConfig object");
-		return NULL;
-	}
-
-	////////////
-	// Set fields appropriately
-	////////////
-
-	// Set type, layout, & description
-	callSetterWithJString(env, javaObject, "setType", toTypeString(env, config.type));
-	CHECK_EXCEPTION(NULL)
-
-	callSetterWithJString(env, javaObject, "setLayout", toLayoutString(env, config.layout));
-	CHECK_EXCEPTION(NULL)
-
-	callSetterWithString(env, javaObject, "setDescription", config.description);
-	CHECK_EXCEPTION(NULL)
-
-
-	// Set fields ( and free up storage )
-	if (config.fields && config.fieldCount) {
-		// Find the method to add fields to the config object's fields collection
-		jmethodID midAddField = getMethodId(env, cls, "addField", "(Ledu/stanford/slac/aida/lib/model/AidaField;)V");
-		if (!midAddField) {
-			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-					"Failed to find the addField(AidaField) method on AidaChannelConfig object");
-			return NULL;
-		} else {
-			// For each field, add it to config object's fields collection
-			for (int i = 0; i < config.fieldCount; i++) {
-				Field field = config.fields[i];
-				(*env)->CallObjectMethod(env, configObject, midAddField, getAidaField(env, field));
-				CHECK_EXCEPTION(NULL)
-			}
-		}
-
-		// free any defined fields
-		free(&(config.fields));
-	}
-
-	return configObject;
-}
-
-/**
  * Create a new java object
  * @param env environment
  * @param class class of object to create
@@ -121,36 +52,6 @@ JavaObject newObject(JNIEnv* env, char* classToCreate)
 	javaObject.object = newObjectFromClass(env, javaObject.class);
 
 	return javaObject;
-}
-
-/**
- * Get an aida field jni object from a Field
- *
- * @param env env
- * @param field  field
- * @return aida jni field object
- */
-jobject getAidaField(JNIEnv* env, Field field)
-{
-	JavaObject javaObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaField");
-	CHECK_EXCEPTION(NULL)
-
-	// Get new AidaField object
-	jobject fieldObject = javaObject.object;
-
-	// Set name, label, description and units
-	callSetterWithString(env, javaObject, "setName", field.name);
-	CHECK_EXCEPTION(NULL)
-
-	callSetterWithString(env, javaObject, "setLabel", field.label);
-	CHECK_EXCEPTION(NULL)
-
-	callSetterWithString(env, javaObject, "setDescription", field.description);
-	CHECK_EXCEPTION(NULL)
-
-	callSetterWithString(env, javaObject, "setUnits", field.units);
-
-	return fieldObject;
 }
 
 /**
