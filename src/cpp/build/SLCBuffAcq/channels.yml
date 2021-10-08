@@ -36,4 +36,4 @@ configurations:
           name: goodmeas
           description: Good Measurement
     channels:
-      - *:BUFFACQ
+      - "*:BUFFACQ"
