@@ -3,6 +3,7 @@ package edu.stanford.slac.aida.lib.util;
 import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaField;
 import edu.stanford.slac.aida.lib.model.AidaType;
+import edu.stanford.slac.except.AidaInternalException;
 import lombok.NonNull;
 import org.epics.pvaccess.PVFactory;
 import org.epics.pvdata.factory.FieldFactory;
@@ -264,8 +265,7 @@ public class AidaPVHelper {
 
         AidaType aidaType = aidaTypeOf(value);
         if (aidaType == null) {
-            // TODO log error
-            return NT_SCALAR_EMPTY_STRUCTURE;
+            throw new AidaInternalException("Could not determine type of returned value: " + value);
         }
 
         ScalarType scalarType = scalarTypeOf(aidaType);
