@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static edu.stanford.slac.aida.lib.model.AidaTableLayout.ROW_MAJOR;
 import static edu.stanford.slac.aida.lib.model.AidaType.STRING_ARRAY;
 import static edu.stanford.slac.aida.lib.model.AidaType.aidaTypeOf;
 import static org.epics.pvdata.pv.ScalarType.pvString;
@@ -258,7 +257,7 @@ public class AidaPVHelper {
      * @param value supported scalar value
      * @return PVStructure containing an NT_SCALAR with the value
      */
-    public static PVStructure asScalar(Object value, AidaChannelConfig aidaChannelConfig) {
+    public static PVStructure asScalar(Object value) {
         if (value == null) {
             return NT_SCALAR_EMPTY_STRUCTURE;
         }
@@ -292,7 +291,7 @@ public class AidaPVHelper {
      * @param values the list of values to convert
      * @return PVStructure containing an NT_SCALAR_ARRAY with the values
      */
-    public static PVStructure asScalarArray(List<?> values, AidaChannelConfig aidaChannelConfig) {
+    public static PVStructure asScalarArray(List<?> values) {
         AidaType aidaType = aidaTypeOf(values);
         if (aidaType == null) {
             return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
@@ -334,11 +333,6 @@ public class AidaPVHelper {
             return NT_TABLE_EMPTY_STRUCTURE;
         }
 
-        // If layout is row-major then transpose the data first before processing
-        if (aidaChannelConfig.getLayout() != null && aidaChannelConfig.getLayout().equals(ROW_MAJOR)) {
-            values = transpose(values);
-        }
-
         // Track fields, field names, labels and types
         List<Field> pvFields = new ArrayList<Field>();
         List<String> fieldNames = new ArrayList<String>();
@@ -350,12 +344,12 @@ public class AidaPVHelper {
 
         // Create top level NT_TABLE fields (labels and value{column1[], column2[], ...})
         Field scalarArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
-        String [] fieldNameArray = new String[fieldNames.size()];
-        for ( int i = 0; i < fieldNames.size() ; i++) {
+        String[] fieldNameArray = new String[fieldNames.size()];
+        for (int i = 0; i < fieldNames.size(); i++) {
             fieldNameArray[i] = fieldNames.get(i);
         }
-        Field [] fieldArray = new Field[pvFields.size()];
-        for ( int i = 0; i < pvFields.size() ; i++) {
+        Field[] fieldArray = new Field[pvFields.size()];
+        for (int i = 0; i < pvFields.size(); i++) {
             fieldArray[i] = pvFields.get(i);
         }
         Field structure = FieldFactory.getFieldCreate().createStructure(fieldNameArray, fieldArray);
@@ -397,17 +391,17 @@ public class AidaPVHelper {
             List<List<Object>> values, AidaChannelConfig channelConfig,
             List<Field> fieldsToPopulate, List<String> fieldNamesToPopulate, List<String> fieldLabelsToPopulate, List<AidaType> fieldTypesToPopulate) {
 
-        // Loop over values and channel config simultaneously
-        Iterator<AidaField> configIterator = channelConfig.getFields().listIterator();
+        // Loop over values and fields simultaneously
+        Iterator<AidaField> fieldIterator = channelConfig.getFields().listIterator();
         for (List<?> column : values) {
             AidaType aidaType = aidaTypeOf(column);
             ScalarType scalarType = scalarTypeOf(aidaType);
             fieldsToPopulate.add(FieldFactory.getFieldCreate().createScalarArray(scalarType));
 
-            if (!configIterator.hasNext()) {
+            if (!fieldIterator.hasNext()) {
                 break;
             }
-            AidaField fieldConfig = configIterator.next();
+            AidaField fieldConfig = fieldIterator.next();
 
             // Get type, field name and label
             // TODO description and units
@@ -415,70 +409,6 @@ public class AidaPVHelper {
             fieldNamesToPopulate.add(fieldConfig.getName());
             fieldLabelsToPopulate.add(fieldConfig.getLabel());
         }
-    }
-
-    /**
-     * transpose a table represented as rows of data to a table represented as columns of data
-     *
-     * @param rows rows of data
-     * @return columns of data
-     */
-    private static List<List<Object>> transpose(List<List<Object>> rows) {
-        List<List<Object>> columns = new ArrayList<List<Object>>();
-
-        for (int rowNumber = 0; rowNumber < rows.size(); rowNumber++) {
-            List<?> row = rows.get(rowNumber);
-            for (int columnNumber = 0; columnNumber < rows.size(); columnNumber++) {
-                Object value = row.get(columnNumber);
-
-                if (rowNumber == 0) {
-                    columns.add(new ArrayList<Object>());
-                }
-                // Add row value to the correct column list
-                columns.get(columnNumber).add(value);
-            }
-        }
-        return columns;
-    }
-
-    /**
-     * Determine the epics type of a java object of a supported type
-     *
-     * @param value java object of supported type
-     * @return the epics scalar type
-     */
-    public static Type typeOf(Object value) {
-        return typeOf(aidaTypeOf(value));
-    }
-
-    /**
-     * Determine the epics scalar type of a java object of a supported type
-     *
-     * @param value java object of supported type
-     * @return the epics scalar type
-     */
-    public static ScalarType scalarTypeOf(Object value) {
-        return scalarTypeOf(aidaTypeOf(value));
-    }
-
-    /**
-     * Determine the epics type of a list of java objects of supported types
-     *
-     * @param values list of values
-     * @return scalar type of values
-     */
-    public static Type typeOf(List<?> values) {
-        return typeOf(aidaTypeOf(values));
-    }
-
-    /**
-     * Determine the epics scalar type of a list of java objects of supported types
-     *
-     * @param values list of values
-     * @return scalar type of values
-     */
-    public static ScalarType scalarTypeOf(List<?> values) {
-        return scalarTypeOf(aidaTypeOf(values));
     }
 
     /**

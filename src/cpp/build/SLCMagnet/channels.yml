@@ -10,8 +10,7 @@ id: 262
 name: SLCBMagnet
 description: SLC control system pulse synchronized Buffered Data
 configurations:
-  - configuration:
-    name: Get Secondary Values
+  - name: Get Secondary Values
     getterConfig:
       type: TABLE
       fields:
@@ -22,10 +21,9 @@ configurations:
           name: secondary
           description: secondary values
     channels:
-      - channel: "*//????:BDES"
-      - channel: "*//????:VDES"
-  - configuration:
-    name: Set BACT/VACT values
+      - "*//????:BDES"
+      - "*//????:VDES"
+  - name: Set BACT/VACT values
     getterConfig:
       type: NONE
     setterConfig:
@@ -37,14 +35,13 @@ configurations:
         - label: bact/vact
           name: bact_vact
           description: BACT/VACT value for each device
-      channels:
-        - channel: MAGNETSET:BDES
-        - channel: MAGNETSET:VDES
-  - configuration:
-    name: BCON
+    channels:
+      - MAGNETSET:BDES
+      - MAGNETSET:VDES
+  - name: BCON
     getterConfig:
       type: NONE
     setterConfig:
       type: VOID
-      channels:
-        - channel: MAGNETSET:BCON
+    channels:
+      - MAGNETSET:BCON

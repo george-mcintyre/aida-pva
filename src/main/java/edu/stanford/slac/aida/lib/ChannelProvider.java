@@ -18,7 +18,10 @@ import edu.stanford.slac.aida.lib.model.*;
 import edu.stanford.slac.aida.lib.util.AidaPva;
 import slac.aida.NativeChannelProvider;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
 
@@ -27,7 +30,6 @@ import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
  */
 public abstract class ChannelProvider extends NativeChannelProvider {
     private final AidaProvider aidaProvider;
-    private final Map<String, AidaChannelConfig> channelConfigMap = new HashMap<String, AidaChannelConfig>();
 
     /**
      * Constructor for the channel provider that reads the configuration from environment variables and
@@ -172,54 +174,25 @@ public abstract class ChannelProvider extends NativeChannelProvider {
     }
 
     /**
-     * Get channel configuration
+     * Get Setter configuration
      *
      * @param channelName the channel name to retrieve configuration
-     * @param forGetter   true to get config for getter false for setter
      * @return the configuration
      */
-    public AidaChannelConfig getChannelConfig(String channelName, Boolean forGetter) {
-        AidaChannelConfig channelConfig = null;
+    public AidaChannelConfig getSetterConfig(String channelName) {
         AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
-        if (channel != null) {
-            if (forGetter) {
-                channelConfig = channel.getGetterConfig();
-            } else {
-                channelConfig = channel.getSetterConfig();
-            }
-        }
-        return channelConfig;
+        return (channel == null) ? null : channel.getSetterConfig();
     }
 
     /**
-     * Retrieves the native channel getterConfig if any is available
+     * Get Getter configuration
      *
-     * @param channelName the channel for which getterConfig is to be returned
-     * @param forGetter   true for getter otherwise setter
-     * @return the channel getterConfig
+     * @param channelName the channel name to retrieve configuration
+     * @return the configuration
      */
-    public AidaChannelConfig getNativeChannelConfig(String channelName, Boolean forGetter) {
-        AidaChannelConfig config = channelConfigMap.get(configMapIndex(channelName, forGetter));
-        if (config == null) {
-            try {
-                config = aidaChannelConfig(channelName, forGetter);
-            } catch (UnsatisfiedLinkError unsatisfiedLinkError) {
-                System.err.println("Warning! Unsatisfied Link for native call.  Returning empty getterConfig");
-            }
-            channelConfigMap.put(configMapIndex(channelName, forGetter), config);
-        }
-        return config;
-    }
-
-    /**
-     * Compute an index to the config map that includes the getter or setter flag
-     *
-     * @param channelName channel name
-     * @param forGetter   if this is for getter or setter
-     * @return the computed index to the config map
-     */
-    private String configMapIndex(String channelName, Boolean forGetter) {
-        return channelName + ":" + (forGetter ? "getter" : "setter");
+    public AidaChannelConfig getGetterConfig(String channelName) {
+        AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
+        return (channel == null) ? null : channel.getGetterConfig();
     }
 
     /**

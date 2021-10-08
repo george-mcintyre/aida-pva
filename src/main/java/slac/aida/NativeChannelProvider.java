@@ -1,7 +1,6 @@
 package slac.aida;
 
 import edu.stanford.slac.aida.lib.model.AidaArgument;
-import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
 import edu.stanford.slac.aida.lib.model.AidaTable;
 
 import java.util.List;
@@ -12,16 +11,6 @@ public class NativeChannelProvider {
      * Called once to initialise the channel provider
      */
     static public native void aidaServiceInit();
-
-    /**
-     * To provide channel configuration to override configuration specified in the channel configuration yaml files
-     * AidaField
-     *
-     * @param channelName the channel name to provide the configuration for
-     * @param forGetter true if config is to be returned for getter otherwise setter
-     * @return the channel configuration or null to use defaults from yaml
-     */
-    protected native AidaChannelConfig aidaChannelConfig(String channelName, boolean forGetter);
 
     /**
      * Prototype to be implemented for Tables.  This is the most commonly implemented method.

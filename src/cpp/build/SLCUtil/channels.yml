@@ -10,11 +10,8 @@
 id: 122
 name: SLCUtil
 description: SLC Utility Server
-getterConfig:
-  type: NONE
 configurations:
-  - configuration:
-    name: BGRP and MKB Config
+  - name: BGRP and MKB Config
     getterConfig:
       type: NONE
     setterConfig:
@@ -27,10 +24,9 @@ configurations:
           label: Value
           description: value of each device after the set operation
     channels:
-      - channel: BGRP:VAL
-      - channel: MKB:VAL
-  - configuration:
-    name: Trigger Config
+      - BGRP:VAL
+      - MKB:VAL
+  - name: Trigger Config
     getterConfig:
       type: SCALAR
     setterConfig:
@@ -38,6 +34,6 @@ configurations:
       fields:
         - name: status
           label: Status Code
-          description: the status code for the specified trigger device on a beam code: 0 => deactivated, 1 => activated
+          description: "the status code for the specified trigger device on a beam code: 0 => deactivated, 1 => activated"
     channels:
-      - channel: TRIG:*:*:TACT
+      - TRIG:*:*:TACT

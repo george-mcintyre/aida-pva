@@ -5,8 +5,7 @@ id: 63
 name: SLCModel
 description: SLC Modelling parameters
 configurations:
-  - configuration:
-    name: Scalar Array Getter
+  - name: Scalar Array Getter
     getterConfig:
       description: Modelling Value
       type: SCALAR_ARRAY
@@ -45,9 +44,8 @@ configurations:
           name: "etay_"
           description: etay'
     channels:
-      - channel: ????:????:*:twiss
-  - configuration:
-    name: Scalar Getter
+      - ????:????:*:twiss
+  - name: Scalar Getter
     getterConfig:
       description: Modelling Value
       type: SCALAR_ARRAY
@@ -59,5 +57,5 @@ configurations:
           name: r2
           description: r2
     channels:
-      - channel: ????:????:*:R
+      - ????:????:*:R
 

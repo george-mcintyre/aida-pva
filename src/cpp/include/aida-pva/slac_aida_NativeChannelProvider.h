@@ -17,14 +17,6 @@ JNIEXPORT void JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit
 
 /*
  * Class:     slac_aida_NativeChannelProvider
- * Method:    aidaChannelConfig
- * Signature: (Ljava/lang/String;Z)Ledu/stanford/slac/aida/lib/model/AidaChannelConfig;
- */
-JNIEXPORT jobject JNICALL Java_slac_aida_NativeChannelProvider_aidaChannelConfig
-  (JNIEnv *, jobject, jstring, jboolean);
-
-/*
- * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestTable
  * Signature: (Ljava/lang/String;Ljava/util/List;)Ledu/stanford/slac/aida/lib/model/AidaTable;
  */

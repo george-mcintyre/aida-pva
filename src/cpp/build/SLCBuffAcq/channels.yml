@@ -10,11 +10,9 @@ id: 262
 name: SLCBuffacq
 description: SLC control system pulse synchronized Buffered Data
 configurations:
-  - configuration:
-    name: Standard Configuration
+  - name: Standard Configuration
     getterConfig:
       type: TABLE
-      layout: COLUMN_MAJOR
       fields:
         - label: BPM Name
           name: name
@@ -38,4 +36,4 @@ configurations:
           name: goodmeas
           description: Good Measurement
     channels:
-      - channel: *:BUFFACQ
+      - *:BUFFACQ

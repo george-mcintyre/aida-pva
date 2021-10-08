@@ -17,8 +17,6 @@ import java.util.List;
 import static edu.stanford.slac.aida.lib.model.AidaProvider.getAidaName;
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 import static org.epics.pvdata.pv.Type.scalar;
 import static org.epics.pvdata.pv.Type.scalarArray;
@@ -112,8 +110,8 @@ public class AidaRPCService implements RPCService {
      *                                          but is not yet supported in the service implementation
      */
     private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
-        AidaChannelConfig channelGetterConfig = aidaChannelProvider.getChannelConfig(channelName, TRUE);
-        AidaChannelConfig channelSetterConfig = aidaChannelProvider.getChannelConfig(channelName, FALSE);
+        AidaChannelConfig channelGetterConfig = aidaChannelProvider.getGetterConfig(channelName);
+        AidaChannelConfig channelSetterConfig = aidaChannelProvider.getSetterConfig(channelName);
 
         if (channelGetterConfig == null) {
             throw new UnsupportedChannelException("Could not find configuration for this channel.  Perhaps the channels.yml file contains an invalid pattern: " + channelName);
@@ -134,7 +132,7 @@ public class AidaRPCService implements RPCService {
             }
         }
 
-        Boolean isSetterRequest = valueArgument != null;
+        boolean isSetterRequest = valueArgument != null;
 
         // See if the request type is supported for the channel
         if (isSetterRequest && NONE.equals(aidaSetterType)) {
@@ -199,7 +197,7 @@ public class AidaRPCService implements RPCService {
 
         // If channelName contains a service (<service>::channelName) then remove the service part before calling the service implementation
         int servicePrefix = channelName.indexOf("::");
-        if (servicePrefix != -1 ) {
+        if (servicePrefix != -1) {
             channelName = channelName.substring(servicePrefix + 2);
         }
 
@@ -231,10 +229,10 @@ public class AidaRPCService implements RPCService {
 
             if (channelGetterType.equals(scalar)) {
                 Object returnValue = this.aidaChannelProvider.requestScalar(channelName, aidaGetterType, arguments);
-                return asScalar(returnValue, channelGetterConfig);
+                return asScalar(returnValue);
             } else if (channelGetterType.equals(scalarArray)) {
                 List<?> returnValue = this.aidaChannelProvider.requestScalarArray(channelName, aidaGetterType, arguments);
-                return asScalarArray(returnValue, channelGetterConfig);
+                return asScalarArray(returnValue);
             } else {
                 if (channelGetterConfig.getFields() == null) {
                     throw new AidaInternalException("Table channel configured without defining fields");
