@@ -137,7 +137,7 @@ public class AidaRPCService implements RPCService {
         Boolean isSetterRequest = valueArgument != null;
 
         // See if the request type is supported for the channel
-        if (isSetterRequest && NONE.equals(aidaGetterType)) {
+        if (isSetterRequest && NONE.equals(aidaSetterType)) {
             throw new UnsupportedChannelTypeException(channelName + arguments + ".  Set requests are not supported for this channel");
         } else if (!isSetterRequest && NONE.equals(aidaGetterType)) {
             throw new UnsupportedChannelTypeException(channelName + arguments + ".  Get requests are not supported for this channel");

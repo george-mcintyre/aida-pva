@@ -929,12 +929,12 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeF
 	if (!ieeeFormat) {
 		// Convert float values if float array
 		if (type == AIDA_FLOAT_ARRAY_TYPE) {
-			CONVERT_FROM_VMS_FLOAT(((float*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
+			CONVERT_FROM_VMS_FLOAT(((float*)data), (int2u)table->rowCount)
 		}
 
 		// Convert double values if double array
 		if (type == AIDA_DOUBLE_ARRAY_TYPE) {
-			CONVERT_FROM_VMS_DOUBLE(((double*)(table->ppData[table->_currentColumn])), (int2u)table->rowCount)
+			CONVERT_FROM_VMS_DOUBLE((double*)data, (int2u)table->rowCount)
 		}
 	}
 

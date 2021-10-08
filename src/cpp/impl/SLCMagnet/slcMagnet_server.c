@@ -85,7 +85,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Acquire Magnet values
 	int numMagnetPvs;
-	vmsstat_t status = DPSLCMAGNET_GET((char*)uri, (micrPattern ? micrPattern : ""), (unitPattern ? unitPattern : ""),
+	vmsstat_t status = DPSLCMAGNET_GET((char*)uri, (micrPattern ? micrPattern : "ALL*"), (unitPattern ? unitPattern : "ALL*"),
 			&numMagnetPvs);
 	if (micrPattern) {
 		free(micrPattern);
@@ -239,7 +239,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	int numPairsWithinLimits = 0;
 	float magnetLimits[count * 2];
 	DPSLCMAGNET_RET_MAGLIMITS(count, &magnetLimits[0]);
-	CONVERT_FROM_VMS_FLOAT(&magnetLimits[0], 1)
+	CONVERT_FROM_VMS_FLOAT(&magnetLimits[0], count*2)
 	for (int i = 0; i < count; i++) {
 		float lowerLimit = magnetLimits[i * 2];
 		float upperLimit = magnetLimits[i * 2 + 1];
