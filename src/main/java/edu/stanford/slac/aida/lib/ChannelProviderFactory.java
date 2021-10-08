@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import edu.stanford.slac.aida.lib.model.AidaProvider;
 
 import java.io.File;
-import java.net.URL;
 import java.util.logging.Logger;
 
 public class ChannelProviderFactory {
@@ -26,7 +25,7 @@ public class ChannelProviderFactory {
         // Priority: max=properties, medium=environment, low=default
         String channelsFilename = System.getProperty("aida.pva.channels.filename", CHANNELS_FILENAME_DEFAULT);
         String channelsFilenameFromEnv = System.getenv("AIDA_PVA_CHANNELS_FILENAME");
-        if (channelsFilenameFromEnv != null && channelsFilename.equals(CHANNELS_FILENAME_DEFAULT)) {
+        if (channelsFilenameFromEnv != null) {
             channelsFilename = channelsFilenameFromEnv;
         }
 
@@ -38,19 +37,7 @@ public class ChannelProviderFactory {
             if (channelSource.exists()) {
                 aidaProvider = mapper.readValue(channelSource, AidaProvider.class);
             } else {
-                logger.warning("Could not load external channel provider configuration, will try internal channel provider configuration file: " + channelsFilename);
-                // get the file url, not working in JAR file.
-                URL resource = AidaProvider.class.getClassLoader().getResource("data/" + channelsFilename);
-                if (resource == null) {
-                    logger.severe("Can't access channel provider configuration file: " + channelsFilename);
-                    throw new RuntimeException("Can't access channel provider configuration file: " + channelsFilename);
-                } else {
-                    try {
-                        aidaProvider = mapper.readValue(resource, AidaProvider.class);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e.getMessage());
-                    }
-                }
+                throw new RuntimeException("Can't access channel provider configuration file: " + channelsFilename);
             }
             aidaProvider.setChannelProvider(channelProvider);
             return aidaProvider;

@@ -4,6 +4,7 @@ import edu.stanford.slac.aida.lib.AidaProviderRunner;
 
 public class AidaService {
     private final static String AIDA_PVA_LIB_NAME = "aida-pva";
+
     static {
         // Get library name from property or environment.
         String aidaPvaLibName = System.getProperty("aida.pva.lib.name", AIDA_PVA_LIB_NAME);

@@ -23,7 +23,7 @@ public enum AidaType {
     STRING_ARRAY,       // Getter returns a string array
     TABLE,              // Getter or setter returns a table
 
-                        // For the following types you can also provide fields in case the request is a TABLE
+    // For the following types you can also provide fields in case the request is a TABLE
     ANY,                // Getter or setter returns any type defined by the mandatory accompanying TYPE argument, for setters this can only be VOID or TABLE
     SCALAR,             // Constrains the TYPE parameter to be set to any scalar type or TABLE
     SCALAR_ARRAY;       // Constrains the TYPE parameter to be set to any scalar array type or TABLE
