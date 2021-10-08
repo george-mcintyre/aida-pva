@@ -6,106 +6,89 @@ id: 0
 name: Sample
 description: Aida Sample Data Provider
 configurations:
-  - configuration:
-    name: Boolean Config
+  - name: Boolean Config
     getterConfig:
       type: BOOLEAN
     channels:
-      - channel: AIDA:SAMPLE:*:attribute01
+      - AIDA:SAMPLE:*:attribute01
       # Test for channel not supported.  This channel is not supported by service
-      - channel: AIDA:SAMPLE:*:attribute00
-  - configuration:
-    name: Byte Config
+      - AIDA:SAMPLE:*:attribute00
+  - name: Byte Config
     getterConfig:
       type: BYTE
     channels:
-      - channel: AIDA:SAMPLE:*:attribute02
-  - configuration:
-    name: Short Config
+      - AIDA:SAMPLE:*:attribute02
+  - name: Short Config
     getterConfig:
       type: SHORT
     channels:
-      - channel: AIDA:SAMPLE:*:attribute03
-  - configuration:
-    name: Integer Config
+      - AIDA:SAMPLE:*:attribute03
+  - name: Integer Config
     getterConfig:
       type: INTEGER
     channels:
-      - channel: AIDA:SAMPLE:*:attribute04
-  - configuration:
-    name: Long Config
+      - AIDA:SAMPLE:*:attribute04
+  - name: Long Config
     getterConfig:
       type: LONG
     channels:
-      - channel: AIDA:SAMPLE:*:attribute05
-  - configuration:
-    name: Float Config
+      - AIDA:SAMPLE:*:attribute05
+  - name: Float Config
     getterConfig:
       type: FLOAT
     channels:
-      - channel: AIDA:SAMPLE:*:attribute06
-  - configuration:
-    name: Double Config
+      - AIDA:SAMPLE:*:attribute06
+  - name: Double Config
     getterConfig:
       type: DOUBLE
     channels:
-      - channel: AIDA:SAMPLE:*:attribute07
-  - configuration:
-    name: String Config
+      - AIDA:SAMPLE:*:attribute07
+  - name: String Config
     getterConfig:
       type: STRING
     channels:
-      - channel: AIDA:SAMPLE:*:attribute08
-  - configuration:
-    name: Boolean Array Config
+      - AIDA:SAMPLE:*:attribute08
+  - name: Boolean Array Config
     getterConfig:
       type: BOOLEAN_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute11
-  - configuration:
-    name: Byte Array Config
+      - AIDA:SAMPLE:*:attribute11
+  - name: Byte Array Config
     getterConfig:
       type: BYTE_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute12
-  - configuration:
-    name: Short Array Config
+      - AIDA:SAMPLE:*:attribute12
+  - name: Short Array Config
     getterConfig:
       type: SHORT_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute13
-  - configuration:
-    name: Integer Array Config
+      - AIDA:SAMPLE:*:attribute13
+  - name: Integer Array Config
     getterConfig:
       type: INTEGER_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute14
-  - configuration:
-    name: Long Array Config
+      - AIDA:SAMPLE:*:attribute14
+  - name: Long Array Config
     getterConfig:
       type: LONG_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute15
-  - configuration:
-    name: Float Array Config
+      - AIDA:SAMPLE:*:attribute15
+  - name: Float Array Config
     getterConfig:
       type: FLOAT_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute16
-  - configuration:
-    name: Double Array Config
+      - AIDA:SAMPLE:*:attribute16
+  - name: Double Array Config
     getterConfig:
       type: DOUBLE_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute17
-  - configuration:
-    name: String Array Config
+      - AIDA:SAMPLE:*:attribute17
+  - name: String Array Config
     getterConfig:
       type: STRING_ARRAY
     channels:
-      - channel: AIDA:SAMPLE:*:attribute18
-  - configuration:
-    name: Table Config
+      - AIDA:SAMPLE:*:attribute18
+  - name: Table Config
     getterConfig:
       type: TABLE
       fields:
@@ -134,15 +117,13 @@ configurations:
           label: Device Message
           description: Last device message
     channels:
-      - channel: AIDA:SAMPLE:*:attribute20
-  - configuration:
-    name: Void Setter Config
+      - AIDA:SAMPLE:*:attribute20
+  - name: Void Setter Config
     setterConfig:
       type: VOID
     channels:
-      - channel: AIDA:SAMPLE:*:attribute30
-  - configuration:
-    name: Table Setter Config
+      - AIDA:SAMPLE:*:attribute30
+  - name: Table Setter Config
     setterConfig:
       type: TABLE
       fields:
@@ -150,9 +131,8 @@ configurations:
           label: Result of setting value
           description: True if the value was set successfully
     channels:
-      - channel: AIDA:SAMPLE:*:attribute31
-  - configuration:
-    name: Arbitrary Getter Config
+      - AIDA:SAMPLE:*:attribute31
+  - name: Arbitrary Getter Config
     getterConfig:
       type: ANY
       fields:
@@ -181,4 +161,4 @@ configurations:
           label: Device Message
           description: Last device message
     channels:
-      - channel: AIDA:SAMPLE:*:attribute32
+      - AIDA:SAMPLE:*:attribute32

@@ -11,8 +11,7 @@ id: 102
 name: SLCBpm
 description: SLC BPM orbit data under a given measurement definition
 configurations:
-  - configuration:
-    name: Standard Configuration
+  - name: Standard Configuration
     getterConfig:
       # Heterogeneous vector of 7 homogenous congruent vectors
       type: TABLE
@@ -40,5 +39,5 @@ configurations:
           name: STATS
           description: 32 bit field
     channels:
-      - channel: ????????:BPMS
-      - channel: ???????:BPMS
+      - ????????:BPMS
+      - ???????:BPMS

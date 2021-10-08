@@ -10,8 +10,7 @@ id: 162
 name: SLCKlys
 description: Klystron Server
 configurations:
-  - configuration:
-    name: TACT Getter and Setter
+  - name: TACT Getter and Setter
     getterConfig:
       type: SCALAR
     setterConfig:
@@ -21,10 +20,9 @@ configurations:
           name: status
           description: Status code for the specified Klystron on a beam code
     channels:
-      - channel: KLYS:????:*:TACT
-      - channel: SBST:????:*:TACT
-  - configuration:
-    name: Setter Returning Table
+      - KLYS:????:*:TACT
+      - SBST:????:*:TACT
+  - name: Setter Returning Table
     getterConfig:
       type: NONE
     setterConfig:
@@ -34,18 +32,17 @@ configurations:
           name: PHAS
           description: PHAS secondary value after the set operation
     channels:
-      - channel: KLYS:????:*:PDES
-      - channel: SBST:????:*:PDES
-      - channel: KLYS:????:*:KPHR
-      - channel: SBST:????:*:KPHR
-  - configuration:
-    name: Setter With No Return
+      - KLYS:????:*:PDES
+      - SBST:????:*:PDES
+      - KLYS:????:*:KPHR
+      - SBST:????:*:KPHR
+  - name: Setter With No Return
     getterConfig:
       type: NONE
     setterConfig:
       type: VOID
     channels:
-      - channel: KLYS:????:*:PCON
-      - channel: SBST:????:*:PCON
-      - channel: KLYS:????:*:ACON
-      - channel: SBST:????:*:ACON
+      - KLYS:????:*:PCON
+      - SBST:????:*:PCON
+      - KLYS:????:*:ACON
+      - SBST:????:*:ACON

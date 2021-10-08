@@ -13,8 +13,7 @@ id: 142
 name: SLCMosc
 description: Master Oscillator Service
 configurations:
-  - configuration:
-    name: Standard Config
+  - name: Standard Config
     getterConfig:
       type: SCALAR
       fields:
@@ -28,5 +27,5 @@ configurations:
           label: Oscillator Value in KHz
           description: Measured setting of the Master Oscillator in KHz
     channels:
-      - channel: MASTEROSC:VAL
+      - MASTEROSC:VAL
 
