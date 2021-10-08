@@ -198,10 +198,9 @@ public class AidaRPCService implements RPCService {
         Type channelSetterType = typeOf(aidaSetterType);
 
         // If channelName contains a service (<service>::channelName) then remove the service part before calling the service implementation
-        int serviceDelimiter = channelName.indexOf("/");
-        int indexOfLegacySeparator = channelName.indexOf("//");
-        if (serviceDelimiter != -1 && serviceDelimiter != indexOfLegacySeparator ) {
-            channelName = channelName.substring(serviceDelimiter + 1);
+        int servicePrefix = channelName.indexOf("::");
+        if (servicePrefix != -1 ) {
+            channelName = channelName.substring(servicePrefix + 2);
         }
 
         if (isSetterRequest) {
