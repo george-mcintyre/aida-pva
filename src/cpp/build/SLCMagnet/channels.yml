@@ -35,13 +35,13 @@ configurations:
         - label: bact/vact
           name: bact_vact
           description: BACT/VACT value for each device
-      channels:
-        - MAGNETSET:BDES
-        - MAGNETSET:VDES
+    channels:
+      - MAGNETSET:BDES
+      - MAGNETSET:VDES
   - name: BCON
     getterConfig:
       type: NONE
     setterConfig:
       type: VOID
-      channels:
-        - MAGNETSET:BCON
+    channels:
+      - MAGNETSET:BCON

@@ -13,7 +13,6 @@ configurations:
   - name: Standard Configuration
     getterConfig:
       type: TABLE
-      layout: COLUMN_MAJOR
       fields:
         - label: BPM Name
           name: name

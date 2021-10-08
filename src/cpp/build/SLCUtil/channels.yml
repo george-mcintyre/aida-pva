@@ -10,8 +10,6 @@
 id: 122
 name: SLCUtil
 description: SLC Utility Server
-getterConfig:
-  type: NONE
 configurations:
   - name: BGRP and MKB Config
     getterConfig:

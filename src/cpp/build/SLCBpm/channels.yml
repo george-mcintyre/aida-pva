@@ -15,7 +15,6 @@ configurations:
     getterConfig:
       # Heterogeneous vector of 7 homogenous congruent vectors
       type: TABLE
-      layout: COLUMN_MAJOR
       fields:
         - label: BPM Name
           name: name
