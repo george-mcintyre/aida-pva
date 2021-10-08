@@ -16,6 +16,7 @@ public class AidaProviderRunner {
 
         // Run the server to start servicing requests
         try {
+            System.out.println("Server Ready");
             server.run(0);
         } catch (PVAException e) {
             e.printStackTrace();
