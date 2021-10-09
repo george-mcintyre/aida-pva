@@ -448,6 +448,42 @@ public class AidaPVHelper {
     }
 
     /**
+     * Determine the Normative type based on the aida type
+     *
+     * @param aidaType aida type
+     * @return Normative Type String
+     */
+    public static String ntTypeOf(AidaType aidaType) {
+        switch (aidaType) {
+            case BOOLEAN:
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+            case STRING:
+            case SCALAR:
+                return NTSCALAR_ID;
+            case BOOLEAN_ARRAY:
+            case BYTE_ARRAY:
+            case SHORT_ARRAY:
+            case INTEGER_ARRAY:
+            case LONG_ARRAY:
+            case FLOAT_ARRAY:
+            case DOUBLE_ARRAY:
+            case STRING_ARRAY:
+            case SCALAR_ARRAY:
+                return NTSCALARARRAY_ID;
+            case TABLE:
+            case ANY:
+                return NTTABLE_ID;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Determine the epics scalar type based on the aida type
      *
      * @param aidaType aida type

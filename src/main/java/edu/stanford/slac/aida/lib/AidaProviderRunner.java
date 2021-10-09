@@ -2,6 +2,8 @@ package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.PVAException;
 
+import static edu.stanford.slac.aida.impl.AidaService.elapsedTime;
+
 public class AidaProviderRunner {
     public static void run(ChannelProvider aidaChannelProvider) {
         // Create new RPCServer
@@ -16,7 +18,7 @@ public class AidaProviderRunner {
 
         // Run the server to start servicing requests
         try {
-            System.out.println("Server Ready");
+            System.out.println("Server Ready: " + elapsedTime());
             server.run(0);
         } catch (PVAException e) {
             e.printStackTrace();
