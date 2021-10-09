@@ -333,9 +333,9 @@ void printValue(Value value)
  * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection.[0].name
  * @return pointer to the json_value
  */
-json_value* getJsonValue(Value *value, char* passedInPath)
+json_value* getJsonValue(Value* value, char* passedInPath)
 {
-	if (value->type != AIDA_JSON_TYPE || !value->value.jsonValue ) {
+	if (value->type != AIDA_JSON_TYPE || !value->value.jsonValue) {
 		return NULL;
 	}
 
@@ -347,7 +347,7 @@ json_value* getJsonValue(Value *value, char* passedInPath)
 	}
 
 	// can't use const for strtok
-	char path[strlen(passedInPath)+1] ;
+	char path[strlen(passedInPath) + 1];
 	strcpy(path, passedInPath);
 
 	int len;
@@ -452,7 +452,7 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 }
 
 /**
- * Get the Display group name from a URI
+ * Get the Display group name from a URI.  This is everything up until the last colon
  * @param uri
  * @param groupName
  * @return
@@ -460,7 +460,7 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 int groupNameFromUri(const char* uri, char groupName[])
 {
 	strcpy(groupName, uri);
-	char* groupNameEnd = strstr(groupName, "//");
+	char* groupNameEnd = strrchr(groupName, ':');
 	if (groupNameEnd) {
 		*groupNameEnd = 0x0;
 	}
@@ -468,19 +468,27 @@ int groupNameFromUri(const char* uri, char groupName[])
 }
 
 /**
- * Get secondary number from URI
+ * Get secondary from pseudo secondary (containing a colon) number from URI
+ *  e.g. `BD01:BEND:BDES`  => `BEND` as int4u
+ *
  * @param uri the uri
  * @param secn pointer to an int to store the secondary as a number
  */
 void secnFromUri(const char* uri, int4u* secn)
 {
-	char* secondary = strstr(uri, "//") + 2;
-	if (!secondary) {
-		fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
-		*secn = 0;
-		return;
+	char uriCopy[strlen(uri)+1];
+	strcpy(uriCopy, uri);
+	char* secondary = strrchr(uriCopy, ':');
+	if ( secondary ) {
+		uriCopy[secondary-uriCopy] = 0x0;
+		secondary = strrchr(uriCopy, ':');
+		if ( secondary ) {
+			memcpy(secn, secondary+1, sizeof(int4u));
+			return;
+		}
 	}
-	memcpy(secn, secondary, sizeof(int4u));
+	fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
+	*secn = 0;
 }
 
 /**
@@ -514,42 +522,6 @@ void pmuStringFromUri(const char* uri, char pmuString[MAX_PMU_LEN])
 }
 
 /**
- * Get primary, micro and unit from a uri
- *
- * @param uri
- * @param primary
- * @param micro
- * @param unit
- */
-void pmuFromUri(const char* uri, char* primary, char* micro, int4u* unit)
-{
-	// strtok variable can't be const
-	char _uri[MAX_URI_LEN];
-	unsigned long uriLen = strlen(uri);
-	if (uriLen > MAX_URI_LEN) {
-		// Should be an error but truncate for now
-		strncpy(_uri, uri, MAX_URI_LEN - 1);
-		_uri[MAX_URI_LEN - 1] = 0x0;
-	} else {
-		strcpy(_uri, uri);
-	}
-
-	// Copy each part to the provided variables
-	char* nextPart = strtok(_uri, ":");
-	if (nextPart) {
-		memcpy(primary, nextPart, PRIM_LEN);
-		nextPart = strtok(NULL, ":");
-		if (nextPart) {
-			memcpy(micro, nextPart, MICRO_LEN);
-			nextPart = strtok(NULL, ":");
-			if (nextPart) {
-				memcpy(unit, nextPart, sizeof(int4u));
-			}
-		}
-	}
-}
-
-/**
  * Get primary, micro and unit from a device name
  *
  * @param device
@@ -562,33 +534,16 @@ void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit)
 	// Copy each part to the provided variables
 	char* nextPart = strtok(device, ":");
 	if (nextPart) {
-		strcpy(primary, nextPart);
+		memcpy(primary, nextPart, PRIM_LEN);
 		nextPart = strtok(NULL, ":");
 		if (nextPart) {
-			strcpy(micro, nextPart);
+			memcpy(micro, nextPart, MICRO_LEN);
 			nextPart = strtok(NULL, ":");
 			if (nextPart) {
-				*unit = atoi(nextPart);
+				*unit = (int4u)atol(nextPart);
 			}
 		}
 	}
-}
-
-/**
- * Convert back from the primary, micro and unit into a URI
- * @param preAllocatedUriBuffer pre-allocated buffer for uri
- * @param primary the primary
- * @param micro the micro
- * @param unit the unit (int4u)
- */
-void uriFromPmu(char preAllocatedUriBuffer[MAX_PMU_LEN], char* primary, char* micro, int4u unit)
-{
-	memcpy(preAllocatedUriBuffer, primary, PRIM_LEN);
-	preAllocatedUriBuffer[PRIM_LEN] = ':';
-	memcpy(preAllocatedUriBuffer + PRIM_LEN + 1, micro, MICRO_LEN);
-	preAllocatedUriBuffer[PRIM_LEN + 1 + MICRO_LEN] = ':';
-	memcpy(preAllocatedUriBuffer + PRIM_LEN + 1 + MICRO_LEN + 1, &unit, sizeof(int4u));
-	preAllocatedUriBuffer[PRIM_LEN + 1 + MICRO_LEN + 1 + sizeof(int4u)] = 0x0;
 }
 
 /**

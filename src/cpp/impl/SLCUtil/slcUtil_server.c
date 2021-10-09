@@ -167,7 +167,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	if (strcasecmp(uri, "MKB//VAL") == 0) {
+	if (strcasecmp(uri, "MKB:VAL") == 0) {
 		// set Multi Knob value
 		return setMkbValue(env, uri, arguments, value);
 	} else {
