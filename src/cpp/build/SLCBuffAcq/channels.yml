@@ -1,5 +1,13 @@
 # Channels definition file for aida-pva
 #
+# DML:
+#       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
+#       FROM AIDA_DIRECTORY dir
+#       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
+#       INNER JOIN AIDA_NAMES names ON dir.NAME_ID = names.ID
+#       WHERE service.NAME = 'SLCBuffacq'
+#       ORDER BY names.ATTRIBUTE, names.INSTANCE
+#
 # This file defines the available channels for the Buff Acq Service
 # Arguments:
 #   BPMD            : Integer Bpm Measurement Definition number
@@ -36,4 +44,13 @@ configurations:
           name: goodmeas
           description: Good Measurement
     channels:
-      - "*:BUFFACQ"
+      - E163BMLN:BUFFACQ
+      - ELECEP01:BUFFACQ
+      - FACET-II:BUFFACQ
+      - INJ_ELEC:BUFFACQ
+      - INJ_POSI:BUFFACQ
+      - NDRFACET:BUFFACQ
+      - SCAVPOSI:BUFFACQ
+      - SCAVSPPS:BUFFACQ
+      - SDRFACET:BUFFACQ
+      - TAXXALL:BUFFACQ

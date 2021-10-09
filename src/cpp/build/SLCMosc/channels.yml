@@ -28,4 +28,3 @@ configurations:
           description: Measured setting of the Master Oscillator in KHz
     channels:
       - MASTEROSC:VAL
-

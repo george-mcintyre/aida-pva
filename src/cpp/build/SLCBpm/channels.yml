@@ -1,5 +1,13 @@
 # Channels definition file for aida-pva
 #
+# DML:
+#     SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
+#     FROM AIDA_DIRECTORY dir
+#     INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
+#     INNER JOIN AIDA_NAMES names ON dir.NAME_ID = names.ID
+#     WHERE service.NAME = 'SLCBpm'
+#     ORDER BY names.ATTRIBUTE, names.INSTANCE
+#   ```
 # This file defines the available channels for the SLCBPM service
 # Arguments:
 #   BPMD          : The timing profile of the acquisition
@@ -38,5 +46,16 @@ configurations:
           name: STATS
           description: 32 bit field
     channels:
-      - ????????:BPMS
-      - ???????:BPMS
+      - E163BMLN:BPMS
+      - ELECEP01:BPMS
+      - FACET-II:BPMS
+      - INJ_ELEC:BPMS
+      - INJ_POSI:BPMS
+      - LCLS_SL2:BPMS
+      - NDRFACET:BPMS
+      - P2BPMHER:BPMS
+      - P2BPMLER:BPMS
+      - PEP2INJF:BPMS
+      - SCAVPOSI:BPMS
+      - SDRFACET:BPMS
+      - TAXXALL:BPMS
