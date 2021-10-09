@@ -16,10 +16,10 @@ Plan	No active plans for extensions.
 
 EXAMPLES
 Schematic	Java examples, see DpSlcMoscTests.java for more examples:
-String query  = "MASTEROSC//VAL";
+String query  = "MASTEROSC:VAL";
 DaValue v = da.getDaValue(query);       /* Get measured Master Oscillator setting value. */
 
-String query = "MASTEROSC//VAL";        /* Indication of set operation requested. */ 
+String query = "MASTEROSC:VAL";        /* Indication of set operation requested. */ 
 Float setValue = new Float(0.328f);     /* Specified relative set value. */
 DaValue inData = new DaValue(setValue); /* Creation of DaValue to hold setValue. */
 DaValue outData = da.setDaValue(query, inData); /* Perform set operation. */
@@ -28,13 +28,13 @@ Matlab	$CD_SOFT/ref/package/aida/test/matlab/masterOscGetDemo.m obtains the Mast
 
 INSTANCES and ATTRIBUTES
 Instance Type	Description
-Get	Syntax	MASTEROSC//VAL
+Get	Syntax	MASTEROSC:VAL
 Example	
-MASTEROSC//VAL
+MASTEROSC:VAL
 
-Set	Syntax	MASTEROSC//VAL
+Set	Syntax	MASTEROSC:VAL
 Example	
-MASTEROSC//VAL
+MASTEROSC:VAL
 
 Attributes
 Attribute	Description

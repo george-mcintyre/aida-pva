@@ -19,14 +19,14 @@ classes ??? and ??? in the epics libraries which are now Aida's programming inte
 | | | 
 | ----------- | ----------- |
 | Schematic | Java examples, see AidaPvaSlcTests.java for more examples: 
-String query = "XCOR:LI03:120//LEFF"; DaReference r = new DaReference(query, da); r.setType(DaValue.Type.FLOAT);  r.compile(da); DaValue v = da.getDaValue(query);  String query = "XCOR:LI31:41//BCON"; /* Indication of set value operation. */ Float floatValue = new Float(5.0f); /* Specified desired value. */ DaValue inData = new DaValue(floatValue); /* Creation of DaValue to hold floatValue. */ da.setDaValue(query, inData); /* Perform set BCON value operation (no value is returned). */ | 
+String query = "XCOR:LI03:120:LEFF"; DaReference r = new DaReference(query, da); r.setType(DaValue.Type.FLOAT);  r.compile(da); DaValue v = da.getDaValue(query);  String query = "XCOR:LI31:41:BCON"; /* Indication of set value operation. */ Float floatValue = new Float(5.0f); /* Specified desired value. */ DaValue inData = new DaValue(floatValue); /* Creation of DaValue to hold floatValue. */ da.setDaValue(query, inData); /* Perform set BCON value operation (no value is returned). */ | 
 Java
 $CD_SOFT/ref/package/aida/test/java/DpSlcTests.java Matlab $CD_SOFT/ ref/package/aida/test/matlab/slcDbSetDemo.m
 
-INSTANCES Types Description Get Syntax    <prim>:<micr>:<unit>//<secn>
-ASTS:<micr>:<channel>//<pseudo-secn>
-Examples XCOR:LI03:120//LEFF ASTS:PR02:VP3012//DATA Set Syntax    <prim>:<micr>:<unit>//<secn>
-Examples XCOR:LI31:41//BCON
+INSTANCES Types Description Get Syntax    <prim>:<micr>:<unit>:<secn>
+ASTS:<micr>:<channel>:<pseudo-secn>
+Examples XCOR:LI03:120:LEFF ASTS:PR02:VP3012:DATA Set Syntax    <prim>:<micr>:<unit>:<secn>
+Examples XCOR:LI31:41:BCON
 
 Instance Attributes Attribute Description
 <secn>    Gets SLC db device data for a named device (d). Methods Name*    Returns getDaValue(d)    DaValue contains a

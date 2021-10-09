@@ -15,7 +15,7 @@ Plan	No active plans for extension, but could add (i) ability to acquire only sp
 
 EXAMPLES
 Schematic	Java example, see DpSlcBpmTests.java for more examples:
-String query  = "P2BPMHER//BPMS";
+String query  = "P2BPMHER:BPMS";
 da.setParam("BPMD=38");             /* Public Measurement Definition parameter */
 da.setParam("CNFTYPE=GOLD");       /* Return diff to the GOLD orbit */
 da.setParam("N=1024");              /* "Navg", for ring, the number of turns (Optional param) */
@@ -28,7 +28,7 @@ INSTANCES and ATTRIBUTES
 Instance Type	Description
 BPM Orbit	Syntax	<dgrp-mnemonic>//BPMS
 Examples	
-P2BPMHER//BPMS
+P2BPMHER:BPMS
 
 Attributes
 Attribute	Description

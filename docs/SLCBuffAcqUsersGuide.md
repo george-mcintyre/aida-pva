@@ -17,7 +17,7 @@ GAPM = data, in column 3.
 For all, name and pulse id are in column 1 and 2, and stat and goodmeas are in columns 6 and 7:
 
 E.g:
-[fphysics@facet-srv01 ~ ]$ aidaget NDRFACET//BUFFACQ -DBPMD=57 -DNRPOS=5 -DDEV1=KLYS:LI03:31 \
+[fphysics@facet-srv01 ~ ]$ aidaget NDRFACET:BUFFACQ -DBPMD=57 -DNRPOS=5 -DDEV1=KLYS:LI03:31 \
 -DDEV2=SBST:LI03:001 -DDEV3=BPMS:LI02:501 -DDEV4=TORO:LI20:2040
 
   TORO:LI20:2040  31330          0.0          0.0   3.39403981E9  1  1
@@ -60,14 +60,14 @@ EXAMPLES
 Schematic	Schematically, the syntax of an AIDA Buffered acquisition is an AIDA entity name (required), plus parameters giving a BPMD number (required), number of pulses (1 pulse is the default), and device names given in unique parameter names. The parameter names must begin "DEV" or "BPM" and at least 1 must be given.
       aidaget <DGRP-name>//BUFFACQ BPMD=n [NRPOS=m] {(BPM<i>|DEV<i>)=<device-name>}+1
 An example using aidaget at the command line:
-[flora03]:u/cd/greg> aidaget NDRFACET//BUFFACQ -DBPMD=57 -DNRPOS=10 -DDEV1=GAPM:LI18:930 -DDEV2=BPMS:LI11:501 
+[flora03]:u/cd/greg> aidaget NDRFACET:BUFFACQ -DBPMD=57 -DNRPOS=10 -DDEV1=GAPM:LI18:930 -DDEV2=BPMS:LI11:501 
   BPMS:LI11:501  51778  0.14952832    0.04818424  1.84745226E10   1  1
   BPMS:LI11:501  51850  0.15105376  -0.007751522   1.8179285E10   1  1
   BPMS:LI11:501  51886  0.15066777   0.026444921  1.82530949E10   1  1
             . . . <17 rows snipped>
 Java	Java example (see $CD_SOFT/ref/package/aida/test/java/DpSlcBuffTests.java for more examples. See in particular the method printffDaValue( DaValue v ) for how to extract each of the result vectors from the DaValue object returned (v in the example below):
 	da = new DaObject();
-	String query  = "NDRFACET//BUFFACQ";
+	String query  = "NDRFACET:BUFFACQ";
 	da.setParam("BPMD","57");             /* BPMD is a required parameter */
 	da.setParam("NRPOS","180");           /* Number of pulses */ 
 	da.setParam("BPM1","BPMS:LI11:501");  /* 3 bpms to acquire given */
@@ -91,7 +91,7 @@ Matlab
 	d.setParam('BPM2','BPMS:DR12:334');
 
 	% Do the acquisition
-	buffdata = d.getDaValue('NDRFACET//BUFFACQ');  
+	buffdata = d.getDaValue('NDRFACET:BUFFACQ');  
 
 	% Extract the results from the returned buffdata DaValue java vector.
 	pts = buffdata.get(0).size();
@@ -113,16 +113,16 @@ Matlab
       
 
 AIDA ENTITIES
-AIDA Entities are the names, or queries, known to AIDA. An entity is composed of an instance part, followed by "//", followed by the attribute part. The instance should describe an object, the attribute should describe a property of that object. This table formally describes the entities associated with the SLC Buffered Acquisition service, and the data that can be acquired with them.
+AIDA Entities are the names, or queries, known to AIDA. An entity is composed of an instance part, followed by ":", followed by the attribute part. The instance should describe an object, the attribute should describe a property of that object. This table formally describes the entities associated with the SLC Buffered Acquisition service, and the data that can be acquired with them.
 
 INSTANCES and ATTRIBUTES
 Instance Type	Description
 Buffered BPM Data	Syntax	<dgrp-mnemonic-name>//BUFFACQ
 Examples	
-    NDRFACET//BUFFACQ
-    INJ_ELEC//BUFFACQ
-    INJ_POSI//BUFFACQ
-    TAXXALL//BUFFACQ
+    NDRFACET:BUFFACQ
+    INJ_ELEC:BUFFACQ
+    INJ_POSI:BUFFACQ
+    TAXXALL:BUFFACQ
       
 See aidalist % BUFFACQ for a complete list.
 Attributes

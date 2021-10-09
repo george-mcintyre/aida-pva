@@ -52,13 +52,11 @@ EPICS network, the Data provder code that accesses and controls the devices or d
 
 # New naming conventions
 
-In AIDA names consist of DEVICE//ATTRIBUTE where DEVICE can have other sub parts composed typically delimited by colons. 
+In AIDA names consist of DEVICE:ATTRIBUTE where DEVICE can have other sub parts composed typically delimited by colons. 
 Though the ATTRIBUTE part is typically a single name in rare cases it also has parts delimited by colons.
 
 in AIDA-PVA names have the same components but are all separated by colons so PRIM:MICR:UNIT//ATTR becomes PRIM:MICR:UNIT:ATTR 
-in AIDA-PVA.  In this way AIDA-PVA allows accessing services with the same naming conventions as EPICS.  EPICS uses // to delimit the 
-optional SERVICE PROVIDER from the PV.  So you could write MCCDEV//PRIM:MICR:UNIT:ATTR to specify the service on MCCDEV if there are 
-multiple service providers supporting the same PV.
+in AIDA-PVA.  In this way AIDA-PVA allows accessing services with the same naming conventions as EPICS.
 
 Even though AIDA-PVA has an updated naming scheme to align with EPICs it is backwards compatible with AIDA and allows legacy style
 names.

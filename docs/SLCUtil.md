@@ -16,15 +16,15 @@ Plan	No active plans for extensions.
 
 EXAMPLES
 Schematic	Java examples, see DpSlcUtilTests.java for more examples:
-String query = "TRIG:LI31:109//TACT";
+String query = "TRIG:LI31:109:TACT";
 da.setParam("BEAM=1");         /* Required parameter specifying a beam code. */
 Short v = (Short) da.get(query, DaValue.Type.SHORT); /* Get the status code for the trigger device on the beam code. */ 
 
-String query = "TRIG:LI31:109//TACT";
+String query = "TRIG:LI31:109:TACT";
 da.setParam("BEAM=1");         /* Required parameter specifying a beam code. */
 String v = (String) da.get(query, DaValue.Type.STRING); /* String type indicates to get the status string. */ 
 
-String query = "TRIG:LI31:109//TACT";
+String query = "TRIG:LI31:109:TACT";
 da.setParam("BEAM=1");         /* Required parameter specifying a beam code. */
 Short setValue = new Short((short) 0); /* Flag 0 indicates a deactivation operation. */
 DaValue inData = new DaValue(setValue); /* Creation a DaValue to hold operation flag. */
@@ -38,11 +38,11 @@ INSTANCES and ATTRIBUTES
 Instance Type	Description
 Get	Syntax	<prim>:<micr>:<unit>//TACT
 Examples	
-TRIG:LI31:109//TACT
+TRIG:LI31:109:TACT
 
 Set	Syntax	<prim>:<micr>:<unit>//TACT
 Examples	
-TRIG:LI31:109//TACT
+TRIG:LI31:109:TACT
 
 Attributes
 Attribute	Description
@@ -84,7 +84,7 @@ Status and limitations	The data provider is complete and there are no known limi
 Plan	No active plans for extensions.
 EXAMPLES
 Schematic	Java example. See DpSlcUtilTests.java for more multiknob examples.
-String query  = "MKB//VAL";
+String query  = "MKB:VAL";
 da.setParam("MKB", "mkb:li02b_xb.mkb");     /* Required MKB parameter specifying a multiknob file. */
 Float relativeDelta = new Float(1.0f);      /* Specified relative delta knob rotation. */
 DaValue inData = new DaValue(relativeDelta); /* Creation of DaValue to hold relative delta value. */
@@ -94,8 +94,8 @@ Java	$CD_SOFT/ref/package/aida/test/java/DpSlcUtilTests.java
 Matlab	$CD_SOFT/ref/package/aida/test/matlab/multiknobDemo.m
 INSTANCES
 Types	Description
-Multiknob Request	Syntax	MKB//VAL  
-Example	MKB//VAL
+Multiknob Request	Syntax	MKB:VAL  
+Example	MKB:VAL
 Instance Attributes
 Attribute	Description
 VAL	Sets devices referenced in a specified multiknob file, which is a required parameter. The parameter data argument (p) is a DaValue containing a Float value specifying the relative delta knob rotation value.
@@ -126,7 +126,7 @@ Status and limitations	The data provider is complete and there are no known limi
 Plan	No active plans for extensions.
 EXAMPLES
 Schematic	Java example. See DpSlcUtilTests.java for two BGRP set variable examples.
-String query  = "BGRP//VAL";
+String query  = "BGRP:VAL";
 da.setParam("BGRP", "LCLS");            /* Required BGRP parameter specifying a BGRP name. */
 da.setParam("VARNAME", "T_CAV");        /* Required VARNAME parameter specifying a variable name for the BGRP. */
 String setValue = "Y";                  /* New BGRP variable value ("N" or "Y"). */
@@ -137,8 +137,8 @@ Java	$CD_SOFT/ref/package/aida/test/java/DpSlcUtilTests.java
 Matlab	$CD_SOFT/ref/package/aida/test/matlab/bgrpDemo.m
 INSTANCES
 Types	Description
-BGRP Set Variable Request	Syntax	BGRP//VAL  
-Example	BGRP//VAL
+BGRP Set Variable Request	Syntax	BGRP:VAL  
+Example	BGRP:VAL
 Instance Attributes
 Attribute	Description
 VAL	Sets a BGRP variable to a new value. The parameter data argument (p) is a DaValue containing a String specifying the new variable value ("N" or "Y").

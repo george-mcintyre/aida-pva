@@ -16,34 +16,34 @@ Plan	No active plans for extensions.
 
 EXAMPLES
 Schematic	Java examples, see DpSlcKlysTests.java for more examples:
-String query = "KLYS:LI31:31//TACT";
+String query = "KLYS:LI31:31:TACT";
 da.setParam("BEAM=8");         /* Required parameter specifying a beam code. */
 da.setParam("DGRP=DEV_DGRP");  /* Display group must be specified if klystron is not in display group LIN_KLYS. */
 Short v = (Short) da.get(query, DaValue.Type.SHORT); /* Get the status code for the klystron on the beam code. */ 
 
-String query = "KLYS:LI31:31//TACT";
+String query = "KLYS:LI31:31:TACT";
 da.setParam("BEAM=8");         /* Required parameter specifying a beam code. */
 da.setParam("DGRP=DEV_DGRP");  /* Display group must be specified if klystron is not in display group LIN_KLYS. */
 String v = (String) da.get(query, DaValue.Type.STRING); /* String type indicates to get the status string. */ 
 
-String query = "KLYS:LI31:31//TACT";
+String query = "KLYS:LI31:31:TACT";
 da.setParam("BEAM=8");         /* Required parameter specifying a beam code. */
 da.setParam("DGRP=DEV_DGRP");  /* Display group must be specified if klystron is not in display group LIN_KLYS. */
 Short setValue = new Short((short) 0); /* Flag 0 indicates a deactivation operation. */
 DaValue inData = new DaValue(setValue); /* Creation a DaValue to hold operation flag. */
 DaValue outData = da.setDaValue(query, inData); /* Perform specified operation to klystron on beam code. */
 
-String query = "KLYS:LI31:31//PDES"; /* Indication of set PDES and optional trim phase operation. */
+String query = "KLYS:LI31:31:PDES"; /* Indication of set PDES and optional trim phase operation. */
 Float pdesValue = new Float(90.0f); /* Specified desired PDES value. */
 DaValue inData = new DaValue(pdesValue); /* Creation of DaValue to hold pdesValue. */
 DaValue outData = da.setDaValue(query, inData); /* Perform set PDES and trim phase operation. */
 
-String query = "KLYS:LI31:31//KPHR"; /* Indication of set KPHR value operation. */
+String query = "KLYS:LI31:31:KPHR"; /* Indication of set KPHR value operation. */
 Float kphrValue = new Float(60.0f); /* Specified desired KPHR value. */
 DaValue inData = new DaValue(kphrValue); /* Creation of DaValue to hold kphrValue. */
 DaValue outData = da.setDaValue(query, inData); /* Perform set KPHR value operation. */
 
-String query = "KLYS:LI31:31//PCON"; /* Indication of set PCON value operation. */
+String query = "KLYS:LI31:31:PCON"; /* Indication of set PCON value operation. */
 Float newValue = new Float(5.0f); /* Specified desired PCON value. */
 DaValue inData = new DaValue(newValue); /* Creation of DaValue to hold newValue. */
 da.setDaValue(query, inData); /* Perform set PCON value operation (no value is returned). */
@@ -55,21 +55,21 @@ $CD_SOFT/ref/package/aida/test/matlab/klysSetKphrDemo.m sets the KPHR value of a
 
 INSTANCES and ATTRIBUTES
 Instance Type	Description
-Get	Syntax	<prim>:<micr>:<unit>//TACT
+Get	Syntax	<prim>:<micr>:<unit>:TACT
 Examples	
-KLYS:LI31:31//TACT
+KLYS:LI31:31:TACT
 
-Set	Syntax	<prim>:<micr>:<unit>//TACT
-<prim>:<micr>:<unit>//PDES
-<prim>:<micr>:<unit>//KPHR
-<prim>:<micr>:<unit>//PCON
-<prim>:<micr>:<unit>//ACON
+Set	Syntax	<prim>:<micr>:<unit>:TACT
+<prim>:<micr>:<unit>:PDES
+<prim>:<micr>:<unit>:KPHR
+<prim>:<micr>:<unit>:PCON
+<prim>:<micr>:<unit>:ACON
 Examples	
-KLYS:LI31:31//TACT
-KLYS:LI31:31//PDES
-KLYS:LI31:31//KPHR
-KLYS:LI31:31//PCON
-KLYS:LI31:31//ACON
+KLYS:LI31:31:TACT
+KLYS:LI31:31:PDES
+KLYS:LI31:31:KPHR
+KLYS:LI31:31:PCON
+KLYS:LI31:31:ACON
 
 Attributes
 Attribute	Description
