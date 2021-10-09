@@ -84,7 +84,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Acquire Magnet values
 	int numMagnetPvs;
-	vmsstat_t status = DPSLCMAGNET_GET((char*)uri, (micrPattern ? micrPattern : "ALL*"), (unitPattern ? unitPattern : "ALL*"),
+	TO_LEGACY_NAME(uri, legacyName)
+	vmsstat_t status = DPSLCMAGNET_GET((char*)legacyName, (micrPattern ? micrPattern : "ALL*"), (unitPattern ? unitPattern : "ALL*"),
 			&numMagnetPvs);
 	if (micrPattern) {
 		free(micrPattern);

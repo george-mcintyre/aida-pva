@@ -140,7 +140,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 {                              \
     while ( nJsonValuesToFree-- > 0) { \
         if ( jsonValuesToFree[nJsonValuesToFree] ) \
-        	json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
+            json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
     } \
 }
 
@@ -151,7 +151,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 {                              \
     while ( nAllocationsToFree-- > 0) { \
         if ( memoryAllocationsToFree[nAllocationsToFree])  \
-        	free (memoryAllocationsToFree[nAllocationsToFree]); \
+            free (memoryAllocationsToFree[nAllocationsToFree]); \
     } \
     FREE_JSON \
 }
@@ -165,15 +165,15 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     \
         bool found = false; \
         for ( int i = 0 ; i < nAllocationsToFree; i++ ) { \
-			if ( (_ptr) == memoryAllocationsToFree[i] ) {   \
-				free (_ptr);                    \
-				found = true;                    \
-			} \
-			if ( found && i != (nAllocationsToFree-1) )   \
-				memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
-	    } \
-    	if ( found )   \
-        	nAllocationsToFree--;     \
+            if ( (_ptr) == memoryAllocationsToFree[i] ) {   \
+                free (_ptr);                    \
+                found = true;                    \
+            } \
+            if ( found && i != (nAllocationsToFree-1) )   \
+                memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
+        } \
+        if ( found )   \
+            nAllocationsToFree--;     \
     }\
 }
 
@@ -243,7 +243,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 
 /**
  * Get a slcName from the provided uri and store it in the given variable name
- * A slcName is the URI with the '//' converted to a dot
+ * A slcName is the URI with the last ':' converted to a dot
  *
  * @param _uri the uri to pull the slcName from
  * @param _var the name of the variable to store the resulting slcName in
@@ -253,8 +253,18 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     uriToSlcName(_var, _uri);
 
 /**
+ * Get a legacy AIDA name from the provided uri and store it in the given variable name
+ *
+ * @param _uri the uri to pull the slcName from
+ * @param _var the name of the variable to store the resulting slcName in
+ */
+#define TO_LEGACY_NAME(_uri, _var)\
+    char _var[MAX_URI_LEN]; \
+    uriLegacyName(_var, _uri);
+
+/**
  * Get a display group name from the provided uri and store it in the given variable name
- * A display group name  is the the part of the URI before the '//'
+ * A display group name  is the the part of the URI before the last ':'
  *
  * @param _uri the uri to pull the dgroup from
  * @param _var the name of the variable to store the resulting dgroup in
@@ -674,7 +684,7 @@ void printValue(Value value);
  * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection[0].name
  * @return the json_value
  */
-json_value* getJsonValue(Value *value, char* path);
+json_value* getJsonValue(Value* value, char* path);
 
 /**
  * Get value from a named  argument in the provided arguments structure.
@@ -730,16 +740,6 @@ void secnFromUri(const char* uri, int4u* secn);
 const char* secondaryFromUri(const char* uri);
 
 /**
- * Get primary, micro and unit from a uri
- *
- * @param uri
- * @param primary
- * @param micro
- * @param unit
- */
-void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit);
-
-/**
  * Get primary, micro and unit from a device name
  *
  * @param device
@@ -748,15 +748,6 @@ void pmuFromUri(const char* uri, char* primary, char* micro, unsigned long* unit
  * @param unit
  */
 void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit);
-
-/**
- * Convert back from the primary, micro and unit into a URI
- * @param preAllocatedUriBuffer pre-allocated buffer for uri
- * @param primary the primary
- * @param micro the micro
- * @param unit the unit (int4u)
- */
-void uriFromPmu(char preAllocatedUriBuffer[18], char* primary, char* micro, int4u unit);
 
 /**
  * Get the pmu part of a URI
@@ -772,6 +763,15 @@ void pmuStringFromUri(const char* uri, char* pmuString);
  * @return
  */
 void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri);
+
+/**
+ * Convert the given URI to the legacy AIDA name for low level functions that still require it that way
+ *
+ * @param legacyName
+ * @param uri
+ * @return
+ */
+void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri);
 
 void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message);
 

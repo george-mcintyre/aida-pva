@@ -498,7 +498,7 @@ void secnFromUri(const char* uri, int4u* secn)
  */
 const char* secondaryFromUri(const char* uri)
 {
-	char* secondary = strstr(uri, "//");
+	char* secondary = strrchr(uri, ':');
 	if (!secondary) {
 		fprintf(stderr, "Secondary not found in uri: %s\n", uri);
 		return uri;
@@ -513,7 +513,7 @@ const char* secondaryFromUri(const char* uri)
  */
 void pmuStringFromUri(const char* uri, char pmuString[MAX_PMU_LEN])
 {
-	unsigned long pmuEnd = strcspn(uri, "/");
+	unsigned long pmuEnd = strrchr(uri, ':') - uri;
 	if (pmuEnd >= MAX_URI_LEN) {
 		pmuEnd = MAX_URI_LEN - 1;
 	}
@@ -554,11 +554,37 @@ void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit)
  */
 void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
 {
-	char* separator = strstr(uri, "//");
+	char* separator = strrchr(uri, ':');
 	if (separator) {
 		memcpy(slcName, uri, separator - uri);
 		memcpy(slcName + (separator - uri), ".", 1);
-		strcpy(slcName + (separator - uri) + 1, separator + 2);
+		strcpy(slcName + (separator - uri) + 1, separator + 1);
+	}
+}
+
+/**
+ * Convert the given URI to the legacy AIDA name for low level functions that still require it that way
+ *
+ * @param legacyName
+ * @param uri
+ * @return
+ */
+void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
+{
+	char* firstSeparator = strchr(uri, ':');
+	char* secondSeparator = strchr(firstSeparator+1, ':');
+	char* lastSeparator = strrchr(uri, ':');
+	// See how many colons.  If only three then this is a pseudo and we need to separate after first
+	if ( lastSeparator == secondSeparator ) {
+		// This has only three parts so separate at first colon
+		memcpy(legacyName, uri, firstSeparator - uri);
+		memcpy(legacyName + (firstSeparator - uri), "//", 2);
+		strcpy(legacyName + (firstSeparator - uri) + 2, firstSeparator + 1);
+	} else {
+		// Normal URI separate at last colon
+		memcpy(legacyName, uri, lastSeparator - uri);
+		memcpy(legacyName + (lastSeparator - uri), "//", 2);
+		strcpy(legacyName + (lastSeparator - uri) + 2, lastSeparator + 1);
 	}
 }
 

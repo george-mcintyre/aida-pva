@@ -312,7 +312,8 @@ static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments)
 	// Read the status
 	vmsstat_t status;
 	short trig_status;
-	status = DPSLCUTIL_TRIG_GETSTATUS((char*)uri, beam, &trig_status);
+	TO_DGROUP(uri, dGroupName)
+	status = DPSLCUTIL_TRIG_GETSTATUS((char*)dGroupName, beam, &trig_status);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");
 	}
