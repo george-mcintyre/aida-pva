@@ -31,6 +31,12 @@ public class AidaService {
         Long elapsedMs = checkpoint.minus(serviceStartTime.getMillis()).getMillis();
         Long elapsedS = elapsedMs/1000;
         elapsedMs -= elapsedS*1000;
-        return String.format("%d.%3ss",  elapsedS , elapsedMs).replace(' ', '0');
+        Long elapsedM = elapsedS/60;
+        elapsedS -= elapsedM*60;
+        if ( elapsedM == 0 ) {
+            return String.format("%d.%3ss",  elapsedS , elapsedMs).replace(' ', '0');
+        } else {
+            return String.format("%d:%2s.%3s",  elapsedM, elapsedS , elapsedMs).replace(' ', '0');
+        }
     }
 }
