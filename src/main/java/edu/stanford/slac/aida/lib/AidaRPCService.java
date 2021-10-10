@@ -164,12 +164,19 @@ public class AidaRPCService implements RPCService {
                 throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
             }
         } else {
-            // If a class of types is set as the getter type, but you didn't set one then error out
-            switch (aidaGetterType) {
-                case SCALAR:
-                case SCALAR_ARRAY:
-                case ANY:
-                    throw new UnsupportedChannelTypeException(channelName + arguments + ".  The 'Type' parameter must be set to a type corresponding to " + aidaGetterType + ", but you didn't specify one");
+            if ( isSetterRequest ) {
+                // If a class of types is set as the getter type, but you didn't set one then error out
+                if (aidaSetterType == ANY) {
+                    throw new UnsupportedChannelTypeException(channelName + arguments + ".  The 'Type' parameter must be set 'VOID' or 'TABLE' but you didn't specify one");
+                }
+            } else {
+                // If a class of types is set as the getter type, but you didn't set one then error out
+                switch (aidaGetterType) {
+                    case SCALAR:
+                    case SCALAR_ARRAY:
+                    case ANY:
+                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The 'Type' parameter must be set to a type corresponding to " + aidaGetterType + ", but you didn't specify one");
+                }
             }
         }
 
@@ -187,9 +194,9 @@ public class AidaRPCService implements RPCService {
         }
 
         if (isSetterRequest) {
-            System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaSetterType + "::" + (channelSetterType == null ? "" : channelSetterType));
+            System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaSetterType + (channelSetterType == null ? "" : ("::" + channelSetterType)));
         } else {
-            System.out.println("AIDA GetValue: " + channelName + arguments + " => " + aidaGetterType + "::" + (channelGetterType == null ? "" : channelGetterType));
+            System.out.println("AIDA GetValue: " + channelName + arguments + " => " + aidaGetterType + (channelGetterType == null ? "" : ("::" + channelGetterType)));
         }
 
         // Call entry point based on return type
