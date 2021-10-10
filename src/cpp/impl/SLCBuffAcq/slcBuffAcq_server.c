@@ -35,6 +35,7 @@ static int getBuffAcqData(JNIEnv* env,
 		float* xData, float* yData, float* tmitData, unsigned long* pulseIdData,
 		int2u* statsData, int2u* goodMeasData);
 static int endAcquireBuffAcq(JNIEnv* env);
+static int checkArguments(JNIEnv* env, int bpmd, int nrpos, int nDevices);
 
 // API Stubs
 REQUEST_STUB_BOOLEAN
@@ -132,23 +133,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		free(devices);
 	}
 
-	// Check that required param, bpmd, is valid.
-	if (bpmd < BPMD_MIN || bpmd > BPMD_MAX) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"BPMD param is required and must be be between 1..9999");
-		RETURN_NULL_TABLE
-	}
-
-	// Check n is valid
-	if (nrpos < NRPOS_MIN || nrpos > NRPOS_MAX) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"NRPOS, the number of pulse to acquire, must be between 1..2800");
-		RETURN_NULL_TABLE
-	}
-
-	// Check devices given
-	if (nDevices <= 0) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "No devices to acquire were received");
+	// Check arguments
+	if (checkArguments(env, bpmd, nrpos, nDevices)) {
 		RETURN_NULL_TABLE
 	}
 
@@ -164,16 +150,16 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE
 	}
 
-	if ( rows > MAX_DGRP_BPMS ) {
+	if (rows > MAX_DGRP_BPMS) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Too many rows returned by this query");
 		RETURN_NULL_TABLE
 	}
 
 	// To hold data
-	char* namesData[MAX_DGRP_BPMS];
-	float xData[MAX_DGRP_BPMS], yData[MAX_DGRP_BPMS], tmitData[MAX_DGRP_BPMS];
-	unsigned long pulseIdData[MAX_DGRP_BPMS];
-	int2u statsData[MAX_DGRP_BPMS], goodMeasData[MAX_DGRP_BPMS];
+	char* namesData[rows + 1];
+	float xData[rows + 1], yData[rows + 1], tmitData[rows + 1];
+	unsigned long pulseIdData[rows + 1];
+	int2u statsData[rows + 1], goodMeasData[rows + 1];
 
 	// Get Buffered Data
 	if (getBuffAcqData(env, namesData, xData, yData, tmitData, pulseIdData, statsData, goodMeasData)) {
@@ -199,6 +185,38 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// All read successfully
 	return table;
+}
+
+/**
+ * Check arguments
+ * @param env
+ * @param bpmd
+ * @param nrpos
+ * @param nDevices
+ * @return
+ */
+static int checkArguments(JNIEnv* env, int bpmd, int nrpos, int nDevices)
+{
+	// Check that required param, bpmd, is valid.
+	if (bpmd < BPMD_MIN || bpmd > BPMD_MAX) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"BPMD param is required and must be be between 1..9999");
+		return EXIT_FAILURE;
+	}
+
+	// Check n is valid
+	if (nrpos < NRPOS_MIN || nrpos > NRPOS_MAX) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"NRPOS, the number of pulse to acquire, must be between 1..2800");
+		return EXIT_FAILURE;
+	}
+
+	// Check devices given
+	if (nDevices <= 0) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "No devices to acquire were received");
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
 }
 
 /**
@@ -272,12 +290,12 @@ getBuffAcqData(JNIEnv* env,
 	}
 
 	// If rows are not homogenous
-	if (!( nNames == nPulseId && nPulseId == nXdata && nXdata == nYdata && nYdata == ntmit && ntmit == nstats && nstats == ngoodmeas )) {
+	if (!(nNames == nPulseId && nPulseId == nXdata && nXdata == nYdata && nYdata == ntmit && ntmit == nstats
+			&& nstats == ngoodmeas)) {
 		endAcquireBuffAcq(env);
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "non-homologous vectors of data returned");
 		return EXIT_FAILURE;
 	}
-
 
 	return endAcquireBuffAcq(env);
 }

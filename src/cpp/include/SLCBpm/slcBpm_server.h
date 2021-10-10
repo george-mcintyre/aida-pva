@@ -9,8 +9,16 @@ extern "C" {
 // Use this ID number temporarily until we can get a permanent ID assigned
 #define AIDAPVA_SLCBPMID 192
 
-#define SORTORDER_Z 1
-#define SORTORDER_DISPLAY 2
+#define NAVG  1
+#define BPMD_ROGUE 0     		// 0 is invalid, used as rogue value
+#define SORTORDER_Z  1
+#define SORTORDER_DISPLAY  2
+#define CNFTYPE_NONE  0
+#define CNFTYPE_GOLD  1
+#define CNFTYPE_LOADED  2
+#define CNFTYPE_SCRATCH  3
+#define CNFTYPE_NORMAL  4
+#define CNFTYPE_TEMPORARY  5
 
 #define CHECK_VMS_STATUS \
 if (!$VMS_STATUS_SUCCESS(status)) { \
