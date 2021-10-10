@@ -22,7 +22,8 @@ getArgumentClassMethods(JNIEnv* env,
 		jmethodID* getDoubleNameMethod, jmethodID* getDoubleValueMethod);
 
 static int checkMethods(JNIEnv* env, jmethodID listSizeMethod, jmethodID listGetMethod, jmethodID argumentGetNameMethod,
-		jmethodID argumentGetValueMethod, jmethodID argumentsGetArgumentsMethod, jmethodID argumentsGetFloatArgumentsMethod, jmethodID argumentsGetDoubleArgumentsMethod,
+		jmethodID argumentGetValueMethod, jmethodID argumentsGetArgumentsMethod,
+		jmethodID argumentsGetFloatArgumentsMethod, jmethodID argumentsGetDoubleArgumentsMethod,
 		jmethodID getFloatNameMethod, jmethodID getFloatValueMethod, jmethodID getDoubleNameMethod,
 		jmethodID getDoubleValueMethod);
 
@@ -170,7 +171,7 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 			listSizeMethod, listGetMethod,
 			argumentGetNameMethod, argumentGetValueMethod,
 			argumentsGetArgumentsMethod, argumentsGetFloatArgumentsMethod, argumentsGetDoubleArgumentsMethod,
-			getFloatNameMethod, getFloatValueMethod,  getDoubleNameMethod, getDoubleValueMethod)) {
+			getFloatNameMethod, getFloatValueMethod, getDoubleNameMethod, getDoubleValueMethod)) {
 		return cArgs;
 	}
 
@@ -231,6 +232,16 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 	return cArgs;
 }
 
+/**
+ * Get java classes that will be used to process the arguments structure
+ * @param env
+ * @param listClass
+ * @param floatArgumentClass
+ * @param doubleArgumentClass
+ * @param aidaArgumentsClass
+ * @param aidaArgumentClass
+ * @return
+ */
 static int getArgumentClasses(JNIEnv* env, jclass* listClass, jclass* floatArgumentClass, jclass* doubleArgumentClass,
 		jclass* aidaArgumentsClass, jclass* aidaArgumentClass)
 {
@@ -271,6 +282,26 @@ static int getArgumentClasses(JNIEnv* env, jclass* listClass, jclass* floatArgum
 	return EXIT_SUCCESS;
 }
 
+/**
+ * Get the method IDs of the java methods needed to process the arguments structure
+ * @param env
+ * @param listClass
+ * @param floatArgumentClass
+ * @param doubleArgumentClass
+ * @param aidaArgumentsClass
+ * @param aidaArgumentClass
+ * @param listSizeMethod
+ * @param listGetMethod
+ * @param argumentsGetArgumentsMethod
+ * @param argumentGetNameMethod
+ * @param argumentGetValueMethod
+ * @param argumentsGetFloatArgumentsMethod
+ * @param argumentsGetDoubleArgumentsMethod
+ * @param getFloatNameMethod
+ * @param getFloatValueMethod
+ * @param getDoubleNameMethod
+ * @param getDoubleValueMethod
+ */
 static void
 getArgumentClassMethods(JNIEnv* env,
 		jclass listClass, jclass floatArgumentClass, jclass doubleArgumentClass,
@@ -305,10 +336,27 @@ getArgumentClassMethods(JNIEnv* env,
 	(*getDoubleValueMethod) = (*env)->GetMethodID(env, doubleArgumentClass, "getValue", "()D");
 }
 
+/**
+ * Check that all the java methods needed to process the arguments structure were obtained successfully
+ * @param env
+ * @param listSizeMethod
+ * @param listGetMethod
+ * @param argumentGetNameMethod
+ * @param argumentGetValueMethod
+ * @param argumentsGetArgumentsMethod
+ * @param argumentsGetFloatArgumentsMethod
+ * @param argumentsGetDoubleArgumentsMethod
+ * @param getFloatNameMethod
+ * @param getFloatValueMethod
+ * @param getDoubleNameMethod
+ * @param getDoubleValueMethod
+ * @return
+ */
 static int checkMethods(JNIEnv* env,
 		jmethodID listSizeMethod, jmethodID listGetMethod,
 		jmethodID argumentGetNameMethod, jmethodID argumentGetValueMethod,
-		jmethodID argumentsGetArgumentsMethod, jmethodID argumentsGetFloatArgumentsMethod, jmethodID argumentsGetDoubleArgumentsMethod,
+		jmethodID argumentsGetArgumentsMethod, jmethodID argumentsGetFloatArgumentsMethod,
+		jmethodID argumentsGetDoubleArgumentsMethod,
 		jmethodID getFloatNameMethod, jmethodID getFloatValueMethod,
 		jmethodID getDoubleNameMethod, jmethodID getDoubleValueMethod)
 {
@@ -377,6 +425,14 @@ static int checkMethods(JNIEnv* env,
 	return EXIT_SUCCESS;
 }
 
+/**
+ * Allocate space for arguments including space for floating point numbers
+ *
+ * @param env
+ * @param cArgs
+ * @param totalFloatingPoints
+ * @return
+ */
 static int allocateSpaceForArguments(JNIEnv* env, Arguments* cArgs, int totalFloatingPoints)
 {
 	// Create array of arguments
