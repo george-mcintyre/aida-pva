@@ -622,55 +622,6 @@ int startsWith(const char* str, char* prefix);
 Argument getArgument(Arguments arguments, char* name);
 
 /**
- * Get boolean argument
- * @param argument argument
- * @return boolean
- */
-int getBooleanArgument(Argument argument);
-
-/**
- * Get byte argument
- * @param argument argument
- * @return byte
- */
-char getByteArgument(Argument argument);
-
-/**
- * Get short argument
- * @param argument argument
- * @return short
- */
-short getShortArgument(Argument argument);
-
-/**
- * Get integer argument
- * @param argument argument
- * @return int
- */
-int getIntegerArgument(Argument argument);
-
-/**
- * Get long argument
- * @param argument argument
- * @return long
- */
-long getLongArgument(Argument argument);
-
-/**
- * Get float argument
- * @param argument argument
- * @return float
- */
-float getFloatArgument(Argument argument);
-
-/**
- * Get double argument
- * @param argument argument
- * @return double
- */
-double getDoubleArgument(Argument argument);
-
-/**
  * Print a value to standard output
  * @param env
  * @param value

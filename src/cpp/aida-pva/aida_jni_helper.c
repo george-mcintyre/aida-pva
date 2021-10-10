@@ -204,7 +204,7 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 	}
 
 	// If any floats or doubles add them to the allocated space
-	int floatingPointValueIndex = 0;
+	cArgs.floatingPointValuesCountCount = 0;
 	if (totalFloatingPoints > 0) {
 		// Loop through the FloatArgument list
 		for (int i = 0; i < floatCount; i++) {
@@ -213,8 +213,8 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 			jfloat value = (*env)->CallFloatMethod(env, floatArgument, getFloatValueMethod);
 
 			// Add key and value to Arguments.
-			cArgs.arguments->floatingPointValues[floatingPointValueIndex].path = toCString(env, name);
-			cArgs.arguments->floatingPointValues[floatingPointValueIndex++].value.floatValue = value;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount++].value.floatValue = value;
 		}
 
 		for (int i = 0; i < doubleCount; i++) {
@@ -223,8 +223,8 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 			jdouble value = (*env)->CallDoubleMethod(env, doubleArgument, getDoubleValueMethod);
 
 			// Add key and value to Arguments.
-			cArgs.arguments->floatingPointValues[floatingPointValueIndex].path = toCString(env, name);
-			cArgs.arguments->floatingPointValues[floatingPointValueIndex++].value.doubleValue = value;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount++].value.doubleValue = value;
 		}
 	}
 
@@ -445,8 +445,8 @@ static int allocateSpaceForArguments(JNIEnv* env, Arguments* cArgs, int totalFlo
 
 	// Create space for floating point numbers
 	if (totalFloatingPoints > 0) {
-		cArgs->arguments->floatingPointValues = calloc(totalFloatingPoints, sizeof(FloatingPointValue));
-		if (!cArgs->arguments->floatingPointValues) {
+		cArgs->floatingPointValues = calloc(totalFloatingPoints, sizeof(FloatingPointValue));
+		if (!cArgs->floatingPointValues) {
 			free(cArgs->arguments);
 			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 					"Failed to allocate memory for floating point values");
@@ -863,11 +863,15 @@ jobject toTable(JNIEnv* env, Table table)
  */
 void releaseArguments(Arguments arguments)
 {
-	if (arguments.argumentCount > 0 && arguments.arguments) {
-		if (arguments.arguments->floatingPointValues) {
-			free(arguments.arguments->floatingPointValues);
-		}
+	if (arguments.floatingPointValues && arguments.floatingPointValuesCountCount) {
+		free(arguments.floatingPointValues);
+		arguments.floatingPointValuesCountCount = 0;
+		arguments.floatingPointValues = NULL;
+	}
+	if (arguments.argumentCount && arguments.arguments) {
 		free(arguments.arguments);
+		arguments.argumentCount = 0;
+		arguments.arguments = NULL;
 	}
 }
 
@@ -877,8 +881,10 @@ void releaseArguments(Arguments arguments)
  */
 void releaseArray(Array array)
 {
-	if (array.count > 0 && array.items) {
+	if (array.count && array.items) {
 		free(array.items);
+		array.count = 0;
+		array.items = NULL;
 	}
 }
 
@@ -888,8 +894,10 @@ void releaseArray(Array array)
  */
 void releaseStringArray(StringArray array)
 {
-	if (array.count > 0 && array.items) {
+	if (array.count && array.items) {
 		free(array.items);
+		array.count = 0;
+		array.items = NULL;
 	}
 }
 
@@ -899,15 +907,22 @@ void releaseStringArray(StringArray array)
  */
 void releaseTable(Table table)
 {
-	if (table.ppData && table.types && table.columnCount > 0) {
+	if (table.ppData && table.columnCount) {
 		for (int column = 0; column < table.columnCount; column++) {
 			if (table.ppData[column]) {
 				free(table.ppData[column]);
+				table.ppData[column] = NULL;
 			}
 		}
-		if (table.ppData) {
-			free(table.ppData);
-		}
+		table.columnCount = 0;
+	}
+	if (table.ppData) {
+		free(table.ppData);
+		table.ppData = NULL;
+	}
+	if (table.types) {
+		free(table.types);
+		table.types = NULL;
 	}
 }
 

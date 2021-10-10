@@ -11,6 +11,8 @@
 #include "aida_types.h"
 #include "aida_server_helper.h"
 
+#define MIN_FLOAT_ALLOCATIONS 100
+
 /// Definitions for ascanf, and avscanf
 #define FORMAT_INTEGER 'd'
 #define FORMAT_UNSIGNED_INTEGER 'u'
@@ -136,7 +138,7 @@
             sprintf(nextStringPosition, "%g", jsonRoot->u.dbl); \
         } else { \
             if (aidaType == AIDA_STRING_TYPE) { \
-                free(nextStringPosition); \
+                free(nextStringPosition);\
             }\
             SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: %s", "<json>", EXIT_FAILURE) \
         } \
@@ -166,6 +168,14 @@ static void parseFormatString(char* formatString, short formatCharsToProcess, ch
 		short* isRequired, short* isLong, short* isShort, short* isArray);
 static void expectingJsonOrValue(const char* argumentName, short isArray, short* isValue,
 		short* valueShouldBeJson);
+static int getFloatArgument(Arguments* arguments, char* path, float* target);
+static int getDoubleArgument(Arguments* arguments, char* path, double* target);
+static int getFloatArrayArgument(Arguments* arguments, char* path, float** target, unsigned int* elementCount);
+static int getDoubleArrayArgument(Arguments* arguments, char* path, double** target, unsigned int* elementCount);
+static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* path);
+static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, unsigned int* elementCount);
+static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount);
+static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount);
 /**
  * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
  *
@@ -417,6 +427,29 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		Type aidaType = getAidaType(env, format, isArray, isLong, isShort);
 		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE)
 
+		// If this is for a FLOAT or DOUBLE then try to get ieee version if available
+		if (aidaType == AIDA_FLOAT_TYPE) {
+			if (getFloatArgument(arguments, argumentName, (float*)target) == EXIT_SUCCESS) {
+				return EXIT_SUCCESS;
+			}
+		} else if (aidaType == AIDA_DOUBLE_TYPE) {
+			if (getDoubleArgument(arguments, argumentName, (double*)target) == EXIT_SUCCESS) {
+				return EXIT_SUCCESS;
+			}
+		}
+
+		if (aidaType == AIDA_FLOAT_ARRAY_TYPE) {
+			if (getFloatArrayArgument(arguments, argumentName, (float**)target, elementCount) == EXIT_SUCCESS) {
+				return EXIT_SUCCESS;
+			}
+		} else if (aidaType == AIDA_DOUBLE_TYPE) {
+			if (getDoubleArrayArgument(arguments, argumentName, (double**)target, elementCount) == EXIT_SUCCESS) {
+				return EXIT_SUCCESS;
+			}
+		}
+
+		// If this is for a FLOAT_ARRAY or DOUBLE_ARRAY then get the ieee version if available
+
 		// if the argument is json then the name may contain dots and square braces,
 		// so this variable contains just the argument name part at the beginning.
 		// e.g. if the argumentName="bpms[0].name" then jsonArgumentName="bpms"
@@ -613,6 +646,156 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 	FREE_JSON
 	return EXIT_SUCCESS;
+}
+
+/**
+ * See if there is a ieee float value stored in arguments.  If so set target
+ *
+ * @param arguments
+ * @param path path to look for in arguments
+ * @param target the place to store the float
+ * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ */
+static int getFloatArgument(Arguments* arguments, char* path, float* target)
+{
+	FloatingPointValue* floatingPointValue = getFloatingPointValue(arguments, path);
+	if (floatingPointValue) {
+		*target = floatingPointValue->value.floatValue;
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
+}
+
+/**
+ * See if there is a ieee double value stored in arguments.  If so set target
+ *
+ * @param arguments
+ * @param path path to look for in arguments
+ * @param target the place to store the double
+ * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ */
+static int getDoubleArgument(Arguments* arguments, char* path, double* target)
+{
+	FloatingPointValue* floatingPointValue = getFloatingPointValue(arguments, path);
+	if (floatingPointValue) {
+		*target = floatingPointValue->value.doubleValue;
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
+}
+
+/**
+ * See if there is an ieee float array stored in arguments.  If so allocate space and
+ * and set target
+ *
+ * @param arguments
+ * @param path path to look for in arguments
+ * @param target the place to store the float array
+ * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ */
+static int getFloatArrayArgument(Arguments* arguments, char* path, float** target, unsigned int* elementCount)
+{
+	float* floatArray = getFloatArray(arguments, path, elementCount);
+	if (floatArray) {
+		*target = floatArray;
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
+}
+/**
+ * See if there is an ieee double array stored in arguments.  If so allocate space and
+ * and set target
+ *
+ * @param arguments
+ * @param path path to look for in arguments
+ * @param target the place to store the double array
+ * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ */
+static int getDoubleArrayArgument(Arguments* arguments, char* path, double** target, unsigned int* elementCount)
+{
+	double* doubleArray = getDoubleArray(arguments, path, elementCount);
+	if (doubleArray) {
+		*target = doubleArray;
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
+}
+
+/**
+ * Get a floating point value by path.  This will look up the value in the arguments
+ * by searching for one with the given path
+ * @param arguments
+ * @param path
+ * @return NULL of not found
+ */
+static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* path)
+{
+	for (int i = 0; i < arguments->floatingPointValuesCountCount; i++) {
+		if (strcasecmp(path, arguments->floatingPointValues[i].path) == 0) {
+			return &arguments->floatingPointValues[i];
+		}
+	}
+	return NULL;
+}
+
+/**
+ * Get an array of floats by searching for an array rooted at path
+ * Space for the array will be allocated if any are found (must be freed by caller)
+ *
+ * @param arguments
+ * @param path
+ * @return
+ */
+static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount)
+{
+	return (float *)_getFloatArray(arguments, path, true, elementCount);
+}
+
+/**
+ * Get an array of doubles by searching for an array rooted at path
+ * Space for the array will be allocated if any are found (must be freed by caller)
+ *
+ * @param arguments
+ * @param path
+ * @return
+ */
+static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount)
+{
+	return (double *)_getFloatArray(arguments, path, false, elementCount);
+}
+
+static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, unsigned int* elementCount)
+{
+	// To store the floats/doubles found and return to caller
+	void* theArray = NULL;
+
+	// To store the calculated element path
+	char elementPath[strlen(path) + 10];
+
+	int numberOfFloatAllocated = 0, numberOfFloatsFound = 0;
+
+	FloatingPointValue* floatingPointValue;
+	sprintf(elementPath, "%s[%d]", path, numberOfFloatsFound);
+
+	while ((floatingPointValue = getFloatingPointValue(arguments, elementPath))) {
+		if (numberOfFloatAllocated == 0) {
+			// allocate space
+			numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
+			theArray = calloc(numberOfFloatAllocated, (forFloat ? sizeof(float) : sizeof(double)));
+		} else if (numberOfFloatAllocated <= numberOfFloatsFound) {
+			// reallocate space
+			numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
+			theArray = realloc(theArray, numberOfFloatAllocated * (forFloat ? sizeof(float) : sizeof(double)));
+		}
+		if ( forFloat ) {
+			((float *)theArray)[numberOfFloatsFound] = floatingPointValue->value.floatValue;
+		} else {
+			((double *)theArray)[numberOfFloatsFound] = floatingPointValue->value.doubleValue;
+		}
+		sprintf(elementPath, "%s[%d]", path, ++numberOfFloatsFound);
+	}
+	*elementCount = numberOfFloatsFound;
+	return theArray;
 }
 
 /**

@@ -210,6 +210,7 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	vmsstat_t status;
 	status = DPSLCUTIL_DO_MKB(mkb, &floatValue, &num_devices);
 	free(mkb);
+	mkb = NULL;
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
 		RETURN_NULL_TABLE;

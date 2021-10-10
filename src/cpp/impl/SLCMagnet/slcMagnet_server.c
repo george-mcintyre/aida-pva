@@ -89,9 +89,11 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 			&numMagnetPvs);
 	if (micrPattern) {
 		free(micrPattern);
+		micrPattern = NULL;
 	}
 	if (unitPattern) {
 		free(unitPattern);
+		unitPattern = NULL;
 	}
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while reading magnet values");

@@ -94,7 +94,6 @@ typedef struct
 {
 	char* name;
 	char* value;
-	FloatingPointValue *floatingPointValues;
 } Argument;
 
 typedef union
@@ -112,7 +111,9 @@ typedef struct
 typedef struct
 {
 	int argumentCount;
+	int floatingPointValuesCountCount;
 	Argument* arguments;
+	FloatingPointValue *floatingPointValues;
 } Arguments;
 
 /**

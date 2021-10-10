@@ -122,6 +122,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		}
 		nDevices += nBpms;
 		free(bpms);
+		bpms = NULL;
 	} else if (nDevs) {
 		for (int i = 0; i < nDevs; i++) {
 			pmuFromDeviceName(devices[i],
@@ -131,6 +132,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		}
 		nDevices += nDevs;
 		free(devices);
+		devices = NULL;
 	}
 
 	// Check arguments
