@@ -12,7 +12,9 @@ import org.epics.util.array.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
@@ -238,29 +240,78 @@ public class AidaRPCService implements RPCService {
         if (pvUriQuery != null) {
             PVField[] pvFields = pvUriQuery.getPVFields();
             for (PVField field : pvFields) {
-                String name = field.getFieldName();
-                if (name == null) {
-                    throw new RPCRequestException(ERROR, "Invalid argument name: <blank>");
-                }
-                // TODO handle floats and doubles as scalar, arrays and structure elements
-                String value = fieldToString(field);
-                if (value == null) {
-                    throw new RPCRequestException(ERROR, "Invalid argument value: <blank>");
-                }
-                arguments.add(new AidaArgument(name, value));
+                getArgument(arguments, field);
             }
         }
         return arguments;
     }
 
     /**
-     * Extract the value from the argument field
+     * Get a single argument from the given field and add it to the list of arguments
      *
-     * @param field the field
+     * @param arguments list of arguments to add the argument to
+     * @param field     field to extract the argument from
+     * @throws RPCRequestException if something bad happens
+     */
+    private void getArgument(List<AidaArgument> arguments, PVField field) throws RPCRequestException {
+        arguments.add(getNameAndValue(field, new HashMap<String, Float>(), new HashMap<String, Double>()));
+    }
+
+    /**
+     * Get name / value pair for an argument
+     *
+     * @param field     the field to break into name and value pair
+     * @param floatMap  to return the list of floats found and the paths
+     * @param doubleMap to return the list of doubles found and the paths
+     * @return the name value pair
+     * @throws RPCRequestException if something bad happens
+     */
+    private AidaArgument getNameAndValue(PVField field, Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
+        AidaArgument nameAndValue = getNameAndStringValue(field, floatMap, doubleMap);
+        nameAndValue.getFloats().putAll(floatMap);
+        nameAndValue.getDoubles().putAll(doubleMap);
+        return nameAndValue;
+    }
+
+    /**
+     * Get argument for a request argument
+     *
+     * @param field        the field to break into name and value pair
+     * @param floatMap     to return the list of floats found and the paths
+     * @param doubleMap    to return the list of doubles found and the paths
+     * @return the name value pair
+     * @throws RPCRequestException if something bad happens
+     */
+    private AidaArgument getNameAndStringValue(PVField field,  Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
+        String name = field.getFieldName();
+        if (name == null) {
+            throw new RPCRequestException(ERROR, "Invalid argument name: <blank>");
+        }
+
+        // Convert all arguments to string (json or otherwise)
+        // But collect all doubles and floats unchanged in ieee format
+        String value = fieldToString(field, name, floatMap, doubleMap);
+
+        if (value == null) {
+            throw new RPCRequestException(ERROR, "Invalid argument value: <blank>");
+        }
+
+        return new AidaArgument(name, value);
+    }
+
+    /**
+     * Extract the String value from the field
+     * Any time a double or float is found, add it to the appropriate map under the `fieldMap` key
+     *
+     * @param field     the field
+     * @param fieldPath path under which this field sits.  Used only for floats and doubles that need
+     *                  to set the path so the name in the pair is prefixed with this value if set
+     * @param floatMap  to return the list of floats found and the paths
+     * @param doubleMap to return the list of doubles found and the paths
      * @return the extracted value
      * @throws RPCRequestException of the field type is unsupported
      */
-    private String fieldToString(PVField field) throws RPCRequestException {
+    private String fieldToString(PVField field, String fieldPath, Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
         String value;
         if (field instanceof PVBoolean) {
             value = Boolean.toString(((PVBoolean) field).get());
@@ -269,16 +320,27 @@ public class AidaRPCService implements RPCService {
         } else if (field instanceof PVUByte) {
             value = Byte.toString(((PVUByte) field).get());
         } else if (field instanceof PVDouble) {
-            value = Double.toString(((PVDouble) field).get());
-        } else if (field instanceof PVFloat) value = Float.toString(((PVFloat) field).get());
-        else if (field instanceof PVInt) {
+            double d = ((PVDouble) field).get();
+            doubleMap.put(fieldPath, d);
+            value = Double.toString(d);
+        } else if (field instanceof PVFloat) {
+            float f = ((PVFloat) field).get();
+            floatMap.put(fieldPath, f);
+            value = Float.toString(f);
+        } else if (field instanceof PVInt) {
             value = Integer.toString(((PVInt) field).get());
         } else if (field instanceof PVLong) {
             value = Long.toString(((PVLong) field).get());
         } else if (field instanceof PVShort) {
             value = Short.toString(((PVShort) field).get());
         } else if (field instanceof PVString) {
-            value = ((PVString) field).get();
+            if (isSubField(fieldPath)) {
+                // Subfield strings are always quoted
+                value = "\"" + ((PVString) field).get() + "\"";
+            } else {
+                // Single top level can be left without quotes
+                value = ((PVString) field).get();
+            }
         } else if (field instanceof PVStructure) {
             // For structures then we need to recurse for each field
             PVStructure structure = ((PVStructure) field);
@@ -287,7 +349,7 @@ public class AidaRPCService implements RPCService {
             boolean firstTime = true;
             for (PVField subField : structure.getPVFields()) {
                 String elementName = subField.getFieldName();
-                String elementValue = fieldToString(subField);
+                String elementValue = fieldToString(subField, fieldPath + "." + elementName, floatMap, doubleMap);
                 if (!firstTime) {
                     structureBuilder.append(", ");
                 }
@@ -296,13 +358,7 @@ public class AidaRPCService implements RPCService {
                 structureBuilder.append("\"");
                 structureBuilder.append(elementName);
                 structureBuilder.append("\": ");
-                if (subField instanceof PVString) {
-                    structureBuilder.append("\"");
-                }
                 structureBuilder.append(elementValue);
-                if (subField instanceof PVString) {
-                    structureBuilder.append("\"");
-                }
             }
             structureBuilder.append("}");
             value = structureBuilder.toString();
@@ -311,7 +367,7 @@ public class AidaRPCService implements RPCService {
             StringBuilder arrayBuilder = new StringBuilder();
             arrayBuilder.append("[");
             boolean firstTime = true;
-            for (String subValue : arrayFields(array)) {
+            for (String subValue : arrayFields(array, fieldPath, floatMap, doubleMap)) {
                 if (!firstTime) {
                     arrayBuilder.append(", ");
                 }
@@ -327,13 +383,16 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Extract array fields to supply to {@link #fieldToString(PVField)}
+     * Extract array fields to supply to {@link #fieldToString(PVField, String, Map, Map)}
      *
-     * @param array any PV array
+     * @param array     any PV array
+     * @param fieldPath path under which this field sits
+     * @param floatMap  to return the list of floats found and the paths
+     * @param doubleMap to return the list of doubles found and the paths
      * @return the list of strings for this array
      * @throws RPCRequestException when there is an unsupported type
      */
-    private List<String> arrayFields(PVArray array) throws RPCRequestException {
+    private List<String> arrayFields(PVArray array, String fieldPath, Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
         List<String> arrayList = new ArrayList<String>();
 
         if (array instanceof PVBooleanArray) {
@@ -356,14 +415,20 @@ public class AidaRPCService implements RPCService {
         } else if (array instanceof PVDoubleArray) {
             // For double arrays
             IteratorDouble it = ((PVDoubleArray) array).get().iterator();
+            int i = 0;
             while (it.hasNext()) {
-                arrayList.add(Double.toString(it.nextDouble()));
+                double d = it.nextDouble();
+                doubleMap.put(fieldPath + "[" + i++ + "]", d);
+                arrayList.add(Double.toString(d));
             }
         } else if (array instanceof PVFloatArray) {
             // For float arrays
             IteratorFloat it = ((PVFloatArray) array).get().iterator();
+            int i = 0;
             while (it.hasNext()) {
-                arrayList.add(Float.toString(it.nextFloat()));
+                float f = it.nextFloat();
+                floatMap.put(fieldPath + "[" + i++ + "]", f);
+                arrayList.add(Float.toString(f));
             }
         } else if (array instanceof PVIntArray) {
             // For integer arrays
@@ -390,13 +455,7 @@ public class AidaRPCService implements RPCService {
             while (offset < len) {
                 int num = ((PVStringArray) array).get(offset, (len - offset), data);
                 for (int i = 0; i < num; i++) {
-                    String string = data.data[offset + i];
-                    // Only add quotes around real strings
-                    if (isNumeric(string)) {
-                        arrayList.add(string);
-                    } else {
-                        arrayList.add("\"" + string + "\"");
-                    }
+                    arrayList.add("\"" + data.data[offset + i] + "\"");
                 }
                 offset += num;
             }
@@ -407,12 +466,16 @@ public class AidaRPCService implements RPCService {
             while (offset < len) {
                 int num = ((PVStructureArray) array).get(offset, (len - offset), data);
                 for (int i = 0; i < num; i++) {
-                    arrayList.add(fieldToString((data.data[offset + i])));
+                    arrayList.add(fieldToString((data.data[offset + i]), fieldPath + "[" + offset + i + "]", floatMap, doubleMap));
                 }
                 offset += num;
             }
         }
         return arrayList;
+    }
+
+    private boolean isSubField(String fieldPath) {
+        return fieldPath.contains(".") || fieldPath.contains("[");
     }
 
     /**
