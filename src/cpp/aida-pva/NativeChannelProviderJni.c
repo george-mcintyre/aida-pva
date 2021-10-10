@@ -23,7 +23,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv* env, jclass
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestBoolean
- * Signature: (Ljava/lang/String;Ljava/util/List;)Z
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)Z
  */
 jboolean
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBoolean
@@ -46,7 +46,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBoolean
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestByte
- * Signature: (Ljava/lang/String;Ljava/util/List;)B
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)B
  */
 JNIEXPORT jbyte
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByte
@@ -69,7 +69,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByte
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestShort
- * Signature: (Ljava/lang/String;Ljava/util/List;)S
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)S
  */
 JNIEXPORT jshort
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShort
@@ -92,7 +92,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShort
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestInteger
- * Signature: (Ljava/lang/String;Ljava/util/List;)I
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)I
  */
 JNIEXPORT jint
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestInteger
@@ -115,7 +115,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestInteger
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestLong
- * Signature: (Ljava/lang/String;Ljava/util/List;)J
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)J
  */
 JNIEXPORT jlong
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLong
@@ -138,7 +138,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLong
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestFloat
- * Signature: (Ljava/lang/String;Ljava/util/List;)F
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)F
  */
 JNIEXPORT jfloat
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloat
@@ -161,7 +161,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloat
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestDouble
- * Signature: (Ljava/lang/String;Ljava/util/List;)D
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)D
  */
 JNIEXPORT jdouble
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDouble
@@ -184,7 +184,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDouble
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestString
- * Signature: (Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)Ljava/lang/String;
  */
 JNIEXPORT jstring
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
@@ -215,7 +215,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestBooleanArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[Z
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[Z
  */
 JNIEXPORT jbooleanArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBooleanArray
@@ -242,7 +242,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBooleanArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestByteArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[B
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[B
  */
 JNIEXPORT jbyteArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByteArray
@@ -269,7 +269,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByteArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestShortArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[S
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[S
  */
 JNIEXPORT jshortArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShortArray
@@ -296,7 +296,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShortArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestIntegerArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[I
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[I
  */
 JNIEXPORT jintArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestIntegerArray
@@ -323,7 +323,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestIntegerArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestLongArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[J
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[J
  */
 JNIEXPORT jlongArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLongArray
@@ -350,7 +350,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLongArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestFloatArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[F
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[F
  */
 JNIEXPORT jfloatArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloatArray
@@ -377,7 +377,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloatArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestDoubleArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[D
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[D
  */
 JNIEXPORT jdoubleArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDoubleArray
@@ -404,7 +404,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDoubleArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestStringArray
- * Signature: (Ljava/lang/String;Ljava/util/List;)[Ljava/lang/String;
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)[Ljava/lang/String;
  */
 JNIEXPORT jobjectArray
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestStringArray
@@ -431,7 +431,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestStringArray
 /*
  * Class:     slac_aida_NativeChannelProvider
  * Method:    aidaRequestTable
- * Signature: (Ljava/lang/String;Ljava/util/List;)Ledu/stanford/slac/aida/lib/model/AidaTable;
+ * Signature: (Ljava/lang/String;Ledu/stanford/slac/aida/lib/model/AidaArguments;)Ledu/stanford/slac/aida/lib/model/AidaTable;
  */
 JNIEXPORT jobject
 JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestTable

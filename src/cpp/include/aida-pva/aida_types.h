@@ -78,10 +78,23 @@ typedef enum
 	AIDA_UNSIGNED_LONG_ARRAY_TYPE		// Represents an internal type of unsigned long array
 } Type;
 
+typedef union
+{
+	float floatValue;
+	double doubleValue;
+} FloatOrDoubleValue;
+
+typedef struct
+{
+	char * path;
+	FloatOrDoubleValue value;
+} FloatingPointValue;
+
 typedef struct
 {
 	char* name;
 	char* value;
+	FloatingPointValue *floatingPointValues;
 } Argument;
 
 typedef union

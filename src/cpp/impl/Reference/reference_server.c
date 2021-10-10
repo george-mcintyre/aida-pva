@@ -45,16 +45,16 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 	// Defaults are all 0 zo any values you see are the ones you sent
 
 	int intVar = 0, * intArray = NULL;
-	unsigned int unsignedIntVar = 0, * unsignedIntArray= NULL;
-	float floatVar = 0.0f, * floatArray= NULL;
-	char byteVar = '0', * byteArray= NULL; // only first value works
-	unsigned char boolVar = 0, * boolArray= NULL;
-	char* stringVar = NULL, ** stringArray= NULL;
-	short shortVar = 0, * shortArray= NULL;
-	unsigned short unsignedShortVar = 0, * unsignedShortArray= NULL;
-	long longVar = 0L, * longArray= NULL;
-	unsigned long unsignedLongVar = 0L, * unsignedLongArray= NULL;
-	double doubleVar = 0.0, * doubleArray= NULL;
+	unsigned int unsignedIntVar = 0, * unsignedIntArray = NULL;
+	float floatVar = 0.0f, * floatArray = NULL;
+	char byteVar = '0', * byteArray = NULL; // only first value works
+	unsigned char boolVar = 0, * boolArray = NULL;
+	char* stringVar = NULL, ** stringArray = NULL;
+	short shortVar = 0, * shortArray = NULL;
+	unsigned short unsignedShortVar = 0, * unsignedShortArray = NULL;
+	long longVar = 0L, * longArray = NULL;
+	unsigned long unsignedLongVar = 0L, * unsignedLongArray = NULL;
+	double doubleVar = 0.0, * doubleArray = NULL;
 
 	unsigned int intArrayCount, unsignedIntArrayCount, floatArrayCount, byteArrayCount, boolArrayCount, stringArrayCount, shortArrayCount, unsignedShortArrayCount, longArrayCount, unsignedLongArrayCount, doubleArrayCount;
 
@@ -65,25 +65,31 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 			"%oda  %oua  %ofa  %oca  %oba  %osa"
 			"%ohda %ohua "
 			"%olda %olua %olfa",
+
 			"int", &intVar,
 			"uInt", &unsignedIntVar,
 			"float", &floatVar,
 			"byte", &byteVar,
 			"bool", &boolVar,
 			"string", &stringVar,
+
 			"short", &shortVar,
 			"uShort", &unsignedShortVar,
+
 			"long", &longVar,
 			"uLong", &unsignedLongVar,
 			"double", &doubleVar,
+
 			"intA", &intArray, &intArrayCount,
 			"uIntA", &unsignedIntArray, &unsignedIntArrayCount,
 			"floatA", &floatArray, &floatArrayCount,
 			"byteA", &byteArray, &byteArrayCount,
 			"boolA", &boolArray, &boolArrayCount,
 			"stringA", &stringArray, &stringArrayCount,
+
 			"shortA", &shortArray, &shortArrayCount,
 			"uShortA", &unsignedShortArray, &unsignedShortArrayCount,
+
 			"longA", &longArray, &longArrayCount,
 			"uLongA", &unsignedLongArray, &unsignedLongArrayCount,
 			"doubleA", &doubleArray, &doubleArrayCount
@@ -104,17 +110,61 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 		printf("uLong=%lu, ", unsignedLongVar);
 		printf("double=%g, ", doubleVar);
 
-		if (intArrayCount) { for (int index = 0; index < intArrayCount; index++) printf("intA[%d]=%d, ", index, intArray[index]); printf("\n");}
-		if (unsignedIntArrayCount) { for (int index = 0; index < unsignedIntArrayCount; index++) printf("uIntA[%d]=%u, ", index, unsignedIntArray[index]); printf("\n");}
-		if (floatArrayCount) { for (int index = 0; index < floatArrayCount; index++) printf("floatA[%d]=%g, ", index, floatArray[index]); printf("\n");}
-		if (byteArrayCount) { for (int index = 0; index < byteArrayCount; index++) printf("byteA[%d]=%c, ", index, byteArray[index]); printf("\n");}
-		if (boolArrayCount) { for (int index = 0; index < boolArrayCount; index++) printf("boolA[%d]=%d, ", index, boolArray[index]); printf("\n");}
-		if (stringArrayCount) { for (int index = 0; index < stringArrayCount; index++) printf("stringA[%d]=%s, ", index, stringArray[index]); printf("\n");}
-		if (shortArrayCount) { for (int index = 0; index < shortArrayCount; index++) printf("shortA[%d]=%hd, ",index,  shortArray[index]); printf("\n");}
-		if (unsignedShortArrayCount) { for (int index = 0; index < unsignedShortArrayCount; index++) printf("uShortA[%d]=%hu, ",index,  unsignedShortArray[index]); printf("\n");}
-		if (longArrayCount) { for (int index = 0; index < longArrayCount; index++) printf("longA[%d]=%ld, ",index,  longArray[index]); printf("\n");}
-		if (unsignedLongArrayCount) { for (int index = 0; index < unsignedLongArrayCount; index++) printf("uLongA[%d]=%lu, ",index,  unsignedLongArray[index]); printf("\n");}
-		if (doubleArrayCount) { for (int index = 0; index < doubleArrayCount; index++) printf("doubleA[%d]=%g, ",index,  doubleArray[index]); printf("\n");}
+		if (intArrayCount) {
+			for (int index = 0; index < intArrayCount; index++)
+				printf("intA[%d]=%d, ", index, intArray[index]);
+			printf("\n");
+		}
+		if (unsignedIntArrayCount) {
+			for (int index = 0; index < unsignedIntArrayCount; index++)
+				printf("uIntA[%d]=%u, ", index, unsignedIntArray[index]);
+			printf("\n");
+		}
+		if (floatArrayCount) {
+			for (int index = 0; index < floatArrayCount; index++)
+				printf("floatA[%d]=%g, ", index, floatArray[index]);
+			printf("\n");
+		}
+		if (byteArrayCount) {
+			for (int index = 0; index < byteArrayCount; index++)
+				printf("byteA[%d]=%c, ", index, byteArray[index]);
+			printf("\n");
+		}
+		if (boolArrayCount) {
+			for (int index = 0; index < boolArrayCount; index++)
+				printf("boolA[%d]=%d, ", index, boolArray[index]);
+			printf("\n");
+		}
+		if (stringArrayCount) {
+			for (int index = 0; index < stringArrayCount; index++)
+				printf("stringA[%d]=%s, ", index, stringArray[index]);
+			printf("\n");
+		}
+		if (shortArrayCount) {
+			for (int index = 0; index < shortArrayCount; index++)
+				printf("shortA[%d]=%hd, ", index, shortArray[index]);
+			printf("\n");
+		}
+		if (unsignedShortArrayCount) {
+			for (int index = 0; index < unsignedShortArrayCount; index++)
+				printf("uShortA[%d]=%hu, ", index, unsignedShortArray[index]);
+			printf("\n");
+		}
+		if (longArrayCount) {
+			for (int index = 0; index < longArrayCount; index++)
+				printf("longA[%d]=%ld, ", index, longArray[index]);
+			printf("\n");
+		}
+		if (unsignedLongArrayCount) {
+			for (int index = 0; index < unsignedLongArrayCount; index++)
+				printf("uLongA[%d]=%lu, ", index, unsignedLongArray[index]);
+			printf("\n");
+		}
+		if (doubleArrayCount) {
+			for (int index = 0; index < doubleArrayCount; index++)
+				printf("doubleA[%d]=%g, ", index, doubleArray[index]);
+			printf("\n");
+		}
 	}
 
 	// Free allocated stuff
@@ -160,10 +210,9 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 	char item = 0x02;
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		item |= getByteArgument(argument);
-	}
+	char x = 0x0;
+	ascanf(env, &arguments, "%oc", "x", &x);
+	item |= x;
 
 	// Return the item
 	return item;
@@ -187,10 +236,9 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 	short item = 3;
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		item += getShortArgument(argument);
-	}
+	short x = 0;
+	ascanf(env, &arguments, "ohd", "x", &x);
+	item += x;
 
 	// Return the item
 	return item;
@@ -214,10 +262,9 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 	int item = 4;
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		item += getIntegerArgument(argument);
-	}
+	int x = 0;
+	ascanf(env, &arguments, "%od", "x", &x);
+	item += x;
 
 	// Return the item
 	return item;
@@ -241,10 +288,9 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 	long item = 5;
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		item += getLongArgument(argument);
-	}
+	long x = 0;
+	ascanf(env, &arguments, "%old", "x", &x);
+	item += x;
 
 	// Return the item
 	return item;
@@ -268,10 +314,9 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 	float item = 6.6f;
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		item *= getFloatArgument(argument);
-	}
+	float x = 1.0f;
+	ascanf(env, &arguments, "%of", "x", &x);
+	item *= x;
 
 	// Return the item
 	return item;
@@ -295,10 +340,9 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 	double item = 7.7;
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		item *= getDoubleArgument(argument);
-	}
+	double x = 1.0f;
+	ascanf(env, &arguments, "%olf", "x", &x);
+	item *= x;
 
 	// Return the item
 	return item;
@@ -322,22 +366,20 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 
 	char* item;
 	char* data = "eight";
-	const char* arg = "";
 
 	// Optional Arguments
-	Argument argument = getArgument(arguments, "x");
-	if (argument.name) {
-		arg = argument.value;
-	}
+	char *x = "";
+	ascanf(env, &arguments, "%os", "x", &x);
 
 	// allocate and return
-	ALLOCATE_MEMORY_OR_RETURN(env, item, strlen(data) + strlen(arg) + 3, "string", NULL)
+	ALLOCATE_MEMORY_OR_RETURN(env, item, strlen(data) + strlen(x) + 3, "string", NULL)
 
-	if (!strlen(arg)) {
+	if (!strlen(x)) {
 		sprintf(item, "%s", data);
 	} else {
-		sprintf(item, "%s: %s", arg, data);
+		sprintf(item, "%s: %s", x, data);
 	}
+	free(x);
 
 	// Return the item
 	return item;
@@ -563,7 +605,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION(table)
 	tableAddSingleRowLongColumn(env, &table, 5);
 	CHECK_EXCEPTION(table)
-	tableAddSingleRowFloatColumn(env, &table,  6.6f, false);
+	tableAddSingleRowFloatColumn(env, &table, 6.6f, false);
 	CHECK_EXCEPTION(table)
 	tableAddSingleRowDoubleColumn(env, &table, 7.7, false);
 	CHECK_EXCEPTION(table)

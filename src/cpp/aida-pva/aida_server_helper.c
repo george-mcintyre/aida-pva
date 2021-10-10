@@ -223,95 +223,6 @@ Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
 	return _getNamedValue(env, arguments, name, true);
 }
 
-/**
- * Get boolean argument
- * @param argument argument
- * @return boolean
- */
-int getBooleanArgument(Argument argument)
-{
-	return strlen(argument.value) &&
-			strcasecmp(argument.value, "false") != 0 &&
-			strcmp(argument.value, "0") != 0;
-}
-
-/**
- * Get byte argument
- * @param argument argument
- * @return byte
- */
-char getByteArgument(Argument argument)
-{
-	int scannedValue = 0;
-
-	if (!strncmp("0x", argument.value, 2)) {
-		sscanf(argument.value, "%x", &scannedValue);
-	} else {
-		sscanf(argument.value, "%d", &scannedValue);
-	}
-
-	return (char)scannedValue;
-}
-
-/**
- * Get short argument
- * @param argument argument
- * @return short
- */
-short getShortArgument(Argument argument)
-{
-	short item = 0;
-	sscanf(argument.value, "%hi", &item);
-	return item;
-}
-
-/**
- * Get integer argument
- * @param argument argument
- * @return int
- */
-int getIntegerArgument(Argument argument)
-{
-	int item = 0;
-	sscanf(argument.value, "%d", &item);
-	return item;
-}
-
-/**
- * Get long argument
- * @param argument argument
- * @return long
- */
-long getLongArgument(Argument argument)
-{
-	long item = 0;
-	sscanf(argument.value, "%ld", &item);
-	return item;
-}
-
-/**
- * Get float argument
- * @param argument argument
- * @return float
- */
-float getFloatArgument(Argument argument)
-{
-	float item = 0;
-	sscanf(argument.value, "%f", &item);
-	return item;
-}
-
-/**
- * Get double argument
- * @param argument argument
- * @return double
- */
-double getDoubleArgument(Argument argument)
-{
-	double item = 0.0;
-	sscanf(argument.value, "%lf", &item);
-	return item;
-}
 
 /**
  * Print a value to standard output
@@ -480,12 +391,8 @@ void secnFromUri(const char* uri, int4u* secn)
 	strcpy(uriCopy, uri);
 	char* secondary = strrchr(uriCopy, ':');
 	if ( secondary ) {
-		uriCopy[secondary-uriCopy] = 0x0;
-		secondary = strrchr(uriCopy, ':');
-		if ( secondary ) {
-			memcpy(secn, secondary+1, sizeof(int4u));
-			return;
-		}
+		memcpy(secn, secondary+1, sizeof(int4u));
+		return;
 	}
 	fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
 	*secn = 0;
