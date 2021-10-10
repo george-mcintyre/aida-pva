@@ -1,8 +1,6 @@
 package edu.stanford.slac.aida.lib;
 
-import edu.stanford.slac.aida.lib.model.AidaArgument;
-import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
-import edu.stanford.slac.aida.lib.model.AidaType;
+import edu.stanford.slac.aida.lib.model.*;
 import edu.stanford.slac.except.*;
 import org.epics.nt.NTURI;
 import org.epics.pvaccess.server.rpc.RPCRequestException;
@@ -12,9 +10,7 @@ import org.epics.util.array.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
@@ -95,8 +91,8 @@ public class AidaRPCService implements RPCService {
      * Make request to the specified channel with the uri and arguments specified
      * and return the NT_TABLE of results.
      *
-     * @param channelName channel name
-     * @param arguments   arguments if any
+     * @param channelName   channel name
+     * @param argumentsList arguments if any
      * @return the structure containing the results.
      * @throws AidaInternalException            if any error occurs because of an implementation error in aida server code
      * @throws MissingRequiredArgumentException when a required argument was not supplied
@@ -106,7 +102,7 @@ public class AidaRPCService implements RPCService {
      *                                          Usually caused when channel matches a pattern specified in the channels.yml file
      *                                          but is not yet supported in the service implementation
      */
-    private PVStructure request(String channelName, List<AidaArgument> arguments) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
+    private PVStructure request(String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
         AidaChannelConfig getterConfig = aidaChannelProvider.getGetterConfig(channelName);
         AidaChannelConfig setterConfig = aidaChannelProvider.getSetterConfig(channelName);
 
@@ -116,7 +112,7 @@ public class AidaRPCService implements RPCService {
         // Get special arguments type and value
         String typeArgument = null;
         AidaArgument valueArgument = null;
-        for (AidaArgument argument : arguments) {
+        for (AidaArgument argument : argumentsList) {
             if (argument.getName().equalsIgnoreCase("Type")) {
                 typeArgument = argument.getValue().toUpperCase();
             }
@@ -129,9 +125,9 @@ public class AidaRPCService implements RPCService {
 
         // See if the request type is supported for the channel
         if (isSetterRequest && NONE.equals(aidaSetterType)) {
-            throw new UnsupportedChannelTypeException(channelName + arguments + ".  Set requests are not supported for this channel");
+            throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  Set requests are not supported for this channel");
         } else if (!isSetterRequest && NONE.equals(aidaGetterType)) {
-            throw new UnsupportedChannelTypeException(channelName + arguments + ".  Get requests are not supported for this channel");
+            throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  Get requests are not supported for this channel");
         }
 
         // If a type has been specified then override the appropriate Config's type with the specified one
@@ -144,12 +140,12 @@ public class AidaRPCService implements RPCService {
                 // or if the specified type is in the class of types allowed by the channel
                 if (isSetterRequest) {
                     if (!TABLE.equals(specifiedAidaType) && !VOID.equals(specifiedAidaType)) {
-                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
                     }
                     if (specifiedAidaType.equals(aidaSetterType) || ANY.equals(aidaSetterType)) {
                         aidaSetterType = specifiedAidaType;
                     } else {
-                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
                     }
                 } else {
                     if (ANY.equals(aidaGetterType) ||
@@ -157,17 +153,17 @@ public class AidaRPCService implements RPCService {
                                     (TABLE.equals(specifiedAidaType) || specifiedAidaType.metaType().equals(aidaGetterType)))) {
                         aidaGetterType = specifiedAidaType;
                     } else {
-                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter must be a " + (aidaGetterType != null ? aidaGetterType : "<unspecified>") + ", but you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be a " + (aidaGetterType != null ? aidaGetterType : "<unspecified>") + ", but you specified " + specifiedAidaType);
                     }
                 }
             } catch (IllegalArgumentException e) {
-                throw new UnsupportedChannelTypeException(channelName + arguments + ".  The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
+                throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
             }
         } else {
-            if ( isSetterRequest ) {
+            if (isSetterRequest) {
                 // If a class of types is set as the getter type, but you didn't set one then error out
                 if (aidaSetterType == ANY) {
-                    throw new UnsupportedChannelTypeException(channelName + arguments + ".  The 'Type' parameter must be set 'VOID' or 'TABLE' but you didn't specify one");
+                    throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The 'Type' parameter must be set 'VOID' or 'TABLE' but you didn't specify one");
                 }
             } else {
                 // If a class of types is set as the getter type, but you didn't set one then error out
@@ -175,7 +171,7 @@ public class AidaRPCService implements RPCService {
                     case SCALAR:
                     case SCALAR_ARRAY:
                     case ANY:
-                        throw new UnsupportedChannelTypeException(channelName + arguments + ".  The 'Type' parameter must be set to a type corresponding to " + aidaGetterType + ", but you didn't specify one");
+                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The 'Type' parameter must be set to a type corresponding to " + aidaGetterType + ", but you didn't specify one");
                 }
             }
         }
@@ -194,10 +190,13 @@ public class AidaRPCService implements RPCService {
         }
 
         if (isSetterRequest) {
-            System.out.println("AIDA SetValue: " + channelName + arguments + " => " + aidaSetterType + (channelSetterType == null ? "" : ("::" + channelSetterType)));
+            System.out.println("AIDA SetValue: " + channelName + argumentsList + " => " + aidaSetterType + (channelSetterType == null ? "" : ("::" + channelSetterType)));
         } else {
-            System.out.println("AIDA GetValue: " + channelName + arguments + " => " + aidaGetterType + (channelGetterType == null ? "" : ("::" + channelGetterType)));
+            System.out.println("AIDA GetValue: " + channelName + argumentsList + " => " + aidaGetterType + (channelGetterType == null ? "" : ("::" + channelGetterType)));
         }
+
+        // Make an arguments object to pass to requests
+        AidaArguments arguments = new AidaArguments(argumentsList);
 
         // Call entry point based on return type
         if (isSetterRequest) {
@@ -247,49 +246,20 @@ public class AidaRPCService implements RPCService {
         if (pvUriQuery != null) {
             PVField[] pvFields = pvUriQuery.getPVFields();
             for (PVField field : pvFields) {
-                getArgument(arguments, field);
+                arguments.add(getArgument(field));
             }
         }
         return arguments;
     }
 
     /**
-     * Get a single argument from the given field and add it to the list of arguments
+     * Convert a PVField into an AidaArgument
      *
-     * @param arguments list of arguments to add the argument to
-     * @param field     field to extract the argument from
+     * @param field the field to convert into an AidaArgument
+     * @return the AidaArgument
      * @throws RPCRequestException if something bad happens
      */
-    private void getArgument(List<AidaArgument> arguments, PVField field) throws RPCRequestException {
-        arguments.add(getNameAndValue(field, new HashMap<String, Float>(), new HashMap<String, Double>()));
-    }
-
-    /**
-     * Get name / value pair for an argument
-     *
-     * @param field     the field to break into name and value pair
-     * @param floatMap  to return the list of floats found and the paths
-     * @param doubleMap to return the list of doubles found and the paths
-     * @return the name value pair
-     * @throws RPCRequestException if something bad happens
-     */
-    private AidaArgument getNameAndValue(PVField field, Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
-        AidaArgument nameAndValue = getNameAndStringValue(field, floatMap, doubleMap);
-        nameAndValue.getFloats().putAll(floatMap);
-        nameAndValue.getDoubles().putAll(doubleMap);
-        return nameAndValue;
-    }
-
-    /**
-     * Get argument for a request argument
-     *
-     * @param field        the field to break into name and value pair
-     * @param floatMap     to return the list of floats found and the paths
-     * @param doubleMap    to return the list of doubles found and the paths
-     * @return the name value pair
-     * @throws RPCRequestException if something bad happens
-     */
-    private AidaArgument getNameAndStringValue(PVField field,  Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
+    private AidaArgument getArgument(PVField field) throws RPCRequestException {
         String name = field.getFieldName();
         if (name == null) {
             throw new RPCRequestException(ERROR, "Invalid argument name: <blank>");
@@ -297,28 +267,30 @@ public class AidaRPCService implements RPCService {
 
         // Convert all arguments to string (json or otherwise)
         // But collect all doubles and floats unchanged in ieee format
-        String value = fieldToString(field, name, floatMap, doubleMap);
+        List<FloatArgument> floatArgumentList = new ArrayList<FloatArgument>();
+        List<DoubleArgument> doubleArgumentList = new ArrayList<DoubleArgument>();
+        String value = fieldToString(field, name, floatArgumentList, doubleArgumentList);
 
         if (value == null) {
             throw new RPCRequestException(ERROR, "Invalid argument value: <blank>");
         }
 
-        return new AidaArgument(name, value);
+        return new AidaArgument(name, value, floatArgumentList, doubleArgumentList);
     }
 
     /**
      * Extract the String value from the field
      * Any time a double or float is found, add it to the appropriate map under the `fieldMap` key
      *
-     * @param field     the field
-     * @param fieldPath path under which this field sits.  Used only for floats and doubles that need
-     *                  to set the path so the name in the pair is prefixed with this value if set
-     * @param floatMap  to return the list of floats found and the paths
-     * @param doubleMap to return the list of doubles found and the paths
+     * @param field              the field
+     * @param fieldPath          path under which this field sits.  Used only for floats and doubles that need
+     *                           to set the path so the name in the pair is prefixed with this value if set
+     * @param floatArgumentList  to return the list of floats found and the paths
+     * @param doubleArgumentList to return the list of doubles found and the paths
      * @return the extracted value
      * @throws RPCRequestException of the field type is unsupported
      */
-    private String fieldToString(PVField field, String fieldPath, Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
+    private String fieldToString(PVField field, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
         String value;
         if (field instanceof PVBoolean) {
             value = Boolean.toString(((PVBoolean) field).get());
@@ -328,11 +300,11 @@ public class AidaRPCService implements RPCService {
             value = Byte.toString(((PVUByte) field).get());
         } else if (field instanceof PVDouble) {
             double d = ((PVDouble) field).get();
-            doubleMap.put(fieldPath, d);
+            doubleArgumentList.add(new DoubleArgument(fieldPath, d));
             value = Double.toString(d);
         } else if (field instanceof PVFloat) {
             float f = ((PVFloat) field).get();
-            floatMap.put(fieldPath, f);
+            floatArgumentList.add(new FloatArgument(fieldPath, f));
             value = Float.toString(f);
         } else if (field instanceof PVInt) {
             value = Integer.toString(((PVInt) field).get());
@@ -356,7 +328,7 @@ public class AidaRPCService implements RPCService {
             boolean firstTime = true;
             for (PVField subField : structure.getPVFields()) {
                 String elementName = subField.getFieldName();
-                String elementValue = fieldToString(subField, fieldPath + "." + elementName, floatMap, doubleMap);
+                String elementValue = fieldToString(subField, fieldPath + "." + elementName, floatArgumentList, doubleArgumentList);
                 if (!firstTime) {
                     structureBuilder.append(", ");
                 }
@@ -374,7 +346,8 @@ public class AidaRPCService implements RPCService {
             StringBuilder arrayBuilder = new StringBuilder();
             arrayBuilder.append("[");
             boolean firstTime = true;
-            for (String subValue : arrayFields(array, fieldPath, floatMap, doubleMap)) {
+            List<String> arrayList = arrayFields(array, fieldPath, floatArgumentList, doubleArgumentList);
+            for (String subValue : arrayList) {
                 if (!firstTime) {
                     arrayBuilder.append(", ");
                 }
@@ -390,16 +363,16 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Extract array fields to supply to {@link #fieldToString(PVField, String, Map, Map)}
+     * Extract array fields
      *
-     * @param array     any PV array
-     * @param fieldPath path under which this field sits
-     * @param floatMap  to return the list of floats found and the paths
-     * @param doubleMap to return the list of doubles found and the paths
+     * @param array              any PV array
+     * @param fieldPath          path under which this field sits
+     * @param floatArgumentList  to return the list of floats found and the paths
+     * @param doubleArgumentList to return the list of doubles found and the paths
      * @return the list of strings for this array
      * @throws RPCRequestException when there is an unsupported type
      */
-    private List<String> arrayFields(PVArray array, String fieldPath, Map<String, Float> floatMap, Map<String, Double> doubleMap) throws RPCRequestException {
+    private List<String> arrayFields(PVArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
         List<String> arrayList = new ArrayList<String>();
 
         if (array instanceof PVBooleanArray) {
@@ -425,7 +398,7 @@ public class AidaRPCService implements RPCService {
             int i = 0;
             while (it.hasNext()) {
                 double d = it.nextDouble();
-                doubleMap.put(fieldPath + "[" + i++ + "]", d);
+                doubleArgumentList.add(new DoubleArgument(fieldPath + "[" + i++ + "]", d));
                 arrayList.add(Double.toString(d));
             }
         } else if (array instanceof PVFloatArray) {
@@ -434,7 +407,7 @@ public class AidaRPCService implements RPCService {
             int i = 0;
             while (it.hasNext()) {
                 float f = it.nextFloat();
-                floatMap.put(fieldPath + "[" + i++ + "]", f);
+                floatArgumentList.add(new FloatArgument(fieldPath + "[" + i++ + "]", f));
                 arrayList.add(Float.toString(f));
             }
         } else if (array instanceof PVIntArray) {
@@ -473,7 +446,7 @@ public class AidaRPCService implements RPCService {
             while (offset < len) {
                 int num = ((PVStructureArray) array).get(offset, (len - offset), data);
                 for (int i = 0; i < num; i++) {
-                    arrayList.add(fieldToString((data.data[offset + i]), fieldPath + "[" + offset + i + "]", floatMap, doubleMap));
+                    arrayList.add(fieldToString((data.data[offset + i]), fieldPath + "[" + offset + i + "]", floatArgumentList, doubleArgumentList));
                 }
                 offset += num;
             }

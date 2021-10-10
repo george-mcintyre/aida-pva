@@ -1,9 +1,7 @@
 package slac.aida;
 
-import edu.stanford.slac.aida.lib.model.AidaArgument;
+import edu.stanford.slac.aida.lib.model.AidaArguments;
 import edu.stanford.slac.aida.lib.model.AidaTable;
-
-import java.util.List;
 
 public class NativeChannelProvider {
 
@@ -21,7 +19,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a List of AidaTable to be tabulated either ROW_MAJOR (list of rows) or COLUMN_MAJOR (list of columns)
      */
-    protected native AidaTable aidaRequestTable(String pvUri, List<AidaArgument> arguments);
+    protected native AidaTable aidaRequestTable(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for setting values with no return value.
@@ -29,7 +27,7 @@ public class NativeChannelProvider {
      * @param pvUri     the uri
      * @param arguments the arguments
      */
-    protected native void aidaSetValue(String pvUri, List<AidaArgument> arguments);
+    protected native void aidaSetValue(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for setting values with a Table as a return value.
@@ -40,7 +38,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a List of AidaTable to be tabulated either ROW_MAJOR (list of rows) or COLUMN_MAJOR (list of columns)
      */
-    protected native AidaTable aidaSetValueWithResponse(String pvUri, List<AidaArgument> arguments);
+    protected native AidaTable aidaSetValueWithResponse(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Boolean
@@ -49,7 +47,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Boolean
      */
-    protected native boolean aidaRequestBoolean(String pvUri, List<AidaArgument> arguments);
+    protected native boolean aidaRequestBoolean(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Byte
@@ -58,7 +56,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Byte
      */
-    protected native byte aidaRequestByte(String pvUri, List<AidaArgument> arguments);
+    protected native byte aidaRequestByte(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Short
@@ -67,7 +65,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Short
      */
-    protected native short aidaRequestShort(String pvUri, List<AidaArgument> arguments);
+    protected native short aidaRequestShort(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Integer
@@ -76,7 +74,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return ab Integer
      */
-    protected native int aidaRequestInteger(String pvUri, List<AidaArgument> arguments);
+    protected native int aidaRequestInteger(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Long
@@ -85,7 +83,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Long
      */
-    protected native long aidaRequestLong(String pvUri, List<AidaArgument> arguments);
+    protected native long aidaRequestLong(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Float
@@ -94,7 +92,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Float
      */
-    protected native float aidaRequestFloat(String pvUri, List<AidaArgument> arguments);
+    protected native float aidaRequestFloat(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Double
@@ -103,7 +101,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Double
      */
-    protected native double aidaRequestDouble(String pvUri, List<AidaArgument> arguments);
+    protected native double aidaRequestDouble(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for String
@@ -112,7 +110,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a String
      */
-    protected native String aidaRequestString(String pvUri, List<AidaArgument> arguments);
+    protected native String aidaRequestString(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Boolean Array
@@ -121,7 +119,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Boolean Array
      */
-    protected native boolean[] aidaRequestBooleanArray(String pvUri, List<AidaArgument> arguments);
+    protected native boolean[] aidaRequestBooleanArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Byte Array
@@ -130,7 +128,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Byte Array
      */
-    protected native byte[] aidaRequestByteArray(String pvUri, List<AidaArgument> arguments);
+    protected native byte[] aidaRequestByteArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Short Array
@@ -139,7 +137,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Short Array
      */
-    protected native short[] aidaRequestShortArray(String pvUri, List<AidaArgument> arguments);
+    protected native short[] aidaRequestShortArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Integer Array
@@ -148,7 +146,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return an Integer Array
      */
-    protected native int[] aidaRequestIntegerArray(String pvUri, List<AidaArgument> arguments);
+    protected native int[] aidaRequestIntegerArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Long Array
@@ -157,7 +155,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Long Array
      */
-    protected native long[] aidaRequestLongArray(String pvUri, List<AidaArgument> arguments);
+    protected native long[] aidaRequestLongArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Float Array
@@ -166,7 +164,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Float Array
      */
-    protected native float[] aidaRequestFloatArray(String pvUri, List<AidaArgument> arguments);
+    protected native float[] aidaRequestFloatArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for Scalar Double Array
@@ -175,7 +173,7 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a Double Array
      */
-    protected native double[] aidaRequestDoubleArray(String pvUri, List<AidaArgument> arguments);
+    protected native double[] aidaRequestDoubleArray(String pvUri, AidaArguments arguments);
 
     /**
      * Prototype to be implemented for String Array
@@ -184,6 +182,6 @@ public class NativeChannelProvider {
      * @param arguments the arguments
      * @return a String Array
      */
-    protected native String[] aidaRequestStringArray(String pvUri, List<AidaArgument> arguments);
+    protected native String[] aidaRequestStringArray(String pvUri, AidaArguments arguments);
 
 }

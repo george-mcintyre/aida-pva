@@ -58,7 +58,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   request arguments
      * @return object
      */
-    public Object requestScalar(String channelName, AidaType aidaType, List<AidaArgument> arguments) {
+    public Object requestScalar(String channelName, AidaType aidaType, AidaArguments arguments) {
         switch (aidaType) {
             case BOOLEAN:
                 return aidaRequestBoolean(channelName, arguments);
@@ -89,7 +89,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   request arguments
      * @return List of scalar object
      */
-    public List<?> requestScalarArray(String channelName, AidaType aidaType, List<AidaArgument> arguments) {
+    public List<?> requestScalarArray(String channelName, AidaType aidaType, AidaArguments arguments) {
         switch (aidaType) {
             case BOOLEAN_ARRAY:
                 List<Boolean> tList = new ArrayList<Boolean>();
@@ -146,7 +146,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   arguments
      * @return return list of lists
      */
-    public List<List<Object>> requestTable(String channelName, List<AidaArgument> arguments) {
+    public List<List<Object>> requestTable(String channelName, AidaArguments arguments) {
         return aidaRequestTable(channelName, arguments).asList();
     }
 
@@ -157,7 +157,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   arguments
      *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
      */
-    public void setValue(String channelName, List<AidaArgument> arguments) {
+    public void setValue(String channelName, AidaArguments arguments) {
         aidaSetValue(channelName, arguments);
     }
 
@@ -169,7 +169,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
      * @return return list of lists
      */
-    public List<List<Object>> setValueWithResponse(String channelName, List<AidaArgument> arguments) {
+    public List<List<Object>> setValueWithResponse(String channelName, AidaArguments arguments) {
         return aidaSetValueWithResponse(channelName, arguments).asList();
     }
 
