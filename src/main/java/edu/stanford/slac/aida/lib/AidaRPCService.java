@@ -189,6 +189,11 @@ public class AidaRPCService implements RPCService {
             channelName = channelName.substring(servicePrefix + 2);
         }
 
+        int indexOfLastLegacySeparator = channelName.lastIndexOf("//");
+        if ( indexOfLastLegacySeparator != -1 ) {
+            channelName = channelName.substring(0, indexOfLastLegacySeparator) + ":" + channelName.substring(indexOfLastLegacySeparator+2) ;
+        }
+
         if (isSetterRequest) {
             System.out.println("AIDA SetValue: " + channelName + argumentsList + " => " + aidaSetterType + (channelSetterType == null ? "" : ("::" + channelSetterType)));
         } else {
