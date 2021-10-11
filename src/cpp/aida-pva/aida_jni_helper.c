@@ -915,14 +915,14 @@ void releaseTable(Table table)
 			}
 		}
 		table.columnCount = 0;
-	}
-	if (table.ppData) {
+
 		free(table.ppData);
 		table.ppData = NULL;
-	}
-	if (table.types) {
-		free(table.types);
-		table.types = NULL;
+
+		if (table.types) {
+			free(table.types);
+			table.types = NULL;
+		}
 	}
 }
 

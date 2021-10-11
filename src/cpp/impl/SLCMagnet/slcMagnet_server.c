@@ -362,6 +362,8 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	unsigned long longUnitList[*count];
 	for (int i = 0; i < nNames; i++) {
 		pmuFromDeviceName(names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i]);
+		*((char *)(*prim_list + PRIM_LEN + i * PRIM_LEN)) = 0x0;   // null terminate last one
+		*((char *)(*micr_list + MICRO_LEN + i * MICRO_LEN)) = 0x0; // null terminate last one
 		((int*)*unit_list)[i] = (int)longUnitList[i];
 	}
 	// Secondary name
