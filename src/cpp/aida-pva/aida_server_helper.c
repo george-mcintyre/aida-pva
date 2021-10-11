@@ -28,7 +28,6 @@ static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool f
  */
 void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
 {
-	fprintf(stderr, "AIDA Exception: %s: %s\n", exception, message);
 	aidaThrow(env, 1, exception, message);
 }
 
@@ -73,6 +72,8 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
 		strncat(errorMessageDescriptor.dsc$a_pointer, message,
 				MIN(strlen(message), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 	}
+
+	fprintf(stderr, "AIDA Exception: %s: %s\n", exception, errorMessageDescriptor.dsc$a_pointer);
 
 	// Create the fully qualified java class name of the exception to throw
 	char classToCreate[BUFSIZ] = "edu/stanford/slac/except/";
@@ -407,7 +408,7 @@ const char* secondaryFromUri(const char* uri)
 {
 	char* secondary = strrchr(uri, ':');
 	if (!secondary) {
-		fprintf(stderr, "Secondary not found in uri: %s\n", uri);
+		fprintf(stderr, "Warning: Secondary not found in uri: %s\n", uri);
 		return uri;
 	}
 	return secondary + 2;

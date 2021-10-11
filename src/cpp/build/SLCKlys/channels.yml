@@ -39,6 +39,21 @@ configurations:
   - name: TACT Getter and Setter
     getterConfig:
       type: SCALAR
+      fields:
+        - label: Accellerate
+          name: accel
+        - label: Standby
+          name: standby
+        - label: Bad
+          name: bad
+        - label: Sled Tuned
+          name: sled
+        - label: Sleded
+          name: sleded
+        - label: Pampl
+          name: pampl
+        - label: pphas
+          name: pphas
     setterConfig:
       type: TABLE
       fields:

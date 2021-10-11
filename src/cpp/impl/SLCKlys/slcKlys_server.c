@@ -46,7 +46,6 @@ REQUEST_STUB_LONG_ARRAY
 REQUEST_STUB_FLOAT_ARRAY
 REQUEST_STUB_DOUBLE_ARRAY
 REQUEST_STUB_STRING_ARRAY
-REQUEST_STUB_TABLE
 
 /**
  * Initialise the service
@@ -119,6 +118,40 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 	} else {
 		return ALLOCATE_STRING(env, "deactivated", "string");
 	}
+}
+
+Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
+{
+	short klystronStatus;
+	if (getKlystronStatus(env, uri, arguments, &klystronStatus)) {
+		RETURN_NULL_TABLE
+	}
+
+	bool isInAccelerateState = (short)(klystronStatus & LINKLYSTA_ACCEL) ? true : false;
+	bool isInStandByState = (short)(klystronStatus & LINKLYSTA_STANDBY) ? true : false;
+	bool isInBadState = (short)(klystronStatus & LINKLYSTA_BAD) ? true : false;
+	bool isSledTuned = (short)(klystronStatus & LINKLYSTA_SLED_TUNED) ? true : false;
+	bool isSleded = (short)(klystronStatus & LINKLYSTA_SLEDED) ? true : false;
+	bool isPampl = (short)(klystronStatus & LINKLYSTA_PAMPL) ? true : false;
+	bool isPphas = (short)(klystronStatus & LINKLYSTA_PPHAS) ? true : false;
+
+	Table table = tableCreate(env, 1, 7);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isInAccelerateState);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isInStandByState);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isInBadState);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isSledTuned);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isSleded);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isPampl);
+	CHECK_EXCEPTION(table)
+	tableAddSingleRowBooleanColumn(env, &table, isPphas);
+
+	return table;
 }
 
 /**
@@ -298,7 +331,6 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	}
 
 	// Set the new value
-	printf("Parameters: %s, %d, %s\n", shortSlcName, isActivateOperation, beam_c);
 	int status = DPSLCKLYS_SETDEACTORREACT(shortSlcName, isActivateOperation, beam_c);
 	if (!SUCCESS(status)) {
 		FREE_MEMORY
