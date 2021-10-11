@@ -106,12 +106,15 @@ configurations:
           description: Number of buffers currently allocated on the device
         - name: memory
           label: Device memory used
+          units: MB
           description: Total device memory used
         - name: sensor
           label: Device Sensor Reading
+          units: KHz
           description: Device sensor reading
         - name: hisensor
           label: High Precision Device Sensor
+          units: Mpa
           description: Device sensor reading
         - name: message
           label: Device Message

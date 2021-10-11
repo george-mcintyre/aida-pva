@@ -28,14 +28,17 @@ configurations:
         - label: pulse id
           name: id
           description: pulse id
-        - label: x offset (mm)
+        - label: x offset
           name: x
+          units: mm
           description: BPM x offset
-        - label: y offset (mm)
+        - label: y offset
           name: y
+          units: mm
           description: BPM y offset
-        - label: num particles (coulomb)
+        - label: num particles
           name: tmits
+          units: coulomb
           description: Number of particles
         - label: STAT
           name: STAT

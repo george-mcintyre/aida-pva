@@ -29,19 +29,22 @@ configurations:
       fields:
         - label: Energy
           name: energy
-          description: Energy (GeV)
+          units: GeV
+          description: Energy
         - label: psix
           name: psix
           description: psix
         - label: betax
           name: betax
-          description: betax (m)
+          units: m
+          description: betax
         - label: alphax
           name: alphax
           description: alphax
         - label: etax
           name: etax
-          description: etax (m)
+          units: m
+          description: etax
         - label: etax'
           name: etax_
           description: etax'
@@ -50,13 +53,15 @@ configurations:
           description: psiy
         - label: betay
           name: betay
-          description: betay (m)
+          units: m
+          description: betay
         - label: alphay
           name: alphay
           description: alphay
         - label: etay
           name: etay
-          description: etay (m)
+          units: m
+          description: etay
         - label: "etay'"
           name: "etay_"
           description: etay'

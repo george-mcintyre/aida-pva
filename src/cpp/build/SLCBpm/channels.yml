@@ -27,17 +27,21 @@ configurations:
         - label: BPM Name
           name: name
           description: Name of BPM
-        - label: x offset (mm)
+        - label: x offset
           name: x
+          units: mm
           description: BPM x offset
-        - label: y offset (mm)
+        - label: y offset
           name: y
+          units: mm
           description: BPM y offset
-        - label: num particles (coulomb)
+        - label: num particles
           name: tmits
+          units: coulomb
           description: Number of particles
-        - label: z position (meters)
+        - label: z position
           name: z
+          units: meters
           description: BPM z position
         - label: HSTA
           name: HSTA
