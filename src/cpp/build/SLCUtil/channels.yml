@@ -18,7 +18,14 @@ id: 122
 name: SLCUtil
 description: SLC Utility Server
 configurations:
-  - name: BGRP and MKB Config
+  - name: BGRP Config
+    getterConfig:
+      type: NONE
+    setterConfig:
+      type: VOID
+    channels:
+      - BGRP:VAL
+  - name: MKB Config
     getterConfig:
       type: NONE
     setterConfig:
@@ -26,12 +33,11 @@ configurations:
       fields:
         - name: name
           label: Device Name
-          description: name of each referenced device
+          description: name of each device referenced in the specified multiknob file
         - name: value
           label: Value
-          description: value of each device after the set operation
+          description: value of each device after the knob rotation set operation
     channels:
-      - BGRP:VAL
       - MKB:VAL
   - name: Trigger Config
     getterConfig:

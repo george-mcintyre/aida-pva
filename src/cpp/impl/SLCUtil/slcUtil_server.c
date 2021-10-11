@@ -216,6 +216,11 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 		RETURN_NULL_TABLE;
 	}
 
+	if ( DPSLCUTIL_MKB_GETABSFLAG() ) {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Specified multiknob file is absolute, which is not permitted");
+		RETURN_NULL_TABLE;
+	}
+
 	// Now get the new values to return
 
 	// To hold the data
