@@ -407,7 +407,8 @@ public class AidaPVHelper {
             // TODO description and units
             fieldTypesToPopulate.add(aidaType);
             fieldNamesToPopulate.add(fieldConfig.getName());
-            fieldLabelsToPopulate.add(fieldConfig.getLabel());
+            String units = fieldConfig.getUnits();
+            fieldLabelsToPopulate.add(fieldConfig.getLabel() + ((units == null || units.length() == 0) ? "" : " (" + units + ")"));
         }
     }
 
