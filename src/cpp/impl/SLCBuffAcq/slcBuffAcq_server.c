@@ -27,7 +27,7 @@
 #include "slcBuffAcq_server.h"
 
 static int
-acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS], char* dGroupName,
+acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceNames, char* dGroupName,
 		int bpmd,
 		int nrpos);
 static int getBuffAcqData(JNIEnv* env,
@@ -115,20 +115,28 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE
 	} else if (nBpms) {
 		for (int i = 0; i < nBpms; i++) {
-			pmuFromDeviceName(bpms[i],
+			if (pmuFromDeviceName(env, bpms[i],
 					deviceNames[i].prim_s._a,
 					deviceNames[i].micr_s._a,
-					&deviceNames[i].unit_s._i);
+					&deviceNames[i].unit_s._i)) {
+				free(bpms);
+				free(devices);
+				RETURN_NULL_TABLE
+			}
 		}
 		nDevices += nBpms;
 		free(bpms);
 		bpms = NULL;
 	} else if (nDevs) {
 		for (int i = 0; i < nDevs; i++) {
-			pmuFromDeviceName(devices[i],
+			if (pmuFromDeviceName(env, devices[i],
 					deviceNames[i].prim_s._a,
 					deviceNames[i].micr_s._a,
-					&deviceNames[i].unit_s._i);
+					&deviceNames[i].unit_s._i)) {
+				free(bpms);
+				free(devices);
+				RETURN_NULL_TABLE
+			}
 		}
 		nDevices += nDevs;
 		free(devices);
@@ -142,7 +150,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Acquire Data
 	int rows;
-	if (acquireBuffAcqData(env, &rows, nDevices, deviceNames, dGroupName, bpmd, nrpos)) {
+	if (acquireBuffAcqData(env, &rows, nDevices, &deviceNames[0], dGroupName, bpmd, nrpos)) {
 		RETURN_NULL_TABLE
 	}
 
@@ -164,7 +172,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	int2u statsData[rows + 1], goodMeasData[rows + 1];
 
 	// Get Buffered Data
-	if (getBuffAcqData(env, namesData, xData, yData, tmitData, pulseIdData, statsData, goodMeasData)) {
+	if (getBuffAcqData(env, &namesData[0], &xData[0], &yData[0], &tmitData[0], &pulseIdData[0], &statsData[0],
+			&goodMeasData[0])) {
 		RETURN_NULL_TABLE
 	}
 
@@ -233,7 +242,7 @@ static int checkArguments(JNIEnv* env, int bpmd, int nrpos, int nDevices)
  * @return
  */
 static int
-acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS], char* dGroupName,
+acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceNames, char* dGroupName,
 		int bpmd,
 		int nrpos)
 {

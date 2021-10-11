@@ -224,7 +224,6 @@ Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
 	return _getNamedValue(env, arguments, name, true);
 }
 
-
 /**
  * Print a value to standard output
  * @param value
@@ -388,11 +387,11 @@ int groupNameFromUri(const char* uri, char groupName[])
  */
 void secnFromUri(const char* uri, int4u* secn)
 {
-	char uriCopy[strlen(uri)+1];
+	char uriCopy[strlen(uri) + 1];
 	strcpy(uriCopy, uri);
 	char* secondary = strrchr(uriCopy, ':');
-	if ( secondary ) {
-		memcpy(secn, secondary+1, sizeof(int4u));
+	if (secondary) {
+		memcpy(secn, secondary + 1, sizeof(int4u));
 		return;
 	}
 	fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
@@ -411,7 +410,7 @@ const char* secondaryFromUri(const char* uri)
 		fprintf(stderr, "Warning: Secondary not found in uri: %s\n", uri);
 		return uri;
 	}
-	return secondary + 2;
+	return secondary + 1;
 }
 
 /**
@@ -436,22 +435,41 @@ void pmuStringFromUri(const char* uri, char pmuString[MAX_PMU_LEN])
  * @param primary
  * @param micro
  * @param unit
+ * @return success if no problems arose
  */
-void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit)
+int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int4u* unit)
 {
 	// Copy each part to the provided variables
 	char* nextPart = strtok(device, ":");
+	unsigned long len;
 	if (nextPart) {
+		len = strlen(nextPart);
+		if (len < 3 || len > 4) {
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
+			return EXIT_FAILURE;
+		}
 		memcpy(primary, nextPart, PRIM_LEN);
 		nextPart = strtok(NULL, ":");
 		if (nextPart) {
+			len = strlen(nextPart);
+			if (len != 4 || !isdigit(nextPart[2]) || !isdigit(nextPart[3])) {
+				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
+				return EXIT_FAILURE;
+			}
 			memcpy(micro, nextPart, MICRO_LEN);
 			nextPart = strtok(NULL, ":");
 			if (nextPart) {
+				len = strlen(nextPart);
+				if (len < 1 || len > 4 || !isdigit(nextPart[0]) || (len > 1 && !isdigit(nextPart[1]))
+						|| (len > 2 && !isdigit(nextPart[2])) || (len > 4 && !isdigit(nextPart[3]))) {
+					aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
+					return EXIT_FAILURE;
+				}
 				*unit = (int4u)atol(nextPart);
 			}
 		}
 	}
+	return EXIT_SUCCESS;
 }
 
 /**
@@ -480,10 +498,10 @@ void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
 void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
 {
 	char* firstSeparator = strchr(uri, ':');
-	char* secondSeparator = strchr(firstSeparator+1, ':');
+	char* secondSeparator = strchr(firstSeparator + 1, ':');
 	char* lastSeparator = strrchr(uri, ':');
 	// See how many colons.  If only three then this is a pseudo and we need to separate after first
-	if ( lastSeparator == secondSeparator ) {
+	if (lastSeparator == secondSeparator) {
 		// This has only three parts so separate at first colon
 		memcpy(legacyName, uri, firstSeparator - uri);
 		memcpy(legacyName + (firstSeparator - uri), "//", 2);

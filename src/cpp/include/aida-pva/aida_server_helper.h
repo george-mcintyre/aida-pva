@@ -698,7 +698,7 @@ const char* secondaryFromUri(const char* uri);
  * @param micro
  * @param unit
  */
-void pmuFromDeviceName(char* device, char* primary, char* micro, int4u* unit);
+int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int4u* unit);
 
 /**
  * Get the pmu part of a URI

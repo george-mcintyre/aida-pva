@@ -85,7 +85,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// Acquire Magnet values
 	int numMagnetPvs;
 	TO_LEGACY_NAME(uri, legacyName)
-	vmsstat_t status = DPSLCMAGNET_GET((char*)legacyName, (micrPattern ? micrPattern : "ALL*"), (unitPattern ? unitPattern : "ALL*"),
+	vmsstat_t status = DPSLCMAGNET_GET((char*)legacyName, (micrPattern ? micrPattern : "ALL*"),
+			(unitPattern ? unitPattern : "ALL*"),
 			&numMagnetPvs);
 	if (micrPattern) {
 		free(micrPattern);
@@ -241,7 +242,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	int numPairsWithinLimits = 0;
 	float magnetLimits[count * 2];
 	DPSLCMAGNET_RET_MAGLIMITS(count, &magnetLimits[0]);
-	CONVERT_FROM_VMS_FLOAT(&magnetLimits[0], count*2)
+	CONVERT_FROM_VMS_FLOAT(&magnetLimits[0], count * 2)
 	for (int i = 0; i < count; i++) {
 		float lowerLimit = magnetLimits[i * 2];
 		float upperLimit = magnetLimits[i * 2 + 1];
@@ -361,16 +362,20 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	ALLOCATE_AND_TRACK_MEMORY(env, *unit_list, *count * sizeof(unsigned long), "unit list", EXIT_FAILURE)
 	unsigned long longUnitList[*count];
 	for (int i = 0; i < nNames; i++) {
-		pmuFromDeviceName(names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i]);
-		*((char *)(*prim_list + PRIM_LEN + i * PRIM_LEN)) = 0x0;   // null terminate last one
-		*((char *)(*micr_list + MICRO_LEN + i * MICRO_LEN)) = 0x0; // null terminate last one
+		if (pmuFromDeviceName(env, names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i])) {
+			FREE_MEMORY
+			return EXIT_FAILURE;
+		}
+		*((char*)(*prim_list + PRIM_LEN + i * PRIM_LEN)) = 0x0;   // null terminate last one
+		*((char*)(*micr_list + MICRO_LEN + i * MICRO_LEN)) = 0x0; // null terminate last one
 		((int*)*unit_list)[i] = (int)longUnitList[i];
 	}
 	// Secondary name
 	secnFromUri(uri, secn);
 
 	// Call names validate to see which names are valid
-	ALLOCATE_AND_TRACK_MEMORY(env, *name_validity, (*count * MAX_VALIDITY_STRING_LEN) + 1, "name validity list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY(env, *name_validity, (*count * MAX_VALIDITY_STRING_LEN) + 1, "name validity list",
+			EXIT_FAILURE)
 	DPSLCMAGNET_SETNAMESVALIDATE(*count, *prim_list, *micr_list, *unit_list, *secn, *name_validity);
 
 	// Check if all names are valid
