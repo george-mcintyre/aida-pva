@@ -27,4 +27,4 @@ $ LINK -
 $!
 $ COPY AIDA-PVA.EXE [---.lib.SLC]
 $ COPY CHANNELS.YML [---.lib.SLC]
-$ COPY REBUILD.COM [---.lib.REFERENCE]
+$ COPY REBUILD.COM [---.lib.SLC]
