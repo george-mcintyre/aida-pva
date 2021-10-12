@@ -477,7 +477,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 	stringArray.count = 0;
 
 	char* colorString = aidaRequestString(env, uri, arguments);
-	CHECK_EXCEPTION(stringArray)
+	CHECK_EXCEPTION_AND_RETURN_(stringArray)
 	TRACK_MEMORY(colorString)
 
 	//	  The substring returned by aidaRequestString is 19
@@ -539,110 +539,110 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// Add column based on TYPE
 	if (strcasecmp(specifiedType, "FLOAT") == 0) {
 		float value = aidaRequestFloat(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowFloatColumn(env, &table, value, true);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "DOUBLE") == 0) {
 		double value = aidaRequestDouble(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowDoubleColumn(env, &table, true, false);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BYTE") == 0) {
 		char value = aidaRequestByte(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowByteColumn(env, &table, value);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "SHORT") == 0) {
 		short value = aidaRequestShort(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowShortColumn(env, &table, value);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "INTEGER") == 0) {
 		int value = aidaRequestInteger(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowIntegerColumn(env, &table, value);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "LONG") == 0) {
 		long value = aidaRequestLong(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowLongColumn(env, &table, value);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BOOLEAN") == 0) {
 		int value = aidaRequestBoolean(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowBooleanColumn(env, &table, value);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "STRING") == 0) {
 		char* value = aidaRequestString(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddSingleRowStringColumn(env, &table, value);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 
 	} else if (strcasecmp(specifiedType, "FLOAT_ARRAY") == 0) {
 		Array value = aidaRequestFloatArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_FLOAT_ARRAY_TYPE, value.items, true);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "DOUBLE_ARRAY") == 0) {
 		Array value = aidaRequestDoubleArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_DOUBLE_ARRAY_TYPE, value.items, true);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BYTE_ARRAY") == 0) {
 		Array value = aidaRequestByteArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_BYTE_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "SHORT_ARRAY") == 0) {
 		Array value = aidaRequestShortArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_SHORT_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "INTEGER_ARRAY") == 0) {
 		Array value = aidaRequestIntegerArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_INTEGER_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "LONG_ARRAY") == 0) {
 		Array value = aidaRequestLongArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_LONG_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BOOLEAN_ARRAY") == 0) {
 		Array value = aidaRequestBooleanArray(env, uri, arguments);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_BOOLEAN_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION(table)
+		CHECK_EXCEPTION_AND_RETURN_(table)
 	}
 
 	// Return the table

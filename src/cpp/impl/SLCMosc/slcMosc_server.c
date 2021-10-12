@@ -94,11 +94,11 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Create table to return value
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 
 	// Get the value
 	double meas_abs_freq = aidaRequestDouble(env, uri, arguments);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 
 	// Add value to table
 	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq, false);
@@ -154,7 +154,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 
 	// Now create table to return
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowDoubleColumn(env, &table, resulting_abs_freq, false);
 
 	return table;

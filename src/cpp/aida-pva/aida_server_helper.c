@@ -298,8 +298,8 @@ json_value* getJsonValue(Value* value, char* passedInPath)
  * 	This is because our json parser can't process arrays at the top level and so we insert
  * 	an object at the top level with an "_array" element if we find an array at the top level
  *
- * @param jsonValue
- * @return
+ * @param jsonValue the json value traverse
+ * @return json value
  */
 json_value* getJsonRoot(json_value* jsonValue)
 {
@@ -363,12 +363,13 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 }
 
 /**
- * Get the Display group name from a URI.  This is everything up until the last colon
- * @param uri
- * @param groupName
- * @return
+ * Get the Display group name from a URI
+ *
+ * @param groupName pre-allocated space to store the group name
+ * @param uri the new format AIDA PV name
+ * @return EXIT_SUCCESS if all goes well EXIT_FAILURE otherwise
  */
-int groupNameFromUri(const char* uri, char groupName[])
+int groupNameFromUri(char groupName[], const char* uri)
 {
 	strcpy(groupName, uri);
 	char* groupNameEnd = strrchr(groupName, ':');
@@ -382,7 +383,7 @@ int groupNameFromUri(const char* uri, char groupName[])
  * Get secondary from pseudo secondary (containing a colon) number from URI
  *  e.g. `BD01:BEND:BDES`  => `BEND` as int4u
  *
- * @param uri the uri
+ * @param uri the new format AIDA PV name
  * @param secn pointer to an int to store the secondary as a number
  */
 void secnFromUri(const char* uri, int4u* secn)
@@ -400,7 +401,8 @@ void secnFromUri(const char* uri, int4u* secn)
 
 /**
  * Get secondary from URI.  Just points into the URI so don't go messing with it
- * @param uri the uri
+ *
+ * @param uri the new format AIDA PV name
  * @param secn pointer to an int to store the secondary as a number
  */
 const char* secondaryFromUri(const char* uri)
@@ -415,10 +417,11 @@ const char* secondaryFromUri(const char* uri)
 
 /**
  * Get the pmu part of a URI
- * @param uri the uri
+ *
  * @param pmuString the pre-allocated space to store the pmu string
+ * @param uri the new format AIDA PV name
  */
-void pmuStringFromUri(const char* uri, char pmuString[MAX_PMU_LEN])
+void pmuStringFromUri(char* pmuString, const char* uri)
 {
 	unsigned long pmuEnd = strrchr(uri, ':') - uri;
 	if (pmuEnd >= MAX_URI_LEN) {
@@ -431,11 +434,10 @@ void pmuStringFromUri(const char* uri, char pmuString[MAX_PMU_LEN])
 /**
  * Get primary, micro and unit from a device name
  *
- * @param device
- * @param primary
- * @param micro
- * @param unit
- * @return success if no problems arose
+ * @param device pre-allocated space to store the device
+ * @param primary pre-allocated space to store the primary
+ * @param micro pre-allocated space to store the micro
+ * @param unit pre-allocated space to store the unit
  */
 int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int4u* unit)
 {
@@ -474,9 +476,9 @@ int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int
 
 /**
  * Convert all URIs to slac names before making queries
- * @param slcName
- * @param uri
- * @return
+ *
+ * @param slcName pointer to space to store the SLC name
+ * @param uri the new format AIDA PV name
  */
 void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
 {
@@ -491,9 +493,8 @@ void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
 /**
  * Convert the given URI to the legacy AIDA name for low level functions that still require it that way
  *
- * @param legacyName
- * @param uri
- * @return
+ * @param legacyName pointer to space to store the legacy AIDA name
+ * @param uri the new format AIDA PV name
  */
 void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
 {
@@ -515,13 +516,15 @@ void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
 }
 
 /**
- * Allocate memory, copy data from source while checking for errors
+ * Allocate memory and copy the source to it if specified.  If the null terminate flag is set
+ * null terminate the allocate space, at the last position
  *
- * @param env to throw errors
- * @param source source data
- * @param size size of data
- * @param message message to display if fails
- * @return the allocated data or null if fails
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param source source of data to copy to newly allocated space, NULL to not copy
+ * @param size the amount of space to allocate
+ * @param nullTerminate true to null terminate
+ * @param message the message to display if anything goes wrong
+ * @return the allocated memory
  */
 void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message)
 {

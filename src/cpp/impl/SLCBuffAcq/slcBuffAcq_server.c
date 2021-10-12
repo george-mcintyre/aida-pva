@@ -96,7 +96,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	unsigned int nBpms = 0, nDevs = 0;
 	char** bpms, ** devices;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
-	TO_DGROUP(uri, dGroupName)
+	TO_DGROUP(dGroupName, uri)
 
 	if (ascanf(env, &arguments, "%d %od %osa %osa",
 			"bpmd", &bpmd,
@@ -160,7 +160,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE
 	}
 
-	if (rows > MAX_DGRP_BPMS) {
+	if (rows > MAX_DGRP_BPMS * MAX_BUFF_MEAS) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Too many rows returned by this query");
 		RETURN_NULL_TABLE
 	}
@@ -172,26 +172,25 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	int2u statsData[rows + 1], goodMeasData[rows + 1];
 
 	// Get Buffered Data
-	if (getBuffAcqData(env, &namesData[0], &xData[0], &yData[0], &tmitData[0], &pulseIdData[0], &statsData[0],
-			&goodMeasData[0])) {
+	if (getBuffAcqData(env, namesData, xData, yData, tmitData, pulseIdData, statsData, goodMeasData)) {
 		RETURN_NULL_TABLE
 	}
 
 	// Make and output table
 	Table table = tableCreate(env, rows, 7);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddStringColumn(env, &table, namesData);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, pulseIdData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_SHORT_TYPE, statsData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_SHORT_TYPE, goodMeasData, false);
 
 	// All read successfully
@@ -287,13 +286,22 @@ getBuffAcqData(JNIEnv* env,
 {
 	int4u nNames = 0, nPulseId, nXdata, nYdata, ntmit, nstats, ngoodmeas;
 
-	if (!(nNames = DPSLCBUFF_GETNAMES(namesData)) ||
+	nNames = DPSLCBUFF_GETNAMES(namesData);
+	char x[20], y[20];
+	strncpy(x, namesData[0], 4);
+	x[4] = 0x0;
+	strncpy(y, namesData[1], 4);
+	y[4] = 0x0;
+	printf("first name=%s: %d\n", x, *((int*)x));
+	printf("second name=%s: %d\n", y, *((int*)y));
+
+	if (
 			!(nPulseId = DPSLCBUFF_GETPULSEIDS(pulseIdData)) ||
-			!(nXdata = DPSLCBUFF_GETXS(xData)) ||
-			!(nYdata = DPSLCBUFF_GETYS(yData)) ||
-			!(ntmit = DPSLCBUFF_GETTMITS(tmitData)) ||
-			!(nstats = DPSLCBUFF_GETSTATS(statsData)) ||
-			!(ngoodmeas = DPSLCBUFF_GETGOODMEASES(goodMeasData))
+					!(nXdata = DPSLCBUFF_GETXS(xData)) ||
+					!(nYdata = DPSLCBUFF_GETYS(yData)) ||
+					!(ntmit = DPSLCBUFF_GETTMITS(tmitData)) ||
+					!(nstats = DPSLCBUFF_GETSTATS(statsData)) ||
+					!(ngoodmeas = DPSLCBUFF_GETGOODMEASES(goodMeasData))
 			) {
 		endAcquireBuffAcq(env);
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading Buffered values");

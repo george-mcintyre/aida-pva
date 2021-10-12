@@ -116,9 +116,9 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Make table and return results
 	Table table = tableCreate(env, numMagnetPvs, 2);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_PMU_STRING_LEN);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValues, false);
 
 	// All read successfully
@@ -301,9 +301,9 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	DPSLCMAGNET_SETCLEANUP();
 
 	Table table = tableCreate(env, rows, 2);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_STATE_NAME_LEN);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, bactData, false);
 
 	return table;

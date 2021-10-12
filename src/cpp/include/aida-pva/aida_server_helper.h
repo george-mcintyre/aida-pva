@@ -59,7 +59,23 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define TRACK_JSON(_ptr) \
     if (_ptr) jsonValuesToFree[nJsonValuesToFree++] = (_ptr);
 
+/**
+ * Allocate memory.  Nothing fancy!
+ *
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ */
 #define ALLOCATE_MEMORY(_env, _size, _purpose) allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose)
+
+/**
+ * Allocate memory.
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
 #define ALLOCATE_MEMORY_OR_RETURN(_env, _var, _size, _purpose, _r) { \
     void * _aptr = allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose); \
     if (!_aptr) \
@@ -67,28 +83,125 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
     (_var) = _aptr; \
 }
 
+/**
+ * Allocate memory and set its contents to the given buffer of given size
+ *
+ * @param _source buffer to copy contents from
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ */
 #define ALLOCATE_AND_SET_MEMORY(_env, _source, _size, _purpose) allocateMemory(_env, _source, _size, false, "Could not allocate space for " _purpose)
+
+/**
+ * Allocate memory and set its contents to the given buffer of given size
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _source buffer to copy contents from
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
 #define ALLOCATE_AND_SET_MEMORY_OR_RETURN_VOID(_env, _var, _source, _size, _purpose) \
 if (!( (_var) = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, false, _purpose))) { \
     return; \
 }
 
+/**
+ * Allocate memory for a string and copy the given string into this allocated space
+ *
+ * @param _string buffer to copy contents from
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ */
 #define ALLOCATE_STRING(_env, _string, _purpose) ALLOCATE_AND_SET_MEMORY(_env, _string, strlen(_string)+1, _purpose)
+
+/**
+ * Allocate space for a fixed length string and copy date from the given string into
+ * the newly allocated space.  You need to specify size as one bigger than the
+ * fixed length string so that it can be null terminated
+ *
+ * @param _string buffer to copy contents from
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ */
 #define ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose) allocateMemory(_env, _string, _size, true, "Could not allocate space for " _purpose)
+
+/**
+ * Allocate memory for a string and copy the given string into this allocated space
+ * The specified variable is set to point to the allocated memory
+ * The given purpose is a string that will be contained in the error message if the allocation fails
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _string buffer to copy contents from
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @return This MACRO will return from your function if it fails
+ */
 #define ALLOCATE_STRING_OR_RETURN_VOID(_env, _var, _string, _purpose) \
 if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return; \
 }
+
+/**
+ * Allocate space for a fixed length string and copy date from the given string into
+ * the newly allocated space.  You need to specify size as one bigger than the
+ * fixed length string so that it can be null terminated
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _string buffer to copy contents from
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @return This MACRO will return from your function if it fails
+ */
 #define ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(_env, _var, _string, _size, _purpose) \
 if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) { \
     return; \
 }
 
+/**
+ * Allocate space for a fixed length string and copy date from the given string into
+ * the newly allocated space.  You need to specify size as one bigger than the
+ * fixed length string so that it can be null terminated
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _string buffer to copy contents from
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
+#define ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(_env, _var, _string, _size, _purpose, _r) \
+{ \
+    void *_aptr = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose); \
+    if ( !_aptr ) { \
+        FREE_MEMORY \
+        return _r; \
+    } \
+    TRACK_MEMORY(_aptr) \
+    (_var) = _aptr; \
+}
+
+/**
+ * Allocate memory for a string and copy the given string into this allocated space
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _string buffer to copy contents from
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
 #define ALLOCATE_STRING_OR_RETURN(_env, _var, _string, _purpose, _r) \
 if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return _r; \
 }
 
+/**
+ * Allocate memory and add it to the tracked memory list so that it can be freed automatically later
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
 #define ALLOCATE_AND_TRACK_MEMORY(_env, _var, _size, _purpose, _r) \
 { \
     void *_aptr = ALLOCATE_MEMORY(_env, _size, _purpose); \
@@ -100,6 +213,16 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     (_var) = _aptr; \
 }
 
+/**
+ * Allocate memory and set its contents to the given buffer of given size
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _source buffer to copy contents from
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
 #define ALLOCATE_SET_AND_TRACK_MEMORY(_env, _var, _source, _size, _purpose, _r) \
 { \
     void *_aptr = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, _purpose); \
@@ -111,20 +234,18 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     (_var) = _aptr; \
 }
 
+/**
+ * Allocate and track a string
+ *
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _string buffer to copy contents from
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
 #define ALLOCATE_AND_TRACK_STRING(_env, _var, _string, _purpose, _r) \
 { \
     void *_aptr = ALLOCATE_STRING(_env, _string, _purpose); \
-    if ( !_aptr ) { \
-        FREE_MEMORY \
-        return _r; \
-    } \
-    TRACK_MEMORY(_aptr) \
-    (_var) = _aptr; \
-}
-
-#define ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(_env, _var, _string, _size, _purpose, _r) \
-{ \
-    void *_aptr = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose); \
     if ( !_aptr ) { \
         FREE_MEMORY \
         return _r; \
@@ -158,6 +279,8 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 
 /**
  * Free a single tracked memory allocation and remove from list
+ *
+ * @param _ptr name of a pointer that points to the memory to free
  */
 #define FREE_TRACKED_MEMORY(_ptr) \
 { \
@@ -179,6 +302,12 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 
 /**
  * Format an error message, throw it in an exception, and return the error code
+ *
+ * @param _exception exception to raise (string)
+ * @param _errorText the text of the error to raise
+ * @param _ref a string that will be substituted in message with %s
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function
  */
 #define SPRINF_ERROR(_exception, _errorText, _ref, _r) \
 { \
@@ -190,6 +319,12 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 
 /**
  * Format an error message, throw it in an exception, free any allocated memory and return the error code
+ *
+ * @param _exception exception to raise (string)
+ * @param _errorText the text of the error to raise
+ * @param _ref a string that will be substituted in message with %s
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function
  */
 #define SPRINF_ERROR_AND_FREE_MEMORY(_exception, _errorText, _ref, _r) \
 { \
@@ -237,9 +372,9 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * @param _uri the uri to pull the pmu string from
  * @param _var the name of the variable to store the resulting pmu string
  */
-#define PMU_STRING_FROM_URI(_uri, _var)  \
+#define PMU_STRING_FROM_URI(_var, _uri)  \
     char _var[MAX_PMU_LEN]; \
-    pmuStringFromUri(_uri, _var);
+    pmuStringFromUri(_var, _uri);
 
 /**
  * Get a slcName from the provided uri and store it in the given variable name
@@ -269,104 +404,146 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * @param _uri the uri to pull the dgroup from
  * @param _var the name of the variable to store the resulting dgroup in
  */
-#define TO_DGROUP(_uri, _var) \
+#define TO_DGROUP(_var, _uri) \
     char _var[MAX_URI_LEN]; \
-    groupNameFromUri(_uri, _var);
+    groupNameFromUri(_var, _uri);
 
+
+
+/**
+ * API stub for AIDA-PVA scalar requests
+ *
+ * @param _api the name of the API to define
+ * @param _rtype the type that this API will return
+ * @param _r the specified return value
+ * @return This MACRO will create a function stub that will return the specified return value
+ */
+#define REQUEST_STUB_SCALAR(_api, _rtype, _r) \
+_rtype _api(JNIEnv* env, const char* uri, Arguments arguments) \
+{ \
+    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
+    return (_r); \
+}
+
+/**
+ * aidaRequestBoolean API Stub
+ */
+#define REQUEST_STUB_BOOLEAN REQUEST_STUB_SCALAR(aidaRequestBoolean, int, 0)
+
+
+/**
+ * aidaRequestByte API Stub
+ */
+#define REQUEST_STUB_BYTE REQUEST_STUB_SCALAR(aidaRequestByte, char, 0x0)
+
+/**
+ * aidaRequestShort API Stub
+ */
+#define REQUEST_STUB_SHORT REQUEST_STUB_SCALAR(aidaRequestShort, short, 0)
+
+/**
+ * aidaRequestInteger API Stub
+ */
+#define REQUEST_STUB_INTEGER REQUEST_STUB_SCALAR(aidaRequestInteger, int, 0)
+
+/**
+ * aidaRequestLong API Stub
+ */
+#define REQUEST_STUB_LONG REQUEST_STUB_SCALAR(aidaRequestLong, long, 0)
+
+/**
+ * aidaRequestFloat API Stub
+ */
+#define REQUEST_STUB_FLOAT REQUEST_STUB_SCALAR(aidaRequestFloat, float, 0.0f)
+
+/**
+ * aidaRequestDouble API Stub
+ */
+#define REQUEST_STUB_DOUBLE REQUEST_STUB_SCALAR(aidaRequestDouble, double, 0.0)
+
+/**
+ * aidaRequestString API Stub
+ */
+#define REQUEST_STUB_STRING REQUEST_STUB_SCALAR(aidaRequestString, char*, NULL)
+
+/**
+ * API stub for AIDA-PVA array requests
+ *
+ * @param _api the name of the API to define
+ * @return This MACRO will create a function stub that will return Array
+ */
 #define REQUEST_STUB_ARRAY(_api) \
 Array _api(JNIEnv* env, const char* uri, Arguments arguments) \
 { \
     UNSUPPORTED_ARRAY_REQUEST \
 }
 
-#define REQUEST_STUB_BOOLEAN \
-int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0; \
-}
-
-#define REQUEST_STUB_BYTE \
-char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0x0; \
-}
-
-#define REQUEST_STUB_SHORT \
-short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0; \
-}
-
-#define REQUEST_STUB_INTEGER \
-int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0; \
-}
-
-#define REQUEST_STUB_LONG \
-long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0; \
-}
-
-#define REQUEST_STUB_FLOAT \
-float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0.0f; \
-}
-
-#define REQUEST_STUB_DOUBLE \
-double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return 0.0; \
-}
-
-#define REQUEST_STUB_STRING \
-char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments) \
-{ \
-    aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
-    return NULL; \
-}
-
+/**
+ * aidaRequestBooleanArray API Stub
+ */
 #define REQUEST_STUB_BOOLEAN_ARRAY REQUEST_STUB_ARRAY(aidaRequestBooleanArray)
 
+/**
+ * aidaRequestByteArray API Stub
+ */
 #define REQUEST_STUB_BYTE_ARRAY REQUEST_STUB_ARRAY(aidaRequestByteArray)
 
+/**
+ * aidaRequestShortArray API Stub
+ */
 #define REQUEST_STUB_SHORT_ARRAY REQUEST_STUB_ARRAY(aidaRequestShortArray)
 
+/**
+ * aidaRequestIntegerArray API Stub
+ */
 #define REQUEST_STUB_INTEGER_ARRAY REQUEST_STUB_ARRAY(aidaRequestIntegerArray)
 
+/**
+ * aidaRequestLongArray API Stub
+ */
 #define REQUEST_STUB_LONG_ARRAY REQUEST_STUB_ARRAY(aidaRequestLongArray)
 
+/**
+ * aidaRequestFloatArray API Stub
+ */
 #define REQUEST_STUB_FLOAT_ARRAY REQUEST_STUB_ARRAY(aidaRequestFloatArray)
 
+/**
+ * aidaRequestDoubleArray API Stub
+ */
 #define REQUEST_STUB_DOUBLE_ARRAY REQUEST_STUB_ARRAY(aidaRequestDoubleArray)
 
+
+/**
+ * aidaRequestStringArray API stub
+ */
 #define REQUEST_STUB_STRING_ARRAY \
 StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments arguments) \
 { \
     UNSUPPORTED_STRING_ARRAY_REQUEST \
 }
 
+/**
+ * aidaRequestTable API stub
+ */
 #define REQUEST_STUB_TABLE \
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments) \
 { \
     UNSUPPORTED_TABLE_REQUEST \
 }
 
+/**
+ * aidaSetValue API stub
+ */
 #define SET_STUB_VOID \
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value) \
 { \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
 }
 
+/**
+ * aidaSetValueWithResponse API stub
+ */
 #define SET_STUB_TABLE \
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value) \
 { \
@@ -663,29 +840,32 @@ Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name);
  * 	This is because our json parser can't process arrays at the top level and so we insert
  * 	an object at the top level with an "_array" element if we find an array at the top level
  *
- * @param jsonValue
- * @return
+ * @param jsonValue the json value traverse
+ * @return json value
  */
 json_value* getJsonRoot(json_value* jsonValue);
 
 /**
  * Get the Display group name from a URI
- * @param uri
- * @param groupName
- * @return
+ *
+ * @param groupName pre-allocated space to store the group name
+ * @param uri the new format AIDA PV name
+ * @return EXIT_SUCCESS if all goes well EXIT_FAILURE otherwise
  */
-int groupNameFromUri(const char* uri, char groupName[]);
+int groupNameFromUri(char groupName[], const char* uri);
 
 /**
  * Get secondary number from URI
- * @param uri the uri
+ *
+ * @param uri the new format AIDA PV name
  * @param secn pointer to an int to store the secondary as a number
  */
 void secnFromUri(const char* uri, int4u* secn);
 
 /**
  * Get secondary from URI.  Just points into the URI so don't go messing with it
- * @param uri the uri
+ *
+ * @param uri the new format AIDA PV name
  * @param secn pointer to an int to store the secondary as a number
  */
 const char* secondaryFromUri(const char* uri);
@@ -693,37 +873,48 @@ const char* secondaryFromUri(const char* uri);
 /**
  * Get primary, micro and unit from a device name
  *
- * @param device
- * @param primary
- * @param micro
- * @param unit
+ * @param device pre-allocated space to store the device
+ * @param primary pre-allocated space to store the primary
+ * @param micro pre-allocated space to store the micro
+ * @param unit pre-allocated space to store the unit
  */
 int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int4u* unit);
 
 /**
  * Get the pmu part of a URI
- * @param uri the uri
+ *
  * @param pmuString the pre-allocated space to store the pmu string
+ * @param uri the new format AIDA PV name
  */
-void pmuStringFromUri(const char* uri, char* pmuString);
+void pmuStringFromUri(char* pmuString, const char* uri);
 
 /**
  * Convert all URIs to slac names before making queries
- * @param slcName
- * @param uri
- * @return
+ *
+ * @param slcName pointer to space to store the SLC name
+ * @param uri the new format AIDA PV name
  */
 void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri);
 
 /**
  * Convert the given URI to the legacy AIDA name for low level functions that still require it that way
  *
- * @param legacyName
- * @param uri
- * @return
+ * @param legacyName pointer to space to store the legacy AIDA name
+ * @param uri the new format AIDA PV name
  */
 void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri);
 
+/**
+ * Allocate memory and copy the source to it if specified.  If the null terminate flag is set
+ * null terminate the allocate space, at the last position
+ *
+ * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param source source of data to copy to newly allocated space, NULL to not copy
+ * @param size the amount of space to allocate
+ * @param nullTerminate true to null terminate
+ * @param message the message to display if anything goes wrong
+ * @return the allocated memory
+ */
 void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message);
 
 #ifdef __cplusplus

@@ -425,7 +425,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 		// Convert format, isArray, isLong, and isShort into an AIDA_TYPE
 		Type aidaType = getAidaType(env, format, isArray, isLong, isShort);
-		CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE)
+		CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE)
 
 		// If this is for a FLOAT or DOUBLE then try to get ieee version if available
 		if (aidaType == AIDA_FLOAT_TYPE) {
@@ -497,7 +497,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					elementValue = getValue(env, *arguments);
 				}
-				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
+				CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
 				value = &elementValue;
 				if (elementValue.type == AIDA_JSON_TYPE) {
 					TRACK_JSON(elementValue.value.jsonValue)
@@ -540,7 +540,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					elementValue = getNamedValue(env, *arguments, jsonArgumentName);
 				}
-				CHECK_EXCEPTION_AND_FREE_MEMORY(EXIT_FAILURE);
+				CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
 				if (elementValue.type != AIDA_JSON_TYPE) {
 					if (isRequired) {
 						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
@@ -1033,7 +1033,7 @@ Table tableCreate(JNIEnv* env, int rows, int columns)
 void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
 {
 	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
-	CHECK_EXCEPTION_VOID
+	CHECK_EXCEPTION_AND_RETURN_VOID
 
 	// allocate data for each string too
 	char** stringArray = table->ppData[table->_currentColumn];
@@ -1057,7 +1057,7 @@ void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
 void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width)
 {
 	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
-	CHECK_EXCEPTION_VOID
+	CHECK_EXCEPTION_AND_RETURN_VOID
 
 	// allocate data for each string too
 	char** stringArray = table->ppData[table->_currentColumn];
@@ -1102,7 +1102,7 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeF
 
 	// Set column type, and allocate space
 	allocateTableColumn(env, table, type, tableElementSizeOfOf(type));
-	CHECK_EXCEPTION_VOID
+	CHECK_EXCEPTION_AND_RETURN_VOID
 
 	// Rest of processing for strings is done in addStringColumn
 	if (type == AIDA_STRING_ARRAY_TYPE) {

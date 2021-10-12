@@ -7,76 +7,196 @@ extern "C" {
 #include <jni.h>
 #include "aida_types.h"
 
-#define CHECK_EXCEPTION(r) \
+/**
+ * Check to see if an exception has been raised,
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         return r; \
     }
 
-#define CHECK_EXCEPTION_AND_FREE_MEMORY(r) \
+/**
+ * Check to see if an exception has been raised,
+ * then free tracked memory,
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r	the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         FREE_MEMORY \
         return r; \
     }
 
-#define CHECK_EXCEPTION_VOID \
+/**
+ * Check to see if an exception has been raised,
+ * and return void,
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @return This MACRO will return from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_AND_RETURN_VOID \
     if ((*env)->ExceptionCheck(env)) { \
         return; \
     }
 
-#define CHECK_EXCEPTION_FOR_ARGUMENTS(r) \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `arguments`
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_ARGUMENTS_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseArguments(arguments); \
         return r; \
     }
 
-#define CHECK_EXCEPTION_AND_ARGUMENTS_VOID \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `arguments`
+ * and return void,
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @return This MACRO will return from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_ARGUMENTS__RETURN_VOID \
     if ((*env)->ExceptionCheck(env)) { \
         releaseArguments(arguments); \
         return; \
     }
 
-#define CHECK_EXCEPTION_FOR_STRING(r) \
+/**
+ * Check to see if an exception has been raised,
+ * free a local variable `string`,
+ * free local variable `arguments`
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_STRING_AND_ARGS_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         if ( string ) free(string); \
         releaseArguments(arguments); \
         return r; \
     }
 
-#define CHECK_EXCEPTION_FOR_STRING_COLUMN(r) \
+/**
+ * Check to see if an exception has been raised,
+ * free a local variable `string`,
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_STRING_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         if ( string ) free(string); \
         return r; \
     }
 
-#define CHECK_EXCEPTION_FOR_ARRAY(r) \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `array`,
+ * free local variable `arguments`
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_ARRAY_AND_ARGS_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseArray(array); \
         releaseArguments(arguments); \
         return r; \
     }
 
-#define CHECK_EXCEPTION_FOR_STRING_ARRAY \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `array`,
+ * free local variable `arguments`
+ * and return void.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @return This MACRO will return from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_STRING_ARRAY_AND_ARGS_AND_RETURN_NULL \
     if ((*env)->ExceptionCheck(env)) { \
         releaseStringArray(array); \
         releaseArguments(arguments); \
         return NULL; \
     }
 
-#define CHECK_EXCEPTION_FOR_TABLE(r) \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `table`,
+ * free local variable `arguments`,
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_TABLE_AND_ARGS_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseTable(table); \
         releaseArguments(arguments); \
         return r; \
     }
 
-#define CHECK_EXCEPTION_FOR_VALUE_VOID \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `value`,
+ * free local variable `arguments`
+ * and return void.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @return This MACRO will return from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_VALUE_AND_ARGS_AND_RETURN_VOID \
     if ((*env)->ExceptionCheck(env)) { \
         releaseValue(value); \
         releaseArguments(arguments); \
         return; \
     }
 
-#define CHECK_EXCEPTION_FOR_VALUE(r) \
+/**
+ * Check to see if an exception has been raised,
+ * free local variable `value`,
+ * free local variable `arguments`,
+ * and return the given return value.
+ *
+ * Uses local variable `env` for checking exception status.
+ *
+ * @param _r the specified return value.
+ * @return This MACRO will return the specified return value from your function if there has been an exception.
+ */
+#define CHECK_EXCEPTION_FREE_VALUE_AND_ARGS_AND_RETURN_(r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseValue(value); \
         releaseArguments(arguments); \
@@ -84,7 +204,7 @@ extern "C" {
     }
 
 /**
- * Java object: containing the jobject and the class
+ * A structure to hold a java object and java class.
  */
 typedef struct
 {
@@ -93,7 +213,7 @@ typedef struct
 } JavaObject;
 
 /**
- * Class and method
+ * A structure to hold a java class and a java method ID.
  */
 typedef struct
 {
@@ -101,92 +221,77 @@ typedef struct
 	jmethodID methodId;
 } ClassAndMethod;
 
-JavaObject newObject(JNIEnv* env, char* classToCreate);
-
 /**
- * Look up class in environment and create a new object
- * @param env environment
- * @param class class to create
- * @return the new jni object
+ * Look up class in the given `env`,
+ * and create a new java object.
+ *
+ * @param env environment.
+ * @param clazz string name of java class to create.
+ * @return the new java object.
  */
-JavaObject newObject(JNIEnv* env, char* classToCreate);
+JavaObject newObject(JNIEnv* env, char* clazz);
 
 /**
- * Convert jstring to c string
- * @param env env
- * @param string jstring
- * @return c-string
+ * Convert given `jstring` to a C string.
+ *
+ * @param env environment.
+ * @param string `jstring`.
+ * @return C string.
  */
 char* toCString(JNIEnv* env, jstring string);
 
 /**
- * Convert c-string to j-string
+ * Convert C string to `jstring`.
  *
- * @param env env
- * @param string c-string
- * @return j-string
+ * @param env environment.
+ * @param string C string.
+ * @return `jstring`.
  */
 jstring toJString(JNIEnv* env, const char* string);
 
 /**
- * Get the method ID on the given class with the given method name and signature
+ * Get the method ID on the given class,
+ * with the given method name,
+ * and signature.
  *
- * @param env env
- * @param cls given class
- * @param methodName given method name
- * @param methodSignature given signature
- * @return the method that matches the name and signature specified
+ * @param env environment.
+ * @param clazz given class.
+ * @param methodName given method name.
+ * @param methodSignature given signature.
+ * @return the method that matches the name and signature specified.
  */
-jmethodID getMethodId(JNIEnv* env, jclass cls, char* methodName, char* methodSignature);
+jmethodID getMethodId(JNIEnv* env, jclass clazz, char* methodName, char* methodSignature);
 
 /**
- * Get the method ID of the constructor of the given class
+ * Get the method ID of the constructor of the given class.
  *
- * @param env env
- * @param cls given class
- * @return the constructor method id
+ * @param env environment.
+ * @param clazz given class.
+ * @return the constructor method id.
  */
-jmethodID getConstructorMethodId(JNIEnv* env, jclass cls);
+jmethodID getConstructorMethodId(JNIEnv* env, jclass clazz);
 
 /**
- * Call setter on a given object with a string argument
+ * Get an `Arguments` structure,
+ * from the given java List<AidaArgument>
  *
- * @param env environment
- * @param javaObject given object
- * @param method string setter method to call
- * @param value string value to set
- */
-void callSetterWithString(JNIEnv* env, JavaObject javaObject, char* method, char* value);
-
-/**
- * Call a setter on a given object with a jString argument
- *
- * @param env env
- * @param javaObject object
- * @param method method
- * @param value jstring value
- */
-void callSetterWithJString(JNIEnv* env, JavaObject javaObject, char* method, jstring value);
-
-/**
- * Get c arguments structure from a java arguments list - List<AidaArgument>
- *
- *
- * @param env env
- * @param jArgs java arguments list - List<AidaArgument> (name, value}
- * @return c arguments structure
+ * @param env environment.
+ * @param jArgs java arguments list - List<AidaArgument>
+ * @return `Arguments` structure
  */
 Arguments toArguments(JNIEnv* env, jobject jArgs);
 
 /**
- * Free up any memory allocated for arguments
- * @param arguments
+ * Free up any memory allocated for the given arguments
+ *
+ * @param arguments the given arguments
  */
 void releaseArguments(Arguments arguments);
 
 /**
- * Free up any memory allocated scalar arrays
- * @param array
+ * Free up any memory allocated the given scalar array
+ *
+ * @param array the given scalar array
  */
 void releaseArray(Array array);
 
@@ -197,162 +302,202 @@ void releaseArray(Array array);
 void releaseStringArray(StringArray array);
 
 /**
- * Free up any memory allocated for tables
- * @param table
+ * Free up any memory allocated for the given table
+ *
+ * @param table the given tables
  */
 void releaseTable(Table table);
 
 /**
- * Create a java boolean array from a c-array
+ * Create a new instance of a java `boolean[]`,
+ * from the `Array` of boolean primitives.
  *
- * @param env env
- * @param array c-array
- * @return java boolean array
+ * @param env environment.
+ * @param array `Array` of boolean primitives provided.
+ * @return new java `boolean[]`.
  */
 jbooleanArray toBooleanArray(JNIEnv* env, Array array);
 
 /**
- * Create a java byte array from a c-array
+ * Create a new instance of a java `byte[]`,
+ * from the `Array` of byte primitives.
  *
- * @param env env
- * @param array c-array
- * @return java byte array
+ * @param env environment.
+ * @param array `Array` of byte primitives provided.
+ * @return new java `byte[]`.
  */
 jbyteArray toByteArray(JNIEnv* env, Array array);
 
 /**
- * Create a java short array from a c-array
+ * Create a new instance of a java `short[]`,
+ * from the `Array` of short primitives.
  *
- * @param env env
- * @param array c-array
- * @return java short array
+ * @param env environment.
+ * @param array `Array` of short primitives provided.
+ * @return new java `short[]`.
  */
 jshortArray toShortArray(JNIEnv* env, Array array);
 
 /**
- * Create a java integer array from a c-array
+ * Create a new instance of a java `int[]`,
+ * from the `Array` of integer primitives.
  *
- * @param env env
- * @param array c-array
- * @return java integer array
+ * @param env environment.
+ * @param array `Array` of integer primitives provided.
+ * @return new java `int[]`.
  */
 jintArray toIntegerArray(JNIEnv* env, Array array);
 
 /**
- * Create a java long array from a c-array
+ * Create a new instance of a java `long[]`,
+ * from the `Array` of long primitives.
  *
- * @param env env
- * @param array c-array
- * @return java long array
+ * @param env environment.
+ * @param array `Array` of long primitives provided.
+ * @return new java `long[]`.
  */
 jlongArray toLongArray(JNIEnv* env, Array array);
 
 /**
- * Create a java float array from a c-array
+ * Create a new instance of a java `float[]`,
+ * from the `Array` of float primitives.
  *
- * @param env env
- * @param array c-array
- * @return java float array
+ * @param env environment.
+ * @param array `Array` of float primitives provided.
+ * @return new java `float[]`.
  */
 jfloatArray toFloatArray(JNIEnv* env, Array array);
 
 /**
- * Create a java double array from a c-array
+ * Create a new instance of a java `double[]`,
+ * from the `Array` of double primitives.
  *
- * @param env env
- * @param array c-array
- * @return java double array
+ * @param env environment.
+ * @param array `Array` of double primitives provided.
+ * @return new java `double[]`.
  */
 jdoubleArray toDoubleArray(JNIEnv* env, Array array);
 
 /**
- * Convert a string array to a java object array
+ * Create a new instance of a java `String[]`,
+ * from the `StringArray` of C string primitives.
  *
- * @param env env
- * @param array string array
- * @return jobject
+ * @param env environment.
+ * @param array `StringArray` of C string primitives provided
+ * @return new java `String[]`
  */
 jobjectArray toStringArray(JNIEnv* env, StringArray array);
 
 /**
- * Convert a table to a jobject for returning to java
+ * Create a new instance of a java `List` of `List`s,
+ * from the given `Table `structure.
  *
- * @param env env
- * @param table the table
- * @return jobject to return to java
+ * @param env environment.
+ * @param table the `Table` provided
+ * @return new java List of Lists
  */
 jobject toTable(JNIEnv* env, Table table);
 
 /**
- * Create a new instance of a Java Boolean from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Boolean
- */
-jobject toBoolean(JNIEnv* env, jboolean data);
-
-/**
- * Create a new instance of a Java Byte from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Byte
- */
-jobject toByte(JNIEnv* env, jbyte data);
-
-/**
- * Create a new instance of a Java Short from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Short
- */
-jobject toShort(JNIEnv* env, jshort data);
-
-/**
- * Create a new instance of a Java Int from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Integer
- */
-jobject toInteger(JNIEnv* env, jint data);
-
-/**
- * Create a new instance of a Java Long from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Long
- */
-jobject toLong(JNIEnv* env, jlong data);
-
-/**
- * Create a new instance of a Java Float from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Float
- */
-jobject toFloat(JNIEnv* env, jfloat data);
-
-/**
- * Create a new instance of a Java Double from the scalar
- * @param env env
- * @param data scalar
- * @return new Java Double
- */
-jobject toDouble(JNIEnv* env, jdouble data);
-
-/**
- * Get value from the {@code Value} argument in the provided arguments structure.
+ * Create a new instance of a java `Boolean`,
+ * from the primitive boolean provided.
  *
- * @param env env
+ * @param env environment.
+ * @param primitive primitive boolean provided
+ * @return new java Boolean
+ */
+jobject toBoolean(JNIEnv* env, jboolean primitive);
+
+/**
+ * Create a new instance of a java `Byte`,
+ * from the primitive byte provided.
+ *
+ * @param env environment.
+ * @param primitive primitive byte provided
+ * @return new java Byte
+ */
+jobject toByte(JNIEnv* env, jbyte primitive);
+
+/**
+ * Create a new instance of a java `Short`,
+ * from the primitive short provided.
+ *
+ * @param env environment.
+ * @param primitive primitive short provided
+ * @return new java Short
+ */
+jobject toShort(JNIEnv* env, jshort primitive);
+
+/**
+ * Create a new instance of a java `Integer`,
+ * from the primitive int provided.
+ *
+ * @param env environment.
+ * @param primitive primitive int provided
+ * @return new java `Integer`
+ */
+jobject toInteger(JNIEnv* env, jint primitive);
+
+/**
+ * Create a new instance of a java `Long`,
+ * from the primitive long provided.
+ *
+ * @param env environment.
+ * @param primitive primitive long provided
+ * @return new java `Long`
+ */
+jobject toLong(JNIEnv* env, jlong primitive);
+
+/**
+ * Create a new instance of a java `Float`,
+ * from the primitive float provided.
+ *
+ * @param env environment.
+ * @param primitive primitive float provided
+ * @return new java `Float`
+ */
+jobject toFloat(JNIEnv* env, jfloat primitive);
+
+/**
+ * Create a new instance of a java `Double`,
+ * from the primitive double provided.
+ *
+ * @param env environment.
+ * @param primitive primitive double provided
+ * @return new java `Double`
+ */
+jobject toDouble(JNIEnv* env, jdouble primitive);
+
+/**
+ * Get value from the `value` argument,
+ * in the provided `arguments` structure,
+ * when the value is a scalar.
+ *
+ * @param env environment.
  * @param arguments provided arguments structure
- * @return the extracted Value
+ * @return the extracted value
  */
 Value getValue(JNIEnv* env, Arguments arguments);
+
+/**
+ * Get value from the `value` argument,
+ * in the provided `arguments` structure,
+ * when the value is a scalar array.
+ *
+ * Even if the argument is not
+ * an array it will create a one element array to put it in.
+ *
+ * @param env environment.
+ * @param arguments provided arguments structure
+ * @return the extracted value
+ */
 Value getArrayValue(JNIEnv* env, Arguments arguments);
 
 /**
- * Print a value to standard output
- * @param env
- * @param value
+ * Release all allocated memory in the given value
+ *
+ * @param env environment.
+ * @param value the given value'
  */
 void releaseValue(Value value);
 

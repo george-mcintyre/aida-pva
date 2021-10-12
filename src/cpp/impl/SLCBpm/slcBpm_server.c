@@ -111,6 +111,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 			cnftype = CNFTYPE_TEMPORARY;
 		} else {
 			free(cfnTypeString);
+			cfnTypeString = NULL;
 			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "CNFTYPE argument not recognised");
 			RETURN_NULL_TABLE
 		}
@@ -120,12 +121,13 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		if ((strcasecmp(cfnTypeString, "SCRATCH") == 0 ||
 				strcasecmp(cfnTypeString, "NORMAL") == 0 ||
 				strcasecmp(cfnTypeString, "TEMPORARY") == 0) && cnfnum <= BPMD_ROGUE) {
+			free(cfnTypeString);
+			cfnTypeString = NULL;
 			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
 					"A CNFNUM argument (>0) is required with the CFNTYPE argument given");
 			RETURN_NULL_TABLE
 		}
 
-		free(cfnTypeString);
 	}
 
 	// Check parameters
@@ -162,19 +164,19 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Make and output table
 	Table table = tableCreate(env, rows, 7);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, NAME_SIZE);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, zData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, hstasData, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, statsData, false);
 
 	// All read successfully

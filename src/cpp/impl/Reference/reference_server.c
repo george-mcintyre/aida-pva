@@ -594,21 +594,21 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	Table table = tableCreate(env, 1, 8);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowByteColumn(env, &table, 2);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowShortColumn(env, &table, 3);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowIntegerColumn(env, &table, 4);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowLongColumn(env, &table, 5);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowFloatColumn(env, &table, 6.6f, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowDoubleColumn(env, &table, 7.7, false);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowStringColumn(env, &table, "eight");
 
 	// Return the table
@@ -657,7 +657,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	}
 
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, 1);
 
 	// Return the table

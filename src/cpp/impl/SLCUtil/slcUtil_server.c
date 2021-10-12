@@ -94,7 +94,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Read the status
 	short trig_status = getTrigStatus(env, uri, arguments);
-	CHECK_EXCEPTION(NULL)
+	CHECK_EXCEPTION_AND_RETURN_(NULL)
 
 	if (trig_status) {
 		return ALLOCATE_STRING(env, "activated","string");
@@ -238,9 +238,9 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 
 	// Now create table to return
 	Table table = tableCreate(env, num_devices, 2);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_DEVICE_STRING_LEN);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValuesData, false);
 
 	return table;
@@ -276,7 +276,7 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 
 	// Set the trigger value
 	vmsstat_t status;
-	TO_DGROUP(uri, dGroupName)
+	TO_DGROUP(dGroupName, uri)
 	status = DPSLCUTIL_TRIG_SETDEACTORREACT(dGroupName, flag, beam);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
@@ -292,7 +292,7 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 
 	// Now create table to return the flag
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowShortColumn(env, &table, flag);
 
 	return table;
@@ -318,7 +318,7 @@ static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments)
 	// Read the status
 	vmsstat_t status;
 	short trig_status;
-	TO_DGROUP(uri, dGroupName)
+	TO_DGROUP(dGroupName, uri)
 	status = DPSLCUTIL_TRIG_GETSTATUS((char*)dGroupName, beam, &trig_status);
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "Unable to get beam status");

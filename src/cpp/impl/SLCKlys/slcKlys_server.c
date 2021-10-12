@@ -136,19 +136,19 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	bool isPphas = (short)(klystronStatus & LINKLYSTA_PPHAS) ? true : false;
 
 	Table table = tableCreate(env, 1, 7);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isInAccelerateState);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isInStandByState);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isInBadState);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isSledTuned);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isSleded);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isPampl);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isPphas);
 
 	return table;
@@ -171,7 +171,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		return;
 	}
 
-	PMU_STRING_FROM_URI(uri, pmu_str)
+	PMU_STRING_FROM_URI(pmu_str, uri)
 
 	if (endsWith(uri, "PCON")) {
 		setPconOrAconValue(env, value, pmu_str, "PCON");
@@ -200,7 +200,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 		RETURN_NULL_TABLE
 	}
 
-	PMU_STRING_FROM_URI(uri, pmu_str)
+	PMU_STRING_FROM_URI(pmu_str, uri)
 
 	if (endsWith(uri, "TACT")) {
 		return setActivateValue(env, uri, arguments, value);
@@ -268,7 +268,7 @@ setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 	}
 
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowFloatColumn(env, &table, phas_value, false);
 
 	return table;
@@ -297,7 +297,7 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	)) {
 		RETURN_NULL_TABLE
 	}
-	PMU_STRING_FROM_URI(uri, shortSlcName)
+	PMU_STRING_FROM_URI(shortSlcName, uri)
 
 	TRACK_MEMORY(beam_c)
 	if (dgrp_c)
@@ -347,7 +347,7 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 
 	// Create table for return value
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION(table)
+	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowShortColumn(env, &table, klys_status);
 
 	return table;
