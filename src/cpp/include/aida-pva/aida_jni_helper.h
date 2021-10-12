@@ -501,6 +501,39 @@ Value getArrayValue(JNIEnv* env, Arguments arguments);
  */
 void releaseValue(Value value);
 
+// For Argument Processing
+
+/**
+ * Set of java classes that are needed to process the java `AidaArgument` class in C
+ */
+typedef struct
+{
+	jclass listClass;
+	jclass floatArgumentClass;
+	jclass doubleArgumentClass;
+	jclass aidaArgumentsClass;
+	jclass aidaArgumentClass;
+} ArgumentClasses;
+
+/**
+ * Set of java methods that are needed to process the java `AidaArgument` class in C
+ */
+typedef struct
+{
+	ArgumentClasses* argumentClasses;
+	jmethodID listSizeMethod;
+	jmethodID listGetMethod;
+	jmethodID argumentsGetArgumentsMethod;
+	jmethodID argumentGetNameMethod;
+	jmethodID argumentGetValueMethod;
+	jmethodID argumentsGetFloatArgumentsMethod;
+	jmethodID argumentsGetDoubleArgumentsMethod;
+	jmethodID getFloatNameMethod;
+	jmethodID getFloatValueMethod;
+	jmethodID getDoubleNameMethod;
+	jmethodID getDoubleValueMethod;
+} ArgumentMethods;
+
 #ifdef __cplusplus
 }
 #endif

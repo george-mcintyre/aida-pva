@@ -7,26 +7,9 @@
 #include "aida_server_helper.h"
 #include "aida_jni_helper.h"
 
-static int getArgumentClasses(JNIEnv* env, jclass* listClass, jclass* floatArgumentClass, jclass* doubleArgumentClass,
-		jclass* aidaArgumentsClass, jclass* aidaArgumentClass);
-
-static void
-getArgumentClassMethods(JNIEnv* env,
-		jclass listClass, jclass floatArgumentClass, jclass doubleArgumentClass,
-		jclass aidaArgumentsClass, jclass aidaArgumentClass,
-		jmethodID* listSizeMethod, jmethodID* listGetMethod,
-		jmethodID* argumentsGetArgumentsMethod,
-		jmethodID* argumentGetNameMethod, jmethodID* argumentGetValueMethod,
-		jmethodID* argumentsGetFloatArgumentsMethod, jmethodID* argumentsGetDoubleArgumentsMethod,
-		jmethodID* getFloatNameMethod, jmethodID* getFloatValueMethod,
-		jmethodID* getDoubleNameMethod, jmethodID* getDoubleValueMethod);
-
-static int checkMethods(JNIEnv* env, jmethodID listSizeMethod, jmethodID listGetMethod, jmethodID argumentGetNameMethod,
-		jmethodID argumentGetValueMethod, jmethodID argumentsGetArgumentsMethod,
-		jmethodID argumentsGetFloatArgumentsMethod, jmethodID argumentsGetDoubleArgumentsMethod,
-		jmethodID getFloatNameMethod, jmethodID getFloatValueMethod, jmethodID getDoubleNameMethod,
-		jmethodID getDoubleValueMethod);
-
+static int getArgumentClasses(JNIEnv* env, ArgumentClasses* argumentClasses);
+static void getArgumentClassMethods(JNIEnv* env, ArgumentMethods* argumentMethods);
+static int checkMethods(JNIEnv* env, ArgumentMethods* argumentMethods);
 static int allocateSpaceForArguments(JNIEnv* env, Arguments* cArgs, int totalFloatingPoints);
 
 /**
@@ -147,51 +130,35 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 	cArgs.argumentCount = 0;
 
 	// Get all classes needed for processing arguments
-	jclass listClass, floatArgumentClass, doubleArgumentClass, aidaArgumentsClass, aidaArgumentClass;
-	if (getArgumentClasses(env, &listClass, &floatArgumentClass, &doubleArgumentClass, &aidaArgumentsClass,
-			&aidaArgumentClass)) {
+	ArgumentClasses argumentClasses;
+	if (getArgumentClasses(env, &argumentClasses)) {
 		return cArgs;
 	}
 
 	// Get class methods
-	jmethodID listSizeMethod, listGetMethod,
-			argumentGetNameMethod, argumentGetValueMethod,
-			argumentsGetArgumentsMethod, argumentsGetFloatArgumentsMethod, argumentsGetDoubleArgumentsMethod,
-			getFloatNameMethod, getFloatValueMethod,
-			getDoubleNameMethod, getDoubleValueMethod;
+	ArgumentMethods argumentMethods;
+	argumentMethods.argumentClasses = &argumentClasses;
 
-	getArgumentClassMethods(env,
-			listClass, floatArgumentClass, doubleArgumentClass,
-			aidaArgumentsClass, aidaArgumentClass,
-			&listSizeMethod, &listGetMethod,
-			&argumentsGetArgumentsMethod,
-			&argumentGetNameMethod, &argumentGetValueMethod,
-			&argumentsGetFloatArgumentsMethod, &argumentsGetDoubleArgumentsMethod,
-			&getFloatNameMethod, &getFloatValueMethod,
-			&getDoubleNameMethod, &getDoubleValueMethod);
+	getArgumentClassMethods(env, &argumentMethods);
 
 	// Check that the methods were retrieved correctly
-	if (checkMethods(env,
-			listSizeMethod, listGetMethod,
-			argumentGetNameMethod, argumentGetValueMethod,
-			argumentsGetArgumentsMethod, argumentsGetFloatArgumentsMethod, argumentsGetDoubleArgumentsMethod,
-			getFloatNameMethod, getFloatValueMethod, getDoubleNameMethod, getDoubleValueMethod)) {
+	if (checkMethods(env, &argumentMethods)) {
 		return cArgs;
 	}
 
 	// Get the arguments list
-	jobject argumentsList = (*env)->CallObjectMethod(env, jArguments, argumentsGetArgumentsMethod);
+	jobject argumentsList = (*env)->CallObjectMethod(env, jArguments, argumentMethods.argumentsGetArgumentsMethod);
 
 	// get the size of the list of arguments
-	cArgs.argumentCount = (*env)->CallIntMethod(env, argumentsList, listSizeMethod);
+	cArgs.argumentCount = (*env)->CallIntMethod(env, argumentsList, argumentMethods.listSizeMethod);
 
 	// Get list of floats and doubles
-	jobject jFloatsList = (*env)->CallObjectMethod(env, jArguments, argumentsGetFloatArgumentsMethod);
-	jobject jDoublesList = (*env)->CallObjectMethod(env, jArguments, argumentsGetDoubleArgumentsMethod);
+	jobject jFloatsList = (*env)->CallObjectMethod(env, jArguments, argumentMethods.argumentsGetFloatArgumentsMethod);
+	jobject jDoublesList = (*env)->CallObjectMethod(env, jArguments, argumentMethods.argumentsGetDoubleArgumentsMethod);
 
 	// Get the size of the list of floats and doubles
-	int floatCount = jFloatsList ? (*env)->CallIntMethod(env, jFloatsList, listSizeMethod) : 0;
-	int doubleCount = jDoublesList ? (*env)->CallIntMethod(env, jDoublesList, listSizeMethod) : 0;
+	int floatCount = jFloatsList ? (*env)->CallIntMethod(env, jFloatsList, argumentMethods.listSizeMethod) : 0;
+	int doubleCount = jDoublesList ? (*env)->CallIntMethod(env, jDoublesList, argumentMethods.listSizeMethod) : 0;
 	int totalFloatingPoints = floatCount + doubleCount;
 
 	// Create space for arguments, allocates space for arguments and the
@@ -202,9 +169,11 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 
 	// walk through and fill array
 	for (int i = 0; i < cArgs.argumentCount; i++) {
-		jobject argument = (*env)->CallObjectMethod(env, argumentsList, listGetMethod, i);
-		cArgs.arguments[i].name = toCString(env, (*env)->CallObjectMethod(env, argument, argumentGetNameMethod));
-		cArgs.arguments[i].value = toCString(env, (*env)->CallObjectMethod(env, argument, argumentGetValueMethod));
+		jobject argument = (*env)->CallObjectMethod(env, argumentsList, argumentMethods.listGetMethod, i);
+		cArgs.arguments[i].name = toCString(env,
+				(*env)->CallObjectMethod(env, argument, argumentMethods.argumentGetNameMethod));
+		cArgs.arguments[i].value = toCString(env,
+				(*env)->CallObjectMethod(env, argument, argumentMethods.argumentGetValueMethod));
 	}
 
 	// If any floats or doubles add them to the allocated space
@@ -212,9 +181,9 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 	if (totalFloatingPoints > 0) {
 		// Loop through the FloatArgument list
 		for (int i = 0; i < floatCount; i++) {
-			jobject floatArgument = (*env)->CallObjectMethod(env, jFloatsList, listGetMethod, i);
-			jobject name = (*env)->CallObjectMethod(env, floatArgument, getFloatNameMethod);
-			jfloat value = (*env)->CallFloatMethod(env, floatArgument, getFloatValueMethod);
+			jobject floatArgument = (*env)->CallObjectMethod(env, jFloatsList, argumentMethods.listGetMethod, i);
+			jobject name = (*env)->CallObjectMethod(env, floatArgument, argumentMethods.getFloatNameMethod);
+			jfloat value = (*env)->CallFloatMethod(env, floatArgument, argumentMethods.getFloatValueMethod);
 
 			// Add key and value to Arguments.
 			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
@@ -222,9 +191,9 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 		}
 
 		for (int i = 0; i < doubleCount; i++) {
-			jobject doubleArgument = (*env)->CallObjectMethod(env, jDoublesList, listGetMethod, i);
-			jobject name = (*env)->CallObjectMethod(env, doubleArgument, getDoubleNameMethod);
-			jdouble value = (*env)->CallDoubleMethod(env, doubleArgument, getDoubleValueMethod);
+			jobject doubleArgument = (*env)->CallObjectMethod(env, jDoublesList, argumentMethods.listGetMethod, i);
+			jobject name = (*env)->CallObjectMethod(env, doubleArgument, argumentMethods.getDoubleNameMethod);
+			jdouble value = (*env)->CallDoubleMethod(env, doubleArgument, argumentMethods.getDoubleValueMethod);
 
 			// Add key and value to Arguments.
 			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
@@ -237,49 +206,44 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 }
 
 /**
- * Get java classes that will be used to process the arguments structure
- * @param env
- * @param listClass
- * @param floatArgumentClass
- * @param doubleArgumentClass
- * @param aidaArgumentsClass
- * @param aidaArgumentClass
- * @return
+ * Get java classes that will be used to process the java `AidaArgument` class in C
+ *
+  @param env environment.
+ * @param argumentClasses the structure to store the list of classes needed to process the java `AidaArgument` class in C
  */
-static int getArgumentClasses(JNIEnv* env, jclass* listClass, jclass* floatArgumentClass, jclass* doubleArgumentClass,
-		jclass* aidaArgumentsClass, jclass* aidaArgumentClass)
+static int getArgumentClasses(JNIEnv* env, ArgumentClasses* argumentClasses)
 {
 	// retrieve the java.util.List interface class
-	*listClass = (*env)->FindClass(env, "java/util/List");
-	if (!*listClass) {
+	argumentClasses->listClass = (*env)->FindClass(env, "java/util/List");
+	if (!argumentClasses->listClass) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Failed to get List class");
 		return EXIT_FAILURE;
 	}
 
 	// retrieve the FloatArgument class
-	*floatArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/FloatArgument");
-	if (!*floatArgumentClass) {
+	argumentClasses->floatArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/FloatArgument");
+	if (!argumentClasses->floatArgumentClass) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Failed to get FloatArgument class");
 		return EXIT_FAILURE;
 	}
 
 	// retrieve the DoubleArgument class
-	*doubleArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/DoubleArgument");
-	if (!*doubleArgumentClass) {
+	argumentClasses->doubleArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/DoubleArgument");
+	if (!argumentClasses->doubleArgumentClass) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Failed to get DoubleArgument class");
 		return EXIT_FAILURE;
 	}
 
 	// retrieve the AidaArguments class
-	*aidaArgumentsClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArguments");
-	if (!*aidaArgumentsClass) {
+	argumentClasses->aidaArgumentsClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArguments");
+	if (!argumentClasses->aidaArgumentsClass) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Failed to get AidaArguments class");
 		return EXIT_FAILURE;
 	}
 
 	// retrieve the AidaArgument class
-	*aidaArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArgument");
-	if (!*aidaArgumentClass) {
+	argumentClasses->aidaArgumentClass = (*env)->FindClass(env, "edu/stanford/slac/aida/lib/model/AidaArgument");
+	if (!argumentClasses->aidaArgumentClass) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Failed to get AidaArgument class");
 		return EXIT_FAILURE;
 	}
@@ -287,140 +251,114 @@ static int getArgumentClasses(JNIEnv* env, jclass* listClass, jclass* floatArgum
 }
 
 /**
- * Get the method IDs of the java methods needed to process the arguments structure
- * @param env
- * @param listClass
- * @param floatArgumentClass
- * @param doubleArgumentClass
- * @param aidaArgumentsClass
- * @param aidaArgumentClass
- * @param listSizeMethod
- * @param listGetMethod
- * @param argumentsGetArgumentsMethod
- * @param argumentGetNameMethod
- * @param argumentGetValueMethod
- * @param argumentsGetFloatArgumentsMethod
- * @param argumentsGetDoubleArgumentsMethod
- * @param getFloatNameMethod
- * @param getFloatValueMethod
- * @param getDoubleNameMethod
- * @param getDoubleValueMethod
+ * Get the method IDs of the java methods that will be used to process the java `AidaArgument` class in C
+ *
+ * @param env environment.
+ * @param argumentMethods the structure to store the methods needed to process the java `AidaArgument` class in C
  */
-static void
-getArgumentClassMethods(JNIEnv* env,
-		jclass listClass, jclass floatArgumentClass, jclass doubleArgumentClass,
-		jclass aidaArgumentsClass, jclass aidaArgumentClass,
-		jmethodID* listSizeMethod, jmethodID* listGetMethod,
-		jmethodID* argumentsGetArgumentsMethod,
-		jmethodID* argumentGetNameMethod, jmethodID* argumentGetValueMethod,
-		jmethodID* argumentsGetFloatArgumentsMethod, jmethodID* argumentsGetDoubleArgumentsMethod,
-		jmethodID* getFloatNameMethod, jmethodID* getFloatValueMethod,
-		jmethodID* getDoubleNameMethod, jmethodID* getDoubleValueMethod)
+static void getArgumentClassMethods(JNIEnv* env, ArgumentMethods* argumentMethods)
 {
 	// retrieve the size and the get methods of list
-	(*listSizeMethod) = (*env)->GetMethodID(env, listClass, "size", "()I");
-	(*listGetMethod) = (*env)->GetMethodID(env, listClass, "get", "(I)Ljava/lang/Object;");
+	(argumentMethods->listSizeMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->listClass, "size", "()I");
+	(argumentMethods->listGetMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->listClass, "get", "(I)Ljava/lang/Object;");
 
 	// retrieve the getName and the getValue methods
-	(*argumentGetNameMethod) = (*env)->GetMethodID(env, aidaArgumentClass, "getName", "()Ljava/lang/String;");
-	(*argumentGetValueMethod) = (*env)->GetMethodID(env, aidaArgumentClass, "getValue", "()Ljava/lang/String;");
+	(argumentMethods->argumentGetNameMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->aidaArgumentClass, "getName", "()Ljava/lang/String;");
+	(argumentMethods->argumentGetValueMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->aidaArgumentClass, "getValue", "()Ljava/lang/String;");
 
 	// retrieve the getArguments, getFloats and the getDoubles methods from AidaArguments
-	(*argumentsGetArgumentsMethod) = (*env)
-			->GetMethodID(env, aidaArgumentsClass, "getArguments", "()Ljava/util/List;");
-	(*argumentsGetFloatArgumentsMethod) = (*env)
-			->GetMethodID(env, aidaArgumentsClass, "getFloatArguments", "()Ljava/util/List;");
-	(*argumentsGetDoubleArgumentsMethod) = (*env)
-			->GetMethodID(env, aidaArgumentsClass, "getDoubleArguments", "()Ljava/util/List;");
+	(argumentMethods->argumentsGetArgumentsMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->aidaArgumentsClass, "getArguments",
+					"()Ljava/util/List;");
+	(argumentMethods->argumentsGetFloatArgumentsMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->aidaArgumentsClass, "getFloatArguments",
+					"()Ljava/util/List;");
+	(argumentMethods->argumentsGetDoubleArgumentsMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->aidaArgumentsClass, "getDoubleArguments",
+					"()Ljava/util/List;");
 
 	// get float and double getters from their boxed classes
-	(*getFloatNameMethod) = (*env)->GetMethodID(env, floatArgumentClass, "getName", "()Ljava/lang/String;");
-	(*getFloatValueMethod) = (*env)->GetMethodID(env, floatArgumentClass, "getValue", "()F");
-	(*getDoubleNameMethod) = (*env)->GetMethodID(env, doubleArgumentClass, "getName", "()Ljava/lang/String;");
-	(*getDoubleValueMethod) = (*env)->GetMethodID(env, doubleArgumentClass, "getValue", "()D");
+	(argumentMethods->getFloatNameMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->floatArgumentClass, "getName", "()Ljava/lang/String;");
+	(argumentMethods->getFloatValueMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->floatArgumentClass, "getValue", "()F");
+	(argumentMethods->getDoubleNameMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->doubleArgumentClass, "getName",
+					"()Ljava/lang/String;");
+	(argumentMethods->getDoubleValueMethod) = (*env)
+			->GetMethodID(env, argumentMethods->argumentClasses->doubleArgumentClass, "getValue", "()D");
 }
 
 /**
- * Check that all the java methods needed to process the arguments structure were obtained successfully
- * @param env
- * @param listSizeMethod
- * @param listGetMethod
- * @param argumentGetNameMethod
- * @param argumentGetValueMethod
- * @param argumentsGetArgumentsMethod
- * @param argumentsGetFloatArgumentsMethod
- * @param argumentsGetDoubleArgumentsMethod
- * @param getFloatNameMethod
- * @param getFloatValueMethod
- * @param getDoubleNameMethod
- * @param getDoubleValueMethod
- * @return
+ * Check that all the java methods that will be used to process the java `AidaArgument` class in C  were obtained successfully
+ *
+ * @param env environment.
+ * @param argumentMethods the list of methods needed to process the java `AidaArgument` class in C
+ * @return EXIT_SUCCESS if they were and EXIT_FAILURE if not
  */
-static int checkMethods(JNIEnv* env,
-		jmethodID listSizeMethod, jmethodID listGetMethod,
-		jmethodID argumentGetNameMethod, jmethodID argumentGetValueMethod,
-		jmethodID argumentsGetArgumentsMethod, jmethodID argumentsGetFloatArgumentsMethod,
-		jmethodID argumentsGetDoubleArgumentsMethod,
-		jmethodID getFloatNameMethod, jmethodID getFloatValueMethod,
-		jmethodID getDoubleNameMethod, jmethodID getDoubleValueMethod)
+static int checkMethods(JNIEnv* env, ArgumentMethods* argumentMethods)
 {
-	if (!listSizeMethod) {
+	if (!argumentMethods->listSizeMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get size(String) method on List object");
 		return EXIT_FAILURE;
 	}
-	if (!listGetMethod) {
+	if (!argumentMethods->listGetMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Failed to get get(int) method on List object");
 		return EXIT_FAILURE;
 	}
-	if (!argumentGetNameMethod) {
+	if (!argumentMethods->argumentGetNameMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getName() method on AidaArgument object");
 		return EXIT_FAILURE;
 	}
-	if (!argumentGetValueMethod) {
+	if (!argumentMethods->argumentGetValueMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getValue() method on AidaArgument object");
 		return EXIT_FAILURE;
 	}
 
-	if (!argumentsGetArgumentsMethod) {
+	if (!argumentMethods->argumentsGetArgumentsMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getArguments() method on AidaArguments object");
 		return EXIT_FAILURE;
 	}
 
-	if (!argumentsGetFloatArgumentsMethod) {
+	if (!argumentMethods->argumentsGetFloatArgumentsMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getFloatArguments() method on AidaArguments object");
 		return EXIT_FAILURE;
 	}
 
-	if (!argumentsGetDoubleArgumentsMethod) {
+	if (!argumentMethods->argumentsGetDoubleArgumentsMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getDoubleArguments() method on AidaArguments object");
 		return EXIT_FAILURE;
 	}
 
-	if (!getFloatNameMethod) {
+	if (!argumentMethods->getFloatNameMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getName() method on FloatValue object");
 		return EXIT_FAILURE;
 	}
 
-	if (!getFloatValueMethod) {
+	if (!argumentMethods->getFloatValueMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getValue() method on FloatValue object");
 		return EXIT_FAILURE;
 	}
 
-	if (!getDoubleNameMethod) {
+	if (!argumentMethods->getDoubleNameMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getName() method on DoubleValue object");
 		return EXIT_FAILURE;
 	}
 
-	if (!getDoubleValueMethod) {
+	if (!argumentMethods->getDoubleValueMethod) {
 		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 				"Failed to get getValue() method on DoubleValue object");
 		return EXIT_FAILURE;
@@ -430,12 +368,12 @@ static int checkMethods(JNIEnv* env,
 }
 
 /**
- * Allocate space for arguments including space for floating point numbers
+ * Allocate space for the given C `Arguments` structure including space for floating point numbers
  *
- * @param env
- * @param cArgs
- * @param totalFloatingPoints
- * @return
+ * @param env the environment
+ * @param cArgs the C arguments structure
+ * @param totalFloatingPoints the total number of floating points contained in the arguments structure
+ * @return EXIT_SUCCESS if allocated successfully EXIT_FAILURE if not
  */
 static int allocateSpaceForArguments(JNIEnv* env, Arguments* cArgs, int totalFloatingPoints)
 {
