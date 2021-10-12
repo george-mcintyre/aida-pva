@@ -166,6 +166,9 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	TRACK_MEMORY(unitList)
 	TRACK_MEMORY(setValues)
 
+	// Get convert values to VMS floats
+	CONVERT_TO_VMS_FLOAT(setValues, count);
+
 	// set the PVs specified by the lists of primary, micros, and units
 	vmsstat_t status;
 	status = DPSLCMAGNET_SETCONFIG(count, primaryList, microList, unitList, secn, setValues);
@@ -246,6 +249,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	for (int i = 0; i < count; i++) {
 		float lowerLimit = magnetLimits[i * 2];
 		float upperLimit = magnetLimits[i * 2 + 1];
+//		printf("Checking limits #%d: %f < %f < %f\n", i, lowerLimit, setValues[i], upperLimit);
 		if ((setValues[i] < lowerLimit) || (setValues[i] > upperLimit)) {
 			withinLimits[i] = false;
 			allSetValuesWithinLimits = false;
@@ -277,6 +281,9 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 			limitedCounter++;
 		}
 	}
+
+	// Get convert values to VMS floats
+	CONVERT_TO_VMS_FLOAT(limitedValuesList, numPairsWithinLimits);
 
 	// set the PVs specified by the lists of primary, micros, and units
 	vmsstat_t status;
@@ -388,9 +395,6 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 
 	// Free up the names as we don't need them anymore as they have been validated
 	FREE_TRACKED_MEMORY(names)
-
-	// Get convert values to VMS floats
-	CONVERT_TO_VMS_FLOAT(*set_values, nValues);
 
 	return EXIT_SUCCESS;
 }
