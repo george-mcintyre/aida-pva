@@ -193,6 +193,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_SHORT_TYPE, goodMeasData, false);
 
+	endAcquireBuffAcq(env);
+
 	// All read successfully
 	return table;
 }
@@ -286,22 +288,13 @@ getBuffAcqData(JNIEnv* env,
 {
 	int4u nNames = 0, nPulseId, nXdata, nYdata, ntmit, nstats, ngoodmeas;
 
-	nNames = DPSLCBUFF_GETNAMES(namesData);
-	char x[20], y[20];
-	strncpy(x, namesData[0], 4);
-	x[4] = 0x0;
-	strncpy(y, namesData[1], 4);
-	y[4] = 0x0;
-	printf("first name=%s: %d\n", x, *((int*)x));
-	printf("second name=%s: %d\n", y, *((int*)y));
-
-	if (
+	if (!(nNames = DPSLCBUFF_GETNAMES(namesData)) ||
 			!(nPulseId = DPSLCBUFF_GETPULSEIDS(pulseIdData)) ||
-					!(nXdata = DPSLCBUFF_GETXS(xData)) ||
-					!(nYdata = DPSLCBUFF_GETYS(yData)) ||
-					!(ntmit = DPSLCBUFF_GETTMITS(tmitData)) ||
-					!(nstats = DPSLCBUFF_GETSTATS(statsData)) ||
-					!(ngoodmeas = DPSLCBUFF_GETGOODMEASES(goodMeasData))
+			!(nXdata = DPSLCBUFF_GETXS(xData)) ||
+			!(nYdata = DPSLCBUFF_GETYS(yData)) ||
+			!(ntmit = DPSLCBUFF_GETTMITS(tmitData)) ||
+			!(nstats = DPSLCBUFF_GETSTATS(statsData)) ||
+			!(ngoodmeas = DPSLCBUFF_GETGOODMEASES(goodMeasData))
 			) {
 		endAcquireBuffAcq(env);
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "reading Buffered values");
@@ -316,7 +309,7 @@ getBuffAcqData(JNIEnv* env,
 		return EXIT_FAILURE;
 	}
 
-	return endAcquireBuffAcq(env);
+	return EXIT_SUCCESS;
 }
 
 /**

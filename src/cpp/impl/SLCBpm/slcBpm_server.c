@@ -179,6 +179,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, statsData, false);
 
+	endAcquireBpmData(env);
+
 	// All read successfully
 	return table;
 }
@@ -318,7 +320,7 @@ static int getBpmData(JNIEnv* env,
 		return EXIT_FAILURE;
 	}
 
-	return endAcquireBpmData(env);
+	return EXIT_SUCCESS;
 }
 
 /**

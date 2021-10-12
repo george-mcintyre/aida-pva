@@ -801,8 +801,8 @@ jobject toTable(JNIEnv* env, Table table)
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, stringValue);
 
 				// Free up string buffer
-				free(string);
 				(*env)->DeleteLocalRef(env, stringValue);
+				free(string);
 				break;
 			}
 			default:
