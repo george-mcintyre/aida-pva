@@ -280,6 +280,8 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 			limitedCounter++;
 		}
 	}
+	limitedPrimList[(numPairsWithinLimits * PRIM_LEN)] = 0x0;
+	limitedMicrList[(numPairsWithinLimits * PRIM_LEN)] = 0x0;
 
 	// Get convert values to VMS floats
 	CONVERT_TO_VMS_FLOAT(limitedValuesList, numPairsWithinLimits);
