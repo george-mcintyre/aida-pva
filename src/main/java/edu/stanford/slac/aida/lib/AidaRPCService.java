@@ -113,11 +113,13 @@ public class AidaRPCService implements RPCService {
         String typeArgument = null;
         AidaArgument valueArgument = null;
         for (AidaArgument argument : argumentsList) {
-            if (argument.getName().equalsIgnoreCase("Type")) {
+            String argumentName = argument.getName();
+            if (argumentName.equalsIgnoreCase("TYPE")) {
                 typeArgument = argument.getValue().toUpperCase();
-            }
-            if (argument.getName().equalsIgnoreCase("Value")) {
+            } else if (argumentName.equalsIgnoreCase("VALUE")) {
                 valueArgument = argument;
+            } else if ( !aidaChannelProvider.getArguments().contains(argumentName.toUpperCase())) {
+                throw new UnsupportedChannelException(channelName  + ":  " + argumentName + " is not a valid argument for this channel");
             }
         }
 

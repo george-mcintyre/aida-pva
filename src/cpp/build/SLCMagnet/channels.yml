@@ -18,6 +18,11 @@
 id: 262
 name: SLCBMagnet
 description: SLC control system pulse synchronized Buffered Data
+arguments:
+  - LIMITCHECK
+  - MAGFUNC
+  - MICROS
+  - UNITS
 configurations:
   - name: Get Secondary Values
     getterConfig:

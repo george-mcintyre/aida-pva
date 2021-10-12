@@ -17,6 +17,11 @@
 id: 122
 name: SLCUtil
 description: SLC Utility Server
+arguments:
+  - BEAM
+  - BGRP
+  - MKB
+  - VARNAME
 configurations:
   - name: BGRP Config
     getterConfig:

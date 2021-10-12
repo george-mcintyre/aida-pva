@@ -748,7 +748,7 @@ static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* pat
  */
 static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount)
 {
-	return (float *)_getFloatArray(arguments, path, true, elementCount);
+	return (float*)_getFloatArray(arguments, path, true, elementCount);
 }
 
 /**
@@ -761,7 +761,7 @@ static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elem
  */
 static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount)
 {
-	return (double *)_getFloatArray(arguments, path, false, elementCount);
+	return (double*)_getFloatArray(arguments, path, false, elementCount);
 }
 
 static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, unsigned int* elementCount)
@@ -781,16 +781,19 @@ static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, uns
 		if (numberOfFloatAllocated == 0) {
 			// allocate space
 			numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
-			theArray = calloc(numberOfFloatAllocated, (forFloat ? sizeof(float) : sizeof(double)));
+			theArray = calloc(numberOfFloatAllocated, forFloat ? sizeof(float) : sizeof(double));
+			if (theArray == NULL) {
+				return NULL;
+			}
 		} else if (numberOfFloatAllocated <= numberOfFloatsFound) {
 			// reallocate space
 			numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
 			theArray = realloc(theArray, numberOfFloatAllocated * (forFloat ? sizeof(float) : sizeof(double)));
 		}
-		if ( forFloat ) {
-			((float *)theArray)[numberOfFloatsFound] = floatingPointValue->value.floatValue;
+		if (forFloat) {
+			((float*)theArray)[numberOfFloatsFound] = floatingPointValue->value.floatValue;
 		} else {
-			((double *)theArray)[numberOfFloatsFound] = floatingPointValue->value.doubleValue;
+			((double*)theArray)[numberOfFloatsFound] = floatingPointValue->value.doubleValue;
 		}
 		sprintf(elementPath, "%s[%d]", path, ++numberOfFloatsFound);
 	}

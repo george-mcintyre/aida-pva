@@ -21,6 +21,13 @@
 id: 63
 name: SLCModel
 description: SLC Modelling parameters
+arguments:
+  - B
+  - MODE
+  - MODEL_TYPE
+  - POS
+  - POSB
+  - RUN
 configurations:
   - name: Scalar Array Getter
     getterConfig:

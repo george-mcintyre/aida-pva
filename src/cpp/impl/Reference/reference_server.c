@@ -24,7 +24,7 @@ void aidaServiceInit(JNIEnv* env)
 }
 
 /**
- * Get a boolean
+ * Get a boolean.
  *
  * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
  * @param uri the uri
@@ -40,152 +40,10 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 
 	int item = 1;
 
-	// Manual test for parameters.
-	// Simply enter parameters a, b, c, d, e, f, g, h, i, j, k
-	// Defaults are all 0 zo any values you see are the ones you sent
-
-	int intVar = 0, * intArray = NULL;
-	unsigned int unsignedIntVar = 0, * unsignedIntArray = NULL;
-	float floatVar = 0.0f, * floatArray = NULL;
-	char byteVar = '0', * byteArray = NULL; // only first value works
-	unsigned char boolVar = 0, * boolArray = NULL;
-	char* stringVar = NULL, ** stringArray = NULL;
-	short shortVar = 0, * shortArray = NULL;
-	unsigned short unsignedShortVar = 0, * unsignedShortArray = NULL;
-	long longVar = 0L, * longArray = NULL;
-	unsigned long unsignedLongVar = 0L, * unsignedLongArray = NULL;
-	double doubleVar = 0.0, * doubleArray = NULL;
-
-	unsigned int intArrayCount, unsignedIntArrayCount, floatArrayCount, byteArrayCount, boolArrayCount, stringArrayCount, shortArrayCount, unsignedShortArrayCount, longArrayCount, unsignedLongArrayCount, doubleArrayCount;
-
-	if (ascanf(env, &arguments,
-			"%od   %ou   %of   %oc   %ob   %os "
-			"%ohd  %ohu "
-			"%old  %olu  %olf"
-			"%oda  %oua  %ofa  %oca  %oba  %osa"
-			"%ohda %ohua "
-			"%olda %olua %olfa",
-
-			"int", &intVar,
-			"uInt", &unsignedIntVar,
-			"float", &floatVar,
-			"byte", &byteVar,
-			"bool", &boolVar,
-			"string", &stringVar,
-
-			"short", &shortVar,
-			"uShort", &unsignedShortVar,
-
-			"long", &longVar,
-			"uLong", &unsignedLongVar,
-			"double", &doubleVar,
-
-			"intA", &intArray, &intArrayCount,
-			"uIntA", &unsignedIntArray, &unsignedIntArrayCount,
-			"floatA", &floatArray, &floatArrayCount,
-			"byteA", &byteArray, &byteArrayCount,
-			"boolA", &boolArray, &boolArrayCount,
-			"stringA", &stringArray, &stringArrayCount,
-
-			"shortA", &shortArray, &shortArrayCount,
-			"uShortA", &unsignedShortArray, &unsignedShortArrayCount,
-
-			"longA", &longArray, &longArrayCount,
-			"uLongA", &unsignedLongArray, &unsignedLongArrayCount,
-			"doubleA", &doubleArray, &doubleArrayCount
-	)) {
-		// Do some error stuff
-		printf("Parsing error in parameters.\n");
-	} else {
-		// Print values
-		printf("int=%d, ", intVar);
-		printf("uInt=%u, ", unsignedIntVar);
-		printf("float=%g, ", floatVar);
-		printf("byte=%c, ", byteVar);
-		printf("bool=%d, ", boolVar);
-		if (stringVar) printf("string=%s, ", stringVar);
-		printf("short=%hd, ", shortVar);
-		printf("uShort=%hu, ", unsignedShortVar);
-		printf("long=%ld, ", longVar);
-		printf("uLong=%lu, ", unsignedLongVar);
-		printf("double=%g, ", doubleVar);
-
-		if (intArrayCount) {
-			for (int index = 0; index < intArrayCount; index++)
-				printf("intA[%d]=%d, ", index, intArray[index]);
-			printf("\n");
-		}
-		if (unsignedIntArrayCount) {
-			for (int index = 0; index < unsignedIntArrayCount; index++)
-				printf("uIntA[%d]=%u, ", index, unsignedIntArray[index]);
-			printf("\n");
-		}
-		if (floatArrayCount) {
-			for (int index = 0; index < floatArrayCount; index++)
-				printf("floatA[%d]=%g, ", index, floatArray[index]);
-			printf("\n");
-		}
-		if (byteArrayCount) {
-			for (int index = 0; index < byteArrayCount; index++)
-				printf("byteA[%d]=%c, ", index, byteArray[index]);
-			printf("\n");
-		}
-		if (boolArrayCount) {
-			for (int index = 0; index < boolArrayCount; index++)
-				printf("boolA[%d]=%d, ", index, boolArray[index]);
-			printf("\n");
-		}
-		if (stringArrayCount) {
-			for (int index = 0; index < stringArrayCount; index++)
-				printf("stringA[%d]=%s, ", index, stringArray[index]);
-			printf("\n");
-		}
-		if (shortArrayCount) {
-			for (int index = 0; index < shortArrayCount; index++)
-				printf("shortA[%d]=%hd, ", index, shortArray[index]);
-			printf("\n");
-		}
-		if (unsignedShortArrayCount) {
-			for (int index = 0; index < unsignedShortArrayCount; index++)
-				printf("uShortA[%d]=%hu, ", index, unsignedShortArray[index]);
-			printf("\n");
-		}
-		if (longArrayCount) {
-			for (int index = 0; index < longArrayCount; index++)
-				printf("longA[%d]=%ld, ", index, longArray[index]);
-			printf("\n");
-		}
-		if (unsignedLongArrayCount) {
-			for (int index = 0; index < unsignedLongArrayCount; index++)
-				printf("uLongA[%d]=%lu, ", index, unsignedLongArray[index]);
-			printf("\n");
-		}
-		if (doubleArrayCount) {
-			for (int index = 0; index < doubleArrayCount; index++)
-				printf("doubleA[%d]=%g, ", index, doubleArray[index]);
-			printf("\n");
-		}
-	}
-
-	// Free allocated stuff
-	// Strings
-	if (stringVar) {
-		free(stringVar);
-	}
-
-	// Arrays
-	if (intArrayCount) free(intArray);
-	if (unsignedIntArrayCount) free(unsignedIntArray);
-	if (floatArrayCount) free(floatArray);
-	if (byteArrayCount) free(byteArray);
-	if (boolArrayCount) free(boolArray);
-	if (stringArrayCount) free(stringArray);
-	if (shortArrayCount) free(shortArray);
-	if (unsignedShortArrayCount) free(unsignedShortArray);
-	if (longArrayCount) free(longArray);
-	if (unsignedLongArrayCount) free(unsignedLongArray);
-	if (doubleArrayCount) free(doubleArray);
-
+	// Optional Arguments
+	unsigned char x = 0x0;
+	ascanf(env, &arguments, "%oc", "x", &x);
+	item |= x;
 
 	// Return the item
 	return item;
@@ -605,9 +463,9 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowLongColumn(env, &table, 5);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowFloatColumn(env, &table, 6.6f, false);
+	tableAddSingleRowFloatColumn(env, &table, 6.6f, true);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowDoubleColumn(env, &table, 7.7, false);
+	tableAddSingleRowDoubleColumn(env, &table, 7.7, true);
 	CHECK_EXCEPTION_AND_RETURN_(table)
 	tableAddSingleRowStringColumn(env, &table, "eight");
 

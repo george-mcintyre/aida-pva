@@ -14,6 +14,7 @@ public class AidaProvider {
     private @NonNull Long id;
     private @NonNull String name;
     private String description;
+    private List<String> arguments;
     private @NonNull List<AidaConfigGroup> configurations = new ArrayList<AidaConfigGroup>();
     private ChannelProvider channelProvider;
 

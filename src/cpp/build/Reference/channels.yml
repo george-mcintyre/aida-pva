@@ -5,6 +5,8 @@
 id: 0
 name: Sample
 description: Aida Sample Data Provider
+arguments:
+  - x
 configurations:
   - name: Boolean Config
     getterConfig:
@@ -93,31 +95,31 @@ configurations:
       type: TABLE
       fields:
         - name: isActive
-          label: Device is active?
+          label: Is active?
           description: Device activity status.  Active if true
         - name: mode
-          label: Device Mode Code
+          label: Mode Code
           description: Device mode code
         - name: status
-          label: Device Status Code
+          label: Status Code
           description: Device status code
         - name: nbufs
-          label: Number of buffers allocated
+          label: Buffers allocated
           description: Number of buffers currently allocated on the device
         - name: memory
-          label: Device memory used
+          label: Memory used
           units: MB
           description: Total device memory used
         - name: sensor
-          label: Device Sensor Reading
+          label: Sensor Reading
           units: KHz
           description: Device sensor reading
         - name: hisensor
-          label: High Precision Device Sensor
+          label: Precision Sensor
           units: Mpa
           description: Device sensor reading
         - name: message
-          label: Device Message
+          label: Message
           description: Last device message
     channels:
       - AIDA:SAMPLE:*:attribute20
@@ -140,28 +142,31 @@ configurations:
       type: ANY
       fields:
         - name: isActive
-          label: Device is active?
+          label: Is active?
           description: Device activity status.  Active if true
         - name: mode
-          label: Device Mode Code
+          label: Mode Code
           description: Device mode code
         - name: status
-          label: Device Status Code
+          label: Status Code
           description: Device status code
         - name: nbufs
-          label: Number of buffers allocated
+          label: Buffers allocated
           description: Number of buffers currently allocated on the device
         - name: memory
-          label: Device memory used
+          label: Memory used
+          units: MB
           description: Total device memory used
         - name: sensor
-          label: Device Sensor Reading
+          label: Sensor Reading
+          units: KHz
           description: Device sensor reading
         - name: hisensor
-          label: High Precision Device Sensor
+          label: Precision Sensor
+          units: Mpa
           description: Device sensor reading
         - name: message
-          label: Device Message
+          label: Message
           description: Last device message
     channels:
       - AIDA:SAMPLE:*:attribute32

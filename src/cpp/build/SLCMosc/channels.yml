@@ -12,6 +12,9 @@
 id: 142
 name: SLCMosc
 description: Master Oscillator Service
+arguments:
+  - RING
+  - UNITS
 configurations:
   - name: Standard Config
     getterConfig:

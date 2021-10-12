@@ -35,6 +35,10 @@
 id: 162
 name: SLCKlys
 description: Klystron Server
+arguments:
+  - BEAM
+  - DGRP
+  - TRIM
 configurations:
   - name: TACT Getter and Setter
     getterConfig:

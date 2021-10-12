@@ -50,6 +50,10 @@ public abstract class ChannelProvider extends NativeChannelProvider {
         aidaServiceInit();
     }
 
+    public List<String> getArguments() {
+        return aidaProvider.getArguments();
+    }
+
     /**
      * Handles scalar requests.  This can return :-
      * - scalars e.g. Boolean, Integer, Byte, Long, Float, Double, ...
