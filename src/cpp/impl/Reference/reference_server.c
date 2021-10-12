@@ -38,12 +38,12 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 	}
 
-	int item = 1;
+	int item;
 
 	// Optional Arguments
-	unsigned char x = 0x0;
+	unsigned char x = 0x1;
 	ascanf(env, &arguments, "%oc", "x", &x);
-	item |= x;
+	item = x;
 
 	// Return the item
 	return item;
@@ -68,8 +68,8 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 	char item = 0x02;
 
 	// Optional Arguments
-	char x = 0x0;
-	ascanf(env, &arguments, "%oc", "x", &x);
+	unsigned char x = 0x0;
+	ascanf(env, &arguments, "%ob", "x", &x);
 	item |= x;
 
 	// Return the item

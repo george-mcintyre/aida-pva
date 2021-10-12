@@ -6,7 +6,7 @@ id: 0
 name: Sample
 description: Aida Sample Data Provider
 arguments:
-  - x
+  - X
 configurations:
   - name: Boolean Config
     getterConfig:

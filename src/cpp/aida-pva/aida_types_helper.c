@@ -176,52 +176,6 @@ static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* pat
 static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, unsigned int* elementCount);
 static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount);
 static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount);
-/**
- * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
- *
- * @param type type
- * @return string
- */
-jstring toTypeString(JNIEnv* env, Type type)
-{
-	switch (type) {
-	case AIDA_BOOLEAN_TYPE :
-		return (*env)->NewStringUTF(env, "BOOLEAN");
-	case AIDA_BYTE_TYPE :
-		return (*env)->NewStringUTF(env, "BYTE");
-	case AIDA_SHORT_TYPE :
-		return (*env)->NewStringUTF(env, "SHORT");
-	case AIDA_INTEGER_TYPE :
-		return (*env)->NewStringUTF(env, "INTEGER");
-	case AIDA_LONG_TYPE :
-		return (*env)->NewStringUTF(env, "LONG");
-	case AIDA_FLOAT_TYPE :
-		return (*env)->NewStringUTF(env, "FLOAT");
-	case AIDA_DOUBLE_TYPE :
-		return (*env)->NewStringUTF(env, "DOUBLE");
-	case AIDA_STRING_TYPE :
-		return (*env)->NewStringUTF(env, "STRING");
-	case AIDA_BOOLEAN_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "BOOLEAN_ARRAY");
-	case AIDA_BYTE_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "BYTE_ARRAY");
-	case AIDA_SHORT_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "SHORT_ARRAY");
-	case AIDA_INTEGER_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "INTEGER_ARRAY");
-	case AIDA_LONG_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "LONG_ARRAY");
-	case AIDA_FLOAT_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "FLOAT_ARRAY");
-	case AIDA_DOUBLE_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "DOUBLE_ARRAY");
-	case AIDA_STRING_ARRAY_TYPE :
-		return (*env)->NewStringUTF(env, "STRING_ARRAY");
-	case AIDA_TABLE_TYPE :
-	default :
-		return (*env)->NewStringUTF(env, "TABLE");
-	}
-}
 
 /**
  * ascanf, avscanf
@@ -290,12 +244,12 @@ jstring toTypeString(JNIEnv* env, Type type)
  *
  * Format Specifiers
  * Supported formats specifiers
+ * - b : unsigned char * - extract a single byte into the corresponding variable, translate “true”, “false” etc
+ * - c : char * - extract a single character into the corresponding variable
  * - d : int * - extract an integer into the corresponding variable (see l & h below).
- * - u : unsigned int * - extract an unsigned integer into the corresponding variable (see l & h below)
  * - f  : float * - extract a floating point number (see l below)
  * - s : char * - extract a string of characters into allocated space and point the corresponding variable to it
- * - c : char * - extract a single character into the corresponding variable
- * - b : unsigned char * - extract a single byte into the corresponding variable, translate “true”, “false” etc
+ * - u : unsigned int * - extract an unsigned integer into the corresponding variable (see l & h below)
  *
  * Required flag
  * - o - optional precede the format with 'o' to indicate that the argument is optional
