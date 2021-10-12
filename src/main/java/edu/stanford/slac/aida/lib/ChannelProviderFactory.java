@@ -27,6 +27,7 @@ public class ChannelProviderFactory {
         String channelsFilenameFromEnv = System.getenv("AIDA_PVA_CHANNELS_FILENAME");
         if (channelsFilenameFromEnv != null) {
             channelsFilename = channelsFilenameFromEnv;
+            System.out.println("Loading channel configuration from: " + channelsFilename);
         }
 
         // Set up the object mapper to read the channels

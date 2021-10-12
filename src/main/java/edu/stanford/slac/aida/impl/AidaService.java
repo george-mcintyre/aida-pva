@@ -13,6 +13,7 @@ public class AidaService {
         String aidaPvaLibEnv = System.getenv("AIDA_PVA_LIB_NAME");
         if (aidaPvaLibEnv != null) {
             aidaPvaLibName = aidaPvaLibEnv;
+            System.out.println("Loading Provider Shared Library: " + aidaPvaLibName);
         }
 
         System.loadLibrary(aidaPvaLibName);
