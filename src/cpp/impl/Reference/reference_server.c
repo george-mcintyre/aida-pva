@@ -42,7 +42,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	unsigned char x = 0x1;
-	ascanf(env, &arguments, "%oc", "x", &x);
+	ascanf(env, &arguments, "%ob", "x", &x);
 	item = x;
 
 	// Return the item

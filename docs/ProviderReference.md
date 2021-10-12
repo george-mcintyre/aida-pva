@@ -4,9 +4,14 @@
 
 `AIDA-PVA` provides a framework for `Channel Providers` to service requests for `Channels` that they support.
 A `Channel` is an EPICS term, co-opted by AIDA-PVA, to mean _any identifiable source of data in
-any `Channel Data Source` on the `SLAC Network`_. All AIDA-PVA Channels use a standard notation.
+any `Channel Data Source` on the `SLAC Network`_. 
 
-The framework has five main features.
+All AIDA-PVA Channels use a standard notation: 
+
+    channel := part ':' second_part [ ':' other_part ... ]
+a set of at least two parts separated by colons.  
+
+_The framework has five main features._
 
 * **Routing** client `Channel Requests` using EPICS' `PVAccess`, through the `AIDA-PVA Service` to the
   registered `Channel Provider` endpoints.
@@ -56,7 +61,7 @@ As an AIDA-PVA Service Provider writer you will be responsible for:
 ## Normative Types
 
 EPICS `PVAccess`is used to provide the protocol and transport for the `AIDA-PVA` framework. EPICS `PVData` is used to
-provide the `Normative Types` functionality used for data encapsulation.
+provide the `Normative Types` functionality used for data encapsulation and standardisation.
 
 `Normative Types` are a set of software designs for high-level composite data types suitable for the application-level
 data exchange between EPICS V4+ network endpoints. In particular, they are intended for use in online scientific data
