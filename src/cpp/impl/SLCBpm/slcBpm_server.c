@@ -251,7 +251,7 @@ static int acquireBpmData(JNIEnv* env, int* rows, int bpmd, int n, int cnftype, 
 	}
 
 	// Acquire BPM values
-	// This often fails first time so if it fails just retry
+	printf("Calling DPSLCBPM_BPMACQ(&bpmCount, bpmd=%d, n=%d, cnftype=%d, cnfnum=%d)\n", bpmd, n, cnftype, cnfnum);
 	status = DPSLCBPM_BPMACQ(&bpmCount, bpmd, n, cnftype, cnfnum);
 	if (!$VMS_STATUS_SUCCESS(status)) {
 		endAcquireBpmData(env);
