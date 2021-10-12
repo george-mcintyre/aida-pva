@@ -101,7 +101,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	CHECK_EXCEPTION_AND_RETURN_(table)
 
 	// Add value to table
-	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq, false);
+	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq, true);
 
 	// Return table
 	return table;
