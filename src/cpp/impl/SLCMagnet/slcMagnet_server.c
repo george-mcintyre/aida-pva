@@ -249,7 +249,6 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	for (int i = 0; i < count; i++) {
 		float lowerLimit = magnetLimits[i * 2];
 		float upperLimit = magnetLimits[i * 2 + 1];
-//		printf("Checking limits #%d: %f < %f < %f\n", i, lowerLimit, setValues[i], upperLimit);
 		if ((setValues[i] < lowerLimit) || (setValues[i] > upperLimit)) {
 			withinLimits[i] = false;
 			allSetValuesWithinLimits = false;
