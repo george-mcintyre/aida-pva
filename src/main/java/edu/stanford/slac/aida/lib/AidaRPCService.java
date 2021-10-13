@@ -152,10 +152,12 @@ public class AidaRPCService implements RPCService {
                 } else {
                     if (ANY.equals(aidaGetterType) ||
                             ((SCALAR.equals(aidaGetterType) || SCALAR_ARRAY.equals(aidaGetterType)) &&
-                                    (TABLE.equals(specifiedAidaType) || specifiedAidaType.metaType().equals(aidaGetterType)))) {
+                                    (TABLE.equals(specifiedAidaType) || specifiedAidaType.metaType().equals(aidaGetterType))) ||
+                            (!SCALAR.equals(aidaGetterType) && !SCALAR_ARRAY.equals(aidaGetterType) && aidaGetterType.equals(specifiedAidaType))
+                    ) {
                         aidaGetterType = specifiedAidaType;
                     } else {
-                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be a " + (aidaGetterType != null ? aidaGetterType : "<unspecified>") + ", but you specified " + specifiedAidaType);
+                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
                     }
                 }
             } catch (IllegalArgumentException e) {
