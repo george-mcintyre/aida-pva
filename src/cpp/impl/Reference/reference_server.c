@@ -69,7 +69,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Optional Arguments
 	unsigned char x = 0x0;
-	ascanf(env, &arguments, "%ob", "x", &x);
+	ascanf(env, &arguments, "%oc", "x", &x);
 	item |= x;
 
 	// Return the item
@@ -198,7 +198,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 	double item = 7.7;
 
 	// Optional Arguments
-	double x = 1.0f;
+	double x = 1.0;
 	ascanf(env, &arguments, "%olf", "x", &x);
 	item *= x;
 
@@ -226,7 +226,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 	char* data = "eight";
 
 	// Optional Arguments
-	char *x = "";
+	char* x = "";
 	ascanf(env, &arguments, "%os", "x", &x);
 
 	// allocate and return
@@ -235,7 +235,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 	if (!strlen(x)) {
 		sprintf(item, "%s", data);
 	} else {
-		sprintf(item, "%s: %s", x, data);
+		sprintf(item, "%s: %s", data, x);
 	}
 	free(x);
 
@@ -263,6 +263,15 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 	ALLOCATE_MEMORY_OR_RETURN(env, booleanArray.items, sizeof(unsigned char), "boolean array", booleanArray)
 	((unsigned char*)(booleanArray.items))[0] = 1;
 
+	// Optional Arguments
+	unsigned char* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%oba", "x", &x, &count) && count) {
+		free(booleanArray.items);
+		booleanArray.count = (int)count;
+		booleanArray.items = x;
+	}
+
 	// Return the boolean array
 	return booleanArray;
 }
@@ -286,6 +295,18 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 	byteArray.count = 1;
 	ALLOCATE_MEMORY_OR_RETURN(env, byteArray.items, sizeof(unsigned char), "byte array", byteArray)
 	((unsigned char*)(byteArray.items))[0] = 12;
+
+	// Optional Arguments
+	unsigned char* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%oca", "x", &x, &count) && count) {
+		free(byteArray.items);
+		byteArray.count = (int)count;
+		byteArray.items = x;
+		for (int i = 0; i < count; i++) {
+			((unsigned char*)byteArray.items)[i] |= 12;
+		}
+	}
 
 	// Return the byte array
 	return byteArray;
@@ -311,6 +332,18 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 	ALLOCATE_MEMORY_OR_RETURN(env, shortArray.items, sizeof(short), "short array", shortArray)
 	((short*)(shortArray.items))[0] = 13;
 
+	// Optional Arguments
+	short* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%ohda", "x", &x, &count) && count) {
+		free(shortArray.items);
+		shortArray.count = (int)count;
+		shortArray.items = x;
+		for (int i = 0; i < count; i++) {
+			((short*)shortArray.items)[i] += 13;
+		}
+	}
+
 	// Return the short array
 	return shortArray;
 }
@@ -334,6 +367,18 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 	integerArray.count = 1;
 	ALLOCATE_MEMORY_OR_RETURN(env, integerArray.items, sizeof(int), "integer array", integerArray)
 	((int*)(integerArray.items))[0] = 14;
+
+	// Optional Arguments
+	int* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%oda", "x", &x, &count) && count) {
+		free(integerArray.items);
+		integerArray.count = (int)count;
+		integerArray.items = x;
+		for (int i = 0; i < count; i++) {
+			((int*)integerArray.items)[i] += 14;
+		}
+	}
 
 	// Return the integer array
 	return integerArray;
@@ -359,6 +404,18 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 	ALLOCATE_MEMORY_OR_RETURN(env, longArray.items, sizeof(long), "long array", longArray)
 	((long*)(longArray.items))[0] = 15;
 
+	// Optional Arguments
+	long* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%olda", "x", &x, &count) && count) {
+		free(longArray.items);
+		longArray.count = (int)count;
+		longArray.items = x;
+		for (int i = 0; i < count; i++) {
+			((long*)longArray.items)[i] += 15;
+		}
+	}
+
 	// Return the long array
 	return longArray;
 }
@@ -382,6 +439,18 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 	floatArray.count = 1;
 	ALLOCATE_MEMORY_OR_RETURN(env, floatArray.items, sizeof(float), "float array", floatArray)
 	((float*)(floatArray.items))[0] = 16.6f;
+
+	// Optional Arguments
+	float* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%ofa", "x", &x, &count) && count) {
+		free(floatArray.items);
+		floatArray.count = (int)count;
+		floatArray.items = x;
+		for (int i = 0; i < count; i++) {
+			((float*)floatArray.items)[i] *= 16.6f;
+		}
+	}
 
 	// Return the float array
 	return floatArray;
@@ -407,6 +476,18 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 	ALLOCATE_MEMORY_OR_RETURN(env, doubleArray.items, sizeof(double), "double array", doubleArray)
 	((double*)(doubleArray.items))[0] = 17.7;
 
+	// Optional Arguments
+	double* x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%olfa", "x", &x, &count) && count) {
+		free(doubleArray.items);
+		doubleArray.count = (int)count;
+		doubleArray.items = x;
+		for (int i = 0; i < count; i++) {
+			((double*)doubleArray.items)[i] *= 17.7;
+		}
+	}
+
 	// Return the double array
 	return doubleArray;
 }
@@ -431,6 +512,15 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 	ALLOCATE_MEMORY_OR_RETURN(env, stringArray.items, sizeof(char*), "string array", stringArray);
 	ALLOCATE_STRING_OR_RETURN(env, stringArray.items[0], "eighteen", "string in string array", stringArray);
 
+	// Optional Arguments
+	char** x;
+	unsigned int count = 0;
+	if (!ascanf(env, &arguments, "%osa", "x", &x, &count) && count) {
+		free(stringArray.items);
+		stringArray.count = (int)count;
+		stringArray.items = x;
+	}
+
 	// Return the string array
 	return stringArray;
 }
@@ -451,23 +541,43 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		RETURN_NULL_TABLE;
 	}
 
+	// Optional Arguments
+	unsigned char xBoolean = 0x1, xByte = 0;
+	short xShort = 0;
+	int xInteger = 0;
+	long xLong = 0;
+	float xFloat = 1.0f;
+	double xDouble = 1.0;
+	char* xString = NULL;
+	if (ascanf(env, &arguments, "%ob %oc %ohd %od $old %of %olf %os",
+			"x.boolean", &xBoolean,
+			"x.byte", &xByte,
+			"x.short", &xShort,
+			"x.integer", &xInteger,
+			"x.long", &xLong,
+			"x.float", &xFloat,
+			"x.double", &xDouble,
+			"x.string", &xString)) {
+		RETURN_NULL_TABLE
+	}
+
 	Table table = tableCreate(env, 1, 8);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowBooleanColumn(env, &table, 1);
+	tableAddSingleRowBooleanColumn(env, &table, xBoolean);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowByteColumn(env, &table, 2);
+	tableAddSingleRowByteColumn(env, &table, 2 | xByte);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowShortColumn(env, &table, 3);
+	tableAddSingleRowShortColumn(env, &table, 3 + xShort);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowIntegerColumn(env, &table, 4);
+	tableAddSingleRowIntegerColumn(env, &table, 4 + xInteger);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowLongColumn(env, &table, 5);
+	tableAddSingleRowLongColumn(env, &table, 5 + xLong);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowFloatColumn(env, &table, 6.6f, true);
+	tableAddSingleRowFloatColumn(env, &table, 6.6f * xFloat, true);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowDoubleColumn(env, &table, 7.7, true);
+	tableAddSingleRowDoubleColumn(env, &table, 7.7 * xDouble, true);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowStringColumn(env, &table, "eight");
+	tableAddSingleRowStringColumn(env, &table, xString ? xString : "eight");
 
 	// Return the table
 	return table;
@@ -484,14 +594,6 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	// Do set value logic ...
-	printValue(value);
-
-	char path[] = "foo[0].bar";
-	json_value* jsonValue = getJsonValue(&value, path);
-	if (jsonValue) {
-		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
-	}
 }
 
 /**
@@ -505,18 +607,13 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
-	// Do set value logic ...
-	printValue(value);
-
-	char path[] = "foo[0].bar";
-	json_value* jsonValue = getJsonValue(&value, path);
-	if (jsonValue) {
-		printf("Value foo[0].bar = %d\n", jsonValue->u.integer);
-	}
+	// Mandatory Value Argument
+	unsigned char v;
+	avscanf(env, &arguments, &value, "%b", "value", &v);
 
 	Table table = tableCreate(env, 1, 1);
 	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddSingleRowBooleanColumn(env, &table, 1);
+	tableAddSingleRowBooleanColumn(env, &table, v);
 
 	// Return the table
 	return table;
