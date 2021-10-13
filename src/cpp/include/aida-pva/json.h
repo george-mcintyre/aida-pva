@@ -39,7 +39,7 @@
 // REMOVED for compatibility with OpenVMS
 // #include <stdint.h>
 #include <limits.h>
-#define json_int_t int
+#define json_int_t long
 #else
 #define json_int_t __int64
 #endif

@@ -110,7 +110,7 @@
         *ptr = *stringValue; \
     } else {   \
         if (jsonRoot->type == json_integer) { \
-            *ptr = jsonRoot->u.integer; \
+            *ptr = (int)(jsonRoot->u.integer & 0XFF) ; \
         } else if (jsonRoot->type == json_string && jsonRoot->u.string.length == 1) { \
             *ptr = *jsonRoot->u.string.ptr; \
         } else { \
@@ -133,7 +133,7 @@
         if (jsonRoot->type == json_string) { \
             strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
         } else if (jsonRoot->type == json_integer) {                \
-            sprintf(nextStringPosition, "%d", jsonRoot->u.integer); \
+            sprintf(nextStringPosition, "%ld", jsonRoot->u.integer); \
         } else if (jsonRoot->type == json_double) {                 \
             sprintf(nextStringPosition, "%g", jsonRoot->u.dbl); \
         } else { \

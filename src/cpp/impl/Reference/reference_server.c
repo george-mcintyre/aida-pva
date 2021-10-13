@@ -304,7 +304,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 		byteArray.count = (int)count;
 		byteArray.items = x;
 		for (int i = 0; i < count; i++) {
-			((unsigned char*)byteArray.items)[i] |= 12;
+			x[i] |= 12;
 		}
 	}
 
@@ -340,7 +340,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 		shortArray.count = (int)count;
 		shortArray.items = x;
 		for (int i = 0; i < count; i++) {
-			((short*)shortArray.items)[i] += 13;
+			x[i] += 13;
 		}
 	}
 
@@ -376,7 +376,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 		integerArray.count = (int)count;
 		integerArray.items = x;
 		for (int i = 0; i < count; i++) {
-			((int*)integerArray.items)[i] += 14;
+			x[i] += 14;
 		}
 	}
 
@@ -402,7 +402,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 	Array longArray;
 	longArray.count = 1;
 	ALLOCATE_MEMORY_OR_RETURN(env, longArray.items, sizeof(long), "long array", longArray)
-	((long*)(longArray.items))[0] = 15;
+	((long*)(longArray.items))[0] = 15l;
 
 	// Optional Arguments
 	long* x;
@@ -412,7 +412,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 		longArray.count = (int)count;
 		longArray.items = x;
 		for (int i = 0; i < count; i++) {
-			((long*)longArray.items)[i] += 15;
+			x[i] += 15l;
 		}
 	}
 
@@ -448,7 +448,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 		floatArray.count = (int)count;
 		floatArray.items = x;
 		for (int i = 0; i < count; i++) {
-			((float*)floatArray.items)[i] *= 16.6f;
+			x[i] *= 16.6f;
 		}
 	}
 
@@ -484,7 +484,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 		doubleArray.count = (int)count;
 		doubleArray.items = x;
 		for (int i = 0; i < count; i++) {
-			((double*)doubleArray.items)[i] *= 17.7;
+			x[i] *= 17.7;
 		}
 	}
 
