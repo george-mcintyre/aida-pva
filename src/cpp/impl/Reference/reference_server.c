@@ -549,7 +549,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	float xFloat = 1.0f;
 	double xDouble = 1.0;
 	char* xString = NULL;
-	if (ascanf(env, &arguments, "%ob %oc %ohd %od $old %of %olf %os",
+	if (ascanf(env, &arguments, "%ob %oc %ohd %od %old %of %olf %os",
 			"x.boolean", &xBoolean,
 			"x.byte", &xByte,
 			"x.short", &xShort,
