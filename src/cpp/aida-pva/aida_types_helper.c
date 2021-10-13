@@ -396,7 +396,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			if (getFloatArrayArgument(arguments, argumentName, (float**)target, elementCount) == EXIT_SUCCESS) {
 				return EXIT_SUCCESS;
 			}
-		} else if (aidaType == AIDA_DOUBLE_TYPE) {
+		} else if (aidaType == AIDA_DOUBLE_ARRAY_TYPE) {
 			if (getDoubleArrayArgument(arguments, argumentName, (double**)target, elementCount) == EXIT_SUCCESS) {
 				return EXIT_SUCCESS;
 			}
