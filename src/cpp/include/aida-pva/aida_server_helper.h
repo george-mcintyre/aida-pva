@@ -326,11 +326,26 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function
  */
-#define SPRINF_ERROR_AND_FREE_MEMORY(_exception, _errorText, _ref, _r) \
+#define SPRINTF_ERROR_AND_FREE_MEMORY(_exception, _errorText, _ref, _r) \
 { \
     char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
     sprintf(error, _errorText,  _ref); \
     aidaThrowNonOsException(env, _exception, error); \
+    FREE_MEMORY \
+    return _r; \
+}
+
+/**
+ *Throw error message in an exception, free any allocated memory and return the error code
+ *
+ * @param _exception exception to raise (string)
+ * @param _errorText the text of the error to raise
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function
+ */
+#define PRINT_ERROR_AND_FREE_MEMORY(_exception, _errorText, _r) \
+{ \
+    aidaThrowNonOsException(env, _exception, _errorText); \
     FREE_MEMORY \
     return _r; \
 }

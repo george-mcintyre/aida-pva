@@ -390,7 +390,8 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	if (!isAllValid(*count, *name_validity)) {
 		char invalidNames[MAX_URI_LEN * nNames + 1];
 		getInvalidNames(invalidNames, *count, names, *name_validity);
-		SPRINF_ERROR_AND_FREE_MEMORY(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s", invalidNames,
+		SPRINTF_ERROR_AND_FREE_MEMORY(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s",
+				invalidNames,
 				EXIT_FAILURE)
 	}
 

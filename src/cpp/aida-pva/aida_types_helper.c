@@ -44,7 +44,7 @@
         } else if (jsonRoot->type == json_double) { \
             *ptr = (_cType)(jsonRoot->u.dbl); \
         } else {\
-            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": %s", "<json>", EXIT_FAILURE) \
+            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": <json>", EXIT_FAILURE) \
         }\
     }\
 }
@@ -96,7 +96,7 @@
                     || strcasecmp(jsonRoot->u.string.ptr, "no") == 0 \
                     || strcasecmp(jsonRoot->u.string.ptr, "f") == 0); \
         } else {  \
-            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", "<json>", EXIT_FAILURE) \
+            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: <json>", EXIT_FAILURE) \
         } \
     } \
 }
@@ -114,7 +114,7 @@
         } else if (jsonRoot->type == json_string && jsonRoot->u.string.length == 1) { \
             *ptr = *jsonRoot->u.string.ptr; \
         } else { \
-            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to byte: %s", "<json>", EXIT_FAILURE) \
+            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to byte: <json>", EXIT_FAILURE) \
         } \
     } \
 }
@@ -140,7 +140,7 @@
             if (aidaType == AIDA_STRING_TYPE) { \
                 free(nextStringPosition);\
             }\
-            SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: %s", "<json>", EXIT_FAILURE) \
+            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: <json>", EXIT_FAILURE) \
         } \
         *ptr = nextStringPosition; \
         nextStringPosition+=strlen(nextStringPosition)+1; \
@@ -350,7 +350,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 		// Invalid format - if no format was specified
 		if (!format) {
-			SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "incorrect format string: %%%s", formatSpecifier,
+			SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "incorrect format string: %%%s", formatSpecifier,
 					EXIT_FAILURE)
 		}
 
@@ -358,7 +358,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		// This is the name of the argument that we will get the value from
 		char* argumentName = va_arg (argp, char *);
 		if (!argumentName) {
-			SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "missing variable to correspond to format: %%%s",
+			SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "missing variable to correspond to format: %%%s",
 					formatSpecifier, EXIT_FAILURE)
 		}
 
@@ -382,24 +382,108 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE)
 
 		// If this is for a FLOAT or DOUBLE then try to get ieee version if available
-		if (aidaType == AIDA_FLOAT_TYPE) {
-			if (getFloatArgument(arguments, argumentName, (float*)target) == EXIT_SUCCESS) {
+		float floatTarget;
+		float* floatArrayTarget;
+		double doubleTarget;
+		double* doubleArrayTarget;
+		if (aidaType == AIDA_FLOAT_TYPE || aidaType == AIDA_DOUBLE_TYPE) {
+			// Try getting double first
+			if (getDoubleArgument(arguments, argumentName, (double*)&doubleTarget) == EXIT_SUCCESS) {
+				if (aidaType == AIDA_FLOAT_TYPE) {  // use for float if that's what you need
+					*((float*)target) = (float)doubleTarget;
+				} else {
+					*((double*)target) = doubleTarget;
+				};
 				return EXIT_SUCCESS;
 			}
-		} else if (aidaType == AIDA_DOUBLE_TYPE) {
-			if (getDoubleArgument(arguments, argumentName, (double*)target) == EXIT_SUCCESS) {
+			// Try float
+			if (getFloatArgument(arguments, argumentName, (float*)&floatTarget) == EXIT_SUCCESS) {
+				if (aidaType == AIDA_DOUBLE_TYPE) {  // use for double if that's what you need
+					*((double*)target) = (double)floatTarget;
+				} else {
+					*((float*)target) = floatTarget;
+				};
 				return EXIT_SUCCESS;
 			}
 		}
 
-		if (aidaType == AIDA_FLOAT_ARRAY_TYPE) {
-			if (getFloatArrayArgument(arguments, argumentName, (float**)target, elementCount) == EXIT_SUCCESS) {
+		if (aidaType == AIDA_FLOAT_ARRAY_TYPE || aidaType == AIDA_DOUBLE_ARRAY_TYPE) {
+			// Try double array first
+			if (getDoubleArrayArgument(arguments, argumentName, (double**)&doubleArrayTarget, elementCount)
+					== EXIT_SUCCESS) {
+				if (aidaType == AIDA_FLOAT_TYPE) {  // use for float if that's what you need
+					// Allocate a new array and copy values
+					floatArrayTarget = calloc(*elementCount, sizeof(float));
+					if (!floatArrayTarget) {
+						free(doubleArrayTarget);
+						PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION,
+								"Could not allocate memory for float argument",
+								EXIT_FAILURE)
+					}
+					*((float**)target) = floatArrayTarget;
+					for (int i = 0; i < *elementCount; i++) {
+						floatArrayTarget[i] = (float)doubleArrayTarget[i];
+					}
+					free(doubleArrayTarget);
+				} else {
+					*((double**)target) = doubleArrayTarget;
+				};
 				return EXIT_SUCCESS;
 			}
-		} else if (aidaType == AIDA_DOUBLE_ARRAY_TYPE) {
-			if (getDoubleArrayArgument(arguments, argumentName, (double**)target, elementCount) == EXIT_SUCCESS) {
+
+			// Then try float array
+			if (getFloatArrayArgument(arguments, argumentName, (float**)&floatArrayTarget, elementCount)
+					== EXIT_SUCCESS) {
+				if (aidaType == AIDA_DOUBLE_TYPE) {  // use for double if that's what you need
+					// Allocate a new array and copy values
+					doubleArrayTarget = calloc(*elementCount, sizeof(double));
+					if (!doubleArrayTarget) {
+						free(floatArrayTarget);
+						PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION,
+								"Could not allocate memory for double argument",
+								EXIT_FAILURE)
+					}
+					*((double**)target) = doubleArrayTarget;
+					for (int i = 0; i < *elementCount; i++) {
+						doubleArrayTarget[i] = (double)floatArrayTarget[i];
+					}
+					free(floatArrayTarget);
+				} else {
+					*((float**)target) = floatArrayTarget;
+				};
 				return EXIT_SUCCESS;
 			}
+		}
+		switch (aidaType) {
+		case AIDA_FLOAT_ARRAY_TYPE:
+			if (getFloatArgument(arguments, argumentName, (float*)target) == EXIT_SUCCESS) {
+				return EXIT_SUCCESS;
+			}
+		case AIDA_DOUBLE_ARRAY_TYPE:
+			if (getDoubleArrayArgument(arguments, argumentName, (double**)&doubleArrayTarget, elementCount)
+					== EXIT_SUCCESS) {
+				if (aidaType == AIDA_FLOAT_TYPE) {  // use for float if that's what you need
+					// Allocate a new array and copy values
+					float* floatTarget = calloc(*elementCount, sizeof(float));
+					if (!floatTarget) {
+						free(doubleArrayTarget);
+						PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION,
+								"Could not allocate memory for float argument",
+								EXIT_FAILURE)
+					}
+					*((float**)target) = floatTarget;
+					for (int i = 0; i < *elementCount; i++) {
+						floatTarget[i] = (float)doubleArrayTarget[i];
+					}
+					free(doubleArrayTarget);
+				} else {
+					*((double**)target) = doubleArrayTarget;
+				};
+				return EXIT_SUCCESS;
+			}
+			break;
+		default:
+			break;
 		}
 
 		// If this is for a FLOAT_ARRAY or DOUBLE_ARRAY then get the ieee version if available
@@ -439,7 +523,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					// Just take the string and wrap it as an array
 					elementValue = asArrayValue(value->value.stringValue);
 					if (elementValue.type != AIDA_JSON_TYPE) {
-						SPRINF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "Unable to make array of: %s",
+						SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "Unable to make array of: %s",
 								value->value.stringValue, EXIT_FAILURE)
 					}
 					value = &elementValue;
@@ -462,7 +546,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Check if the value has been properly set
 			if (value->type == AIDA_NO_TYPE) {
 				if (isRequired) {
-					SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing required argument: %s",
+					SPRINTF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing required argument: %s",
 							argumentName, EXIT_FAILURE)
 				} else {
 					// If this is a string and a default has been set but the optional string has not been provided
@@ -497,7 +581,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
 				if (elementValue.type != AIDA_JSON_TYPE) {
 					if (isRequired) {
-						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+						SPRINTF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
 								"Missing required argument: %s", argumentName, EXIT_FAILURE)
 					} else {
 						continue;
@@ -511,7 +595,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				Argument elementArgument = getArgument(*arguments, argumentName);
 				if (!elementArgument.name) {
 					if (isRequired) {
-						SPRINF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+						SPRINTF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
 								"Missing required argument: %s", argumentName, EXIT_FAILURE)
 					} else {
 						continue;
