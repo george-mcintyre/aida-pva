@@ -23,7 +23,7 @@ import lombok.NonNull;
 public class AidaField {
     /**
      * TABLE's are returned as Normative Type `PVStructures`.
-     * see AIDA-PVA Normative Types Documentation - https://github.com/slaclab/aida-pva/blob/master/docs/NormativeTypes.md
+     * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
      *
      * It contains a `value` field which is also a `PVStructure`, which contains subfields for each `TABLE` column.
      *
