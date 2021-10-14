@@ -109,7 +109,7 @@ public class AidaRPCService implements RPCService {
         AidaType aidaGetterType = getterConfig == null ? NONE : getterConfig.getType();
         AidaType aidaSetterType = setterConfig == null ? NONE : setterConfig.getType();
 
-        // Get special arguments type and value
+        // Get special arguments `TYPE` and `VALUE` used to determine which APIs will be called
         String typeArgument = null;
         AidaArgument valueArgument = null;
         for (AidaArgument argument : argumentsList) {
@@ -122,6 +122,8 @@ public class AidaRPCService implements RPCService {
         }
 
         boolean isSetterRequest = valueArgument != null;
+
+        // Validate arguments
         for (AidaArgument argument : argumentsList) {
             String argumentName = argument.getName();
             if (aidaGetterType != NONE && !getterConfig.getArguments().contains(argumentName.toUpperCase())) {
