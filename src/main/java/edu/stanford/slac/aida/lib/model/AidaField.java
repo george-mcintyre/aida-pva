@@ -23,7 +23,7 @@ import lombok.NonNull;
 public class AidaField {
     /**
      * TABLE's are returned as Normative Type `PVStructure`'s.  see
-     * <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>
+     * <a href="https://github.com/slaclab/aida-pva/blob/master/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>
      * `value` field PVStructure's subfield field name
      */
     private @NonNull String name;
