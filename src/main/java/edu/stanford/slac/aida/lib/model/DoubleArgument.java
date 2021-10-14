@@ -3,27 +3,31 @@ package edu.stanford.slac.aida.lib.model;
 import lombok.Data;
 
 /**
- * This class encapsulates an {@link AidaConfigGroup}.
+ * This class encapsulates an {@link DoubleArgument}.
  * <p>
- * It is used to represent the configuration that will apply to a single group of {@link AidaChannel}s.
+ * Whenever arguments are passed with a channel request some they are all converted to strings and converted back
+ * in the Native Provider to their original types.  Floats and Doubles however are treated differently because
+ * the ieee format in which Floats and Doubles are represented can, in some circumstances, hold more precision
+ * than can be expressed in strings.
  * <p>
- * The {@link AidaConfigGroup} class controls how the AIDA-PVA Channel Provider responds to a channel request.
+ * For this reason the original Float and Double values are transited, as-is across the EPICS network, through AIDA-PVA
+ * and down to the Native Provider.
  * <p>
- * There is a {@link AidaConfigGroup#getterConfig} for the `get` requests,
- * and a {@link AidaConfigGroup#setterConfig} for the `set` requests.
- * <p>
- * The List of {@link AidaConfigGroup#channels} are the names of the channels that will use the specified config
+ * For the last leg of that journey, from AIDA-PVA to the Native Provider the double precision arguments are
+ * encapsulated in a {@link DoubleArgument} object.
  * <p>
  * Note that it uses the {@link lombok.Data} annotation to provide all the getters and setters.
  * a constructor with all required arguments,
  * and an equals(), hashcode() and toString()  method.
- * <p>
- * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
- * with no arguments.
- * <p>
  */
 @Data
 public class DoubleArgument {
+    /**
+     * The argument name
+     */
     private final String name;
+    /**
+     * The double precision floating point argument value
+     */
     private final double value;
 }
