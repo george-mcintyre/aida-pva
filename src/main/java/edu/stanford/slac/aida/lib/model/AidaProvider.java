@@ -72,7 +72,7 @@ public class AidaProvider {
      * @return the list of supported channel names
      */
     public Set<String> getChannelNames() {
-        makeSureChannelMapIsLoaded();
+        loadChannelMapIfNotLoaded();
         return this.channelMap.keySet();
     }
 
@@ -89,7 +89,7 @@ public class AidaProvider {
      * @return the {@link AidaChannel} object that matches the given channel name
      */
     public AidaChannel getAidaChannel(String channelName) {
-        makeSureChannelMapIsLoaded();
+        loadChannelMapIfNotLoaded();
 
         // Look for an exact match or a {@link WildcardMatcher#match} if that fails
         AidaChannel aidaChannel = this.channelMap.get(channelName);
@@ -111,18 +111,21 @@ public class AidaProvider {
      * {@link AidaProvider#configurations} that have been loaded in from the Channel Provider's
      * CHANNELS.YML file.
      */
-    private void makeSureChannelMapIsLoaded() {
-        /// Make sure that no other thread can do this at the same time
+    private void loadChannelMapIfNotLoaded() {
+        /// Make sure that no other thread does this at the same time
         synchronized (this.channelMap) {
+            // Only load the map if it is empty
             if (this.channelMap.isEmpty()) {
+                // Get all the configuration groups
                 for (AidaConfigGroup configuration : getConfigurations()) {
                     AidaChannelConfig getterConfig = configuration.getGetterConfig();
                     AidaChannelConfig setterConfig = configuration.getSetterConfig();
 
-                    // Set default labels in the config
+                    // In the getter config, set the labels to be the field names, if the labels are not specified
                     if (getterConfig != null) {
                         setDefaultLabels(getterConfig.getFields());
                     }
+                    // In the setter config, set the labels to be the field names, if the labels are not specified
                     if (setterConfig != null) {
                         setDefaultLabels(setterConfig.getFields());
                     }
@@ -132,9 +135,11 @@ public class AidaProvider {
                         AidaChannel aidaChannel = new AidaChannel(channelName, configuration.getGetterConfig(), configuration.getSetterConfig());
                         this.channelMap.put(channelName, aidaChannel);
 
-                        // Add legacy style channel name as well as new style, regardless as to how it is specified in the channels file
+                        // Get index of last separator using new and legacy format channel names
                         int indexOfLastSeparator = channelName.lastIndexOf(":");
                         int indexOfLastLegacySeparator = channelName.lastIndexOf("//");
+
+                        // Add legacy style channel name as well as new style, regardless as to how it is specified in the channels file
 
                         // If specified using legacy separator then add entry with the new style as well
                         if (indexOfLastLegacySeparator != -1) {
@@ -163,14 +168,18 @@ public class AidaProvider {
     }
 
     /**
-     * Set the label to be the name if it is not specified
+     * Set the labels to be the field names, if the labels are not specified
      *
      * @param fields the fields to update
      */
     private void setDefaultLabels(List<AidaField> fields) {
+        // If any fields are given
         if (fields != null) {
+            // For each of the given fields
             for (AidaField field : fields) {
+                // If the label is not specified
                 if (field.getLabel() == null) {
+                    // Use the name as the label
                     field.setLabel(field.getName());
                 }
             }
