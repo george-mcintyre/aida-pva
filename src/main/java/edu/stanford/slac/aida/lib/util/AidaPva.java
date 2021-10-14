@@ -1,9 +1,12 @@
 package edu.stanford.slac.aida.lib.util;
 
 /**
- * Go here for generator
+ * This class has one and only one job.  Print a banner in the logs.
+ * <p>
+ * Go here for generator to try out different banner styles if you're bored with this one :)
  * https://www.messletters.com/en/big-text/
- * style: univers
+ * <p>
+ * style used: `univers`
  */
 public class AidaPva {
     public static String banner() {
