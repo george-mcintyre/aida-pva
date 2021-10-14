@@ -59,79 +59,10 @@ As an AIDA-PVA Service Provider writer you will be responsible for:
 ![Aida-PVA Topology](images/aida-pva-system-components.png)
 
 ## Normative Types
-
-EPICS `PVAccess`is used to provide the protocol and transport for the `AIDA-PVA` framework. EPICS `PVData` is used to
-provide the `Normative Types` functionality used for data encapsulation and standardisation.
-
-`Normative Types` are a set of software designs for high-level composite data types suitable for the application-level
-data exchange between EPICS V4+ network endpoints. In particular, they are intended for use in online scientific data
-services. The intention is that where the endpoints in an EPICS V4+ network use only
-`Normative Types`, each peer in the network should be able to understand all the data transmitted to it, at least
-syntactically, and be able to take processing steps appropriate to that data.
-
-AIDA-PVA uses `NTTable`, `NTScalarArray` and `NTScalar` `Normative Types` to represent its data.
-
-![Normative Type Usage in AIDA-PVA](images/nt_types.png)
-
-See [EPICS Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t%20timeStamp%20%3A%20opt-,Description%20of%20Normative%20Types,include%20descriptor%2C%20alarm%20and%20timestamp.)
-for more information
+see [Normative Types](NormativeTypes.md)
 
 ## Supported Data Types
-
-### Scalar Types
-
-* **BOOLEAN**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVBoolean`
-* **BYTE**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVByte`. Note there is no CHAR so clients are required to use BYTE and marshal the results
-  appropriately
-* **SHORT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVShort`
-* **INTEGER**            - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVInteger`
-* **LONG**               - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVLong`
-* **FLOAT**              - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVFloat`
-* **DOUBLE**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVDouble`
-* **STRING**             - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalar` norm
-  containing a single `PVString`
-
-### Scalar Array Types
-
-* **BOOLEAN_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVBooleanArray` array
-* **BYTE_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVByteArray` array. Note there is no CHAR_ARRAY so clients are required to use BYTE_ARRAY and marshal
-  the results appropriately
-* **SHORT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVShortArray` array
-* **INTEGER_ARRAY**      - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVIntegerArray` array
-* **LONG_ARRAY**         - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVLongArray` array
-* **FLOAT_ARRAY**        - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVFloatArray` array
-* **DOUBLE_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVDoubleArray` array
-* **STRING_ARRAY**       - Getter for this Channel returns a `PVStructure` that conforms to the `NTScalarArray` norm
-  containing a `PVStringArray` array
-
-### Structures
-
-* **TABLE**              - Getter or setter returns a `PVStructure` that conforms to the `NTTable` norm containing a set
-  of homogenous congruent vectors which can be any of the `PVScalarArray` types supported under Scalar Array Types
-  above.
-
-### Special configuration only types.
-
-* **NONE**               - Means that this getter or setter is not supported
-* **VOID**               - Means that this setter does not return a value (only valid for setters)
-* **ANY**                - Getter or setter returns any type defined by the mandatory accompanying `TYPE` argument, for
-  setters this can only be VOID or TABLE
-* **SCALAR**             - Constrains the `TYPE` parameter to be set to any scalar type or `TABLE`
-* **SCALAR_ARRAY**       - Constrains the `TYPE` parameter to be set to any scalar array type or `TABLE`
+see [Supported Data Types](SuportedTypes.md)
 
 # Implementation
 
