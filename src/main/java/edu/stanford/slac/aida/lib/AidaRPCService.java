@@ -127,9 +127,9 @@ public class AidaRPCService implements RPCService {
         for (AidaArgument argument : argumentsList) {
             String argumentName = argument.getName();
             if (aidaGetterType != NONE && !getterConfig.getArguments().contains(argumentName.toUpperCase())) {
-                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for get requests to this channel");
+                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for get requests to this channel. Valid arguments are: " + getterConfig.getArguments());
             } else if (aidaSetterType != NONE && !setterConfig.getArguments().contains(argumentName.toUpperCase())) {
-                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for set requests to this channel");
+                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for set requests to this channel. Valid arguments are: " + setterConfig.getArguments());
             }
         }
 

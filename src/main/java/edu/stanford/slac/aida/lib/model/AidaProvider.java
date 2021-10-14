@@ -66,30 +66,32 @@ public class AidaProvider {
 
     /**
      * Get the set of supported Channel Names.  AIDA-PVA Providers
-     * support both AIDA-PVA and legacy AIDA names for their channels
+     * support both AIDA-PVA and legacy AIDA names for their channels.  The list
+     * returned will contain both.
      *
      * @return the list of supported channel names
      */
     public Set<String> getChannelNames() {
-        if (this.channelMap.isEmpty()) {
-            cacheChannelNamesAndLoadConfig();
-        }
+        makeSureChannelMapIsLoaded();
         return this.channelMap.keySet();
     }
 
     /**
-     * Get the channel based on the channel name
-     * Make sure that all config is fully specified
+     * Get the channel based on the channel name.
+     * <p>
+     * First, make sure that all config is loaded.
+     * <p>
+     * Channels are matched literally but also by using the {@link WildcardMatcher#match}
+     * to see if any of the patterns specified as supported by this channel correspond to the
+     * channel name specified in the request
      *
-     * @param channelName the channel name
-     * @return the fully configured AIDA channel
+     * @param channelName the channel name from the request
+     * @return the {@link AidaChannel} object that matches the given channel name
      */
     public AidaChannel getAidaChannel(String channelName) {
-        if (this.channelMap.isEmpty()) {
-            cacheChannelNamesAndLoadConfig();
-        }
+        makeSureChannelMapIsLoaded();
 
-        // Look for an exact match or a wild card match if that fails
+        // Look for an exact match or a {@link WildcardMatcher#match} if that fails
         AidaChannel aidaChannel = this.channelMap.get(channelName);
         if (aidaChannel == null) {
             for (Map.Entry<String, AidaChannel> entry : this.channelMap.entrySet()) {
@@ -104,50 +106,56 @@ public class AidaProvider {
     }
 
     /**
-     * Set the channel names based on set of instance attribute pairs
+     * For speed the list of channels and their configurations are cached in a memory resident
+     * {@link HashMap}.  This method is used to prime that {@link HashMap} from the list of
+     * {@link AidaProvider#configurations} that have been loaded in from the Channel Provider's
+     * CHANNELS.YML file.
      */
-    private void cacheChannelNamesAndLoadConfig() {
+    private void makeSureChannelMapIsLoaded() {
+        /// Make sure that no other thread can do this at the same time
         synchronized (this.channelMap) {
-            for (AidaConfigGroup configuration : getConfigurations()) {
-                AidaChannelConfig getterConfig = configuration.getGetterConfig();
-                AidaChannelConfig setterConfig = configuration.getSetterConfig();
+            if (this.channelMap.isEmpty()) {
+                for (AidaConfigGroup configuration : getConfigurations()) {
+                    AidaChannelConfig getterConfig = configuration.getGetterConfig();
+                    AidaChannelConfig setterConfig = configuration.getSetterConfig();
 
-                // Set default labels in the config
-                if (getterConfig != null) {
-                    setDefaultLabels(getterConfig.getFields());
-                }
-                if (setterConfig != null) {
-                    setDefaultLabels(setterConfig.getFields());
-                }
+                    // Set default labels in the config
+                    if (getterConfig != null) {
+                        setDefaultLabels(getterConfig.getFields());
+                    }
+                    if (setterConfig != null) {
+                        setDefaultLabels(setterConfig.getFields());
+                    }
 
-                // Set give all channels that are in this configuration group the same config
-                for (String channelName : configuration.getChannels()) {
-                    AidaChannel aidaChannel = new AidaChannel(channelName, configuration.getGetterConfig(), configuration.getSetterConfig());
-                    this.channelMap.put(channelName, aidaChannel);
+                    // Set give all channels that are in this configuration group the same config
+                    for (String channelName : configuration.getChannels()) {
+                        AidaChannel aidaChannel = new AidaChannel(channelName, configuration.getGetterConfig(), configuration.getSetterConfig());
+                        this.channelMap.put(channelName, aidaChannel);
 
-                    // Add legacy style channel name as well as new style, regardless as to how it is specified in the channels file
-                    int indexOfLastSeparator = channelName.lastIndexOf(":");
-                    int indexOfLastLegacySeparator = channelName.lastIndexOf("//");
+                        // Add legacy style channel name as well as new style, regardless as to how it is specified in the channels file
+                        int indexOfLastSeparator = channelName.lastIndexOf(":");
+                        int indexOfLastLegacySeparator = channelName.lastIndexOf("//");
 
-                    // If specified using legacy separator then add entry with the new style as well
-                    if (indexOfLastLegacySeparator != -1) {
-                        this.channelMap.put(channelName.substring(0, indexOfLastLegacySeparator) + ":" + channelName.substring(indexOfLastLegacySeparator + 2), aidaChannel);
+                        // If specified using legacy separator then add entry with the new style as well
+                        if (indexOfLastLegacySeparator != -1) {
+                            this.channelMap.put(channelName.substring(0, indexOfLastLegacySeparator) + ":" + channelName.substring(indexOfLastLegacySeparator + 2), aidaChannel);
 
-                        // If specified with new naming style then add an entry with the legacy separator for backwards compatibility
-                    } else if (indexOfLastSeparator != -1) {
-                        String legacyStyle = null;
+                            // If specified with new naming style then add an entry with the legacy separator for backwards compatibility
+                        } else if (indexOfLastSeparator != -1) {
+                            String legacyStyle = null;
 
-                        String[] parts = channelName.split(":");
-                        int nParts = parts.length;
-                        if (nParts == 3) {
-                            // If uri has three parts like for MAGNET then need to add legacy separator after second not first
-                            legacyStyle = parts[0] + "//" + parts[1] + ":" + parts[2];
-                        } else {
-                            // Otherwise, add before last part
-                            legacyStyle = channelName.substring(0, indexOfLastSeparator) + "//" + channelName.substring(indexOfLastSeparator + 1);
+                            String[] parts = channelName.split(":");
+                            int nParts = parts.length;
+                            if (nParts == 3) {
+                                // If uri has three parts like for MAGNET then need to add legacy separator after second not first
+                                legacyStyle = parts[0] + "//" + parts[1] + ":" + parts[2];
+                            } else {
+                                // Otherwise, add before last part
+                                legacyStyle = channelName.substring(0, indexOfLastSeparator) + "//" + channelName.substring(indexOfLastSeparator + 1);
+                            }
+
+                            this.channelMap.put(legacyStyle, aidaChannel);
                         }
-
-                        this.channelMap.put(legacyStyle, aidaChannel);
                     }
                 }
             }
