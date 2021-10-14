@@ -12,9 +12,6 @@
 id: 142
 name: SLCMosc
 description: Master Oscillator Service
-arguments:
-  - RING
-  - UNITS
 configurations:
   - name: Standard Config
     getterConfig:
@@ -26,6 +23,9 @@ configurations:
           description: Measured setting of the Master Oscillator in KHz
     setterConfig:
       type: TABLE
+      arguments:
+        - RING
+        - UNITS
       fields:
         - name: value
           label: Oscillator Value

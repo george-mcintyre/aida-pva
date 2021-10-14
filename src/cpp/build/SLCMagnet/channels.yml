@@ -18,15 +18,13 @@
 id: 262
 name: SLCBMagnet
 description: SLC control system pulse synchronized Buffered Data
-arguments:
-  - LIMITCHECK
-  - MAGFUNC
-  - MICROS
-  - UNITS
 configurations:
   - name: Get Secondary Values
     getterConfig:
       type: TABLE
+      arguments:
+        - MICROS
+        - UNITS
       fields:
         - label: name of magnet
           name: name
@@ -4902,6 +4900,9 @@ configurations:
       type: NONE
     setterConfig:
       type: TABLE
+      arguments:
+        - LIMITCHECK
+        - MAGFUNC
       fields:
         - label: status
           name: status

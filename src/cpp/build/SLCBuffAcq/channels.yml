@@ -17,15 +17,15 @@
 id: 262
 name: SLCBuffacq
 description: SLC control system pulse synchronized Buffered Data
-arguments:
-  - DEVS
-  - BPMD
-  - BPMS
-  - NRPOS
 configurations:
   - name: Standard Configuration
     getterConfig:
       type: TABLE
+      arguments:
+        - DEVS
+        - BPMD
+        - BPMS
+        - NRPOS
       fields:
         - label: BPM Name
           name: name

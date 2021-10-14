@@ -118,12 +118,18 @@ public class AidaRPCService implements RPCService {
                 typeArgument = argument.getValue().toUpperCase();
             } else if (argumentName.equalsIgnoreCase("VALUE")) {
                 valueArgument = argument;
-            } else if ( !aidaChannelProvider.getArguments().contains(argumentName.toUpperCase())) {
-                throw new UnsupportedChannelException(channelName  + ":  " + argumentName + " is not a valid argument for this channel");
             }
         }
 
         boolean isSetterRequest = valueArgument != null;
+        for (AidaArgument argument : argumentsList) {
+            String argumentName = argument.getName();
+            if (aidaGetterType != NONE && !getterConfig.getArguments().contains(argumentName.toUpperCase())) {
+                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for get requests to this channel");
+            } else if (aidaSetterType != NONE && !setterConfig.getArguments().contains(argumentName.toUpperCase())) {
+                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for set requests to this channel");
+            }
+        }
 
         // See if the request type is supported for the channel
         if (isSetterRequest && NONE.equals(aidaSetterType)) {
@@ -194,8 +200,8 @@ public class AidaRPCService implements RPCService {
         }
 
         int indexOfLastLegacySeparator = channelName.lastIndexOf("//");
-        if ( indexOfLastLegacySeparator != -1 ) {
-            channelName = channelName.substring(0, indexOfLastLegacySeparator) + ":" + channelName.substring(indexOfLastLegacySeparator+2) ;
+        if (indexOfLastLegacySeparator != -1) {
+            channelName = channelName.substring(0, indexOfLastLegacySeparator) + ":" + channelName.substring(indexOfLastLegacySeparator + 2);
         }
 
         if (isSetterRequest) {

@@ -51,13 +51,13 @@ public abstract class ChannelProvider extends NativeChannelProvider {
     /**
      * Constructor for the channel provider that reads the configuration from environment variables and
      * configuration files.
-     *
+     * <p>
      * Uses {@link ChannelProviderFactory#create(ChannelProvider)} to check
      * the `aida.pva.channels.filename` property or the `AIDA_PVA_CHANNELS_FILENAME`
      * environment variable to load the yaml configuration file
-     *
+     * <p>
      * Lists the abbreviated list of hosted channels to the console.
-     *
+     * <p>
      * Calls the {@link ChannelProvider#logHostedChannels()}
      */
     public ChannelProvider() {
@@ -72,10 +72,6 @@ public abstract class ChannelProvider extends NativeChannelProvider {
 
         // Call initialisation for the channel provider
         aidaServiceInit();
-    }
-
-    public List<String> getArguments() {
-        return aidaProvider.getArguments();
     }
 
     /**

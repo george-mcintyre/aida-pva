@@ -64,6 +64,13 @@ public class AidaChannelConfig {
     private @NonNull AidaType type;
 
     /**
+     * Stores the list of valid arguments for the `get` or `set` requests that this {@link AidaChannelConfig} is configuring.
+     * Any argument that is delivered with the request but is not in this list is trapped by the framework
+     * and reported as an error
+     */
+    private List<String> arguments;
+
+    /**
      * - If the {@link AidaChannelConfig#type} is set to {@link AidaType#TABLE},
      * or if a `TYPE` argument is specified with value = `TABLE` then {@link AidaChannelConfig#fields} contains the
      * configuration of the fields that will be in the returned structure.

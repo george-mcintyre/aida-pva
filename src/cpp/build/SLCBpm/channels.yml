@@ -18,17 +18,17 @@
 id: 102
 name: SLCBpm
 description: SLC BPM orbit data under a given measurement definition
-arguments:
-  - BPMD
-  - CNFNUM
-  - CNFTYPE
-  - N
-  - SORTORDER
 configurations:
   - name: Standard Configuration
     getterConfig:
       # Heterogeneous vector of 7 homogenous congruent vectors
       type: TABLE
+      arguments:
+        - BPMD
+        - CNFNUM
+        - CNFTYPE
+        - N
+        - SORTORDER
       fields:
         - label: BPM Name
           name: name

@@ -5,12 +5,12 @@
 id: 0
 name: Sample
 description: Aida Sample Data Provider
-arguments:
-  - X
 configurations:
   - name: Boolean Config
     getterConfig:
       type: BOOLEAN
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute01
       # Test for channel not supported.  This channel is not supported by service
@@ -18,81 +18,113 @@ configurations:
   - name: Byte Config
     getterConfig:
       type: BYTE
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute02
   - name: Short Config
     getterConfig:
       type: SHORT
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute03
   - name: Integer Config
     getterConfig:
       type: INTEGER
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute04
   - name: Long Config
     getterConfig:
       type: LONG
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute05
   - name: Float Config
     getterConfig:
       type: FLOAT
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute06
   - name: Double Config
     getterConfig:
       type: DOUBLE
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute07
   - name: String Config
     getterConfig:
       type: STRING
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute08
   - name: Boolean Array Config
     getterConfig:
       type: BOOLEAN_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute11
   - name: Byte Array Config
     getterConfig:
       type: BYTE_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute12
   - name: Short Array Config
     getterConfig:
       type: SHORT_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute13
   - name: Integer Array Config
     getterConfig:
       type: INTEGER_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute14
   - name: Long Array Config
     getterConfig:
       type: LONG_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute15
   - name: Float Array Config
     getterConfig:
       type: FLOAT_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute16
   - name: Double Array Config
     getterConfig:
       type: DOUBLE_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute17
   - name: String Array Config
     getterConfig:
       type: STRING_ARRAY
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute18
   - name: Table Config
     getterConfig:
       type: TABLE
+      arguments:
+        - X
       fields:
         - name: isActive
           label: Is active?
@@ -126,11 +158,15 @@ configurations:
   - name: Void Setter Config
     setterConfig:
       type: VOID
+      arguments:
+        - X
     channels:
       - AIDA:SAMPLE:*:attribute30
   - name: Table Setter Config
     setterConfig:
       type: TABLE
+      arguments:
+        - X
       fields:
         - name: status
           label: Result of setting value
@@ -140,6 +176,8 @@ configurations:
   - name: Arbitrary Getter Config
     getterConfig:
       type: ANY
+      arguments:
+        - X
       fields:
         - name: isActive
           label: Is active?

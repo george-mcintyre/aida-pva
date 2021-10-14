@@ -9,9 +9,9 @@ import org.epics.pvaccess.util.WildcardMatcher;
 import java.util.*;
 
 /**
- * This class encapsulates an {@link AidaConfigGroup}.
+ * This class encapsulates an {@link AidaProvider}.
  * <p>
- * It is used to represent the configuration that will apply to a single group of {@link AidaChannel}s.
+ * It is used configure how an AIDA-PVA will operate.
  * <p>
  * The {@link AidaConfigGroup} class controls how the AIDA-PVA Channel Provider responds to a channel request.
  * <p>
@@ -34,7 +34,6 @@ public class AidaProvider {
     private @NonNull Long id;
     private @NonNull String name;
     private String description;
-    private List<String> arguments;
     private @NonNull List<AidaConfigGroup> configurations = new ArrayList<AidaConfigGroup>();
     private ChannelProvider channelProvider;
 

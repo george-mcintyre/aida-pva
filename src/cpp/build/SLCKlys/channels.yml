@@ -35,14 +35,13 @@
 id: 162
 name: SLCKlys
 description: Klystron Server
-arguments:
-  - BEAM
-  - DGRP
-  - TRIM
 configurations:
   - name: TACT Getter and Setter
     getterConfig:
       type: SCALAR
+      arguments:
+        - BEAM
+        - DGRP
       fields:
         - label: Accellerate
           name: accel
@@ -60,6 +59,9 @@ configurations:
           name: pphas
     setterConfig:
       type: TABLE
+      arguments:
+        - BEAM
+        - DGRP
       fields:
         - label: Status Code
           name: status
@@ -697,6 +699,8 @@ configurations:
       type: NONE
     setterConfig:
       type: VOID
+      arguments:
+        - TRIM
     channels:
       - KLYS:AM00:1:ACON
       - KLYS:AM00:2:ACON

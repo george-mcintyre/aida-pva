@@ -17,17 +17,15 @@
 id: 122
 name: SLCUtil
 description: SLC Utility Server
-arguments:
-  - BEAM
-  - BGRP
-  - MKB
-  - VARNAME
 configurations:
   - name: BGRP Config
     getterConfig:
       type: NONE
     setterConfig:
       type: VOID
+      arguments:
+        - BGRP
+        - VARNAME
     channels:
       - BGRP:VAL
   - name: MKB Config
@@ -35,6 +33,8 @@ configurations:
       type: NONE
     setterConfig:
       type: TABLE
+      arguments:
+        - MKB
       fields:
         - name: name
           label: Device Name
@@ -47,8 +47,12 @@ configurations:
   - name: Trigger Config
     getterConfig:
       type: SCALAR
+      arguments:
+        - BEAM
     setterConfig:
       type: TABLE
+      arguments:
+        - BEAM
       fields:
         - name: status
           label: Status Code

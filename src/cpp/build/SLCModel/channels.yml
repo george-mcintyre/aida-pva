@@ -21,18 +21,16 @@
 id: 63
 name: SLCModel
 description: SLC Modelling parameters
-arguments:
-  - B
-  - MODE
-  - MODEL_TYPE
-  - POS
-  - POSB
-  - RUN
 configurations:
   - name: Scalar Array Getter
     getterConfig:
       description: Modelling Value
       type: SCALAR_ARRAY
+      arguments:
+        - DGRP
+        - MODE
+        - MODEL_TYPE
+        - POS
       fields:
         - label: Energy
           name: energy
@@ -13644,6 +13642,12 @@ configurations:
     getterConfig:
       description: Modelling Value
       type: SCALAR_ARRAY
+      arguments:
+        - DGRP
+        - MODE
+        - MODEL_TYPE
+        - POS
+        - B
       fields:
         - label: "R[1]"
           name: r1
