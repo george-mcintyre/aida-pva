@@ -3,8 +3,8 @@ package edu.stanford.slac.aida.lib.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.epics.pvdata.pv.PVStructure;
 import org.epics.pvdata.pv.PVScalarArray;
+import org.epics.pvdata.pv.PVStructure;
 import org.epics.pvdata.pv.ScalarArray;
 import org.epics.pvdata.pv.ScalarType;
 
@@ -20,7 +20,6 @@ import org.epics.pvdata.pv.ScalarType;
  * <p>
  * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
  * with no arguments.
- * <p>
  */
 @Data
 @NoArgsConstructor

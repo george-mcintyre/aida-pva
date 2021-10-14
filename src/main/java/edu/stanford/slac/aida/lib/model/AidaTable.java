@@ -6,68 +6,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class encapsulates an {@link AidaConfigGroup}.
+ * This class encapsulates an {@link AidaTable}.
  * <p>
- * It is used to represent the configuration that will apply to a single group of {@link AidaChannel}s.
+ * It is the class that is returned from the Native Providers for requests that return a TABLE.
  * <p>
- * The {@link AidaConfigGroup} class controls how the AIDA-PVA Channel Provider responds to a channel request.
+ * It contains a single property {@link AidaTable#data} that stores a List of column Lists.
  * <p>
- * There is a {@link AidaConfigGroup#getterConfig} for the `get` requests,
- * and a {@link AidaConfigGroup#setterConfig} for the `set` requests.
- * <p>
- * The List of {@link AidaConfigGroup#channels} are the names of the channels that will use the specified config
- * <p>
- * Note that it uses the {@link lombok.Data} annotation to provide all the getters and setters.
- * a constructor with all required arguments,
- * and an equals(), hashcode() and toString()  method.
- * <p>
- * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
- * with no arguments.
- * <p>
- */
-/**
- * Interface object to pass tables between JNI/C and Java
+ * Note that it uses the {@link lombok.ToString} annotation to provide the toString() method.
  */
 @ToString
 public class AidaTable {
-    private final List<List<Object>> data;
-
-    public AidaTable() {
-        this.data = new ArrayList<List<Object>>();
-    }
+    /**
+     * The property that is used to return the table data.  A simple List of column Lists.
+     * The inner, column, Lists are simply {@link List<Object>} to be able to represent any type of data
+     * for a column.
+     */
+    private final List<List<Object>> data = new ArrayList<List<Object>>();
 
     /**
-     * Add an element to the specified numbered collection
+     * Add an element to the specified column in this {@link AidaTable#data}.
+     * <p>
+     * Each new column is added by successive calls to {@link .AidaTable#add}
+     * and so the columnId specified will either have to be inserted, or added at the end.
+     * <p>
+     * This is called by the Native Channel Provider code in C so be careful if refactoring the signature or name.
      *
-     * @param collectionID the number representing the number of the collection to add to
-     * @param object       the object to add to that collection
+     * @param columnId the number representing the number of the column to add to
+     * @param object   the object to add to that column
      * @return true if added correctly
      */
-    public boolean add(int collectionID, Object object) {
+    public boolean add(int columnId, Object object) {
+        // Only allow this to be run by one thread at a time
         synchronized (this.data) {
-            List<Object> collection;
-            int currentCollectionCount = this.data.size();
-            if (currentCollectionCount <= collectionID) {
-                for (int collectionCounter = currentCollectionCount - 1; collectionCounter < collectionID; collectionCounter++) {
-                    collection = new ArrayList<Object>();
-                    this.data.add(collection);
+            // Get the current number of columns in  {@link AidaTable#data}
+            int currentColumnCount = this.data.size();
+
+            // If we don't have enough columns then we need to add new ones from the end of the current list
+            // up to the new columnId given
+            if (currentColumnCount <= columnId) {
+                // Loop from end of current list to new size = columnId
+                for (int collectionCounter = currentColumnCount - 1; collectionCounter < columnId; collectionCounter++) {
+                    // Add new columns
+                    this.data.add(new ArrayList<Object>());
                 }
             }
-            collection = this.data.get(collectionID);
-            if (collection == null) {
+
+            // Now get the column identified by columnId as it will now definitely exist
+            List<Object> column = this.data.get(columnId);
+            // If by some crazy alignment of the stars it does not then return failure
+            if (column == null) {
                 return false;
             }
 
+            // If there is no column data to add then add a single string value of null.
+            // This should never happen
             if (object == null) {
-                return collection.add("<null>");
+                return column.add("<null>");
             }
 
-            return collection.add(object);
+            // Add the column of data to the correct column
+            return column.add(object);
         }
     }
 
     /**
-     * Get the list underpinning this AidaTable object
+     * Get the list underpinning this {@link AidaTable} object
      *
      * @return the list
      */
