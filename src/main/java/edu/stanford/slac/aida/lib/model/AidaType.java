@@ -3,28 +3,25 @@ package edu.stanford.slac.aida.lib.model;
 import java.util.List;
 
 /**
- * This class encapsulates an {@link AidaConfigGroup}.
+ * This class encapsulates an {@link AidaType}.
  * <p>
- * It is used to represent the configuration that will apply to a single group of {@link AidaChannel}s.
- * <p>
- * The {@link AidaConfigGroup} class controls how the AIDA-PVA Channel Provider responds to a channel request.
- * <p>
- * There is a {@link AidaConfigGroup#getterConfig} for the `get` requests,
- * and a {@link AidaConfigGroup#setterConfig} for the `set` requests.
- * <p>
- * The List of {@link AidaConfigGroup#channels} are the names of the channels that will use the specified config
- * <p>
- * Note that it uses the {@link lombok.Data} annotation to provide all the getters and setters.
- * a constructor with all required arguments,
- * and an equals(), hashcode() and toString()  method.
- * <p>
- * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
- * with no arguments.
+ * All the data types that can be used in AIDA-PVA are represented here.
  * <p>
  */
 public enum AidaType {
+    /*
+     * API Not valid
+     */
     NONE,               // Means that this getter or setter is not supported
+
+    /*
+     * No return value
+     */
     VOID,               // Means that this setter does not return a value (only valid for setters)
+
+    /*
+     * Scalar return values
+     */
     BOOLEAN,            // Getter returns a boolean
     BYTE,               // Getter returns a byte
     SHORT,              // Getter returns a short
@@ -33,6 +30,10 @@ public enum AidaType {
     FLOAT,              // Getter returns a float
     DOUBLE,             // Getter returns a double
     STRING,             // Getter returns a string
+
+    /*
+     * Scalar Array return values
+     */
     BOOLEAN_ARRAY,      // Getter returns a boolean array
     BYTE_ARRAY,         // Getter returns a byte array
     SHORT_ARRAY,        // Getter returns a short array
@@ -41,18 +42,31 @@ public enum AidaType {
     FLOAT_ARRAY,        // Getter returns a float array
     DOUBLE_ARRAY,       // Getter returns a double array
     STRING_ARRAY,       // Getter returns a string array
+
+    /*
+     * Table Array return values
+     */
     TABLE,              // Getter or setter returns a table
 
-    // For the following types you can also provide fields in case the request is a TABLE
+    /*
+     * Return meta-types.
+     * These meta-types are used for channel configuration only.
+     * They cannot be used as the value of a TYPE parameter.
+     *
+     * When a channel is configured with any of these meta-types, all requests for that channel must be presented with TYPE parameter.
+     *
+     * All of these meta-types allow you to set TABLE as the value of the mandatory TYPE parameter so in the configuration,
+     * you must also provide field definitions if the Native Channel Provider will support TABLE requests.
+     */
     ANY,                // Getter or setter returns any type defined by the mandatory accompanying TYPE argument, for setters this can only be VOID or TABLE
     SCALAR,             // Constrains the TYPE parameter to be set to any scalar type or TABLE
     SCALAR_ARRAY;       // Constrains the TYPE parameter to be set to any scalar array type or TABLE
 
     /**
-     * Determine the aida type of a java object of a supported type.  Return null if type not supported
+     * Given a {@link java.lang.Object} this method will return the corresponding AIDA-PVA type.
      *
      * @param value java object to check
-     * @return the aida type
+     * @return the corresponding AIDA-PVA type or null if the type is not supported by AIDA-PVA.
      */
     public static AidaType aidaTypeOf(Object value) {
         if (value instanceof Boolean) {
@@ -83,10 +97,10 @@ public enum AidaType {
     }
 
     /**
-     * Determine the aida type of a list of java objects of supported types
+     * Given a {@link java.util.List} of homogenous objects this method will return the corresponding AIDA-PVA type of the List.
      *
-     * @param values list of values
-     * @return the aida type
+     * @param values list of homogenous objects
+     * @return the corresponding AIDA-PVA type of the List or null if the type is not supported
      */
     public static AidaType aidaTypeOf(List<?> values) {
         if (values == null || values.isEmpty()) {
