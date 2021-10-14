@@ -19,7 +19,7 @@
 #
 # This file defines the available channels for the Model Service
 id: 63
-name: SLCModel
+name: Model
 description: SLC Modelling parameters
 configurations:
   - name: Scalar Array Getter

@@ -1,9 +1,12 @@
-This page provides documentation for users and programmers of AIDA's SLC Trigger Data Provider. This data provider allows the retrieval of the status code or a status string for a specified trigger device on a beam code. It also allows the deactivation or reactivation of a specified trigger device on a beam code.
+This page provides documentation for users and programmers of AIDA-PVA's SLC Trigger Data Provider. This data provider
+allows the retrieval of the status code or a status string for a specified trigger device on a beam code. It also allows
+the deactivation or reactivation of a specified trigger device on a beam code.
 
-See Also: Basic Users Guide to Aida, REF_AIDASHR; AIDA SLC Peer Programmers Guide
+See Also: Basic Users Guide to Aida, REF_AIDASHR; AIDA-PVA SLC Peer Programmers Guide
 
-Users Guide
-This section descibes what an AIDA user should know about using the SLC Trigger data provider. For general information on using AIDA see Basic Users Guide to Aida, and the Aida javadoc, in particular the classes DaObject and DaReference, in aida.lib.da which form Aida's programming interface. One can also use Aida through Matlab.
+Users Guide This section descibes what an AIDA user should know about using the SLC Trigger data provider. For general
+information on using AIDA see Basic Users Guide to Aida, and the Aida javadoc, in particular the classes DaObject and
+DaReference, in aida.lib.da which form Aida's programming interface. One can also use Aida through Matlab.
 
 Table 1: Summary of AIDA Data Provider for SLC Trigger Data
 

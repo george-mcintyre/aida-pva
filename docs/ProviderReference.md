@@ -41,7 +41,7 @@ _The framework has five main features._
 As an AIDA-PVA Service Provider writer you will be responsible for:
 
 * Creating the AIDA-PVA `Channel Provider` Shared Library.
-* Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA `Channels` that
+* Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA-PVA `Channels` that
   your `Channel Provider` will support.
 
 ### Components

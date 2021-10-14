@@ -13,12 +13,11 @@ import java.util.*;
  * <p>
  * It is used configure how an AIDA-PVA will operate.
  * <p>
- * The {@link AidaConfigGroup} class controls how the AIDA-PVA Channel Provider responds to a channel request.
- * <p>
- * There is a {@link AidaConfigGroup#getterConfig} for the `get` requests,
- * and a {@link AidaConfigGroup#setterConfig} for the `set` requests.
- * <p>
- * The List of {@link AidaConfigGroup#channels} are the names of the channels that will use the specified config
+ * It has an {@link AidaProvider#id} to identify the Provider.
+ * It has an {@link AidaProvider#name} to give it a name.
+ * It has a {@link AidaProvider#description} displayed during startup alongside the {@link AidaProvider#id} and {@link AidaProvider#name}.
+ * The {@link AidaProvider#configurations} define the different {@link AidaConfigGroup} we define for requests to this channel.
+ * Finally, the {@link AidaProvider#channelProvider} defines the actual class that will implement the functionality to service this channel.
  * <p>
  * Note that it uses the {@link lombok.Data} annotation to provide all the getters and setters.
  * a constructor with all required arguments,
@@ -31,19 +30,42 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 public class AidaProvider {
+    /**
+     * The {@link AidaProvider#id} identifies the Provider.  By convention, we use the `AIDA_SERVICES.ID` from the
+     * AIDA Oracle Database.
+     */
     private @NonNull Long id;
+
+    /**
+     * The {@link AidaProvider#name} identifies the Provider by name.  By convention, we use the `AIDA_SERVICES.NAME` from the
+     * AIDA Oracle Database.
+     */
     private @NonNull String name;
+
+    /**
+     * The {@link AidaProvider#description} describes what the Provider does.  By convention, we use the `AIDA_SERVICES.DESCRIPTION` from the
+     * AIDA Oracle Database.
+     */
     private String description;
+
+    /**
+     * The {@link AidaProvider#configurations} lists the different {@link AidaConfigGroup} we define for requests to this channel.
+     * The groups are defined with reference to the appropriate documentation for the Provider. https://www.slac.stanford.edu/grp/cd/soft/aida
+     */
     private @NonNull List<AidaConfigGroup> configurations = new ArrayList<AidaConfigGroup>();
+
+    /**
+     * The {@link AidaProvider#channelProvider} defines the actual class that will implement the functionality to service this channel
+     */
     private ChannelProvider channelProvider;
 
     /**
-     * A map of channel to channel configuration so that configuration can be looked up by channel name
+     * A map of Channel Name => {@link AidaChannel} channel configuration, so that configuration can be looked up by Channel Name
      */
     private final Map<String, AidaChannel> channelMap = new HashMap<String, AidaChannel>();
 
     /**
-     * Get the set of supported channels.  AIDA providers
+     * Get the set of supported Channel Names.  AIDA-PVA Providers
      * support both AIDA-PVA and legacy AIDA names for their channels
      *
      * @return the list of supported channel names

@@ -1,10 +1,11 @@
-# User Guide to AIDA
-This is the guide to using the AIDA-PVA system at Stanford National Laboratory.  AIDA is the Accellerator Integrated
-Data Access framework developed by SLAC in the early 2000s.  AIDA-PVA is the latest version developed in the early 20s.
+# User Guide to AIDA-PVA
 
-If you are already familiar AIDA you can jump to [Differences Between AIDA and AIDA-PVA](UserGuide4AidaUsers.md) without reading 
-all of the following sections.  If you are already familiar with EPICS and just want to know how you can use it to 
-access AIDA data providers then check out [EPICS and AIDA-PVA](UserGuide4EpicsUsers.md).   
+This is the guide to using the AIDA-PVA system at Stanford National Laboratory. AIDA is the Accellerator Integrated Data
+Access framework developed by SLAC in the early 2000s. AIDA-PVA is the latest version developed in the early 20s.
+
+If you are already familiar AIDA you can jump to [Differences Between AIDA and AIDA-PVA](UserGuide4AidaUsers.md) without
+reading all of the following sections. If you are already familiar with EPICS and just want to know how you can use it
+to access AIDA-PVA data providers then check out [EPICS and AIDA-PVA](UserGuide4EpicsUsers.md).   
 If you're new to both AIDA and EPICS then grab a coffee, and strap in, this may take some time :)
 
 # Overview 
@@ -14,12 +15,12 @@ provides a naming convention to address all devices and their attributes, a way 
 and obtaining results in any format, including rich formats including metadata.  Finally, it provides security, logging and 
 reliability to allow it to be used in a variety of applications from logging, and monitoring, to modeling and control.
 
-AIDA-PVA supercedes AIDA but both AIDA and AIDA-PVA co-exist and share many of the low level AIDA provider layers so that
-the results obtained by usine either version remain consistent.  
+AIDA-PVA supercedes AIDA but both AIDA and AIDA-PVA co-exist and share many of the low level AIDA provider layers so
+that the results obtained by usine either version remain consistent.
 
 Legacy AIDA uses CORBA to transport requests to the Data Providers while AIDA-PVA uses EPICS-7's PV-Access mechanism.  
-EPICS has become a staple for laboratories around the world and leveraging its features allows scientists
-and engineers who are already familiar with programming on EPICS to access AIDA data providers with very little effort. 
+EPICS has become a staple for laboratories around the world and leveraging its features allows scientists and engineers
+who are already familiar with programming on EPICS to access AIDA-PVA data providers with very little effort.
 
 [ DIAGRAM ]   - nb. do just the aida-pva part, keep whole thing for differences doc
 

@@ -1,10 +1,10 @@
 # SLC Database Users Guide
 
-This section describes what an AIDA user should know about accessing the SLC Database data through AIDA. For general
-information on using AIDA see [Basic Users Guide to Aida](UserGuide.md), and the EPICS javadoc, in particular the
+This section describes what an AIDA-PVA user should know about accessing the SLC Database data through AIDA. For general
+information on using AIDA-PVA see [Basic Users Guide to Aida](UserGuide.md), and the EPICS javadoc, in particular the
 classes ??? and ??? in the epics libraries which are now Aida's programming interface. One can also use Matlab.
 
-# AIDA Data Provider for SLC Database Data
+# AIDA-PVA Data Provider for SLC Database Data
 
 ## Summary
 

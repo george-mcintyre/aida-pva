@@ -15,7 +15,7 @@ public class ChannelProviderFactory {
      * Read all instance attribute pairs from the configuration file specified in an environment
      * variable of a file called "channels.yml" in the current working directory
      * <p>
-     * A yaml file (*.yml or *.yaml) defines the channels of this AIDA Channel Provider
+     * A yaml file (*.yml or *.yaml) defines the channels of this AIDA-PVA Channel Provider
      *
      * @param channelProvider the channel provider
      * @return an AidaProvider object or null if there is a problem reading the configuration
