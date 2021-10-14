@@ -22,9 +22,12 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class AidaField {
     /**
-     * TABLE's are returned as Normative Type `PVStructure`'s.  see
-     * <a href="https://github.com/slaclab/aida-pva/blob/master/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>
-     * `value` field PVStructure's subfield field name
+     * TABLE's are returned as Normative Type `PVStructures`.
+     * see AIDA-PVA Normative Types Documentation - https://github.com/slaclab/aida-pva/blob/master/docs/NormativeTypes.md
+     *
+     * It contains a `value` field which is also a `PVStructure`, which contains subfields for each `TABLE` column.
+     *
+     * This {@link AidaField#name} relates to the name of one of those subfields.
      */
     private @NonNull String name;
 
