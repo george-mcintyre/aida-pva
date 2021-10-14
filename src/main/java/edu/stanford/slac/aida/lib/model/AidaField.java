@@ -3,6 +3,10 @@ package edu.stanford.slac.aida.lib.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.epics.pvdata.pv.PVStructure;
+import org.epics.pvdata.pv.PVScalarArray;
+import org.epics.pvdata.pv.ScalarArray;
+import org.epics.pvdata.pv.ScalarType;
 
 /**
  * This class encapsulates an {@link AidaField}.
@@ -22,34 +26,35 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class AidaField {
     /**
-     * TABLE's are returned as Normative Type `PVStructures`.
+     * TABLE's are returned as Normative Type {@link PVStructure}s.
      * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
-     *
-     * It contains a `value` field which is also a `PVStructure`, which contains subfields for each `TABLE` column.
-     *
+     * <p>
+     * It contains a `value` field which is also a {@link PVStructure}, which contains subfields for each `TABLE` column
+     * which are simple {@link ScalarArray} of the column's data.
+     * <p>
      * This {@link AidaField#name} relates to the name of one of those subfields.
      */
     private @NonNull String name;
 
     /**
-     * TABLE's are returned as Normative Type `PVStructures`.
+     * TABLE's are returned as Normative Type {@link PVStructure}s.
      * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
-     *
-     * It contains a `labels` field which is a list of `pvstrings`, which are labels for each `TABLE` column.
-     *
+     * <p>
+     * It contains a `labels` field which is a list of {@link ScalarType#pvString}, which are labels for each `TABLE` column.
+     * <p>
      * This {@link AidaField#label} gives the value of the label for this column in the `TABLE`.
      */
 
     private String label;
 
     /**
-     * TABLE's are returned as Normative Type `PVStructures`.
+     * TABLE's are returned as Normative Type {@link PVStructure}s.
      * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
-     *
-     * But TABLEs don't have a `display_t` structure as PVScalars and PVScalarArrays do to
-     * store description and units for a field.  So we can't currently use the description
-     * and units that are configured for table columns.  So this field is ignored.
-     *
+     * <p>
+     * But TABLEs don't contain {@link PVScalarArray} which contains a `display` subfield
+     * which stores `description` and `units` for a field.  So we can't currently use the `description`
+     * and `units` that are configured for TABLE columns and thus field is ignored.
+     * <p>
      * In the future it will be used to set the description of the TABLE column
      */
     private String description;
@@ -57,11 +62,11 @@ public class AidaField {
     /**
      * TABLE's are returned as Normative Type `PVStructures`.
      * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
-     *
-     * But TABLEs don't have a `display_t` structure as PVScalars and PVScalarArrays do to
-     * store description and units for a field.  So we can't currently use the description
-     * and units that are configured for table columns.  So this field is ignored.
-     *
+     * <p>
+     * But TABLEs don't contain {@link PVScalarArray} which contains a `display` subfield
+     * which stores `description` and `units` for a field.  So we can't currently use the `description`
+     * and `units` that are configured for TABLE columns and thus field is ignored.
+     * <p>
      * In the future it will be used to set the units of the TABLE column
      */
     private String units;
