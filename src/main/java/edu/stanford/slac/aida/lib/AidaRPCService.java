@@ -123,16 +123,6 @@ public class AidaRPCService implements RPCService {
 
         boolean isSetterRequest = valueArgument != null;
 
-        // Validate arguments
-        for (AidaArgument argument : argumentsList) {
-            String argumentName = argument.getName();
-            if (aidaGetterType != NONE && !getterConfig.getArguments().contains(argumentName.toUpperCase())) {
-                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for get requests to this channel. Valid arguments are: " + getterConfig.getArguments());
-            } else if (aidaSetterType != NONE && !setterConfig.getArguments().contains(argumentName.toUpperCase())) {
-                throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for set requests to this channel. Valid arguments are: " + setterConfig.getArguments());
-            }
-        }
-
         // See if the request type is supported for the channel
         if (isSetterRequest && NONE.equals(aidaSetterType)) {
             throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  Set requests are not supported for this channel");
@@ -142,34 +132,20 @@ public class AidaRPCService implements RPCService {
 
         // If a type has been specified then override the appropriate Config's type with the specified one
         if (typeArgument != null) {
-            try {
-                AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
-
-                // Check that it matches the type class from the channels file
-                // if channel accepts any type or if the specified type is TABLE (which matches any configuration)
-                // or if the specified type is in the class of types allowed by the channel
-                if (isSetterRequest) {
-                    if (!TABLE.equals(specifiedAidaType) && !VOID.equals(specifiedAidaType)) {
-                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
-                    }
-                    if (specifiedAidaType.equals(aidaSetterType) || ANY.equals(aidaSetterType)) {
-                        aidaSetterType = specifiedAidaType;
-                    } else {
-                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter is not compatible with the channel's definition (" + aidaSetterType + "), you specified " + specifiedAidaType);
-                    }
-                } else {
-                    if (ANY.equals(aidaGetterType) ||
-                            ((SCALAR.equals(aidaGetterType) || SCALAR_ARRAY.equals(aidaGetterType)) &&
-                                    (TABLE.equals(specifiedAidaType) || specifiedAidaType.metaType().equals(aidaGetterType))) ||
-                            (!SCALAR.equals(aidaGetterType) && !SCALAR_ARRAY.equals(aidaGetterType) && aidaGetterType.equals(specifiedAidaType))
-                    ) {
-                        aidaGetterType = specifiedAidaType;
-                    } else {
-                        throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
-                    }
+            AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
+            // Check that it matches the type class from the channels file
+            // if channel accepts any type or if the specified type is TABLE (which matches any configuration)
+            // or if the specified type is in the class of types allowed by the channel
+            if (isSetterRequest) {
+                if (!isSpecifiedTypeCompatibleWithConfiguredType(specifiedAidaType, aidaSetterType)) {
+                    throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be either VOID or TABLE for setters, but you specified " + specifiedAidaType);
                 }
-            } catch (IllegalArgumentException e) {
-                throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter is not a recognised AIDA type: " + typeArgument);
+                aidaSetterType = specifiedAidaType;
+            } else {
+                if (!isSpecifiedTypeCompatibleWithConfiguredType(specifiedAidaType, aidaGetterType)) {
+                    throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The type specified by the 'Type' parameter must be a " + aidaGetterType + ", but you specified " + specifiedAidaType);
+                }
+                aidaGetterType = specifiedAidaType;
             }
         } else {
             if (isSetterRequest) {
@@ -184,6 +160,22 @@ public class AidaRPCService implements RPCService {
                     case SCALAR_ARRAY:
                     case ANY:
                         throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The 'Type' parameter must be set to a type corresponding to " + aidaGetterType + ", but you didn't specify one");
+                }
+            }
+        }
+
+        // Validate arguments
+        for (AidaArgument argument : argumentsList) {
+            String argumentName = argument.getName().toUpperCase();
+            if (!argumentName.equals("TYPE") && !argumentName.equals("VALUE")) {
+                if (isSetterRequest) {
+                    if (!setterConfig.getArguments().contains(argumentName)) {
+                        throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for set requests to this channel. Valid arguments are: " + setterConfig.getArguments());
+                    }
+                } else {
+                    if (!getterConfig.getArguments().contains(argumentName)) {
+                        throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for get requests to this channel. Valid arguments are: " + getterConfig.getArguments());
+                    }
                 }
             }
         }
@@ -297,7 +289,7 @@ public class AidaRPCService implements RPCService {
 
     /**
      * Extract the String value from the field
-     * Any time a double or float is found, add it to the appropriate map under the `fieldMap` key
+     * Any time a double or float is found, add it to the appropriate map under the `fieldPath` key
      *
      * @param field              the field
      * @param fieldPath          path under which this field sits.  Used only for floats and doubles that need

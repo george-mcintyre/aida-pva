@@ -17,21 +17,101 @@ import static edu.stanford.slac.aida.lib.model.AidaType.STRING_ARRAY;
 import static edu.stanford.slac.aida.lib.model.AidaType.aidaTypeOf;
 import static org.epics.pvdata.pv.ScalarType.pvString;
 
+/**
+ * This class provides many functions that help with processing EPICS `Process Variables`.
+ * APDA-PVA receives data from EPICS in {@link org.epics.pvdata.pv.PVField} and
+ * {@link org.epics.pvdata.pv.PVStructure}, and we send data back to the EPICS network
+ * using the these same data types.
+ * <p>
+ * This class provides functions that convert to and from AIDA-PVA java types, and enables creation of the
+ * structures and norms required to reply to, and decipher EPICS network requests and data.
+ * <p>
+ * Furthermore, we use Normative Types to represent data in a standard way.  This is layered on top
+ * of Process Variables.   So this class also provides constants and standard structures for use with
+ * Normative Types.
+ * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
+ */
 public class AidaPVHelper {
+    /**
+     * Each top level {@link org.epics.pvdata.pv.PVStructure} in the Normative Type scheme
+     * has a {@link org.epics.pvdata.pv.ScalarType#pvString} {@link org.epics.pvdata.pv.PVField}
+     * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
+     * <p>
+     * This static constant is the string used to identify {@link org.epics.pvdata.pv.PVStructure}s
+     * containing {@link org.epics.pvdata.pv.PVScalar} data representing and NTScalar type.
+     */
     private static final String NTSCALAR_ID = "epics:nt/NTScalar:1.0";
+
+    /**
+     * Each top level {@link org.epics.pvdata.pv.PVStructure} in the Normative Type scheme
+     * has a {@link org.epics.pvdata.pv.ScalarType#pvString} {@link org.epics.pvdata.pv.PVField}
+     * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
+     * <p>
+     * This static constant is the string used to identify {@link org.epics.pvdata.pv.PVStructure}s
+     * containing {@link org.epics.pvdata.pv.PVScalarArray} data representing and NTScalarArray type.
+     */
     private static final String NTSCALARARRAY_ID = "epics:nt/NTScalarArray:1.0";
+
+    /**
+     * Each top level {@link org.epics.pvdata.pv.PVStructure} in the Normative Type scheme
+     * has a {@link org.epics.pvdata.pv.ScalarType#pvString} {@link org.epics.pvdata.pv.PVField}
+     * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
+     * <p>
+     * This static constant is the string used to identify {@link org.epics.pvdata.pv.PVStructure}s
+     * containing {@link org.epics.pvdata.pv.PVStructure} data representing and NTTable type.
+     */
     private static final String NTTABLE_ID = "epics:nt/NTTable:1.0";
 
+    /**
+     * The Normative Type specification defines the name of the field containing the value part
+     * of its main types (Scalar, ScalarArray, and Table) as "value".
+     */
     public static final String NT_FIELD_NAME = "value";
+
+    /**
+     * The Normative Type specification defines the name of the field containing the labels part
+     * of its Table type as "labels".
+     */
     public static final String NT_LABELS_NAME = "labels";
+
+    /**
+     * These are the names of the elements in the top level of the Normative Type Table structure
+     */
     private static final String[] NT_TABLE_TOP_STRUCTURE_NAMES = {NT_LABELS_NAME, NT_FIELD_NAME};
+
+    /**
+     * These are the fields at the top level of the Normative Type Scalar Structure
+     */
     private static final String[] NT_SCALAR_TOP_STRUCTURE_NAME = {NT_FIELD_NAME};
 
+    /**
+     * If you want to add no field names to a structure then use this shortcut
+     */
     public static final String[] EMPTY_FIELD_NAMES = new String[0];
+
+    /**
+     * If you want to add no fields to a structure then use this shortcut
+     */
     public static final Field[] EMPTY_FIELD_DEFINITIONS = new Field[0];
 
     /**
-     * Empty fields for an empty NT_TABLE
+     * Shortcut for a complete empty {@link org.epics.pvdata.pv.Field} for an empty NTScalar
+     * We use string as it doesn't matter as it will be empty
+     */
+    private static final Field[] NT_SCALAR_EMPTY_FIELD = new Field[]{
+            FieldFactory.getFieldCreate().createScalar(pvString)
+    };
+
+    /**
+     * Shortcut for a complete empty {@link org.epics.pvdata.pv.Field} for an empty NTScalarArray.
+     * We use string as it doesn't matter as it will be empty
+     */
+    private static final Field[] NT_SCALAR_ARRAY_EMPTY_FIELD = new Field[]{
+            FieldFactory.getFieldCreate().createScalarArray(pvString)
+    };
+
+    /**
+     * Shortcut for complete empty {@link org.epics.pvdata.pv.Field}s for an empty NTTable structure
      */
     private static final Field[] NT_TABLE_EMPTY_FIELDS = new Field[]{
             FieldFactory.getFieldCreate().createScalarArray(pvString),
@@ -39,21 +119,8 @@ public class AidaPVHelper {
     };
 
     /**
-     * Empty field for an empty NT_SCALAR_ARRAY.  We use string as it doesn't matter as it will be empty
-     */
-    private static final Field[] NT_SCALAR_ARRAY_EMPTY_FIELD = new Field[]{
-            FieldFactory.getFieldCreate().createScalarArray(pvString)
-    };
-
-    /**
-     * Empty field for an empty NT_SCALAR  We use string as it doesn't matter as it will be empty
-     */
-    private static final Field[] NT_SCALAR_EMPTY_FIELD = new Field[]{
-            FieldFactory.getFieldCreate().createScalar(pvString)
-    };
-
-    /**
-     * Empty table structure when no data is returned
+     * Shortcut for a complete empty NTTable {@link org.epics.pvdata.pv.PVStructure} for when no data is returned from the Native Channel Provider
+     * from a request
      */
     public static final PVStructure NT_SCALAR_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -64,7 +131,7 @@ public class AidaPVHelper {
 
 
     /**
-     * Empty scalar array when no data is returned
+     * Shortcut for a complete empty {@link org.epics.pvdata.pv.PVStructure} containing an NTScalarArray when no data is returned
      */
     public static final PVStructure NT_SCALAR_ARRAY_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -75,7 +142,7 @@ public class AidaPVHelper {
 
 
     /**
-     * Empty table structure when no data is returned
+     * Shortcut for a complete empty {@link org.epics.pvdata.pv.PVStructure} containing an NTTable when no data is returned
      */
     public static final PVStructure NT_TABLE_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -84,225 +151,207 @@ public class AidaPVHelper {
                                     // Structure with two elements: labels and field definitions
                                     .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, NT_TABLE_EMPTY_FIELDS));
 
-
     /**
-     * Set field value inside a given structure.
+     * Creating a {@link org.epics.pvdata.pv.PVStructure} is a two stage process.  First you need to create its
+     * structure, then you fill that structure with data.  The name of the field in any
+     * {@link org.epics.pvdata.pv.PVStructure} where the value is stored is always called "value".
+     * <p>
+     * This method allows you to set the value field in an already created {@link org.epics.pvdata.pv.PVStructure} to the given value.
      *
-     * @param structure the given structure
-     * @param fieldName field name string.
-     * @param value     the value to set in the field
+     * @param structure the given structure.
+     * @param value     the value to set in the value field.
+     * @param aidaType  the {@link AidaType} of the value to set.
      */
-    public static void setValue(@NonNull PVStructure structure, @NonNull String fieldName, Object value) {
-        AidaType aidaType = aidaTypeOf(value);
-        if (aidaType != null) {
-            setValue(structure, fieldName, value, aidaType);
-        }
-    }
-
-    /**
-     * Set field value inside a given structure.
-     *
-     * @param structure the given structure
-     * @param fieldName field name string.  optionally containing dot notation to indicate sub-structures
-     * @param value     the value to set in the field
-     * @param aidaType  the aida type of the value to set
-     */
-    private static void setValue(@NonNull PVStructure structure, @NonNull String fieldName, Object value, @NonNull AidaType aidaType) {
-        // Get sub-fields if required
-        String[] fieldParts = fieldName.split("\\.");
-        // For all sub-fields get sub-structures
-        for (int i = 0; i < fieldParts.length - 1; i++) {
-            structure = structure.getStructureField(fieldParts[i]);
-            fieldName = fieldParts[i + 1];
-        }
-
+    private static void setValue(@NonNull PVStructure structure, Object value, @NonNull AidaType aidaType) {
+        PVField field = structure.getSubField(NT_FIELD_NAME);
         switch (aidaType) {
             case BOOLEAN:
-                structure.getBooleanField(fieldName).put((Boolean) value);
+                ((PVBoolean) field).put((Boolean) value);
                 break;
             case BYTE:
-                structure.getByteField(fieldName).put((Byte) value);
+                ((PVByte) field).put((Byte) value);
                 break;
             case DOUBLE:
-                structure.getDoubleField(fieldName).put((Double) value);
+                ((PVDouble) field).put((Double) value);
                 break;
             case FLOAT:
-                structure.getFloatField(fieldName).put((Float) value);
+                ((PVFloat) field).put((Float) value);
                 break;
             case INTEGER:
-                structure.getIntField(fieldName).put((Integer) value);
+                ((PVInt) field).put((Integer) value);
                 break;
             case LONG:
-                structure.getLongField(fieldName).put((Long) value);
+                ((PVLong) field).put((Long) value);
                 break;
             case SHORT:
-                structure.getShortField(fieldName).put((Short) value);
+                ((PVShort) field).put((Short) value);
                 break;
             case STRING:
-                structure.getStringField(fieldName).put((String) value);
+                ((PVString) field).put((String) value);
                 break;
         }
+
+        // Change the status of the field to be immutable meaning that its value can no longer be changed
+        field.setImmutable();
     }
 
     /**
-     * Set values for the given pv structure for the specified field name
+     * Creating a {@link org.epics.pvdata.pv.PVStructure} is a two stage process.  First you need to create its
+     * structure, then you fill that structure with data.
+     * <p>
+     * This method allows you to set the value of any array field in an already
+     * created {@link org.epics.pvdata.pv.PVStructure} to the given list of values.
+     * <p>
+     * The `fieldName` parameter can be a path from the root of the structure down to the array that the values will be stored in.
+     * So it may be of the form "value.listName" which would store the values in the array called "listName"
+     * which is in the root structure field called "value".
      *
-     * @param structure the given structure
-     * @param fieldName the specified field name
-     * @param values    the values to set
+     * @param structure the given structure.
+     * @param fieldName the name of the array field.
+     * @param values    the values to set in the field.
+     * @param aidaType  the {@link AidaType} of the values to set.
      */
-    private static void setValues(@NonNull PVStructure structure, @NonNull String fieldName, @NonNull List<?> values) {
-        AidaType aidaType = aidaTypeOf(values);
-        if (aidaType != null) {
-            setValues(structure, fieldName, values, aidaType);
-        }
-    }
-
-    /**
-     * Set field values inside a given structure.
-     *
-     * @param structure the given structure
-     * @param fieldName field name string.
-     * @param values    the values to set in the field
-     * @param aidaType  the aida type of the value to set
-     */
+    @SuppressWarnings("unchecked")
     private static void setValues(@NonNull PVStructure structure, @NonNull String fieldName, @NonNull List<?> values, @NonNull AidaType aidaType) {
-        // Get sub-fields if required
+        // If the `fieldName` parameter is specified as a path then find the target structure where the values
+        // have to eventually be set
         String[] fieldParts = fieldName.split("\\.");
-        // For all sub-fields get sub-structures
+        // For all subfields get substructures
         for (int i = 0; i < fieldParts.length - 1; i++) {
             structure = structure.getStructureField(fieldParts[i]);
             fieldName = fieldParts[i + 1];
         }
 
+        // Now we have the target `structure` that we want to set `fieldName` to `values`
+
+        // Find out how many values there are
         int valuesCount = values.size();
-        Object[] valuesArray = values.toArray();
+
+        // Locate the array that was defined in the first stage of
+        // this {@link org.epics.pvdata.pv.PVStructure} creation
+        // and set the capacity to the number of values we need to store
         PVScalarArray scalarArray = structure.getScalarArrayField(fieldName, scalarTypeOf(aidaType));
         scalarArray.setCapacity(valuesCount);
 
+        // Depending on the type of the values to add, call the correct method to add the values
+        // In each case we can't add boxed values, so we convert to a primitive array first
+        // then add that primitive array to the structure's field.
         switch (aidaType) {
             case BOOLEAN_ARRAY: {
-                boolean[] primitiveArray = new boolean[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Boolean) valuesArray[i];
-
-                ((PVBooleanArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
+                ((PVBooleanArray) scalarArray).put(0, valuesCount, toPrimitiveBooleanArray(((List<Boolean>) values)), 0);
                 break;
             }
             case BYTE_ARRAY: {
-                byte[] primitiveArray = new byte[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Byte) valuesArray[i];
-
-                ((PVByteArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
-                break;
-            }
-            case DOUBLE_ARRAY: {
-                double[] primitiveArray = new double[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Double) valuesArray[i];
-
-                ((PVDoubleArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
-                break;
-            }
-            case FLOAT_ARRAY: {
-                float[] primitiveArray = new float[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Float) valuesArray[i];
-
-                ((PVFloatArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
+                ((PVByteArray) scalarArray).put(0, valuesCount, toPrimitiveByteArray((List<Byte>) values), 0);
                 break;
             }
             case INTEGER_ARRAY: {
-                int[] primitiveArray = new int[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Integer) valuesArray[i];
-
-                ((PVIntArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
-                break;
-            }
-            case LONG_ARRAY: {
-                long[] primitiveArray = new long[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Long) valuesArray[i];
-
-                ((PVLongArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
+                ((PVIntArray) scalarArray).put(0, valuesCount, toPrimitiveIntArray((List<Integer>) values), 0);
                 break;
             }
             case SHORT_ARRAY: {
-                short[] primitiveArray = new short[valuesCount];
-                for (int i = 0; i < valuesCount; i++)
-                    primitiveArray[i] = (Short) valuesArray[i];
-
-                ((PVShortArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
+                ((PVShortArray) scalarArray).put(0, valuesCount, toPrimitiveShortArray((List<Short>) values), 0);
+                break;
+            }
+            case LONG_ARRAY: {
+                ((PVLongArray) scalarArray).put(0, valuesCount, toPrimitiveLongArray((List<Long>) values), 0);
+                break;
+            }
+            case FLOAT_ARRAY: {
+                ((PVFloatArray) scalarArray).put(0, valuesCount, toPrimitiveFloatArray((List<Float>) values), 0);
+                break;
+            }
+            case DOUBLE_ARRAY: {
+                ((PVDoubleArray) scalarArray).put(0, valuesCount, toPrimitiveDoubleArray((List<Double>) values), 0);
                 break;
             }
             case STRING_ARRAY: {
-                String[] primitiveArray = new String[valuesCount];
-                for (int i = 0; i < valuesCount; i++) {
-                    primitiveArray[i] = (String) valuesArray[i];
-                }
-
-                ((PVStringArray) scalarArray).put(0, valuesCount, primitiveArray, 0);
+                ((PVStringArray) scalarArray).put(0, valuesCount, toStringArray((List<String>) values), 0);
                 break;
             }
         }
+
+        // Change the status of the field to be immutable meaning that its value can no longer be changed
         scalarArray.setImmutable();
     }
 
     /**
-     * Convert a value to a PVStructure containing an NT_SCALAR
+     * Convert an arbitrary value to a {@link org.epics.pvdata.pv.PVStructure} containing an `NTScalar`
      * <p>
-     * The value is one of the supported scalar types Boolean, Byte, Short, Int, Long, Float, Double or String
+     * The value must be the java equivalent of one of the supported AIDA-PVA scalar types
+     * - {@link java.lang.Boolean}, {@link java.lang.Byte}, {@link java.lang.Short},
+     * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
+     * - {@link java.lang.Double} or {@link java.lang.String}
      *
-     * @param value supported scalar value
-     * @return PVStructure containing an NT_SCALAR with the value
+     * @param value java equivalent of one of the supported AIDA-PVA scalar types
+     * @return {@link org.epics.pvdata.pv.PVStructure} containing an NTScalar with the value
      */
     public static PVStructure asScalar(Object value) {
+        // Null values are returned as an empty {@link org.epics.pvdata.pv.PVStructure}
         if (value == null) {
             return NT_SCALAR_EMPTY_STRUCTURE;
         }
 
+        // Find out the AIDA-PVA type that corresponds to the given value
         AidaType aidaType = aidaTypeOf(value);
         if (aidaType == null) {
             throw new AidaInternalException("Could not determine type of returned value: " + value);
         }
 
+        // And find out the corresponding PVScalar type that it needs to converted into
         ScalarType scalarType = scalarTypeOf(aidaType);
+
+        // Create the field of that type to be added to the {@link org.epics.pvdata.pv.PVStructure} we return
         Field[] scalarField = new Field[]{
                 FieldFactory.getFieldCreate().createScalar(scalarType)
         };
 
+        // Create a new {@link org.epics.pvdata.pv.PVStructure} to return containing the field we created
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 // Structure with one element: label and empty scalar field definition
                                 .createStructure(NTSCALAR_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarField));
 
-        // Set value
-        setValue(retVal, NT_FIELD_NAME, value, aidaType);
+        // In the second phase of {@link org.epics.pvdata.pv.PVStructure} creation we now set the field value
+        // Note that the field name to set is always called "value" for NT types
+        setValue(retVal, value, aidaType);
 
         return retVal;
     }
 
     /**
-     * Convert a list of values to a PVStructure containing an NT_SCALAR_ARRAY
+     * Convert an arbitrary list of values to a {@link org.epics.pvdata.pv.PVStructure} containing an `NTScalarArray`
+     * <p>
+     * The value must be the java {@link java.util.List} of a type equivalent of one of the supported AIDA-PVA scalar types
+     * - {@link java.lang.Boolean}, {@link java.lang.Byte}, {@link java.lang.Short},
+     * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
+     * - {@link java.lang.Double} or {@link java.lang.String}
      *
      * @param values the list of values to convert
-     * @return PVStructure containing an NT_SCALAR_ARRAY with the values
+     * @return {@link org.epics.pvdata.pv.PVStructure} containing an `NTScalarArray` with the values
      */
     public static PVStructure asScalarArray(List<?> values) {
+        // Null values are returned as an empty {@link org.epics.pvdata.pv.PVStructure}
+        if (values == null) {
+            return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
+        }
+
+        // Find out the AIDA-PVA type that corresponds to the given values
         AidaType aidaType = aidaTypeOf(values);
         if (aidaType == null) {
             return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
         }
 
+        // And find out the corresponding PVScalar type that it needs to converted into
         ScalarType scalarType = scalarTypeOf(aidaType);
 
+        // Create the field of that type to be added to the {@link org.epics.pvdata.pv.PVStructure} we return
         Field[] scalarArrayField = new Field[]{
                 FieldFactory.getFieldCreate().createScalarArray(scalarType)
         };
 
+        // Create a new {@link org.epics.pvdata.pv.PVStructure} to return containing the field we created
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
@@ -310,7 +359,8 @@ public class AidaPVHelper {
                                 .createStructure(NTSCALARARRAY_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarArrayField));
 
 
-        // Set value
+        // In the second phase of {@link org.epics.pvdata.pv.PVStructure} creation we now set the field value
+        // Note that the field name to set is always called "value" for NT types
         setValues(retVal, NT_FIELD_NAME, values, aidaType);
 
         return retVal;
@@ -318,49 +368,63 @@ public class AidaPVHelper {
 
 
     /**
-     * Convert a list of values to a PVStructure containing an NT_TABLE
-     * <p>
-     * The list is a list of columns or a list of rows.  The config.layout is used to determine whether
-     * the lists are ROW_MAJOR or COLUMN_MAJOR (default)
-     * <p>
-     * The columns/rows are pulled out out the list and mapped to the NT_TABLE columns
+     * Convert an arbitrary list of homogeneously sized columns of values to a {@link org.epics.pvdata.pv.PVStructure} containing an `NTTable`
+     * The value of each of the columns must be a java {@link java.util.List} of a type equivalent of one of the supported AIDA-PVA scalar types
+     * - {@link java.lang.Boolean}, {@link java.lang.Byte}, {@link java.lang.Short},
+     * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
+     * - {@link java.lang.Double} or {@link java.lang.String}
      *
      * @param values the list of values
      * @return the returned PVStructure containing the NT_TABLE
      */
     public static PVStructure asNtTable(List<List<Object>> values, AidaChannelConfig aidaChannelConfig) {
+        // If there is nothing to add or that the list is empty or if the columns are empty return an empty
+        //  {@link org.epics.pvdata.pv.PVStructure}
         if (values == null || values.isEmpty() || values.get(0).isEmpty()) {
             return NT_TABLE_EMPTY_STRUCTURE;
         }
 
-        // Track fields, field names, labels and types
-        List<Field> pvFields = new ArrayList<Field>();
+        // If the lists are not homogeneously sized then raise an exception
+        int columnSize = values.get(0).size();
+        for (List<Object> column : values) {
+            if (column.size() != columnSize) {
+                throw new AidaInternalException("Columns in NTTable not homogeneously sized. Normal size: " + columnSize + ", One column size: " + column.size());
+            }
+        }
+
+        // The field names, labels and types for an NTTable come from the Channel Configuration specified in the
+        // CHANNELS.YML file loaded when the service initialises.
+        // We need to retrieve these configured values from the given configuration associated with the
+        // request we're processing
         List<String> fieldNames = new ArrayList<String>();
         List<String> labels = new ArrayList<String>();
         List<AidaType> aidaTypes = new ArrayList<AidaType>();
+        // We need to create a set of fields that we will fill with these values
+        List<Field> pvFields = new ArrayList<Field>();
+        setFieldsWithNamesLabelsAndTypesFromConfig(pvFields, aidaChannelConfig, values, fieldNames, labels, aidaTypes);
 
-        // get fields, field names, labels and types
-        getFieldsNamesLabelsAndTypes(values, aidaChannelConfig, pvFields, fieldNames, labels, aidaTypes);
+        /// FIRST STAGE {@link org.epics.pvdata.pv.PVStructure} creation: Structure
 
-        // Create top level NT_TABLE fields (labels and value{column1[], column2[], ...})
-        Field scalarArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
-        String[] fieldNameArray = new String[fieldNames.size()];
-        for (int i = 0; i < fieldNames.size(); i++) {
-            fieldNameArray[i] = fieldNames.get(i);
-        }
-        Field[] fieldArray = new Field[pvFields.size()];
-        for (int i = 0; i < pvFields.size(); i++) {
-            fieldArray[i] = pvFields.get(i);
-        }
-        Field structure = FieldFactory.getFieldCreate().createStructure(fieldNameArray, fieldArray);
+        // List of strings that will contain the labels names
+        Field labelsArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
 
-        Field[] topFields = new Field[]{scalarArray, structure};
+        // Create the second level {@link org.epics.pvdata.pv.Field} that will conta
+        // top fields, this one holding the structure of the rest of the NTTable
+        //  - fieldNames = PVScalarArray containing pvstring and
+        //  - columns of values = A set of Fields that are each PVScalarArrays
+        Field structure = FieldFactory.getFieldCreate().createStructure(toStringArray(fieldNames), toFieldArray(pvFields));
 
-        // Create the top structure that will be returned (labels and values)
+        // Create the two top fields of the
+        Field[] topFields = new Field[]{labelsArray, structure};
+
+        // Create the top {@link org.epics.pvdata.pv.PVStructure} that will be returned (labels and values)
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, topFields));
+
+
+        /// SECOND STAGE {@link org.epics.pvdata.pv.PVStructure} creation: Set values
 
         // Set the field labels
         setValues(retVal, NT_LABELS_NAME, labels, STRING_ARRAY);
@@ -380,16 +444,16 @@ public class AidaPVHelper {
     /**
      * Get the fields, field names, labels and types from the supplied values and config
      *
-     * @param values                the supplied values
-     * @param channelConfig         the config
      * @param fieldsToPopulate      the fields to populate - provide an empty list
+     * @param channelConfig         the config
+     * @param values                the supplied values
      * @param fieldNamesToPopulate  the field names to populate - provide an empty list
      * @param fieldLabelsToPopulate the labels to populate - provide an empty list
      * @param fieldTypesToPopulate  the types to populate - provide an empty list
      */
-    private static void getFieldsNamesLabelsAndTypes(
-            List<List<Object>> values, AidaChannelConfig channelConfig,
-            List<Field> fieldsToPopulate, List<String> fieldNamesToPopulate, List<String> fieldLabelsToPopulate, List<AidaType> fieldTypesToPopulate) {
+    private static void setFieldsWithNamesLabelsAndTypesFromConfig(
+            List<Field> fieldsToPopulate, AidaChannelConfig channelConfig, List<List<Object>> values,
+            List<String> fieldNamesToPopulate, List<String> fieldLabelsToPopulate, List<AidaType> fieldTypesToPopulate) {
 
         // Loop over values and fields simultaneously
         Iterator<AidaField> fieldIterator = channelConfig.getFields().listIterator();
@@ -498,21 +562,21 @@ public class AidaPVHelper {
             case BYTE:
             case BYTE_ARRAY:
                 return ScalarType.pvByte;
+            case INTEGER:
+            case INTEGER_ARRAY:
+                return ScalarType.pvInt;
+            case SHORT:
+            case SHORT_ARRAY:
+                return ScalarType.pvShort;
+            case LONG:
+            case LONG_ARRAY:
+                return ScalarType.pvLong;
             case DOUBLE:
             case DOUBLE_ARRAY:
                 return ScalarType.pvDouble;
             case FLOAT:
             case FLOAT_ARRAY:
                 return ScalarType.pvFloat;
-            case INTEGER:
-            case INTEGER_ARRAY:
-                return ScalarType.pvInt;
-            case LONG:
-            case LONG_ARRAY:
-                return ScalarType.pvLong;
-            case SHORT:
-            case SHORT_ARRAY:
-                return ScalarType.pvShort;
             case STRING:
             case STRING_ARRAY:
                 return ScalarType.pvString;
@@ -520,6 +584,134 @@ public class AidaPVHelper {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Convert a List of Boolean to an array of primitive booleans
+     *
+     * @param values List of Booleans
+     * @return an array of primitive booleans
+     */
+    private static boolean[] toPrimitiveBooleanArray(List<Boolean> values) {
+        int valuesCount = values.size();
+        boolean[] primitiveArray = new boolean[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of Byte to an array of primitive bytes
+     *
+     * @param values List of Bytes
+     * @return an array of primitive bytes
+     */
+    private static byte[] toPrimitiveByteArray(List<Byte> values) {
+        int valuesCount = values.size();
+        byte[] primitiveArray = new byte[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of Short to an array of primitive shorts
+     *
+     * @param values List of Shorts
+     * @return an array of primitive shorts
+     */
+    private static short[] toPrimitiveShortArray(List<Short> values) {
+        int valuesCount = values.size();
+        short[] primitiveArray = new short[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of Integer to an array of primitive ints
+     *
+     * @param values List of Integers
+     * @return an array of primitive ints
+     */
+    private static int[] toPrimitiveIntArray(List<Integer> values) {
+        int valuesCount = values.size();
+        int[] primitiveArray = new int[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of Long to an array of primitive longs
+     *
+     * @param values List of Longs
+     * @return an array of primitive longs
+     */
+    private static long[] toPrimitiveLongArray(List<Long> values) {
+        int valuesCount = values.size();
+        long[] primitiveArray = new long[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of Float to an array of primitive floats
+     *
+     * @param values List of Floats
+     * @return an array of primitive floats
+     */
+    private static float[] toPrimitiveFloatArray(List<Float> values) {
+        int valuesCount = values.size();
+        float[] primitiveArray = new float[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of Double to an array of primitive doubles
+     *
+     * @param values List of Doubles
+     * @return an array of primitive doubles
+     */
+    private static double[] toPrimitiveDoubleArray(List<Double> values) {
+        int valuesCount = values.size();
+        double[] primitiveArray = new double[valuesCount];
+        for (int i = 0; i < valuesCount; i++)
+            primitiveArray[i] = values.get(i);
+        return primitiveArray;
+    }
+
+    /**
+     * Convert a List of String to an array of strings
+     *
+     * @param strings List of Strings
+     * @return an array of strings
+     */
+    private static String[] toStringArray(List<String> strings) {
+        int valuesCount = strings.size();
+        String[] stringArray = new String[valuesCount];
+        for (int i = 0; i < valuesCount; i++) {
+            stringArray[i] = strings.get(i);
+        }
+        return stringArray;
+    }
+
+    /**
+     * Convert a List of Fields to an array of Fields
+     *
+     * @param fields List of Fields
+     * @return an array of Fields
+     */
+    private static Field[] toFieldArray(List<Field> fields) {
+        int fieldCount = fields.size();
+        Field[] fieldArray = new Field[fieldCount];
+        for (int i = 0; i < fieldCount; i++) {
+            fieldArray[i] = fields.get(i);
+        }
+        return fieldArray;
     }
 }
 

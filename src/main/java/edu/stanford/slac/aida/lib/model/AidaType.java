@@ -170,4 +170,19 @@ public enum AidaType {
         }
     }
 
+    /**
+     * Check if the specified type is compatible with the configured type.
+     *
+     * @param specifiedAidaType the specified type
+     * @param configuredType    the configured type
+     * @return true if compatible false if not
+     */
+    public static boolean isSpecifiedTypeCompatibleWithConfiguredType(AidaType specifiedAidaType, AidaType configuredType) {
+        if (configuredType == ANY) {
+            return true;
+        } else if (configuredType == SCALAR || configuredType == SCALAR_ARRAY) {
+            return specifiedAidaType.metaType() == configuredType;
+        } else
+            return specifiedAidaType == configuredType;
+    }
 }
