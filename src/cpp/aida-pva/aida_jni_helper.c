@@ -390,6 +390,7 @@ static int allocateSpaceForArguments(JNIEnv* env, Arguments* cArgs, int totalFlo
 		cArgs->floatingPointValues = calloc(totalFloatingPoints, sizeof(FloatingPointValue));
 		if (!cArgs->floatingPointValues) {
 			free(cArgs->arguments);
+			cArgs->arguments = NULL;
 			aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION,
 					"Failed to allocate memory for floating point values");
 			return EXIT_FAILURE;
@@ -522,8 +523,12 @@ jshortArray toShortArray(JNIEnv* env, Array array)
 		return NULL;
 	}
 
-	// Copy values
-	(*env)->SetShortArrayRegion(env, returnValue, 0, array.count, array.items);
+	// Copy values to be safe about length of short copy all values
+	jshort jShortArray[array.count];
+	for (int i = 0; i < array.count; i++) {
+		jShortArray[i] = (jshort)((short*)array.items)[i];
+	}
+	(*env)->SetShortArrayRegion(env, returnValue, 0, array.count, jShortArray);
 
 	// Free up array
 	releaseArray(array);
@@ -551,8 +556,12 @@ jintArray toIntegerArray(JNIEnv* env, Array array)
 		return NULL;
 	}
 
-	// Copy values
-	(*env)->SetIntArrayRegion(env, returnValue, 0, array.count, array.items);
+	// Copy values.  To be safe about lengths of integers copy all values
+	jint jintArray[array.count];
+	for (int i = 0; i < array.count; i++) {
+		jintArray[i] = (jint)((int*)array.items)[i];
+	}
+	(*env)->SetIntArrayRegion(env, returnValue, 0, array.count, jintArray);
 
 	// Free up array
 	releaseArray(array);
@@ -580,8 +589,13 @@ jlongArray toLongArray(JNIEnv* env, Array array)
 		return NULL;
 	}
 
-	// Copy values
-	(*env)->SetLongArrayRegion(env, returnValue, 0, array.count, array.items);
+	// Copy values.  Due to the different size of longs on different sides of jni divide we need to
+	// copy each value and convert it before returning
+	jlong jlongArray[array.count];
+	for (int i = 0; i < array.count; i++) {
+		jlongArray[i] = (jlong)((long*)array.items)[i];
+	}
+	(*env)->SetLongArrayRegion(env, returnValue, 0, array.count, jlongArray);
 
 	// Free up array
 	releaseArray(array);
@@ -749,7 +763,7 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			case AIDA_SHORT_ARRAY_TYPE: {
-				jshort data = ((jshort*)(table.ppData[column]))[row];
+				jshort data = (jshort)((short*)(table.ppData[column]))[row];
 				jobject dataObject = toShort(env, data);
 				CHECK_EXCEPTION_AND_RETURN_(NULL)
 
@@ -758,7 +772,7 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			case AIDA_INTEGER_ARRAY_TYPE: {
-				jint data = ((jint*)(table.ppData[column]))[row];
+				jint data = (jint)((int*)(table.ppData[column]))[row];
 				jobject dataObject = toInteger(env, data);
 				CHECK_EXCEPTION_AND_RETURN_(NULL)
 
@@ -767,7 +781,7 @@ jobject toTable(JNIEnv* env, Table table)
 				break;
 			}
 			case AIDA_LONG_ARRAY_TYPE: {
-				jlong data = ((jlong*)(table.ppData[column]))[row];
+				jlong data = (jlong)((long*)(table.ppData[column]))[row];
 				jobject dataObject = toLong(env, data);
 				CHECK_EXCEPTION_AND_RETURN_(NULL)
 
