@@ -173,18 +173,30 @@ public class AidaRPCService implements RPCService {
      * @throws UnsupportedChannelException if operation is invalid for channel
      */
     private PVStructure callNativeChannelProvider(String channelName, AidaArguments arguments, boolean isSetterRequest, AidaType aidaGetterType, AidaType aidaSetterType, AidaChannelConfig getterConfig, AidaChannelConfig setterConfig) throws UnsupportedChannelException {
+        // Setter requests
         if (isSetterRequest) {
+            // Returning VOID
             if (aidaSetterType.equals(VOID)) {
                 this.aidaChannelProvider.setValue(channelName, arguments);
+
+                // Returning TABLES
             } else if (aidaSetterType.equals(TABLE)) {
                 return asNtTable(this.aidaChannelProvider.setValueWithResponse(channelName, arguments), setterConfig);
             }
+
+            // Getter requests
         } else {
             AidaType metaType = aidaGetterType.metaType();
+
+            // Returning SCALAR
             if (metaType == SCALAR) {
                 return asScalar(this.aidaChannelProvider.requestScalar(channelName, aidaGetterType, arguments));
+
+                // Returning SCALAR_ARRAY
             } else if (metaType == SCALAR_ARRAY) {
                 return asScalarArray(this.aidaChannelProvider.requestScalarArray(channelName, aidaGetterType, arguments));
+
+                // Returning TABLE
             } else {
                 return asNtTable(this.aidaChannelProvider.requestTable(channelName, arguments), getterConfig);
             }
