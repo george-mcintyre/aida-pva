@@ -740,27 +740,35 @@ public class AidaPVHelper {
         if (array instanceof PVBooleanArray) {
             // For boolean arrays
             booleanArrayToString((PVBooleanArray) array, arrayList);
+
         } else if (array instanceof PVByteArray) {
             // For byte arrays
             byteArrayToString((PVByteArray) array, arrayList);
+
         } else if (array instanceof PVShortArray) {
             // For short arrays
             shortArrayToString((PVShortArray) array, arrayList);
+
         } else if (array instanceof PVIntArray) {
             // For integer arrays
             integerArrayToString((PVIntArray) array, arrayList);
+
         } else if (array instanceof PVLongArray) {
             // For long arrays
             longArrayToString((PVLongArray) array, arrayList);
-        } else if (array instanceof PVDoubleArray) {
-            // For double arrays
-            doubleArrayToString((PVDoubleArray) array, fieldPath, doubleArgumentList, arrayList);
+
         } else if (array instanceof PVFloatArray) {
             // For float arrays
             floatArrayToString((PVFloatArray) array, fieldPath, floatArgumentList, arrayList);
+
+        } else if (array instanceof PVDoubleArray) {
+            // For double arrays
+            doubleArrayToString((PVDoubleArray) array, fieldPath, doubleArgumentList, arrayList);
+
         } else if (array instanceof PVStringArray) {
             // For string arrays
             stringArrayToString(array, arrayList);
+
         } else if (array instanceof PVStructureArray) {
             // For structure arrays then recurse to unpack each field
             structureArrayToString(array, fieldPath, floatArgumentList, doubleArgumentList, arrayList);
