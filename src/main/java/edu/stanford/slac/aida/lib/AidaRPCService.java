@@ -5,10 +5,10 @@ import edu.stanford.slac.except.*;
 import org.epics.nt.NTURI;
 import org.epics.pvaccess.server.rpc.RPCRequestException;
 import org.epics.pvaccess.server.rpc.RPCService;
-import org.epics.pvdata.pv.*;
-import org.epics.util.array.*;
+import org.epics.pvdata.pv.PVField;
+import org.epics.pvdata.pv.PVString;
+import org.epics.pvdata.pv.PVStructure;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,11 +124,9 @@ public class AidaRPCService implements RPCService {
         // See if the request type is supported for the channel
         checkThatRequestedOperationIsSupported(channelName, argumentsList, isSetterRequest, aidaGetterType, aidaSetterType);
 
-        if (typeArgument == null) {
-            // If no TYPE has been specified then see if it was mandatory
+        if (typeArgument == null) { // If no TYPE has been specified then see if it was mandatory
             checkIfMissingTypeArgumentIsMandatory(channelName, argumentsList, isSetterRequest, aidaGetterType, aidaSetterType);
-        } else {
-            // If a TYPE has been specified then override the Config's type with the specified one if it is compatible
+        } else { // If a TYPE has been specified then override the Config's type with the specified one if it is compatible
             aidaSetterType = checkIfTypeArgumentIsCompatible(channelName, argumentsList, isSetterRequest, aidaGetterType, aidaSetterType, typeArgument);
         }
 
@@ -173,31 +171,24 @@ public class AidaRPCService implements RPCService {
      * @throws UnsupportedChannelException if operation is invalid for channel
      */
     private PVStructure callNativeChannelProvider(String channelName, AidaArguments arguments, boolean isSetterRequest, AidaType aidaGetterType, AidaType aidaSetterType, AidaChannelConfig getterConfig, AidaChannelConfig setterConfig) throws UnsupportedChannelException {
-        // Setter requests
-        if (isSetterRequest) {
-            // Returning VOID
-            if (aidaSetterType.equals(VOID)) {
+        if (isSetterRequest) {  // Setter requests
+            if (aidaSetterType.equals(VOID)) { // Returning VOID
                 this.aidaChannelProvider.setValue(channelName, arguments);
 
-                // Returning TABLES
-            } else if (aidaSetterType.equals(TABLE)) {
+            } else if (aidaSetterType.equals(TABLE)) { // Returning TABLES
                 return asNtTable(this.aidaChannelProvider.setValueWithResponse(channelName, arguments), setterConfig);
             }
 
-            // Getter requests
-        } else {
+        } else { // Getter requests
             AidaType metaType = aidaGetterType.metaType();
 
-            // Returning SCALAR
-            if (metaType == SCALAR) {
+            if (metaType == SCALAR) { // Returning SCALAR
                 return asScalar(this.aidaChannelProvider.requestScalar(channelName, aidaGetterType, arguments));
 
-                // Returning SCALAR_ARRAY
-            } else if (metaType == SCALAR_ARRAY) {
+            } else if (metaType == SCALAR_ARRAY) { // Returning SCALAR_ARRAY
                 return asScalarArray(this.aidaChannelProvider.requestScalarArray(channelName, aidaGetterType, arguments));
 
-                // Returning TABLE
-            } else {
+            } else { // Returning TABLE
                 return asNtTable(this.aidaChannelProvider.requestTable(channelName, arguments), getterConfig);
             }
         }
@@ -265,11 +256,9 @@ public class AidaRPCService implements RPCService {
      * @throws AidaInternalException if the configuration file has been mis-configured
      */
     private void checkThatConfigDefinesFieldsForTableRequests(AidaType aidaGetterType, AidaType aidaSetterType, AidaChannelConfig getterConfig, AidaChannelConfig setterConfig) throws AidaInternalException {
-        if (aidaSetterType == TABLE && (setterConfig == null || setterConfig.getFields() == null)) {
-            // Make sure that fields have been defined if the requested return type is TABLE
+        if (aidaSetterType == TABLE && (setterConfig == null || setterConfig.getFields() == null)) { // Make sure that fields have been defined if the requested return type is TABLE
             throw new AidaInternalException("Table channel configured without defining fields");
-        } else if (aidaGetterType == TABLE && getterConfig.getFields() == null) {
-            // Make sure that fields have been defined if the requested return type is TABLE
+        } else if (aidaGetterType == TABLE && getterConfig.getFields() == null) { // Make sure that fields have been defined if the requested return type is TABLE
             throw new AidaInternalException("Table channel configured without defining fields");
         }
     }
@@ -288,6 +277,7 @@ public class AidaRPCService implements RPCService {
      */
     private AidaType checkIfTypeArgumentIsCompatible(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaType aidaGetterType, AidaType aidaSetterType, String typeArgument) throws UnsupportedChannelException {
         AidaType specifiedAidaType = AidaType.valueOf(typeArgument);
+
         // Check that it matches the type class from the channels file
         // if channel accepts any type or if the specified type is TABLE (which matches any configuration)
         // or if the specified type is in the class of types allowed by the channel
@@ -315,13 +305,11 @@ public class AidaRPCService implements RPCService {
      * @throws UnsupportedChannelException if the TYPE parameter was required but not provided
      */
     private void checkIfMissingTypeArgumentIsMandatory(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaType aidaGetterType, AidaType aidaSetterType) throws UnsupportedChannelException {
-        if (isSetterRequest) {
-            // If a class of types is set as the getter type, but you didn't set one then error out
+        if (isSetterRequest) {  // If a meta-type is set as the setter type, but the client request didn't explicitly specify a TYPE argument then error out
             if (aidaSetterType == ANY) {
                 throw new UnsupportedChannelTypeException(channelName + argumentsList + ".  The 'Type' parameter must be set 'VOID' or 'TABLE' but you didn't specify one");
             }
-        } else {
-            // If a class of types is set as the getter type, but you didn't set one then error out
+        } else { // If a meta-type is set as the getter type, but the client request didn't explicitly specify a TYPE argument then error out
             switch (aidaGetterType) {
                 case SCALAR:
                 case SCALAR_ARRAY:
@@ -344,13 +332,14 @@ public class AidaRPCService implements RPCService {
     private void validateArguments(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaChannelConfig getterConfig, AidaChannelConfig setterConfig) throws UnsupportedChannelException {
         for (AidaArgument argument : argumentsList) {
             String argumentName = argument.getName().toUpperCase();
-            if (!argumentName.equals("TYPE") && !argumentName.equals("VALUE")) {
+
+            if (!argumentName.equals("TYPE") && !argumentName.equals("VALUE")) { // Ignore TYPE and VALUE arguments because they are validated elsewhere
                 if (isSetterRequest) {
-                    if (!setterConfig.getArguments().contains(argumentName)) {
+                    if (!setterConfig.getArguments().contains(argumentName)) { // if the given argument name is not in the acceptable set of argument names then error out
                         throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for set requests to this channel. Valid arguments are: " + setterConfig.getArguments());
                     }
                 } else {
-                    if (!getterConfig.getArguments().contains(argumentName)) {
+                    if (!getterConfig.getArguments().contains(argumentName)) {  // if the given argument name is not in the acceptable set of argument names then error out
                         throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for get requests to this channel. Valid arguments are: " + getterConfig.getArguments());
                     }
                 }
@@ -379,10 +368,11 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Get the arguments for the specified request
+     * Get the arguments for the specified request.  Returns the list of {@link AidaArgument} for the
+     * given Normative Type query {@link PVStructure}
      *
-     * @param pvUriQuery the specified request
-     * @return the list of aida channel arguments
+     * @param pvUriQuery the given Normative Type query {@link PVStructure}
+     * @return the list of {@link AidaArgument}
      * @throws RPCRequestException if there is a problem reading the arguments
      */
     private List<AidaArgument> getArguments(PVStructure pvUriQuery) throws RPCRequestException {
@@ -397,10 +387,10 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Convert a PVField into an AidaArgument
+     * Convert a {@link PVField} into an {@link AidaArgument}
      *
-     * @param field the field to convert into an AidaArgument
-     * @return the AidaArgument
+     * @param field the {@link PVField} to convert into an {@link AidaArgument}
+     * @return the {@link AidaArgument}
      * @throws RPCRequestException if something bad happens
      */
     private AidaArgument getArgument(PVField field) throws RPCRequestException {
@@ -409,10 +399,15 @@ public class AidaRPCService implements RPCService {
             throw new RPCRequestException(ERROR, "Invalid argument name: <blank>");
         }
 
-        // Convert all arguments to string (json or otherwise)
-        // But collect all doubles and floats unchanged in ieee format
+        // To store list of all floating point numbers found in this argument.  They are
+        // lists because the arguments can be structures that contain many floating points
+        // in various elements.  When extracting those elements the full json path to
+        // the element in the structure is saved
         List<FloatArgument> floatArgumentList = new ArrayList<FloatArgument>();
         List<DoubleArgument> doubleArgumentList = new ArrayList<DoubleArgument>();
+
+        // Convert all arguments to string (json or otherwise)
+        // But collect all doubles and floats unchanged in ieee format
         String value = fieldToString(field, name, floatArgumentList, doubleArgumentList);
 
         if (value == null) {
@@ -420,226 +415,5 @@ public class AidaRPCService implements RPCService {
         }
 
         return new AidaArgument(name, value, floatArgumentList, doubleArgumentList);
-    }
-
-    /**
-     * Extract the String value from the field
-     * Any time a double or float is found, add it to the appropriate map under the `fieldPath` key
-     *
-     * @param field              the field
-     * @param fieldPath          path under which this field sits.  Used only for floats and doubles that need
-     *                           to set the path so the name in the pair is prefixed with this value if set
-     * @param floatArgumentList  to return the list of floats found and the paths
-     * @param doubleArgumentList to return the list of doubles found and the paths
-     * @return the extracted value
-     * @throws RPCRequestException of the field type is unsupported
-     */
-    private String fieldToString(PVField field, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
-        String value;
-        if (field instanceof PVBoolean) {
-            value = Boolean.toString(((PVBoolean) field).get());
-        } else if (field instanceof PVByte) {
-            value = Byte.toString(((PVByte) field).get());
-        } else if (field instanceof PVUByte) {
-            value = Byte.toString(((PVUByte) field).get());
-        } else if (field instanceof PVDouble) {
-            double d = ((PVDouble) field).get();
-            doubleArgumentList.add(new DoubleArgument(fieldPath, d));
-            value = Double.toString(d);
-        } else if (field instanceof PVFloat) {
-            float f = ((PVFloat) field).get();
-            floatArgumentList.add(new FloatArgument(fieldPath, f));
-            value = Float.toString(f);
-        } else if (field instanceof PVInt) {
-            value = Integer.toString(((PVInt) field).get());
-        } else if (field instanceof PVLong) {
-            value = Long.toString(((PVLong) field).get());
-        } else if (field instanceof PVShort) {
-            value = Short.toString(((PVShort) field).get());
-        } else if (field instanceof PVString) {
-            if (isSubField(fieldPath)) {
-                // Subfield strings are always quoted
-                value = "\"" + ((PVString) field).get() + "\"";
-            } else {
-                // Single top level can be left without quotes
-                value = ((PVString) field).get();
-            }
-        } else if (field instanceof PVStructure) {
-            // For structures then we need to recurse for each field
-            PVStructure structure = ((PVStructure) field);
-            StringBuilder structureBuilder = new StringBuilder();
-            structureBuilder.append("{");
-            boolean firstTime = true;
-            for (PVField subField : structure.getPVFields()) {
-                String elementName = subField.getFieldName();
-                String elementValue = fieldToString(subField, fieldPath + "." + elementName, floatArgumentList, doubleArgumentList);
-                if (!firstTime) {
-                    structureBuilder.append(", ");
-                }
-                firstTime = false;
-
-                structureBuilder.append("\"");
-                structureBuilder.append(elementName);
-                structureBuilder.append("\": ");
-                structureBuilder.append(elementValue);
-            }
-            structureBuilder.append("}");
-            value = structureBuilder.toString();
-        } else if (field instanceof PVArray) {
-            PVArray array = ((PVArray) field);
-            StringBuilder arrayBuilder = new StringBuilder();
-            arrayBuilder.append("[");
-            boolean firstTime = true;
-            List<String> arrayList = arrayFields(array, fieldPath, floatArgumentList, doubleArgumentList);
-            for (String subValue : arrayList) {
-                if (!firstTime) {
-                    arrayBuilder.append(", ");
-                }
-                firstTime = false;
-                arrayBuilder.append(subValue);
-            }
-            arrayBuilder.append("]");
-            value = arrayBuilder.toString();
-        } else {
-            throw new RPCRequestException(ERROR, "Invalid argument value: can only accept scalar, scalar array, structure or structure array");
-        }
-        return value;
-    }
-
-    /**
-     * Extract array fields
-     *
-     * @param array              any PV array
-     * @param fieldPath          path under which this field sits
-     * @param floatArgumentList  to return the list of floats found and the paths
-     * @param doubleArgumentList to return the list of doubles found and the paths
-     * @return the list of strings for this array
-     * @throws RPCRequestException when there is an unsupported type
-     */
-    private List<String> arrayFields(PVArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
-        List<String> arrayList = new ArrayList<String>();
-
-        if (array instanceof PVBooleanArray) {
-            // For boolean arrays
-            BooleanArrayData data = new BooleanArrayData();
-            int offset = 0, len = array.getLength();
-            while (offset < len) {
-                int num = ((PVBooleanArray) array).get(offset, (len - offset), data);
-                for (int i = 0; i < num; i++) {
-                    arrayList.add(Boolean.toString(data.data[offset + i]));
-                }
-                offset += num;
-            }
-        } else if (array instanceof PVByteArray) {
-            // For byte arrays
-            IteratorByte it = ((PVByteArray) array).get().iterator();
-            while (it.hasNext()) {
-                arrayList.add(Byte.toString(it.nextByte()));
-            }
-        } else if (array instanceof PVDoubleArray) {
-            // For double arrays
-            IteratorDouble it = ((PVDoubleArray) array).get().iterator();
-            int i = 0;
-            while (it.hasNext()) {
-                double d = it.nextDouble();
-                doubleArgumentList.add(new DoubleArgument(fieldPath + "[" + i++ + "]", d));
-                arrayList.add(Double.toString(d));
-            }
-        } else if (array instanceof PVFloatArray) {
-            // For float arrays
-            IteratorFloat it = ((PVFloatArray) array).get().iterator();
-            int i = 0;
-            while (it.hasNext()) {
-                float f = it.nextFloat();
-                floatArgumentList.add(new FloatArgument(fieldPath + "[" + i++ + "]", f));
-                arrayList.add(Float.toString(f));
-            }
-        } else if (array instanceof PVIntArray) {
-            // For integer arrays
-            IteratorInteger it = ((PVIntArray) array).get().iterator();
-            while (it.hasNext()) {
-                arrayList.add(Integer.toString(it.nextInt()));
-            }
-        } else if (array instanceof PVLongArray) {
-            // For long arrays
-            IteratorLong it = ((PVLongArray) array).get().iterator();
-            while (it.hasNext()) {
-                arrayList.add(Long.toString(it.nextLong()));
-            }
-        } else if (array instanceof PVShortArray) {
-            // For short arrays
-            IteratorShort it = ((PVShortArray) array).get().iterator();
-            while (it.hasNext()) {
-                arrayList.add(Short.toString(it.nextShort()));
-            }
-        } else if (array instanceof PVStringArray) {
-            // For string arrays
-            StringArrayData data = new StringArrayData();
-            int offset = 0, len = array.getLength();
-            while (offset < len) {
-                int num = ((PVStringArray) array).get(offset, (len - offset), data);
-                for (int i = 0; i < num; i++) {
-                    arrayList.add("\"" + data.data[offset + i] + "\"");
-                }
-                offset += num;
-            }
-        } else if (array instanceof PVStructureArray) {
-            // For structure arrays then recurse to unpack each field
-            StructureArrayData data = new StructureArrayData();
-            int offset = 0, len = array.getLength();
-            while (offset < len) {
-                int num = ((PVStructureArray) array).get(offset, (len - offset), data);
-                for (int i = 0; i < num; i++) {
-                    arrayList.add(fieldToString((data.data[offset + i]), fieldPath + "[" + offset + i + "]", floatArgumentList, doubleArgumentList));
-                }
-                offset += num;
-            }
-        }
-        return arrayList;
-    }
-
-    private boolean isSubField(String fieldPath) {
-        return fieldPath.contains(".") || fieldPath.contains("[");
-    }
-
-    /**
-     * Is the given string numeric
-     * Test by trying to convert to all numeric types and if any succeeds then return true
-     *
-     * @param strNum the string to check
-     * @return true if the string is a number false otherwise
-     */
-    private boolean isNumeric(String strNum) {
-        if (strNum == null) {
-            return false;
-        }
-
-        try {
-            Integer.parseInt(strNum);
-            return true;
-        } catch (NumberFormatException ignored) {
-        }
-
-        try {
-            Float.parseFloat(strNum);
-            return true;
-        } catch (NumberFormatException ignored) {
-        }
-        try {
-            Double.parseDouble(strNum);
-            return true;
-        } catch (NumberFormatException ignored) {
-        }
-        try {
-            Long.parseLong(strNum);
-            return true;
-        } catch (NumberFormatException ignored) {
-        }
-        try {
-            new BigInteger(strNum);
-            return true;
-        } catch (NumberFormatException ignored) {
-        }
-        return false;
     }
 }

@@ -1,13 +1,13 @@
 package edu.stanford.slac.aida.lib.util;
 
-import edu.stanford.slac.aida.lib.model.AidaChannelConfig;
-import edu.stanford.slac.aida.lib.model.AidaField;
-import edu.stanford.slac.aida.lib.model.AidaType;
+import edu.stanford.slac.aida.lib.model.*;
 import edu.stanford.slac.except.AidaInternalException;
 import lombok.NonNull;
 import org.epics.pvaccess.PVFactory;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
 import org.epics.pvdata.factory.FieldFactory;
 import org.epics.pvdata.pv.*;
+import org.epics.util.array.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,6 +16,7 @@ import java.util.List;
 import static edu.stanford.slac.aida.lib.model.AidaType.STRING_ARRAY;
 import static edu.stanford.slac.aida.lib.model.AidaType.aidaTypeOf;
 import static org.epics.pvdata.pv.ScalarType.pvString;
+import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
  * This class provides many functions that help with processing EPICS `Process Variables`.
@@ -587,6 +588,212 @@ public class AidaPVHelper {
     }
 
     /**
+     * Extract the String value from the field
+     * Any time a double or float is found, add it to the appropriate map under the `fieldPath` key
+     *
+     * @param field              the field
+     * @param fieldPath          path under which this field sits.  Used only for floats and doubles that need
+     *                           to set the path so the name in the pair is prefixed with this value if set
+     * @param floatArgumentList  to return the list of floats found and the paths
+     * @param doubleArgumentList to return the list of doubles found and the paths
+     * @return the extracted value
+     * @throws RPCRequestException of the field type is unsupported
+     */
+    public static String fieldToString(PVField field, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
+        String value;
+
+        if (field instanceof PVBoolean) {
+            value = Boolean.toString(((PVBoolean) field).get());
+        } else if (field instanceof PVByte) {
+            value = Byte.toString(((PVByte) field).get());
+        } else if (field instanceof PVUByte) {
+            value = Byte.toString(((PVUByte) field).get());
+        } else if (field instanceof PVShort) {
+            value = Short.toString(((PVShort) field).get());
+        } else if (field instanceof PVInt) {
+            value = Integer.toString(((PVInt) field).get());
+        } else if (field instanceof PVLong) {
+            value = Long.toString(((PVLong) field).get());
+        } else if (field instanceof PVFloat) { // For float store the ieee value in the list as well
+            value = floatFieldToString((PVFloat) field, fieldPath, floatArgumentList);
+        } else if (field instanceof PVDouble) { // For double store the ieee value in the list as well
+            value = doubleFieldToString((PVDouble) field, fieldPath, doubleArgumentList);
+        } else if (field instanceof PVString) { // For strings quote them is they are subfields but leave them untouched if not
+            value = stringFieldToString((PVString) field, fieldPath);
+        } else if (field instanceof PVStructure) { // For structures recurse for each of the fields
+            value = structureFieldToString((PVStructure) field, fieldPath, floatArgumentList, doubleArgumentList);
+        } else if (field instanceof PVArray) { // For arrays recurse for each of the array elements
+            value = arrayFieldToString((PVArray) field, fieldPath, floatArgumentList, doubleArgumentList);
+        } else {
+            throw new RPCRequestException(ERROR, "Invalid argument value: can only accept scalar, scalar array, structure or structure array");
+        }
+        return value;
+    }
+
+    /**
+     * Convert the {@link PVArray} field to the json string representation of an array of that field,
+     * storing any ieee values found unchanged in the given {@link FloatArgument}and {@link DoubleArgument} lists
+     *
+     * @param field              the {@link PVArray} field
+     * @param fieldPath          the absolute path to the field from the root
+     * @param floatArgumentList  the {@link FloatArgument} list to store any ieee values
+     * @param doubleArgumentList the {@link DoubleArgument} list to store any ieee values
+     * @return the json string representation of the {@link PVArray}
+     * @throws RPCRequestException if anything bad happens
+     */
+    private static String arrayFieldToString(PVArray field, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
+        String value;
+        StringBuilder arrayBuilder = new StringBuilder();
+
+        arrayBuilder.append("["); // Start of array
+
+        boolean firstTime = true;
+
+        // Convert all array entries to Strings, recurse to get any floating point numbers into the appropriate lists
+        List<String> arrayList = arrayFieldToStringList(field, fieldPath, floatArgumentList, doubleArgumentList);
+
+        for (String subValue : arrayList) {  // For each string value in the retrieved list
+            // Comma separate entries
+            if (!firstTime) {
+                arrayBuilder.append(", ");
+            }
+            firstTime = false;
+
+            // Add to list
+            arrayBuilder.append(subValue);
+        }
+
+        arrayBuilder.append("]"); // End of array
+
+        value = arrayBuilder.toString();
+        return value;
+    }
+
+    /**
+     * Convert the {@link PVStructure} field to the json string representation of a structure of that field,
+     * storing any ieee values found unchanged in the given {@link FloatArgument}and {@link DoubleArgument} lists
+     *
+     * @param field              the {@link PVStructure} field
+     * @param fieldPath          the absolute path to the field from the root
+     * @param floatArgumentList  the {@link FloatArgument} list to store any ieee values
+     * @param doubleArgumentList the {@link DoubleArgument} list to store any ieee values
+     * @return the json string representation of the {@link PVStructure}
+     * @throws RPCRequestException if anything bad happens
+     */
+    public static String structureFieldToString(PVStructure field, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
+        String value;
+        StringBuilder structureBuilder = new StringBuilder();
+
+        structureBuilder.append("{");  // Start of structure
+
+        boolean firstTime = true;
+        for (PVField subField : field.getPVFields()) { // For each field in structure
+            String elementName = subField.getFieldName(); // get the field name
+            String absolutePathToElement = fieldPath + "." + elementName; // This is the absolute path to the element from the root of the structure
+
+            // And recurse into the field to get the string representation of it - of course any floats it contains will be stored in the appropriate lists
+            String elementValue = fieldToString(subField, absolutePathToElement, floatArgumentList, doubleArgumentList);
+            addStructureElementValue(structureBuilder, elementName, elementValue, firstTime);
+            firstTime = false;
+        }
+
+        structureBuilder.append("}"); // End of structure
+
+        value = structureBuilder.toString();
+        return value;
+    }
+
+    /**
+     * Add element value to the given {@link StringBuilder}
+     *
+     * @param structureBuilder the given {@link StringBuilder}
+     * @param elementName      the element name to add
+     * @param elementValue     the element value to add
+     * @param firstElement     is this the first element added to the structure
+     */
+    private static void addStructureElementValue(StringBuilder structureBuilder, String elementName, String elementValue, boolean firstElement) {
+        // Comma separate entries in the structure
+        if (!firstElement) {
+            structureBuilder.append(", ");
+        }
+
+        // Add the element name and the element value
+        structureBuilder.append("\"");
+        structureBuilder.append(elementName);
+        structureBuilder.append("\": ");
+        structureBuilder.append(elementValue);
+    }
+
+    /**
+     * Extract array fields as a list of strings. recurse as necessary.
+     *
+     * @param array              any PV array
+     * @param fieldPath          the absolute path to the field from the root
+     * @param floatArgumentList  to return the list of floats found and the paths
+     * @param doubleArgumentList to return the list of doubles found and the paths
+     * @return the list of strings for this array
+     * @throws RPCRequestException when there is an unsupported type
+     */
+    public static List<String> arrayFieldToStringList(PVArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
+        List<String> arrayList = new ArrayList<String>();
+
+        if (array instanceof PVBooleanArray) {
+            // For boolean arrays
+            booleanArrayToString((PVBooleanArray) array, arrayList);
+        } else if (array instanceof PVByteArray) {
+            // For byte arrays
+            byteArrayToString((PVByteArray) array, arrayList);
+        } else if (array instanceof PVShortArray) {
+            // For short arrays
+            shortArrayToString((PVShortArray) array, arrayList);
+        } else if (array instanceof PVIntArray) {
+            // For integer arrays
+            integerArrayToString((PVIntArray) array, arrayList);
+        } else if (array instanceof PVLongArray) {
+            // For long arrays
+            longArrayToString((PVLongArray) array, arrayList);
+        } else if (array instanceof PVDoubleArray) {
+            // For double arrays
+            doubleArrayToString((PVDoubleArray) array, fieldPath, doubleArgumentList, arrayList);
+        } else if (array instanceof PVFloatArray) {
+            // For float arrays
+            floatArrayToString((PVFloatArray) array, fieldPath, floatArgumentList, arrayList);
+        } else if (array instanceof PVStringArray) {
+            // For string arrays
+            stringArrayToString(array, arrayList);
+        } else if (array instanceof PVStructureArray) {
+            // For structure arrays then recurse to unpack each field
+            structureArrayToString(array, fieldPath, floatArgumentList, doubleArgumentList, arrayList);
+        }
+        return arrayList;
+    }
+
+    /**
+     * Convert a List of Fields to an array of Fields
+     *
+     * @param fields List of Fields
+     * @return an array of Fields
+     */
+    private static Field[] toFieldArray(List<Field> fields) {
+        int fieldCount = fields.size();
+        Field[] fieldArray = new Field[fieldCount];
+        for (int i = 0; i < fieldCount; i++) {
+            fieldArray[i] = fields.get(i);
+        }
+        return fieldArray;
+    }
+
+    /**
+     * True if the given absolute path to the field is not at the root
+     *
+     * @param fieldPath the absolute path to the field from the root
+     * @return True if the given absolute path to the field is not at the root
+     */
+    private static boolean isSubField(String fieldPath) {
+        return fieldPath.contains(".") || fieldPath.contains("[");
+    }
+
+    /**
      * Convert a List of Boolean to an array of primitive booleans
      *
      * @param values List of Booleans
@@ -598,6 +805,24 @@ public class AidaPVHelper {
         for (int i = 0; i < valuesCount; i++)
             primitiveArray[i] = values.get(i);
         return primitiveArray;
+    }
+
+    /**
+     * Convert the given {@link PVBooleanArray} to {@link String}s, adding them to the provided {@link String} list
+     *
+     * @param array      the given {@link PVBooleanArray}
+     * @param stringList the provided {@link String} list
+     */
+    private static void booleanArrayToString(PVBooleanArray array, List<String> stringList) {
+        BooleanArrayData data = new BooleanArrayData();
+        int offset = 0, len = array.getLength();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                stringList.add(Boolean.toString(data.data[offset + i]));
+            }
+            offset += num;
+        }
     }
 
     /**
@@ -615,6 +840,19 @@ public class AidaPVHelper {
     }
 
     /**
+     * Convert the given {@link PVByteArray} to {@link String}s, adding them to the provided {@link String} list
+     *
+     * @param array      the given {@link PVByteArray}
+     * @param stringList the provided {@link String} list
+     */
+    private static void byteArrayToString(PVByteArray array, List<String> stringList) {
+        IteratorByte it = array.get().iterator();
+        while (it.hasNext()) {
+            stringList.add(Byte.toString(it.nextByte()));
+        }
+    }
+
+    /**
      * Convert a List of Short to an array of primitive shorts
      *
      * @param values List of Shorts
@@ -626,6 +864,19 @@ public class AidaPVHelper {
         for (int i = 0; i < valuesCount; i++)
             primitiveArray[i] = values.get(i);
         return primitiveArray;
+    }
+
+    /**
+     * Convert the given {@link PVShortArray} to {@link String}s, adding them to the provided {@link String} list
+     *
+     * @param array      the given {@link PVShortArray}
+     * @param stringList the provided {@link String} list
+     */
+    private static void shortArrayToString(PVShortArray array, List<String> stringList) {
+        IteratorShort it = array.get().iterator();
+        while (it.hasNext()) {
+            stringList.add(Short.toString(it.nextShort()));
+        }
     }
 
     /**
@@ -643,6 +894,19 @@ public class AidaPVHelper {
     }
 
     /**
+     * Convert the given {@link PVIntArray} to {@link String}s, adding them to the provided {@link String} list
+     *
+     * @param array      the given {@link PVIntArray}
+     * @param stringList the provided {@link String} list
+     */
+    private static void integerArrayToString(PVIntArray array, List<String> stringList) {
+        IteratorInteger it = array.get().iterator();
+        while (it.hasNext()) {
+            stringList.add(Integer.toString(it.nextInt()));
+        }
+    }
+
+    /**
      * Convert a List of Long to an array of primitive longs
      *
      * @param values List of Longs
@@ -654,6 +918,35 @@ public class AidaPVHelper {
         for (int i = 0; i < valuesCount; i++)
             primitiveArray[i] = values.get(i);
         return primitiveArray;
+    }
+
+    /**
+     * Convert the given {@link PVLongArray} to {@link String}s, adding them to the provided {@link String} list
+     *
+     * @param array      the given {@link PVLongArray}
+     * @param stringList the provided {@link String} list
+     */
+    private static void longArrayToString(PVLongArray array, List<String> stringList) {
+        IteratorLong it = array.get().iterator();
+        while (it.hasNext()) {
+            stringList.add(Long.toString(it.nextLong()));
+        }
+    }
+
+    /**
+     * Convert a float field to a string but also store the ieee value unchanged in the given {@link FloatArgument} list
+     *
+     * @param field             the float field
+     * @param fieldPath         the absolute path to the field from the root
+     * @param floatArgumentList the {@link FloatArgument} list to store the ieee value
+     * @return the string representation of the floating point number
+     */
+    private static String floatFieldToString(PVFloat field, String fieldPath, List<FloatArgument> floatArgumentList) {
+        String value;
+        float f = field.get();
+        value = Float.toString(f);
+        floatArgumentList.add(new FloatArgument(fieldPath, f));
+        return value;
     }
 
     /**
@@ -671,6 +964,41 @@ public class AidaPVHelper {
     }
 
     /**
+     * Convert the given {@link PVFloatArray} to {@link String}s, adding them to the provided {@link String} list
+     * Also add all floats found to the provided {@link FloatArgument} list
+     *
+     * @param array             the given {@link PVFloatArray}
+     * @param fieldPath         the absolute path to the field from the root
+     * @param floatArgumentList the provided {@link FloatArgument} list
+     * @param stringList        the provided  {@link String} list
+     */
+    private static void floatArrayToString(PVFloatArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<String> stringList) {
+        IteratorFloat it = array.get().iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            float f = it.nextFloat();
+            floatArgumentList.add(new FloatArgument(fieldPath + "[" + i++ + "]", f));
+            stringList.add(Float.toString(f));
+        }
+    }
+
+    /**
+     * Convert a double field to a string but also store the ieee value unchanged in the given {@link DoubleArgument} list
+     *
+     * @param field              the double field
+     * @param fieldPath          the absolute path to the field from the root
+     * @param doubleArgumentList the {@link DoubleArgument} list to store the ieee value
+     * @return the string representation of the floating point number
+     */
+    private static String doubleFieldToString(PVDouble field, String fieldPath, List<DoubleArgument> doubleArgumentList) {
+        String value;
+        double d = field.get();
+        value = Double.toString(d);
+        doubleArgumentList.add(new DoubleArgument(fieldPath, d));
+        return value;
+    }
+
+    /**
      * Convert a List of Double to an array of primitive doubles
      *
      * @param values List of Doubles
@@ -682,6 +1010,44 @@ public class AidaPVHelper {
         for (int i = 0; i < valuesCount; i++)
             primitiveArray[i] = values.get(i);
         return primitiveArray;
+    }
+
+    /**
+     * Convert the given {@link PVDoubleArray} to {@link String}s, adding them to the provided {@link String} list
+     * Also add all doubles found to the provided {@link DoubleArgument} list
+     *
+     * @param array              the given {@link PVDoubleArray}
+     * @param fieldPath          the absolute path to the field from the root
+     * @param doubleArgumentList the provided {@link DoubleArgument} list
+     * @param stringList         the provided  {@link String} list
+     */
+    private static void doubleArrayToString(PVDoubleArray array, String fieldPath, List<DoubleArgument> doubleArgumentList, List<String> stringList) {
+        IteratorDouble it = array.get().iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            double d = it.nextDouble();
+            doubleArgumentList.add(new DoubleArgument(fieldPath + "[" + i++ + "]", d));
+            stringList.add(Double.toString(d));
+        }
+    }
+
+    /**
+     * Convert a string field to a string but quote it if it is not at the root level
+     *
+     * @param field     string field
+     * @param fieldPath the absolute path to the field from the root
+     * @return the string
+     */
+    private static String stringFieldToString(PVString field, String fieldPath) {
+        String value;
+        if (isSubField(fieldPath)) {
+            // Subfield strings are always quoted
+            value = "\"" + field.get() + "\"";
+        } else {
+            // Single top level can be left without quotes
+            value = field.get();
+        }
+        return value;
     }
 
     /**
@@ -700,18 +1066,45 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert a List of Fields to an array of Fields
+     * Convert the given {@link PVArray} to {@link String}s, adding them to the provided {@link String} list
      *
-     * @param fields List of Fields
-     * @return an array of Fields
+     * @param array      the given {@link PVArray}
+     * @param stringList the provided  {@link String} list
      */
-    private static Field[] toFieldArray(List<Field> fields) {
-        int fieldCount = fields.size();
-        Field[] fieldArray = new Field[fieldCount];
-        for (int i = 0; i < fieldCount; i++) {
-            fieldArray[i] = fields.get(i);
+    private static void stringArrayToString(PVArray array, List<String> stringList) {
+        StringArrayData data = new StringArrayData();
+        int offset = 0, len = array.getLength();
+        while (offset < len) {
+            int num = ((PVStringArray) array).get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                stringList.add("\"" + data.data[offset + i] + "\"");
+            }
+            offset += num;
         }
-        return fieldArray;
+    }
+
+
+    /**
+     * Convert the given {@link PVArray} which represents a structure, to {@link String}s, adding them to the provided {@link String} list,
+     * Also add all floats found to the provided {@link FloatArgument} list,
+     * and add all doubles found to the provided {@link DoubleArgument} list
+     *
+     * @param array              the given {@link PVDoubleArray}
+     * @param fieldPath          the absolute path to the field from the root
+     * @param floatArgumentList  the provided {@link FloatArgument} list
+     * @param doubleArgumentList the provided {@link DoubleArgument} list
+     * @param stringList         the provided  {@link String} list
+     */
+    private static void structureArrayToString(PVArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList, List<String> stringList) throws RPCRequestException {
+        StructureArrayData data = new StructureArrayData();
+        int offset = 0, len = array.getLength();
+        while (offset < len) {
+            int num = ((PVStructureArray) array).get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                stringList.add(fieldToString((data.data[offset + i]), fieldPath + "[" + offset + i + "]", floatArgumentList, doubleArgumentList));
+            }
+            offset += num;
+        }
     }
 }
 
