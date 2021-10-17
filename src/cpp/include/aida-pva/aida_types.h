@@ -86,7 +86,8 @@ typedef union
 
 typedef struct
 {
-	char * path;
+	char* path;
+	bool isFloat;
 	FloatOrDoubleValue value;
 } FloatingPointValue;
 

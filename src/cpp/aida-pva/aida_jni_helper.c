@@ -180,24 +180,26 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 	cArgs.floatingPointValuesCountCount = 0;
 	if (totalFloatingPoints > 0) {
 		// Loop through the FloatArgument list
-		for (int i = 0; i < floatCount; i++) {
+		for (int i = 0; i < floatCount; i++, cArgs.floatingPointValuesCountCount++) {
 			jobject floatArgument = (*env)->CallObjectMethod(env, jFloatsList, argumentMethods.listGetMethod, i);
 			jobject name = (*env)->CallObjectMethod(env, floatArgument, argumentMethods.getFloatNameMethod);
 			jfloat value = (*env)->CallFloatMethod(env, floatArgument, argumentMethods.getFloatValueMethod);
 
 			// Add key and value to Arguments.
 			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount++].value.floatValue = value;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].isFloat = true;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].value.floatValue = value;
 		}
 
-		for (int i = 0; i < doubleCount; i++) {
+		for (int i = 0; i < doubleCount; i++, cArgs.floatingPointValuesCountCount++) {
 			jobject doubleArgument = (*env)->CallObjectMethod(env, jDoublesList, argumentMethods.listGetMethod, i);
 			jobject name = (*env)->CallObjectMethod(env, doubleArgument, argumentMethods.getDoubleNameMethod);
 			jdouble value = (*env)->CallDoubleMethod(env, doubleArgument, argumentMethods.getDoubleValueMethod);
 
 			// Add key and value to Arguments.
 			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount++].value.doubleValue = value;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].isFloat = false;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].value.doubleValue = value;
 		}
 	}
 

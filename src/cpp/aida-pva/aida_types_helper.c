@@ -456,37 +456,6 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				return EXIT_SUCCESS;
 			}
 		}
-		switch (aidaType) {
-		case AIDA_FLOAT_ARRAY_TYPE:
-			if (getFloatArgument(arguments, argumentName, (float*)target) == EXIT_SUCCESS) {
-				return EXIT_SUCCESS;
-			}
-		case AIDA_DOUBLE_ARRAY_TYPE:
-			if (getDoubleArrayArgument(arguments, argumentName, (double**)&doubleArrayTarget, elementCount)
-					== EXIT_SUCCESS) {
-				if (aidaType == AIDA_FLOAT_TYPE) {  // use for float if that's what you need
-					// Allocate a new array and copy values
-					float* floatTarget = calloc(*elementCount, sizeof(float));
-					if (!floatTarget) {
-						free(doubleArrayTarget);
-						PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION,
-								"Could not allocate memory for float argument",
-								EXIT_FAILURE)
-					}
-					*((float**)target) = floatTarget;
-					for (int i = 0; i < *elementCount; i++) {
-						floatTarget[i] = (float)doubleArrayTarget[i];
-					}
-					free(doubleArrayTarget);
-				} else {
-					*((double**)target) = doubleArrayTarget;
-				};
-				return EXIT_SUCCESS;
-			}
-			break;
-		default:
-			break;
-		}
 
 		// If this is for a FLOAT_ARRAY or DOUBLE_ARRAY then get the ieee version if available
 
@@ -818,23 +787,29 @@ static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, uns
 	sprintf(elementPath, "%s[%d]", path, numberOfFloatsFound);
 
 	while ((floatingPointValue = getFloatingPointValue(arguments, elementPath))) {
-		if (numberOfFloatAllocated == 0) {
-			// allocate space
-			numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
-			theArray = calloc(numberOfFloatAllocated, forFloat ? sizeof(float) : sizeof(double));
-			if (theArray == NULL) {
-				return NULL;
+		// If the floating point found is the same we're looking for ...
+		if (floatingPointValue->isFloat == forFloat) {
+			if (numberOfFloatAllocated == 0) { // allocate space if none allocated
+				numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
+				theArray = calloc(numberOfFloatAllocated, forFloat ? sizeof(float) : sizeof(double));
+				if (theArray == NULL) {
+					return NULL;
+				}
+			} else if (numberOfFloatAllocated
+					<= numberOfFloatsFound) { // reallocate space is allocated space is used up
+				numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
+				theArray = realloc(theArray, numberOfFloatAllocated * (forFloat ? sizeof(float) : sizeof(double)));
 			}
-		} else if (numberOfFloatAllocated <= numberOfFloatsFound) {
-			// reallocate space
-			numberOfFloatAllocated += MIN_FLOAT_ALLOCATIONS;
-			theArray = realloc(theArray, numberOfFloatAllocated * (forFloat ? sizeof(float) : sizeof(double)));
+
+			// Get the floating point value and store it in the target array
+			if (forFloat) {
+				((float*)theArray)[numberOfFloatsFound] = floatingPointValue->value.floatValue;
+			} else {
+				((double*)theArray)[numberOfFloatsFound] = floatingPointValue->value.doubleValue;
+			}
 		}
-		if (forFloat) {
-			((float*)theArray)[numberOfFloatsFound] = floatingPointValue->value.floatValue;
-		} else {
-			((double*)theArray)[numberOfFloatsFound] = floatingPointValue->value.doubleValue;
-		}
+
+		// Next element path
 		sprintf(elementPath, "%s[%d]", path, ++numberOfFloatsFound);
 	}
 	*elementCount = numberOfFloatsFound;
