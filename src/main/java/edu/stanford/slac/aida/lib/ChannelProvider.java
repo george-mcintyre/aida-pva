@@ -39,8 +39,8 @@ import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
  * <p>
  * It also handles the five main classes of requests routing them to the correct underlying
  * - {@link slac.aida.NativeChannelProvider} entry point:
- * - {@link ChannelProvider#requestScalar(String, AidaType, AidaArguments)}
- * - {@link ChannelProvider#requestScalarArray(String, AidaType, AidaArguments)}
+ * - {@link ChannelProvider#requestScalar(String, AidaArguments, AidaType)}
+ * - {@link ChannelProvider#requestScalarArray(String, AidaArguments, AidaType)}
  * - {@link ChannelProvider#requestTable(String, AidaArguments)}
  * - {@link ChannelProvider#setValue(String, AidaArguments)}
  * - {@link ChannelProvider#setValueWithResponse(String, AidaArguments)}
@@ -82,7 +82,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   request arguments
      * @return object
      */
-    public Object requestScalar(String channelName, AidaType aidaType, AidaArguments arguments) {
+    public Object requestScalar(String channelName, AidaArguments arguments, AidaType aidaType) {
         switch (aidaType) {
             case BOOLEAN:
                 return aidaRequestBoolean(channelName, arguments);
@@ -109,11 +109,11 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * - collections of scalars e.g. List<Boolean>, List<Integer>, List<Byte>, List<Long>, List<Float>, List<Double>,  ...
      *
      * @param channelName request channel name
-     * @param aidaType    the scalar type underpinning this scalar array
      * @param arguments   request arguments
+     * @param aidaType    the scalar type underpinning this scalar array
      * @return List of scalar object
      */
-    public List<?> requestScalarArray(String channelName, AidaType aidaType, AidaArguments arguments) {
+    public List<?> requestScalarArray(String channelName, AidaArguments arguments, AidaType aidaType) {
         switch (aidaType) {
             case BOOLEAN_ARRAY:
                 List<Boolean> tList = new ArrayList<Boolean>();

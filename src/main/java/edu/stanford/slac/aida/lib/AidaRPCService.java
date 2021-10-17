@@ -183,10 +183,10 @@ public class AidaRPCService implements RPCService {
             AidaType metaType = aidaGetterType.metaType();
 
             if (metaType == SCALAR) { // Returning SCALAR
-                return asScalar(this.aidaChannelProvider.requestScalar(channelName, aidaGetterType, arguments));
+                return asScalar(this.aidaChannelProvider.requestScalar(channelName, arguments, aidaGetterType));
 
             } else if (metaType == SCALAR_ARRAY) { // Returning SCALAR_ARRAY
-                return asScalarArray(this.aidaChannelProvider.requestScalarArray(channelName, aidaGetterType, arguments));
+                return asScalarArray(this.aidaChannelProvider.requestScalarArray(channelName, arguments, aidaGetterType));
 
             } else { // Returning TABLE
                 return asNtTable(this.aidaChannelProvider.requestTable(channelName, arguments), getterConfig);
