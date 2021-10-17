@@ -8,9 +8,12 @@ import org.epics.pvaccess.server.rpc.RPCService;
 import org.epics.pvdata.pv.PVField;
 import org.epics.pvdata.pv.PVString;
 import org.epics.pvdata.pv.PVStructure;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
@@ -414,6 +417,40 @@ public class AidaRPCService implements RPCService {
             throw new RPCRequestException(ERROR, "Invalid argument value: <blank>");
         }
 
+        // json parser in AIDA-PVA Module in AIDASHR is a bit flaky and crashes when it does not
+        // get properly formed json, so we'll parse it here to make sure it's ok
+        String trimmedValue = value.trim();
+        if (trimmedValue.startsWith("[")) {
+            try {
+                new JSONObject("{\"_array\": " + trimmedValue + "}");
+            } catch (JSONException e) {
+                throw new RPCRequestException(ERROR, "Invalid json detected: argument name: " + name + ", value: " + value);
+            }
+            checkForLongsTerminatedByL(name, value, trimmedValue);
+        } else if (trimmedValue.startsWith("{")) {
+            try {
+                new JSONObject(trimmedValue);
+            } catch (JSONException e) {
+                throw new RPCRequestException(ERROR, "Invalid json detected: argument name: " + name + ", value: " + value);
+            }
+            checkForLongsTerminatedByL(name, value, trimmedValue);
+        }
+
         return new AidaArgument(name, value, floatArgumentList, doubleArgumentList);
+    }
+
+    /**
+     * Simple Check for json containing literal long numbers with a suffix of "L" these are too much for the
+     * simple json parser on the C side of the JNI interface
+     *
+     * @param name         argument name
+     * @param value        argument value
+     * @param trimmedValue trimmed argument value
+     * @throws RPCRequestException if contains an invalid literal long
+     */
+    private void checkForLongsTerminatedByL(String name, String value, String trimmedValue) throws RPCRequestException {
+        if (Pattern.compile(".*[0-9]+L.*").matcher(trimmedValue).matches()) {
+            throw new RPCRequestException(ERROR, "JSON Long values cannot be terminated by 'L' with this json parser: argument name: " + name + ", value: " + value);
+        }
     }
 }
