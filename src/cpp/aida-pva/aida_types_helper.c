@@ -36,15 +36,19 @@
 #define ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, _target) \
 { \
     _cType* ptr = (_cType*)(_target); \
-    if (!valueShouldBeJson) {                                    \
-        sscanf(stringValue, _format, ptr);\
-    } else {                                                              \
+    if (!valueShouldBeJson) { \
+        if ( sscanf(stringValue, _format, ptr) == 0 ) {                   \
+            SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, stringValue, EXIT_FAILURE) \
+        }\
+    } else {  \
         if (jsonRoot->type == json_integer) { \
             *ptr = (_cType)jsonRoot->u.integer; \
         } else if (jsonRoot->type == json_double) { \
             *ptr = (_cType)(jsonRoot->u.dbl); \
         } else if (jsonRoot->type == json_string) { \
-            sscanf(jsonRoot->u.string.ptr, _format, ptr); \
+            if ( sscanf(jsonRoot->u.string.ptr, _format, ptr) == 0 ) {    \
+                SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, jsonRoot->u.string.ptr, EXIT_FAILURE) \
+            } \
         } else { \
             PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": <json>", EXIT_FAILURE) \
         }\
@@ -1310,6 +1314,7 @@ Value asArrayValue(char* stringValue)
 		sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", stringValue);
 	}
 	Value value;
+	value.type = AIDA_NO_TYPE;
 	value.value.jsonValue = json_parse(arrayValueToParse, strlen(arrayValueToParse));
 	if (value.value.jsonValue) {
 		value.type = AIDA_JSON_TYPE;

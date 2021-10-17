@@ -14,7 +14,8 @@
 static json_value* navigateToArrayElement(json_value* jsonValue, int index);
 static json_value* navigateToObjectElement(json_value* jsonValue, const char* name);
 static json_value* processArrayReference(json_value* jsonValue, const char* arrayRef);
-static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool forArray);
+static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, bool forArray);
+static bool isOnlyNumbers(char* string);
 
 /**
  * To log any non-OS exceptions and throw back to java
@@ -150,7 +151,20 @@ Argument getArgument(Arguments arguments, char* name)
 	return noArgument;
 }
 
-static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool forArray)
+/**
+ * Implementation of getNamedValue.  This will search the given arguments for an argument
+ * with the given name and will create a Value to store it in.  If the forArray
+ * flag is set then the argument's value will be coerced into an array.
+ * Note that if json is detected in the value it will be parsed into the Value's
+ * json value element.
+ *
+ * @param env
+ * @param arguments
+ * @param name
+ * @param forArray
+ * @return
+ */
+static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, bool forArray)
 {
 	Value value;
 	value.type = AIDA_NO_TYPE;
@@ -172,7 +186,11 @@ static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool f
 			sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);
 			valueToParse = arrayValueToParse;
 		} else if (forArray) {
-			if (isdigit(*valueToParse)) {
+			if (strstr(valueToParse, "\"") != NULL) {
+				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+						"Unable to parse supplied JSON value string");
+				return value;
+			} else if (isOnlyNumbers(valueToParse)) {
 				sprintf(arrayValueToParse, "{\"_array\": [%s]}", valueToParse);
 			} else {
 				sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", valueToParse);
@@ -199,6 +217,53 @@ static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool f
 }
 
 /**
+ * Check if the string contains only numbers, white space or commas
+ * @param string
+ * @return
+ */
+static bool isOnlyNumbers(char* string)
+{
+	if (string == NULL) {
+		return false;
+	}
+	bool isDigit = true;
+	bool isComma = false;
+	bool isPoint = false;
+	int len = strlen(string);
+	for (int i = 0; i < len; i++) {
+		// if we're reading digits digits are ok
+		if (isdigit(string[i]) && isDigit) {
+			isComma = false;
+			continue;
+		}
+		if (string[i] == '.') {
+			if (isPoint) {
+				return false;
+			}
+			if (isDigit && !isPoint)
+				isPoint = true;
+		}
+		if (isspace(string[i])) {
+			if (isPoint) {
+				return false;
+			}
+			isDigit = false;
+			continue;
+		}
+		if (string[i] == ',') {
+			// Double comma is not ok
+			if (isComma) {
+				return false;
+			}
+			isComma = true;
+			continue;
+		}
+		return false;
+	}
+	return true;
+}
+
+/**
  * Get value from a named  argument in the provided arguments structure.
  *
  * @param env env
@@ -208,7 +273,7 @@ static Value _getNamedValue(JNIEnv* env, Arguments arguments, char* name, bool f
  */
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 {
-	return _getNamedValue(env, arguments, name, false);
+	return getNamedValueImpl(env, arguments, name, false);
 }
 
 /**
@@ -221,7 +286,7 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
  */
 Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
 {
-	return _getNamedValue(env, arguments, name, true);
+	return getNamedValueImpl(env, arguments, name, true);
 }
 
 /**
