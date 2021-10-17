@@ -43,7 +43,9 @@
             *ptr = (_cType)jsonRoot->u.integer; \
         } else if (jsonRoot->type == json_double) { \
             *ptr = (_cType)(jsonRoot->u.dbl); \
-        } else {\
+        } else if (jsonRoot->type == json_string) { \
+            sscanf(jsonRoot->u.string.ptr, _format, ptr); \
+        } else { \
             PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": <json>", EXIT_FAILURE) \
         }\
     }\
