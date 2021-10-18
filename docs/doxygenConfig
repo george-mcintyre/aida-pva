@@ -1,3 +1,15 @@
+###############################
+###### # To Generate documentation for AIDA-PVA
+###### # First delombok the code
+###### # Then run doxygen
+######
+###### cd $DEV_HOME/aida-pva
+######
+###### java -jar ~/.m2/repository/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar delombok src -d root
+######
+###### doxygen docs/doxygenConfig
+###### ################################
+
 # Doxyfile 1.9.2
 
 # This file describes the settings to be used by the documentation system
@@ -871,44 +883,8 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = . \
-                         .. \
-                         ../src/main/java/edu/stanford/slac/aida/impl \
-                         ../src/main/java/edu/stanford/slac/aida/lib \
-                         ../src/main/java/edu/stanford/slac/aida/lib/model \
-                         ../src/main/java/edu/stanford/slac/aida/lib/util \
-                         ../src/main/java/slac/aida \
-                         ../src/main/resources \
-                         ../src/cpp/aida-pva \
-                         ../src/cpp/build \
-                         ../src/cpp/build/Reference \
-                         ../src/cpp/build/SLC \
-                         ../src/cpp/build/SLCBpm \
-                         ../src/cpp/build/SLCBuffAcq \
-                         ../src/cpp/build/SLCKlys \
-                         ../src/cpp/build/SLCMagnet \
-                         ../src/cpp/build/SKCModel \
-                         ../src/cpp/build/SLCMosc \
-                         ../src/cpp/build/SLCUtil \
-                         ../src/cpp/impl/Reference \
-                         ../src/cpp/impl/SLC \
-                         ../src/cpp/impl/SLCBpm \
-                         ../src/cpp/impl/SLCBuffAcq \
-                         ../src/cpp/impl/SLCKlys \
-                         ../src/cpp/impl/SLCMagnet \
-                         ../src/cpp/impl/SKCModel \
-                         ../src/cpp/impl/SLCMosc \
-                         ../src/cpp/impl/SLCUtil \
-                         ../src/cpp/include/aida-pva \
-                         ../src/cpp/include/Reference \
-                         ../src/cpp/include/SLC \
-                         ../src/cpp/include/SLCBpm \
-                         ../src/cpp/include/SLCBuffAcq \
-                         ../src/cpp/include/SLCKlys \
-                         ../src/cpp/include/SLCMagnet \
-                         ../src/cpp/include/SKCModel \
-                         ../src/cpp/include/SLCMosc \
-                         ../src/cpp/include/SLCUtil \
+INPUT                  = docs \
+                         root
 
 
 # This tag can be used to specify the character encoding of the source files
