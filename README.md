@@ -13,9 +13,6 @@ the way they integrate and are deployed.
 
 For more information:
 
-* [AIDA-PVA Documentation](docs/UserGuide.md)
-* [Writing an AIDA-PVA Service - Programmer's Reference Manual](docs/ProviderReference.md)
-* [AIDA-PVA Internals - Technical Reference Manual](docs/Reference.md)
-* [Deploying AIDA-PVA - A DevOps Guide](docs/DevOps.md)
+* [AIDA-PVA Documentation](https://htmlpreview.github.io/?https://github.com/slaclab/aida-pva/blob/master/docGen/html/index.html)
 
 ![System Diagram](docs/images/aida-pva.png)
