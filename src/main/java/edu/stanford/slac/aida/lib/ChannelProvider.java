@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
 
@@ -46,6 +47,11 @@ import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
  * - {@link ChannelProvider#setValueWithResponse(String, AidaArguments)}
  */
 public abstract class ChannelProvider extends NativeChannelProvider {
+    /**
+     * Logger to log info
+     */
+    private static final Logger logger = Logger.getLogger(ChannelProvider.class.getName());
+
     private final AidaProvider aidaProvider;
 
     /**
@@ -241,7 +247,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * Log the list of channels being served
      */
     private void logHostedChannels() {
-        System.out.println("\nAIDA-pva Channel Provider : " + getProviderName());
-        System.out.println("Channels hosted: \n  " + lessStrings(this.aidaProvider.getChannelNames()) + "\n");
+        logger.info("\nAIDA-pva Channel Provider : " + getProviderName());
+        logger.info("Channels hosted: \n  " + lessStrings(this.aidaProvider.getChannelNames()) + "\n");
     }
 }

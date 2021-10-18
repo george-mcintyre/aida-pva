@@ -7,8 +7,18 @@ import edu.stanford.slac.aida.lib.model.AidaProvider;
 import java.io.File;
 import java.util.logging.Logger;
 
+/**
+ * This class is a factory class that can create a channel based on environment and configuration files
+ */
 public class ChannelProviderFactory {
+    /**
+     * Default configuration file name. override by using a property or environment variable
+     */
     private final static String CHANNELS_FILENAME_DEFAULT = "channels.yml";
+
+    /**
+     * A logger to log information
+     */
     private static final Logger logger = Logger.getLogger(ChannelProviderFactory.class.getName());
 
     /**
@@ -29,7 +39,7 @@ public class ChannelProviderFactory {
             channelsFilename = channelsFilenameFromEnv;
         }
         if ( !channelsFilename.equals(CHANNELS_FILENAME_DEFAULT) ) {
-            System.out.println("Loading channel configuration from: " + channelsFilename);
+            logger.info("Loading channel configuration from: " + channelsFilename);
         }
 
         // Set up the object mapper to read the channels

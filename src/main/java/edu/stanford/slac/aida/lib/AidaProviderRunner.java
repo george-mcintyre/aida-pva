@@ -2,9 +2,20 @@ package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.PVAException;
 
+import java.util.logging.Logger;
+
 import static edu.stanford.slac.aida.impl.AidaService.elapsedTime;
 
+/**
+ * This class can run a Channel Provider so that it can service requests.
+ * It is called by {@link edu.stanford.slac.aida.impl.AidaService#main}.
+ */
 public class AidaProviderRunner {
+    /**
+     * Logger to log info
+     */
+    private static final Logger logger = Logger.getLogger(AidaProviderRunner.class.getName());
+
     public static void run(ChannelProvider aidaChannelProvider) {
         // Create new RPCServer
         AidaRPCServer server = new AidaRPCServer(aidaChannelProvider);
@@ -18,7 +29,7 @@ public class AidaProviderRunner {
 
         // Run the server to start servicing requests
         try {
-            System.out.println("Server Ready: " + elapsedTime());
+            logger.info("Server Ready: " + elapsedTime());
             server.run(0);
         } catch (PVAException e) {
             e.printStackTrace();

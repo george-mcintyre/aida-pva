@@ -3,6 +3,8 @@ package edu.stanford.slac.aida.impl;
 import edu.stanford.slac.aida.lib.AidaProviderRunner;
 import org.joda.time.DateTime;
 
+import java.util.logging.Logger;
+
 /**
  * The {@link edu.stanford.slac.aida.impl.AidaService} class is the main class that gets run to start an
  * AIDA-PVA Provider.  It automatically loads the Native Provider Library on startup.
@@ -24,6 +26,11 @@ public class AidaService {
      */
     private final static DateTime serviceStartTime = DateTime.now();
 
+    /**
+     * Logger to log info
+     */
+    private static final Logger logger = Logger.getLogger(AidaService.class.getName());
+
     /*
      * This static block is run once whenever the  Service is started to load the Native Provider Library
      */
@@ -39,7 +46,7 @@ public class AidaService {
 
         // If we've overridden the default name then log it to the console
         if (!aidaPvaLibName.equals(AIDA_PVA_LIB_NAME)) {
-            System.out.println("Loading Provider Shared Library: " + aidaPvaLibName);
+            logger.info("Loading Provider Shared Library: " + aidaPvaLibName);
         }
 
         // Load the Native Provider Library

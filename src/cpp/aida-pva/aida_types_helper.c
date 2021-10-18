@@ -37,7 +37,7 @@
 { \
     _cType* ptr = (_cType*)(_target); \
     if (!valueShouldBeJson) { \
-        if ( sscanf(stringValue, _format, ptr) == 0 ) {                   \
+        if ( sscanf(stringValue, _format, ptr) == 0 ) { \
             SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, stringValue, EXIT_FAILURE) \
         }\
     } else {  \
@@ -78,15 +78,16 @@
     unsigned char* ptr = (unsigned char*)(_targetBoolean); \
     if (!valueShouldBeJson) {  \
         if (isdigit(*stringValue)) {\
-            int number; \
-            sscanf(stringValue, "%d", &number); \
-            *ptr = (unsigned char)number; \
+            double number; \
+            sscanf(stringValue, "%lg", &number); \
+            *ptr = (unsigned char)((number == 0.0) ? 0 : 1); \
         } else  { \
-            *ptr = (unsigned char)!( strcasecmp(stringValue, "n") ==0  \
-                    || strcasecmp(stringValue, "0") ==0  \
-                    || strcasecmp(stringValue, "no") ==0  \
-                    || strcasecmp(stringValue, "false") ==0  \
-                    || strcasecmp(stringValue, "f")==0 );  \
+            int _val = getBooleanValue(stringValue); \
+            if ( _val == -1 ) { \
+                SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", stringValue, EXIT_FAILURE) \
+            } else { \
+             	*ptr = _val;  \
+            } \
         } \
     } else {   \
         if (jsonRoot->type == json_integer) { \
@@ -96,11 +97,12 @@
         } else if (jsonRoot->type == json_boolean) { \
             *ptr = (unsigned char)jsonRoot->u.boolean; \
         } else if (jsonRoot->type == json_string) { \
-            *ptr = (unsigned char)!(strcasecmp(jsonRoot->u.string.ptr, "false") == 0 \
-                    || strcasecmp(jsonRoot->u.string.ptr, "n") == 0 \
-                    || strcasecmp(jsonRoot->u.string.ptr, "0") == 0 \
-                    || strcasecmp(jsonRoot->u.string.ptr, "no") == 0 \
-                    || strcasecmp(jsonRoot->u.string.ptr, "f") == 0); \
+            int _val = getBooleanValue(jsonRoot->u.string.ptr); \
+            if ( _val == -1 ) { \
+                SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", jsonRoot->u.string.ptr, EXIT_FAILURE) \
+            } else { \
+             	*ptr = _val;  \
+            } \
         } else {  \
             PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: <json>", EXIT_FAILURE) \
         } \
@@ -182,6 +184,7 @@ static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* pat
 static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, unsigned int* elementCount);
 static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount);
 static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount);
+static int getBooleanValue(char* stringValue);
 
 /**
  * ascanf, avscanf
@@ -1420,4 +1423,28 @@ static void allocateTableColumn(JNIEnv* env, Table* table, Type aidaType, size_t
 {
 	table->types[table->_currentColumn] = aidaType;
 	table->ppData[table->_currentColumn] = ALLOCATE_MEMORY(env, table->rowCount * elementSize, "table data");
+}
+
+/**
+ * Determine if the given string value is a boolean value
+ * @param stringValue string value
+ * @return boolean or -1 if it is not a boolean value
+ */
+static int getBooleanValue(char* stringValue)
+{
+	if (strcasecmp(stringValue, "y") == 0
+			|| strcasecmp(stringValue, "1") == 0
+			|| strcasecmp(stringValue, "yes") == 0
+			|| strcasecmp(stringValue, "true") == 0
+			|| strcasecmp(stringValue, "t") == 0) {
+		return true;
+	}
+	if (strcasecmp(stringValue, "n") == 0
+			|| strcasecmp(stringValue, "0") == 0
+			|| strcasecmp(stringValue, "no") == 0
+			|| strcasecmp(stringValue, "false") == 0
+			|| strcasecmp(stringValue, "f") == 0) {
+		return false;
+	}
+	return -1;
 }

@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
@@ -20,6 +21,11 @@ import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 public class AidaRPCService implements RPCService {
+    /**
+     * Logger to log info
+     */
+    private static final Logger logger = Logger.getLogger(AidaRPCService.class.getName());
+
     private final ChannelProvider aidaChannelProvider;
 
     public AidaRPCService(ChannelProvider aidaChannelProvider) {
@@ -342,7 +348,7 @@ public class AidaRPCService implements RPCService {
      */
     private void logRequest(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaType aidaType) {
         String normativeType = ntTypeOf(aidaType);
-        System.out.println("AIDA " + (isSetterRequest ? "SetValue" : "GetValue") + ": " + channelName + argumentsList + " => " + aidaType + (normativeType == null ? "" : ("::" + normativeType)));
+        logger.info("AIDA " + (isSetterRequest ? "SetValue" : "GetValue") + ": " + channelName + argumentsList + " => " + aidaType + (normativeType == null ? "" : ("::" + normativeType)));
     }
 
     /**

@@ -9,7 +9,7 @@ public class AidaStringUtils {
     /**
      * Show first 10 strings at most
      *
-     * @return 10 or less strings
+     * @return 10 or fewer strings
      */
     public static List<String> lessStrings(Set<String> allStringSet) {
         return lessStrings(new ArrayList<String>(allStringSet));
