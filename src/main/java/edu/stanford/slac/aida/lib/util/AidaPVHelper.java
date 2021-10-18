@@ -20,8 +20,8 @@ import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
  * This class provides many functions that help with processing EPICS `Process Variables`.
- * APDA-PVA receives data from EPICS in {@link org.epics.pvdata.pv.PVField} and
- * {@link org.epics.pvdata.pv.PVStructure}, and we send data back to the EPICS network
+ * APDA-PVA receives data from EPICS in {@link PVField} and
+ * {@link PVStructure}, and we send data back to the EPICS network
  * using the these same data types.
  * <p>
  * This class provides functions that convert to and from AIDA-PVA java types, and enables creation of the
@@ -34,32 +34,32 @@ import static org.epics.pvdata.pv.Status.StatusType.ERROR;
  */
 public class AidaPVHelper {
     /**
-     * Each top level {@link org.epics.pvdata.pv.PVStructure} in the Normative Type scheme
-     * has a {@link org.epics.pvdata.pv.ScalarType#pvString} {@link org.epics.pvdata.pv.PVField}
+     * Each top level {@link PVStructure} in the Normative Type scheme
+     * has a {@link ScalarType#pvString} {@link PVField}
      * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
      * <p>
-     * This static constant is the string used to identify {@link org.epics.pvdata.pv.PVStructure}s
-     * containing {@link org.epics.pvdata.pv.PVScalar} data representing and NTScalar type.
+     * This static constant is the string used to identify {@link PVStructure}s
+     * containing {@link PVScalar} data representing and NTScalar type.
      */
     private static final String NTSCALAR_ID = "epics:nt/NTScalar:1.0";
 
     /**
-     * Each top level {@link org.epics.pvdata.pv.PVStructure} in the Normative Type scheme
-     * has a {@link org.epics.pvdata.pv.ScalarType#pvString} {@link org.epics.pvdata.pv.PVField}
+     * Each top level {@link PVStructure} in the Normative Type scheme
+     * has a {@link ScalarType#pvString} {@link PVField}
      * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
      * <p>
-     * This static constant is the string used to identify {@link org.epics.pvdata.pv.PVStructure}s
-     * containing {@link org.epics.pvdata.pv.PVScalarArray} data representing and NTScalarArray type.
+     * This static constant is the string used to identify {@link PVStructure}s
+     * containing {@link PVScalarArray} data representing and NTScalarArray type.
      */
     private static final String NTSCALARARRAY_ID = "epics:nt/NTScalarArray:1.0";
 
     /**
-     * Each top level {@link org.epics.pvdata.pv.PVStructure} in the Normative Type scheme
-     * has a {@link org.epics.pvdata.pv.ScalarType#pvString} {@link org.epics.pvdata.pv.PVField}
+     * Each top level {@link PVStructure} in the Normative Type scheme
+     * has a {@link ScalarType#pvString} {@link PVField}
      * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
      * <p>
-     * This static constant is the string used to identify {@link org.epics.pvdata.pv.PVStructure}s
-     * containing {@link org.epics.pvdata.pv.PVStructure} data representing and NTTable type.
+     * This static constant is the string used to identify {@link PVStructure}s
+     * containing {@link PVStructure} data representing and NTTable type.
      */
     private static final String NTTABLE_ID = "epics:nt/NTTable:1.0";
 
@@ -96,7 +96,7 @@ public class AidaPVHelper {
     public static final Field[] EMPTY_FIELD_DEFINITIONS = new Field[0];
 
     /**
-     * Shortcut for a complete empty {@link org.epics.pvdata.pv.Field} for an empty NTScalar
+     * Shortcut for a complete empty {@link Field} for an empty NTScalar
      * We use string as it doesn't matter as it will be empty
      */
     private static final Field[] NT_SCALAR_EMPTY_FIELD = new Field[]{
@@ -104,7 +104,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for a complete empty {@link org.epics.pvdata.pv.Field} for an empty NTScalarArray.
+     * Shortcut for a complete empty {@link Field} for an empty NTScalarArray.
      * We use string as it doesn't matter as it will be empty
      */
     private static final Field[] NT_SCALAR_ARRAY_EMPTY_FIELD = new Field[]{
@@ -112,7 +112,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for complete empty {@link org.epics.pvdata.pv.Field}s for an empty NTTable structure
+     * Shortcut for complete empty {@link Field}s for an empty NTTable structure
      */
     private static final Field[] NT_TABLE_EMPTY_FIELDS = new Field[]{
             FieldFactory.getFieldCreate().createScalarArray(pvString),
@@ -120,7 +120,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for a complete empty NTTable {@link org.epics.pvdata.pv.PVStructure} for when no data is returned from the Native Channel Provider
+     * Shortcut for a complete empty NTTable {@link PVStructure} for when no data is returned from the Native Channel Provider
      * from a request
      */
     public static final PVStructure NT_SCALAR_EMPTY_STRUCTURE =
@@ -132,7 +132,7 @@ public class AidaPVHelper {
 
 
     /**
-     * Shortcut for a complete empty {@link org.epics.pvdata.pv.PVStructure} containing an NTScalarArray when no data is returned
+     * Shortcut for a complete empty {@link PVStructure} containing an NTScalarArray when no data is returned
      */
     public static final PVStructure NT_SCALAR_ARRAY_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -143,7 +143,7 @@ public class AidaPVHelper {
 
 
     /**
-     * Shortcut for a complete empty {@link org.epics.pvdata.pv.PVStructure} containing an NTTable when no data is returned
+     * Shortcut for a complete empty {@link PVStructure} containing an NTTable when no data is returned
      */
     public static final PVStructure NT_TABLE_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -153,11 +153,11 @@ public class AidaPVHelper {
                                     .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, NT_TABLE_EMPTY_FIELDS));
 
     /**
-     * Creating a {@link org.epics.pvdata.pv.PVStructure} is a two stage process.  First you need to create its
+     * Creating a {@link PVStructure} is a two stage process.  First you need to create its
      * structure, then you fill that structure with data.  The name of the field in any
-     * {@link org.epics.pvdata.pv.PVStructure} where the value is stored is always called "value".
+     * {@link PVStructure} where the value is stored is always called "value".
      * <p>
-     * This method allows you to set the value field in an already created {@link org.epics.pvdata.pv.PVStructure} to the given value.
+     * This method allows you to set the value field in an already created {@link PVStructure} to the given value.
      *
      * @param structure the given structure.
      * @param value     the value to set in the value field.
@@ -197,11 +197,11 @@ public class AidaPVHelper {
     }
 
     /**
-     * Creating a {@link org.epics.pvdata.pv.PVStructure} is a two stage process.  First you need to create its
+     * Creating a {@link PVStructure} is a two stage process.  First you need to create its
      * structure, then you fill that structure with data.
      * <p>
      * This method allows you to set the value of any array field in an already
-     * created {@link org.epics.pvdata.pv.PVStructure} to the given list of values.
+     * created {@link PVStructure} to the given list of values.
      * <p>
      * The `fieldName` parameter can be a path from the root of the structure down to the array that the values will be stored in.
      * So it may be of the form "value.listName" which would store the values in the array called "listName"
@@ -229,7 +229,7 @@ public class AidaPVHelper {
         int valuesCount = values.size();
 
         // Locate the array that was defined in the first stage of
-        // this {@link org.epics.pvdata.pv.PVStructure} creation
+        // this {@link PVStructure} creation
         // and set the capacity to the number of values we need to store
         PVScalarArray scalarArray = structure.getScalarArrayField(fieldName, scalarTypeOf(aidaType));
         scalarArray.setCapacity(valuesCount);
@@ -277,18 +277,18 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert an arbitrary value to a {@link org.epics.pvdata.pv.PVStructure} containing an `NTScalar`
+     * Convert an arbitrary value to a {@link PVStructure} containing an `NTScalar`
      * <p>
      * The value must be the java equivalent of one of the supported AIDA-PVA scalar types
-     * - {@link java.lang.Boolean}, {@link java.lang.Byte}, {@link java.lang.Short},
-     * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
-     * - {@link java.lang.Double} or {@link java.lang.String}
+     * - {@link Boolean}, {@link Byte}, {@link Short},
+     * - {@link Integer}, {@link Long}, {@link Float},
+     * - {@link Double} or {@link String}
      *
      * @param value java equivalent of one of the supported AIDA-PVA scalar types
-     * @return {@link org.epics.pvdata.pv.PVStructure} containing an NTScalar with the value
+     * @return {@link PVStructure} containing an NTScalar with the value
      */
     public static PVStructure asScalar(Object value) {
-        // Null values are returned as an empty {@link org.epics.pvdata.pv.PVStructure}
+        // Null values are returned as an empty {@link PVStructure}
         if (value == null) {
             return NT_SCALAR_EMPTY_STRUCTURE;
         }
@@ -302,19 +302,19 @@ public class AidaPVHelper {
         // And find out the corresponding PVScalar type that it needs to converted into
         ScalarType scalarType = scalarTypeOf(aidaType);
 
-        // Create the field of that type to be added to the {@link org.epics.pvdata.pv.PVStructure} we return
+        // Create the field of that type to be added to the {@link PVStructure} we return
         Field[] scalarField = new Field[]{
                 FieldFactory.getFieldCreate().createScalar(scalarType)
         };
 
-        // Create a new {@link org.epics.pvdata.pv.PVStructure} to return containing the field we created
+        // Create a new {@link PVStructure} to return containing the field we created
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 // Structure with one element: label and empty scalar field definition
                                 .createStructure(NTSCALAR_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarField));
 
-        // In the second phase of {@link org.epics.pvdata.pv.PVStructure} creation we now set the field value
+        // In the second phase of {@link PVStructure} creation we now set the field value
         // Note that the field name to set is always called "value" for NT types
         setValue(retVal, value, aidaType);
 
@@ -322,18 +322,18 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert an arbitrary list of values to a {@link org.epics.pvdata.pv.PVStructure} containing an `NTScalarArray`
+     * Convert an arbitrary list of values to a {@link PVStructure} containing an `NTScalarArray`
      * <p>
-     * The value must be the java {@link java.util.List} of a type equivalent of one of the supported AIDA-PVA scalar types
-     * - {@link java.lang.Boolean}, {@link java.lang.Byte}, {@link java.lang.Short},
-     * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
-     * - {@link java.lang.Double} or {@link java.lang.String}
+     * The value must be the java {@link List} of a type equivalent of one of the supported AIDA-PVA scalar types
+     * - {@link Boolean}, {@link Byte}, {@link Short},
+     * - {@link Integer}, {@link Long}, {@link Float},
+     * - {@link Double} or {@link String}
      *
      * @param values the list of values to convert
-     * @return {@link org.epics.pvdata.pv.PVStructure} containing an `NTScalarArray` with the values
+     * @return {@link PVStructure} containing an `NTScalarArray` with the values
      */
     public static PVStructure asScalarArray(List<?> values) {
-        // Null values are returned as an empty {@link org.epics.pvdata.pv.PVStructure}
+        // Null values are returned as an empty {@link PVStructure}
         if (values == null) {
             return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
         }
@@ -347,12 +347,12 @@ public class AidaPVHelper {
         // And find out the corresponding PVScalar type that it needs to converted into
         ScalarType scalarType = scalarTypeOf(aidaType);
 
-        // Create the field of that type to be added to the {@link org.epics.pvdata.pv.PVStructure} we return
+        // Create the field of that type to be added to the {@link PVStructure} we return
         Field[] scalarArrayField = new Field[]{
                 FieldFactory.getFieldCreate().createScalarArray(scalarType)
         };
 
-        // Create a new {@link org.epics.pvdata.pv.PVStructure} to return containing the field we created
+        // Create a new {@link PVStructure} to return containing the field we created
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
@@ -360,7 +360,7 @@ public class AidaPVHelper {
                                 .createStructure(NTSCALARARRAY_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarArrayField));
 
 
-        // In the second phase of {@link org.epics.pvdata.pv.PVStructure} creation we now set the field value
+        // In the second phase of {@link PVStructure} creation we now set the field value
         // Note that the field name to set is always called "value" for NT types
         setValues(retVal, NT_FIELD_NAME, values, aidaType);
 
@@ -369,11 +369,11 @@ public class AidaPVHelper {
 
 
     /**
-     * Convert an arbitrary list of homogeneously sized columns of values to a {@link org.epics.pvdata.pv.PVStructure} containing an `NTTable`
-     * The value of each of the columns must be a java {@link java.util.List} of a type equivalent of one of the supported AIDA-PVA scalar types
-     * - {@link java.lang.Boolean}, {@link java.lang.Byte}, {@link java.lang.Short},
-     * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
-     * - {@link java.lang.Double} or {@link java.lang.String}
+     * Convert an arbitrary list of homogeneously sized columns of values to a {@link PVStructure} containing an `NTTable`
+     * The value of each of the columns must be a java {@link List} of a type equivalent of one of the supported AIDA-PVA scalar types
+     * - {@link Boolean}, {@link Byte}, {@link Short},
+     * - {@link Integer}, {@link Long}, {@link Float},
+     * - {@link Double} or {@link String}
      *
      * @param values            the list of values
      * @param aidaChannelConfig the configuration
@@ -381,7 +381,7 @@ public class AidaPVHelper {
      */
     public static PVStructure asNtTable(List<List<Object>> values, AidaChannelConfig aidaChannelConfig) {
         // If there is nothing to add or that the list is empty or if the columns are empty return an empty
-        //  {@link org.epics.pvdata.pv.PVStructure}
+        //  {@link PVStructure}
         if (values == null || values.isEmpty() || values.get(0).isEmpty()) {
             return NT_TABLE_EMPTY_STRUCTURE;
         }
@@ -405,12 +405,12 @@ public class AidaPVHelper {
         List<Field> pvFields = new ArrayList<Field>();
         setFieldsWithNamesLabelsAndTypesFromConfig(pvFields, aidaChannelConfig, values, fieldNames, labels, aidaTypes);
 
-        /// FIRST STAGE {@link org.epics.pvdata.pv.PVStructure} creation: Structure
+        /// FIRST STAGE {@link PVStructure} creation: Structure
 
         // List of strings that will contain the labels names
         Field labelsArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
 
-        // Create the second level {@link org.epics.pvdata.pv.Field} that will conta
+        // Create the second level {@link Field} that will conta
         // top fields, this one holding the structure of the rest of the NTTable
         //  - fieldNames = PVScalarArray containing pvstring and
         //  - columns of values = A set of Fields that are each PVScalarArrays
@@ -419,14 +419,14 @@ public class AidaPVHelper {
         // Create the two top fields of the
         Field[] topFields = new Field[]{labelsArray, structure};
 
-        // Create the top {@link org.epics.pvdata.pv.PVStructure} that will be returned (labels and values)
+        // Create the top {@link PVStructure} that will be returned (labels and values)
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, topFields));
 
 
-        /// SECOND STAGE {@link org.epics.pvdata.pv.PVStructure} creation: Set values
+        /// SECOND STAGE {@link PVStructure} creation: Set values
 
         // Set the field labels
         setValues(retVal, NT_LABELS_NAME, labels, STRING_ARRAY);

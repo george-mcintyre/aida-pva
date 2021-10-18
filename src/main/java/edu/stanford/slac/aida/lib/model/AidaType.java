@@ -62,7 +62,7 @@ public enum AidaType {
     SCALAR_ARRAY;       // Constrains the TYPE parameter to be set to any scalar array type or TABLE
 
     /**
-     * Given a {@link java.lang.Object} this method will return the corresponding AIDA-PVA type.
+     * Given a {@link Object} this method will return the corresponding AIDA-PVA type.
      *
      * @param value java object to check
      * @return the corresponding AIDA-PVA type or null if the type is not supported by AIDA-PVA.
@@ -96,7 +96,7 @@ public enum AidaType {
     }
 
     /**
-     * Given a {@link java.util.List} of homogenous objects this method will return the corresponding AIDA-PVA type of the List.
+     * Given a {@link List} of homogenous objects this method will return the corresponding AIDA-PVA type of the List.
      *
      * @param values list of homogenous objects
      * @return the corresponding AIDA-PVA type of the List or null if the type is not supported

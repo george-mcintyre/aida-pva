@@ -1,14 +1,19 @@
 package edu.stanford.slac.aida.lib.util;
 
 /**
- * This class has one and only one job.  Print a banner in the logs.
+ * This class has one and only one job.  Create a banner to be displayed the logs.
  * <p>
  * Go here for generator to try out different banner styles if you're bored with this one :)
  * https://www.messletters.com/en/big-text/
  * <p>
- * style used: `univers`
+ * Style used: `univers`
  */
 public class AidaPva {
+    /**
+     * This static method will return a string banner to be displayed in the logs at startup
+     *
+     * @return the string banner to be displayed in the logs
+     */
     public static String banner() {
         return "                                                                                                       \n" +
                 "       db         88  88888888ba,           db                                                         \n" +

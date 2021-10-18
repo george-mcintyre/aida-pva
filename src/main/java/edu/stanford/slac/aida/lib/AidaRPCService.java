@@ -256,7 +256,7 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Check that the configuration defines fields for table requests so that we will know how to create the {@link org.epics.pvdata.pv.PVStructure} to return the result in
+     * Check that the configuration defines fields for table requests so that we will know how to create the {@link PVStructure} to return the result in
      *
      * @param aidaType the request type
      * @param config   the configuration

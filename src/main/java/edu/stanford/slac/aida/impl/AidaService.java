@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import java.util.logging.Logger;
 
 /**
- * The {@link edu.stanford.slac.aida.impl.AidaService} class is the main class that gets run to start an
+ * The {@link AidaService} class is the main class that gets run to start an
  * AIDA-PVA Provider.  It automatically loads the Native Provider Library on startup.
  * <p>
  * It also runs an {@link AidaChannelProvider}  listener so that it can intercept search requests for
