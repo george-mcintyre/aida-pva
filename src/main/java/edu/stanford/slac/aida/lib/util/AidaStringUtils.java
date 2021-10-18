@@ -9,6 +9,7 @@ public class AidaStringUtils {
     /**
      * Show first 10 strings at most
      *
+     * @param allStringSet set of stings to shorten
      * @return 10 or fewer strings
      */
     public static List<String> lessStrings(Set<String> allStringSet) {
@@ -18,6 +19,7 @@ public class AidaStringUtils {
     /**
      * Show first 10 strings at most
      *
+     * @param allStringList list of stings to shorten
      * @return 10 or less strings
      */
     public static List<String> lessStrings(List<String> allStringList) {

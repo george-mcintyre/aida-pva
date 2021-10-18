@@ -6,7 +6,6 @@ import java.util.List;
  * This class encapsulates an {@link AidaType}.
  * <p>
  * All the data types that can be used in AIDA-PVA are represented here.
- * <p>
  */
 public enum AidaType {
     /*

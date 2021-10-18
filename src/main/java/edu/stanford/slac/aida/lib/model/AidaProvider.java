@@ -25,7 +25,6 @@ import java.util.*;
  * <p>
  * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
  * with no arguments.
- * <p>
  */
 @Data
 @NoArgsConstructor

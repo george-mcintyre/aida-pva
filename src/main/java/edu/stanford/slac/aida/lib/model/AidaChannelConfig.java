@@ -26,7 +26,6 @@ import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
  * <p>
  * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
  * with no arguments.
- * <p>
  */
 @Data
 @NoArgsConstructor

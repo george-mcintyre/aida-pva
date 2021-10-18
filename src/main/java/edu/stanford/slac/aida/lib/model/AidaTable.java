@@ -26,7 +26,7 @@ public class AidaTable {
     /**
      * Add an element to the specified column in this {@link AidaTable#data}.
      * <p>
-     * Each new column is added by successive calls to {@link .AidaTable#add}
+     * Each new column is added by successive calls to {@link AidaTable#add}
      * and so the columnId specified will either have to be inserted, or added at the end.
      * <p>
      * This is called by the Native Channel Provider code in C so be careful if refactoring the signature or name.

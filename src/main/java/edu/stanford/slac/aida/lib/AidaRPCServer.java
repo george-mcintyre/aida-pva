@@ -20,6 +20,8 @@ public class AidaRPCServer extends RPCServer {
     /**
      * Constructor.  Not used by AIDA-PVA.  May be removed
      *
+     * @param threads             the number of threads to use
+     * @param queueSize           the size of the queue
      * @param aidaChannelProvider to handle requests on this server
      */
     public AidaRPCServer(int threads, int queueSize, ChannelProvider aidaChannelProvider) {

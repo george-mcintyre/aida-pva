@@ -30,7 +30,7 @@ import static org.epics.pvdata.pv.Status.StatusType.ERROR;
  * Furthermore, we use Normative Types to represent data in a standard way.  This is layered on top
  * of Process Variables.   So this class also provides constants and standard structures for use with
  * Normative Types.
- * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
+ * <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>
  */
 public class AidaPVHelper {
     /**
@@ -375,7 +375,8 @@ public class AidaPVHelper {
      * - {@link java.lang.Integer}, {@link java.lang.Long}, {@link java.lang.Float},
      * - {@link java.lang.Double} or {@link java.lang.String}
      *
-     * @param values the list of values
+     * @param values            the list of values
+     * @param aidaChannelConfig the configuration
      * @return the returned PVStructure containing the NT_TABLE
      */
     public static PVStructure asNtTable(List<List<Object>> values, AidaChannelConfig aidaChannelConfig) {

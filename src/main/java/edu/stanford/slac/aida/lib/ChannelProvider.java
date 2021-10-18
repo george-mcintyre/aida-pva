@@ -86,6 +86,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *
      * @param channelName request channel name
      * @param arguments   request arguments
+     * @param aidaType    the return type
      * @return object
      */
     public Object requestScalar(String channelName, AidaArguments arguments, AidaType aidaType) {
@@ -112,7 +113,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
 
     /**
      * Handles scalar array requests by calling the appropriate Native Method.  This can return :-
-     * - collections of scalars e.g. List<Boolean>, List<Integer>, List<Byte>, List<Long>, List<Float>, List<Double>,  ...
+     * - collections of scalars e.g. List of {@link Boolean}, List of {@link Integer} , List of {@link Byte} , List of {@link Long} , List of {@link Float}, List of {@link Double},  ...
      *
      * @param channelName request channel name
      * @param arguments   request arguments
