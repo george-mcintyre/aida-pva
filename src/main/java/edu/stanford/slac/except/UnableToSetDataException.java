@@ -1,6 +1,10 @@
 package edu.stanford.slac.except;
 
 
+/**
+ * Unable to set data exception
+ * Use this when an error occurs during a set operation
+ */
 public class UnableToSetDataException extends RuntimeException {
     public UnableToSetDataException() {
     }
