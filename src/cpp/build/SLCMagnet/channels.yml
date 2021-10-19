@@ -1,3 +1,4 @@
+!!edu.stanford.slac.aida.lib.model.AidaProvider
 # Channels definition file for aida-pva
 #
 # DML:
@@ -9,15 +10,11 @@
 #       AND names.ATTRIBUTE LIKE '%:BDES' OR names.ATTRIBUTE LIKE '%:VDES'
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
 #
-# This file defines the available channels for the Buff Acq Service
-# Arguments:
-#   MICROS            : Start_micro-end_micro
-#   UNITS             : Start_unit-end_unit
-#   MAGFUNC           : TRIM, PTRB, or NOFUNC
-#   LIMITCHECK        : ALL or SOME
+# This file defines the available channels for the Magnet Service
+#
 id: 262
 name: SLCBMagnet
-description: SLC control system pulse synchronized Buffered Data
+description: SLC Magnet Data
 configurations:
   - name: Get Secondary Values
     getterConfig:

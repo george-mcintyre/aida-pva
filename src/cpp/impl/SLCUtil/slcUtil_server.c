@@ -42,7 +42,7 @@ REQUEST_STUB_TABLE
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -60,7 +60,7 @@ void aidaServiceInit(JNIEnv* env)
  * Get a short
  *
  * @param uri the uri
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param arguments the arguments
  * @return the short
  */
@@ -72,7 +72,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a integer
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer
@@ -85,7 +85,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a string.  Allocate memory for string and it will be freed for you by framework
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string
@@ -94,7 +94,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Read the status
 	short trig_status = getTrigStatus(env, uri, arguments);
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	if (trig_status) {
 		return ALLOCATE_STRING(env, "activated","string");
@@ -109,7 +109,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
  *    BGRP    	: The BGRP name
  *    VARNAME   : BGRP variable name for the specified BGRP
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -119,7 +119,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 {
 	TRACK_ALLOCATED_MEMORY
 
-	vmsstat_t status = 0;
+	vmsstat_t status;
 	char* bgrp, * varname, * valueString;
 
 	// Check if operations are enabled?
@@ -159,7 +159,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 /**
  * Set a value and return a table as a response
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -238,9 +238,9 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 
 	// Now create table to return
 	Table table = tableCreate(env, num_devices, 2);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_DEVICE_STRING_LEN);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValuesData, false);
 
 	return table;
@@ -292,7 +292,7 @@ static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, 
 
 	// Now create table to return the flag
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowShortColumn(env, &table, flag);
 
 	return table;

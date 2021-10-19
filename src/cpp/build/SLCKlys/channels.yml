@@ -1,3 +1,4 @@
+!!edu.stanford.slac.aida.lib.model.AidaProvider
 # Channels definition file for aida-pva
 # DML: 1
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
@@ -26,12 +27,8 @@
 #       AND names.ATTRIBUTE IN ('PCON', 'ACON')
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
 #
-# This file defines the available channels for the Kyystron Service
-# Arguments:
-#   type          : For TACT attribute this is either SHORT, LONG, or STRING
-#   BEAM          : Beam Code number
-#   DGRP          : Dgrp name
-#   TRIM          : Trim value (YES or NO)
+# This file defines the available channels for the Klystron Service
+#
 id: 162
 name: SLCKlys
 description: Klystron Server

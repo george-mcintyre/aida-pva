@@ -51,7 +51,7 @@ SET_STUB_TABLE
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -74,7 +74,7 @@ void aidaServiceInit(JNIEnv* env)
  * end acquisition
  * Return data
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
@@ -153,7 +153,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// To hold data
-	char namesData[rows + 1][NAME_SIZE];
+	char namesData[MAX_DGRP_BPMS][NAME_SIZE];
 	float xData[rows + 1], yData[rows + 1], tmitData[rows + 1], zData[rows + 1];
 	unsigned long hstasData[rows + 1], statsData[rows + 1];
 
@@ -164,19 +164,19 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Make and output table
 	Table table = tableCreate(env, rows, 7);
-	CHECK_EXCEPTION_AND_RETURN_(table)
-	tableAddFixedWidthStringColumn(env, &table, namesData, NAME_SIZE);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
+	tableAddFixedWidthStringColumn(env, &table, (char*)namesData, NAME_SIZE);
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, zData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, hstasData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, statsData, false);
 
 	endAcquireBpmData(env);
@@ -296,8 +296,6 @@ static int getBpmData(JNIEnv* env,
 	CHECK_VMS_STATUS
 	status = DPSLCBPM_GETY(&rowsy, yData);
 	CHECK_VMS_STATUS
-
-	int2u n = rows;
 
 	// data that return rows read
 	if (!(rowsnames = DPSLCBPM_GETNAMES(namesData)) ||

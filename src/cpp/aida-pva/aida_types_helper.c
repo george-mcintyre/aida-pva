@@ -1,3 +1,22 @@
+/** @file
+ *  @brief This file contain functions that should be
+ *  used directly by Native Channel Providers.
+ *  These functions provide all of the features related to processing of Arguments and Table
+ *  that allow the Channel Provider to implement its service.
+ *
+ *  - ascanf() and avscanf() to scan arguments into provided variables.
+ *  - Table creation and building functions: tableAddColumn(),
+ *    tableAddSingleRowFloatColumn(),
+ *    tableAddSingleRowLongColumn(),
+ *    tableAddSingleRowBooleanColumn(),
+ *    tableAddSingleRowByteColumn(),
+ *    tableAddSingleRowShortColumn(),
+ *    tableAddSingleRowIntegerColumn(),
+ *    tableAddSingleRowDoubleColumn(),
+ *    tableAddSingleRowStringColumn(),
+ *    tableAddFixedWidthStringColumn(),
+ *    tableAddStringColumn()
+ */
 #include <jni.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,34 +30,76 @@
 #include "aida_types.h"
 #include "aida_server_helper.h"
 
+/**
+ * Minimum number of floating point allocations.  When allocating space for floating point numbers the framework allocates in batches and then reallocates if the batch is full.  This is the minimum batch size.
+ */
 #define MIN_FLOAT_ALLOCATIONS 100
 
-/// Definitions for ascanf, and avscanf
+/**
+ * int format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_INTEGER 'd'
+/**
+ * unsigned int format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_UNSIGNED_INTEGER 'u'
+/**
+ * float format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_FLOAT 'f'
+/**
+ * string format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_STRING 's'
+/**
+ * byte format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_BYTE 'c'
+/**
+ * boolean format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_BOOLEAN 'b'
 
+/**
+ * optional format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_OPTIONAL_FLAG 'o'
 
+/**
+ * short format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_PREFIX_SHORT 'h'
+/**
+ * long format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_PREFIX_LONG 'l'
 
+/**
+ * array format definition character for ascanf() and avscanf().
+ */
 #define FORMAT_SUFFIX_ARRAY 'a'
 
+/**
+ * Maximum number of permitted format specifiers for ascanf() and avscanf().
+ */
 #define MAX_FORMAT_SPECIFIERS 20
-#define    MAX_FORMAT 8
-
+/**
+ * Maximum length of s single format specifier for ascanf() and avscanf().
+ */
+#define MAX_FORMAT 8
+/**
+ * Used internally to formulate a correctly cast pointer to the array being constructed.
+ */
 #define ARRAY_TARGET(_cType) &((_cType *)(*arrayPtr))[i]
-
+/**
+ * Macro used internally to set a scalar value for ascanf() and avscanf().
+ */
 #define ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, _target) \
 { \
     _cType* ptr = (_cType*)(_target); \
     if (!valueShouldBeJson) { \
         if ( sscanf(stringValue, _format, ptr) == 0 ) { \
-            SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, stringValue, EXIT_FAILURE) \
+            SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, stringValue, EXIT_FAILURE) \
         }\
     } else {  \
         if (jsonRoot->type == json_integer) { \
@@ -47,32 +108,17 @@
             *ptr = (_cType)(jsonRoot->u.dbl); \
         } else if (jsonRoot->type == json_string) { \
             if ( sscanf(jsonRoot->u.string.ptr, _format, ptr) == 0 ) {    \
-                SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, jsonRoot->u.string.ptr, EXIT_FAILURE) \
+                SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, jsonRoot->u.string.ptr, EXIT_FAILURE) \
             } \
         } else { \
-            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": <json>", EXIT_FAILURE) \
+            PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": <json>", EXIT_FAILURE) \
         }\
     }\
 }
 
-#define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
-{ \
-    ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
-    for (int i = 0; i < arrayCount; i++) { \
-        jsonRoot = arrayRoot->u.array.values[i]; \
-        ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, ARRAY_TARGET(_cType)) \
-    } \
-}
-
-#define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
-{ \
-    ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
-    for (int i = 0; i < arrayCount; i++) { \
-        jsonRoot = arrayRoot->u.array.values[i]; \
-        _setMacro(ARRAY_TARGET(_cType)) \
-    } \
-}
-
+/**
+ * Macro used internally to set a scalar boolean for ascanf() and avscanf().
+ */
 #define ASCANF_SET_BOOLEAN(_targetBoolean) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetBoolean); \
@@ -84,9 +130,9 @@
         } else  { \
             int _val = getBooleanValue(stringValue); \
             if ( _val == -1 ) { \
-                SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", stringValue, EXIT_FAILURE) \
+                SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", stringValue, EXIT_FAILURE) \
             } else { \
-             	*ptr = _val;  \
+                *ptr = _val;  \
             } \
         } \
     } else {   \
@@ -99,18 +145,19 @@
         } else if (jsonRoot->type == json_string) { \
             int _val = getBooleanValue(jsonRoot->u.string.ptr); \
             if ( _val == -1 ) { \
-                SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", jsonRoot->u.string.ptr, EXIT_FAILURE) \
+                SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: %s", jsonRoot->u.string.ptr, EXIT_FAILURE) \
             } else { \
-             	*ptr = _val;  \
+                *ptr = _val;  \
             } \
         } else {  \
-            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: <json>", EXIT_FAILURE) \
+            PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to boolean: <json>", EXIT_FAILURE) \
         } \
     } \
 }
 
-#define ASCANF_SET_BOOLEAN_ARRAY ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(unsigned char, ASCANF_SET_BOOLEAN)
-
+/**
+ * Macro used internally to set a scalar byte for ascanf() and avscanf().
+ */
 #define ASCANF_SET_BYTE(_targetByte) \
 { \
     unsigned char* ptr = (unsigned char*)(_targetByte); \
@@ -122,13 +169,14 @@
         } else if (jsonRoot->type == json_string && jsonRoot->u.string.length == 1) { \
             *ptr = *jsonRoot->u.string.ptr; \
         } else { \
-            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to byte: <json>", EXIT_FAILURE) \
+            PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to byte: <json>", EXIT_FAILURE) \
         } \
     } \
 }
 
-#define ASCANF_SET_BYTE_ARRAY ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(unsigned char, ASCANF_SET_BYTE)
-
+/**
+ * Macro used internally to set a string for ascanf() and avscanf().
+ */
 #define ASCANF_SET_STRING(_targetString) \
 { \
     char** ptr = (char**)(_targetString); \
@@ -136,7 +184,7 @@
         *ptr = stringValue; \
     } else {  \
         if (aidaType == AIDA_STRING_TYPE) { \
-            ALLOCATE_AND_TRACK_MEMORY(env, nextStringPosition, jsonRoot->u.string.length+1, "string arguments", EXIT_FAILURE) \
+            ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, nextStringPosition, jsonRoot->u.string.length+1, "string arguments", EXIT_FAILURE) \
         }\
         if (jsonRoot->type == json_string) { \
             strcpy(nextStringPosition, jsonRoot->u.string.ptr); \
@@ -148,17 +196,54 @@
             if (aidaType == AIDA_STRING_TYPE) { \
                 free(nextStringPosition);\
             }\
-            PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: <json>", EXIT_FAILURE) \
+            PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: <json>", EXIT_FAILURE) \
         } \
         *ptr = nextStringPosition; \
         nextStringPosition+=strlen(nextStringPosition)+1; \
     } \
 }
 
+/**
+ * Macro used internally to set an array for ascanf() and avscanf().
+ */
+#define ASCANF_SET_ARRAY(_format, _cType, _jsonType, _typeName) \
+{ \
+    ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
+    for (int i = 0; i < arrayCount; i++) { \
+        jsonRoot = arrayRoot->u.array.values[i]; \
+        ASCANF_SET_SCALAR(_format, _cType, _jsonType, _typeName, ARRAY_TARGET(_cType)) \
+    } \
+}
+
+/**
+ * Macro used internally for setting a boolean array or a byte array for ascanf() and avscanf().
+ */
+#define ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(_cType, _setMacro) \
+{ \
+    ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *arrayPtr, arrayCount * sizeof(_cType), "array arguments", EXIT_FAILURE) \
+    for (int i = 0; i < arrayCount; i++) { \
+        jsonRoot = arrayRoot->u.array.values[i]; \
+        _setMacro(ARRAY_TARGET(_cType)) \
+    } \
+}
+
+/**
+ * Macro used to internally for setting a boolean array for ascanf() and avscanf().
+ */
+#define ASCANF_SET_BOOLEAN_ARRAY ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(unsigned char, ASCANF_SET_BOOLEAN)
+
+/**
+ * Macro used internally for setting a byte array for ascanf() and avscanf().
+ */
+#define ASCANF_SET_BYTE_ARRAY ASCANF_SET_BOOLEAN_OR_BYTE_ARRAY(unsigned char, ASCANF_SET_BYTE)
+
+/**
+ * Macro used internally to set a string array for ascanf() and avscanf().
+ */
 #define ASCANF_SET_STRING_ARRAY \
 { \
     size_t pointerSpace = arrayCount * sizeof(char*); \
-    ALLOCATE_AND_TRACK_MEMORY(env, *arrayPtr, pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1, "string array arguments", EXIT_FAILURE) \
+    ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *arrayPtr, pointerSpace + totalStingLengthOf(arrayRoot) + arrayCount + 1, "string array arguments", EXIT_FAILURE) \
     nextStringPosition = ((char*)*arrayPtr) + pointerSpace; \
     for (int i = 0; i < arrayCount; i++) { \
         jsonRoot = arrayRoot->u.array.values[i]; \
@@ -185,103 +270,35 @@ static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, uns
 static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount);
 static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount);
 static int getBooleanValue(char* stringValue);
+static Value asArrayValue(char* stringValue);
 
 /**
- * ascanf, avscanf
+ * ascanf(), avscanf()
  *
- * Synopsis
- *
+ * @paragraph Synopsis
+ * @code
  *     int ascanf(Arguments *arguments, const char *format, ...);
  *     int avscanf(Arguments *arguments, Value *value, const char *format, ...);
+ * @endcode
  *
- * Details
- * Reads data from the given arguments and stores them according to parameter format into the locations given by the additional arguments, as if scanf was used, but reading from arguments instead of the standard input (stdin).
+ * @paragraph Details
+ * Reads data from the given @p arguments and stores them according
+ * to parameter format into the locations given by the additional arguments,
+ * as if scanf() was used, but reading from arguments instead of the standard input (stdin).
  *
- * The additional arguments should point to already allocated objects of the type specified by their corresponding format specifier.  For strings and arrays only the pointer needs to be pre-allocated.
+ * @see avscanf() for full details.
  *
- * The only space allocated by this function is for the array of pointers to strings or arrays.  On return strings will point to the original string in the given arguments so the strings themselves do not need to be freed by the caller.
- *
- * Note, only the provided pointer needs to be freed as only one allocation is made e.g.
- *
- *     Arguments arguments;
- *     int *intArray;
- *     ascanf(arguments "%da, "fooArray", &intArray);
- *     // Do stuff
- *     free(intArray);
- *
- * Differences from scanf
- * There are a number of other differences from scanf which are best described by example:
- *
- * 1. Scan into simple variable
- *
- *     int n;
- *     ascanf("%d", "NPOS", &n);
- *
- * You must always provide the name of the variable and the pointer to the place to put the value in pairs
- *
- * 2. Optional arguments
- * Optional arguments are specified with the o character before the format character.
- *
- *     short flag = 10;  // 10 is the default value
- *     ascanf("%ohd", "flag", &flag);
- *
- * By default all arguments are considered required unless this character is specified. For optional arguments the pointer provided must point to the default value. In the case of arrays and strings this will be copied into allocated storage that will need to be freed as normal. i.e. strings themselves don't need to be freed.
- *
- * Variable Names
- * 1. You can specify simple variable names
- *     int simpleInt;
- *     ascanf(&arguments "%d, "simple", &simpleInt);
- *
- * 1. You can specify simple names or you can use dot and square brace notation to refer to arguments that refer to json structures. e.g. given a variable named json and presented as
- *
- *     json=' { "foo": {"bar": 0} }}'
- *
- * You can specify the name as json.foo.bar to retrieve the 0 value *
- *
- * 2. Also given a variable named jsonArray and presented as
- *     jsonArray=' [ {"foo": 10}, {"bar": 20} ]'
- *
- * You can specify the name as jsonArray[1].bar to retrieve the 20 value
- *
- * 3. Finally if you use the name value in the the avscanf() function will use the supplied value to get the data for that parameter
- *     Arguments arguments;
- *     Value value;
- *     int *intArray;
- *     avscanf(&arguments &value, "%da, "fooArray", &intArray);
- *     // Do stuff
- *     free(intArray);
- *
- * Format Specifiers
- * Supported formats specifiers
- * - b : unsigned char * - extract a single byte into the corresponding variable, translate “true”, “false” etc
- * - c : char * - extract a single character into the corresponding variable
- * - d : int * - extract an integer into the corresponding variable (see l & h below).
- * - f  : float * - extract a floating point number (see l below)
- * - s : char * - extract a string of characters into allocated space and point the corresponding variable to it
- * - u : unsigned int * - extract an unsigned integer into the corresponding variable (see l & h below)
- *
- * Required flag
- * - o - optional precede the format with 'o' to indicate that the argument is optional
- *
- * Prefixes
- * - h - short * - preceding d will retrieve a short e.g. %hd
- * - l - long *, double * - preceding d will retrieve a long eg. %ld, preceding f will retrieve a double eg. %lf
- *
- * Suffixes
- * - a - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it. the variable will have an extra level of indirection than the non-array version e.g. "%d" "int *" becomes "%da" "int **"
- *
- * @param env
- * @param arguments      arguments that the function processes as its source to retrieve the data.
- * @param value          value that the function processes as its source to retrieve the data
- * @param formatString   C  string that contains a format string as described above
+ * @param env            The JNI environment.  Used in all functions involving JNI
+ * @param arguments      Arguments that the function processes as its source to retrieve the data.
+ * @param formatString   C string that contains a format string as described above
  * @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
  * 						 containing pairs of names and pointers to allocated storage (except as indicated above),
  * 						 where the interpretation of the extracted data is stored with the appropriate type.
  *                       There should be at least as many pairs of these arguments as the number of values stored
  *                       by the format specifiers.
  *                       Additional arguments are ignored by the function
- * @return EXIT_SUCCESS if all required arguments were read and no errors occurred, otherwise EXIT_FAILURE
- * @throw MissingRequiredArgument if one of the required arguments are missing
+ * @return `EXIT_SUCCESS` if all required arguments were read and no errors occurred, otherwise `EXIT_FAILURE`
+ * @throw MissingRequiredArgumentException if one of the required arguments are missing
 */
 int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...)
 {
@@ -292,6 +309,156 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...)
 	return status;
 }
 
+/**
+ * ascanf(), avscanf()
+ *
+ * @paragraph Synopsis
+ * @code
+ *     int ascanf(Arguments *arguments, const char *format, ...);
+ *     int avscanf(Arguments *arguments, Value *value, const char *format, ...);
+ * @endcode
+ *
+ * @paragraph Details
+ * Reads data from the given @p arguments and stores them according
+ * to parameter format into the locations given by the additional arguments,
+ * as if scanf() was used, but reading from arguments instead of the standard input (stdin).
+ *
+ * The additional arguments should point to already allocated objects of
+ * the type specified by their corresponding format specifier.
+ * For strings and arrays only the pointer needs to be pre-allocated.
+ *
+ * The only space allocated by this function is for the strings or arrays.  So callers
+ * should only free strings and arrays.  Even if you provide a default value for a string
+ * the pointer will be allocated memory on exit from the function, so even then you need to free it.
+ *
+ * @note
+ * Only the provided pointer needs to be freed as only one allocation is made e.g.
+ * @code
+ *     Arguments arguments;
+ *     int *intArray;
+ *     ascanf(arguments "%da, "fooArray", &intArray);
+ *     // Do stuff
+ *     free(intArray);
+ * @endcode
+ *
+ * String space is allocated as follows:
+ * @code
+ * +------------------------+----------+----------+----------+---------+
+ * | pointers to strings    | string 1 | string 2 | string 3 | ...     |
+ * +------------------------+----------+----------+----------+---------+
+ * @endcode
+ *
+ * @paragraph dts Differences to scanf()
+ * ___
+ * There are a number of differences from scanf() which are best described by example:
+ *
+ * @paragraph gd General differences
+ * -# Scan into simple variable/
+ * @code
+ *     int n;
+ *     ascanf("%d", "NPOS", &n);
+ * @endcode
+ * You must always provide the name of the variable and the pointer to the place to put the value in pairs
+ * -# Optional arguments.
+ * Optional arguments are specified with the **o** character before the format character.
+ * @code
+ *     short flag = 10;  // 10 is the default value
+ *     ascanf("%ohd", "flag", &flag);
+ * @endcode
+ *
+ * By default all arguments referenced by format specifications are considered required
+ * unless the format specification character is preceded by **o**.
+ * For optional arguments the pointer provided must point to the default value.
+ * In the case of arrays and strings this will be copied into allocated storage that
+ * will need to be freed as normal.
+ *
+ * @paragraph an Argument names
+ * -# You can specify simple argument names to search for.  These will simply find the named argument and extract its value.
+ * @code
+ *     int simpleInt;
+ *     ascanf(&arguments "%d, "simple", &simpleInt);
+ * @endcode
+ * -# You can also use dot and square brace notation to refer to complex arguments that are either arrays or complex objects.
+ *  Values that are buried deep inside the json structures can be referenced in this way. e.g., given a
+ *  variable named `json` and presented as:
+ * @code
+ *     json='{"foo": {"bar": 0}}}'
+ * @endcode
+ * You can specify the @p name as `"json.foo.bar"` to retrieve the `0` value.
+ * -# Also given a variable named `jsonArray` and presented as
+ * @code
+ *     jsonArray='[{"foo": 10}, {"bar": 20}]'
+ * @endcode
+ * You can specify the #p name as `"jsonArray[1].bar"` to retrieve the `20` value.
+ * -# Finally if you use the @p name `"value"`, then the avscanf() function
+ * will use the supplied @p value parameter to get the data for that parameter
+ * @code
+ *     Arguments arguments;
+ *     Value value;
+ *     int *intArray;
+ *     avscanf(&arguments &value, "%da, "fooArray", &intArray);
+ *     // Do stuff
+ *     free(intArray);
+ * @endcode
+ *
+ * @paragraph fs Format Specifiers
+ * ___
+ * @paragraph sfs Type specifiers
+ * - **b** : `unsigned char *` - interpret the input as a boolean, then extract a single byte into the corresponding variable.
+ *   - The following translate to `true` - `1` :
+ *     - `“true”` - char string
+ *     - `“t”`  - char string
+ *     - `“yes”` - char string
+ *     - `“y”`  - char string
+ *     - `!0` - short, int, long, float, or double
+ *   - The following translate to `false` - `0`:
+ *     - `“false”` - char string
+ *     - `“f”`- char string
+ *     - `“no”`- char string
+ *     - `“n”`- char string
+ *     - `0` - short, int, long, float, or double
+ * - **c** : `char *` - extract a single character into the corresponding variable.
+ * - **d** : `int *` - extract an integer into the corresponding variable (see **l** & **h** below).
+ * - **f** : `float *` - extract a floating point number (see **l** below).
+ * - **s** : `char *` - extract a string of characters into allocated space and point the corresponding variable to it.
+ * - **u** : `unsigned int *` - extract an unsigned integer into the corresponding variable (see **l** & **h** below).
+ *
+ * @paragraph rf Required flag
+ * - **o** - optional precede the format with this to indicate that the argument is optional.
+ *
+ * @paragraph Prefixes
+ * - **h** - `short *` - preceding **d** will retrieve a short e.g. "%hd".
+ * - **l** - `long *`, double * - preceding **d** will retrieve a long eg. `"%ld"`; preceding **f** will retrieve a double eg. `"%lf"`.
+ *
+ * @paragraph Suffixes
+ * - **a** - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it.
+ *   The variable will have an extra level of indirection than the non-array version.
+ *   e.g.,
+ *   @code
+ *       int i;
+ *       ascanf(..., "%d", &i);
+ *   @endcode
+ *   becomes
+ *   @code
+ *       int *ia, n;
+ *       ascanf(..., "%da", &ia, &n);
+ *   @endcode
+ *   Also, you need to provide an extra parameter for each format containing an **a** suffix to hold the count of array
+ *   elements found.  The pointer will point to an `int`.
+ *
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI
+ * @param arguments      Arguments that the function processes as its source to retrieve the data.
+ * @param formatString   C string that contains a format string as described above
+ * @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
+ * 						 containing pairs of names and pointers to allocated storage (except as indicated above),
+ * 						 where the interpretation of the extracted data is stored with the appropriate type.
+ *                       There should be at least as many pairs of these arguments as the number of values stored
+ *                       by the format specifiers.
+ *                       Additional arguments are ignored by the function
+ * @return `EXIT_SUCCESS` if all required arguments were read and no errors occurred, otherwise `EXIT_FAILURE`
+ * @throw MissingRequiredArgumentException if one of the required arguments are missing
+*/
 int avscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, ...)
 {
 	va_list argp;
@@ -359,7 +526,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 		// Invalid format - if no format was specified
 		if (!format) {
-			SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "incorrect format string: %%%s", formatSpecifier,
+			SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "incorrect format string: %%%s", formatSpecifier,
 					EXIT_FAILURE)
 		}
 
@@ -367,7 +534,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		// This is the name of the argument that we will get the value from
 		char* argumentName = va_arg (argp, char *);
 		if (!argumentName) {
-			SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "missing variable to correspond to format: %%%s",
+			SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "missing variable to correspond to format: %%%s",
 					formatSpecifier, EXIT_FAILURE)
 		}
 
@@ -388,7 +555,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 
 		// Convert format, isArray, isLong, and isShort into an AIDA_TYPE
 		Type aidaType = getAidaType(env, format, isArray, isLong, isShort);
-		CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE)
+		ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE)
 
 		// If this is for a FLOAT or DOUBLE then try to get ieee version if available
 		float floatTarget;
@@ -425,7 +592,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					floatArrayTarget = calloc(*elementCount, sizeof(float));
 					if (!floatArrayTarget) {
 						free(doubleArrayTarget);
-						PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION,
+						PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION,
 								"Could not allocate memory for float argument",
 								EXIT_FAILURE)
 					}
@@ -448,7 +615,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					doubleArrayTarget = calloc(*elementCount, sizeof(double));
 					if (!doubleArrayTarget) {
 						free(floatArrayTarget);
-						PRINT_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION,
+						PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION,
 								"Could not allocate memory for double argument",
 								EXIT_FAILURE)
 					}
@@ -501,7 +668,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					// Just take the string and wrap it as an array
 					elementValue = asArrayValue(value->value.stringValue);
 					if (elementValue.type != AIDA_JSON_TYPE) {
-						SPRINTF_ERROR_AND_FREE_MEMORY(AIDA_INTERNAL_EXCEPTION, "Unable to make array of: %s",
+						SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "Unable to make array of: %s",
 								value->value.stringValue, EXIT_FAILURE)
 					}
 					value = &elementValue;
@@ -513,7 +680,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					elementValue = getValue(env, *arguments);
 				}
-				CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
+				ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
 				value = &elementValue;
 				if (elementValue.type == AIDA_JSON_TYPE) {
 					TRACK_JSON(elementValue.value.jsonValue)
@@ -524,7 +691,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Check if the value has been properly set
 			if (value->type == AIDA_NO_TYPE) {
 				if (isRequired) {
-					SPRINTF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing required argument: %s",
+					SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing required argument: %s",
 							argumentName, EXIT_FAILURE)
 				} else {
 					// If this is a string and a default has been set but the optional string has not been provided
@@ -533,8 +700,8 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					char* defaultString = *(char**)target;
 					if (aidaType == AIDA_STRING_TYPE && defaultString) {
 						char* allocatedString;
-						ALLOCATE_AND_TRACK_STRING(env, allocatedString, defaultString, "default arguments",
-								EXIT_FAILURE)
+						ALLOCATE_COPY_AND_TRACK_STRING_AND_ON_ERROR_RETURN_(
+								env, allocatedString, defaultString, "default arguments", EXIT_FAILURE)
 						*(char**)target = allocatedString;
 					}
 					continue;
@@ -556,10 +723,10 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					elementValue = getNamedValue(env, *arguments, jsonArgumentName);
 				}
-				CHECK_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
+				ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(EXIT_FAILURE);
 				if (elementValue.type != AIDA_JSON_TYPE) {
 					if (isRequired) {
-						SPRINTF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+						SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
 								"Missing required argument: %s", argumentName, EXIT_FAILURE)
 					} else {
 						continue;
@@ -573,7 +740,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				Argument elementArgument = getArgument(*arguments, argumentName);
 				if (!elementArgument.name) {
 					if (isRequired) {
-						SPRINTF_ERROR_AND_FREE_MEMORY(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
+						SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(MISSING_REQUIRED_ARGUMENT_EXCEPTION,
 								"Missing required argument: %s", argumentName, EXIT_FAILURE)
 					} else {
 						continue;
@@ -665,12 +832,547 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 }
 
 /**
+ * Make a Table for return to client.  This is the first call that needs to be made to return a Table.
+ * This will create a Table with the specified the number of rows and columns.
+ * You need to call tableAddColumn(), tableAddStringColumn(), or any of the
+ * other special `tableAdd` functions to add
+ * columns to the Table before returning it.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param rows           the number of rows to create the Table with.
+ * @param columns        the number of columns to create the Table with,
+ * @return the newly created Table
+ *
+ * @see
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ *
+ * @paragraph Example
+ *
+ * Create a two column, two row Table, add data, and return.
+ * @code
+ * int rows = 2, columns = 2;
+ * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
+ *
+ * Table table = tableCreate(env, rows, columns);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * return table;
+ * @endcode
+ * @note
+ * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * sure that no exception was raised.
+ */
+Table tableCreate(JNIEnv* env, int rows, int columns)
+{
+	Table table;
+	memset(&table, 0, sizeof(table));
+	table._currentColumn = 0;  // Reset current column so that any addColumn() calls are correct
+	table.columnCount = 0;
+
+	if (rows <= 0) {
+		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Attempt to allocate a zero length table");
+		return table;
+	}
+
+	// Allocate space for the table columns and column types
+	ALLOCATE_MEMORY_AND_ON_ERROR_RETURN(env, table.ppData, columns * sizeof(void*), "table columns", table)
+	ALLOCATE_MEMORY_AND_ON_ERROR_RETURN(env, table.types, columns * sizeof(Type*), "table column types", table)
+	table.rowCount = rows;
+	table.columnCount = columns;
+	return table;
+}
+
+/**
+ * Add a column of arbitrary type to a Table.  Add the given data to the
+ * column assuming that the data has a number of rows that corresponds to the
+ * Table's rowCount.  Memory will be allocated for the data of the column so
+ * the @p data buffer presented can be freed up after calling this function.
+ *
+ * @note
+ * Don't call this to add strings to the Table.  Use tableAddStringColumn() for that.
+ *
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the column to.
+ * @param type           the type of this Table column.
+ * @param data           the data to add to this column, a buffer of `sizeof(type) * table->rowCount` size.
+ * @param ieeeFormat     true if the data provided is already in ieee format.  If the data is not in ieee format,
+ *        usually because it has been retrieved from some backend system, this function will convert it to ieee format
+ *        unless this parameter is set to true.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ *
+ * @paragraph Example
+ *
+ * Create a two column, two row Table, add data, and return.
+ * @code
+ * int rows = 2, columns = 2;
+ * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
+ *
+ * Table table = tableCreate(env, rows, columns);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * return table;
+ * @endcode
+ * @note
+ * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * sure that no exception was raised.
+ */
+void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat)
+{
+	// Table full?
+	if (table->_currentColumn == table->columnCount) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Internal Error: more columns added than table size");
+		return;
+	}
+
+	// No Data supplied ?
+	if (!data) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Internal Error: Attempt to add column with no data");
+		return;
+	}
+
+	// Correct type for tables
+	type = tableArrayTypeOf(type);
+
+	// Set column type, and allocate space
+	allocateTableColumn(env, table, type, tableElementSizeOfOf(type));
+	ON_EXCEPTION_RETURN_VOID
+
+	// Rest of processing for strings is done in addStringColumn
+	if (type == AIDA_STRING_ARRAY_TYPE) {
+		return;
+	}
+
+	if (!ieeeFormat) {
+		// Convert float values if float array
+		if (type == AIDA_FLOAT_ARRAY_TYPE) {
+			CONVERT_FROM_VMS_FLOAT(((float*)data), (int2u)table->rowCount)
+		}
+
+		// Convert double values if double array
+		if (type == AIDA_DOUBLE_ARRAY_TYPE) {
+			CONVERT_FROM_VMS_DOUBLE((double*)data, (int2u)table->rowCount)
+		}
+	}
+
+	// Add data to column
+	for (int row = 0; row < table->rowCount; row++) {
+		// add data and increment pointer based on type
+		switch (type) {
+		case AIDA_BOOLEAN_ARRAY_TYPE:
+		case AIDA_BYTE_ARRAY_TYPE:
+			((unsigned char*)(table->ppData[table->_currentColumn]))[row] = ((unsigned char*)data)[row];
+			break;
+		case AIDA_SHORT_ARRAY_TYPE:
+			((short*)(table->ppData[table->_currentColumn]))[row] = ((short*)data)[row];
+			break;
+		case AIDA_INTEGER_ARRAY_TYPE:
+			((int*)(table->ppData[table->_currentColumn]))[row] = ((int*)data)[row];
+			break;
+		case AIDA_LONG_ARRAY_TYPE:
+			((long*)(table->ppData[table->_currentColumn]))[row] = ((long*)data)[row];
+			break;
+		case AIDA_FLOAT_ARRAY_TYPE:
+			((float*)(table->ppData[table->_currentColumn]))[row] = ((float*)data)[row];
+			break;
+		case AIDA_DOUBLE_ARRAY_TYPE:
+			((double*)(table->ppData[table->_currentColumn]))[row] = ((double*)data)[row];
+			break;
+		default:
+			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+					"Internal Error: Call to tableAddColumn() un-supported type");
+			return;
+		}
+	}
+
+	table->_currentColumn++;
+}
+
+/**
+ * Add a String column to the given Table.
+ * This reads data from a buffer that is itself a list of pointers to strings.
+ * We allocate just enough space to store the strings in our Table.  This is allocated
+ * in one buffer so there is only one pointer to release.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the string column to.
+ * @param data           the data to add to this column, a buffer of `sizeof(char *) * table->rowCount` size.
+ *     This will contain the strings to be added to the Table.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ *
+ * @paragraph Example
+ *
+ * Create a single column, one row Table, add data, and return.
+ * @code
+ * int rows = 1, columns = 1;
+ * char* namesData[rows];
+ * namesData[0] = "NAME";
+ *
+ * Table table = tableCreate(env, rows, columns);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * tableAddStringColumn(env, &table, namesData);
+ * ON_EXCEPTION_AND_RETURN_(table)
+ * return table;
+ * @endcode
+ * @note
+ * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * sure that no exception was raised.
+ */
+void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
+{
+	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
+	ON_EXCEPTION_RETURN_VOID
+
+	// allocate data for each string too
+	char** stringArray = table->ppData[table->_currentColumn];
+	for (int row = 0; row < table->rowCount; row++, data++) {
+		ALLOCATE_STRING_AND_ON_ERROR_RETURN_VOID(env, stringArray[row], *data, "table strings")
+	}
+
+	table->_currentColumn++;
+}
+
+/**
+ * This reads data from an allocated space that is rows * width with each string occupying width characters
+ * Though the strings are null terminated if there is space, there is no guarantee so an exact number of
+ * bytes is copied.  Each string in the Table is allocated maximally.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          The Table to add the column to.
+ * @param data           The data to add to this column, a pointer to `char` buffer containing
+ *                       the fixed length strings.  The strings are arranged in
+ *                       contiguous blocks @p width long.
+ * @param width 		 the width of the strings
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, char* data, int width)
+{
+	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
+	ON_EXCEPTION_RETURN_VOID
+
+	// allocate data for each string too
+	char** stringArray = table->ppData[table->_currentColumn];
+	char* dataPointer = (char*)data;
+	for (int row = 0; row < table->rowCount; row++, dataPointer += width) {
+		ALLOCATE_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_VOID(env, stringArray[row], dataPointer, width + 1, "table strings")
+		stringArray[row][width] = 0x0;
+	}
+
+	table->_currentColumn++;
+}
+
+/**
+ * Add a boolean column to a Table with only one row.  This function will allocate
+ * the required memory for the single `unsigned char` that is required.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          The Table to add the column to.
+ * @param data           The data to add to this column, a pointer to an `unsigned char`.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data)
+{
+	tableAddColumn(env, table, AIDA_BOOLEAN_TYPE, &data, false);
+}
+
+/**
+ * Add a byte column to a Table with only one row
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          The Table to add the column to.
+ * @param data           The data to add to this column, an `unsigned char`.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data)
+{
+	tableAddColumn(env, table, AIDA_BYTE_TYPE, &data, false);
+}
+
+/**
+ * Add a short column to a Table with only one row.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          The Table to add the column to.
+ * @param data           The data to add to this column, a `short`.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data)
+{
+	tableAddColumn(env, table, AIDA_SHORT_TYPE, &data, false);
+}
+
+/**
+ * Add a integer column to a Table with only one row.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the column to.
+ * @param data           the data to add to this column, an `int`
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data)
+{
+	tableAddColumn(env, table, AIDA_INTEGER_TYPE, &data, false);
+}
+
+/**
+ * Add a long column to a Table with only one row
+ *
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the column to.
+ * @param data           the data to add to this column.  A `long` value
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data)
+{
+	tableAddColumn(env, table, AIDA_LONG_TYPE, &data, false);
+}
+
+/**
+ * Add a float column to a Table with only one row
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          The Table to add the column to.
+ * @param data           The data to add to this column, a `float`.
+ * @param ieeeFloat	     True if the data is in ieee format, otherwise the given floating point
+ * 						 number is converted from VMS to ieee format.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat)
+{
+	tableAddColumn(env, table, AIDA_FLOAT_TYPE, &data, ieeeFloat);
+}
+
+/**
+ * Add a double column to a Table with only one row.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          The Table to add the column to.
+ * @param data           The data to add to this column, a `double`.
+ * @param ieeeDouble	 True if the data is in ieee format, otherwise the double precision floating point
+ * 						 number is converted from VMS to ieee format.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowStringColumn(),
+ */
+void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble)
+{
+	tableAddColumn(env, table, AIDA_DOUBLE_TYPE, &data, ieeeDouble);
+}
+
+/**
+ * Add a string column to a Table with only one row.  This is a shortcut
+ * Table function that simplifies adding a string to a Table with only one row.
+ *
+ * @note
+ * The framework will release all memory associated with
+ * a Table when you return from your API implementation.
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the column to.
+ * @param data           the data to add to this column.  A single string.
+ *
+ * @see
+ * tableCreate(),
+ * tableAddColumn(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ */
+void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data)
+{
+	tableAddStringColumn(env, table, &data);
+}
+
+/**
  * See if there is a ieee float value stored in arguments.  If so set target
  *
- * @param arguments
- * @param path path to look for in arguments
- * @param target the place to store the float
- * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ * @param arguments the arguments to scan for the float.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"json.foo.bar"`
+ * @param target the place to store the float if found.
+ * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
 static int getFloatArgument(Arguments* arguments, char* path, float* target)
 {
@@ -683,12 +1385,14 @@ static int getFloatArgument(Arguments* arguments, char* path, float* target)
 }
 
 /**
- * See if there is a ieee double value stored in arguments.  If so set target
+ * See if there is a ieee double value stored in arguments.  If so set target.
  *
- * @param arguments
- * @param path path to look for in arguments
- * @param target the place to store the double
- * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ * @param arguments the arguments to scan for the double.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"json.foo.bar"`
+ * @param target the place to store the double.
+ * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
 static int getDoubleArgument(Arguments* arguments, char* path, double* target)
 {
@@ -702,12 +1406,14 @@ static int getDoubleArgument(Arguments* arguments, char* path, double* target)
 
 /**
  * See if there is an ieee float array stored in arguments.  If so allocate space and
- * and set target
+ * and set target.
  *
- * @param arguments
- * @param path path to look for in arguments
- * @param target the place to store the float array
- * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ * @param arguments the arguments to scan for the float array.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"jsonArray[1].bar"`
+ * @param target the place to store the float array.
+ * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
 static int getFloatArrayArgument(Arguments* arguments, char* path, float** target, unsigned int* elementCount)
 {
@@ -718,14 +1424,17 @@ static int getFloatArrayArgument(Arguments* arguments, char* path, float** targe
 	}
 	return EXIT_FAILURE;
 }
+
 /**
  * See if there is an ieee double array stored in arguments.  If so allocate space and
- * and set target
+ * and set target.
  *
- * @param arguments
- * @param path path to look for in arguments
- * @param target the place to store the double array
- * @return EXIT_SUCCESS if found EXIT_FAILURE if not
+ * @param arguments the arguments to scan for the double array.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"jsonArray[1].bar"`
+ * @param target the place to store the double array.
+ * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
 static int getDoubleArrayArgument(Arguments* arguments, char* path, double** target, unsigned int* elementCount)
 {
@@ -739,10 +1448,13 @@ static int getDoubleArrayArgument(Arguments* arguments, char* path, double** tar
 
 /**
  * Get a floating point value by path.  This will look up the value in the arguments
- * by searching for one with the given path
- * @param arguments
- * @param path
- * @return NULL of not found
+ * by searching for one with the given path.
+ *
+ * @param arguments the arguments to scan for the floating point value.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"jsonArray[1].bar"`
+ * @return NULL of not found.
  */
 static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* path)
 {
@@ -755,12 +1467,14 @@ static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* pat
 }
 
 /**
- * Get an array of floats by searching for an array rooted at path
- * Space for the array will be allocated if any are found (must be freed by caller)
+ * Get an array of floats by searching for an array rooted at path.
+ * Space for the array will be allocated if any are found (must be freed by caller).
  *
- * @param arguments
- * @param path
- * @return
+ * @param arguments the arguments to scan for the floating point array.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"jsonArray[1].bar"`
+ * @return NULL of not found.
  */
 static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount)
 {
@@ -771,9 +1485,11 @@ static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elem
  * Get an array of doubles by searching for an array rooted at path
  * Space for the array will be allocated if any are found (must be freed by caller)
  *
- * @param arguments
- * @param path
- * @return
+ * @param arguments the arguments to scan for the double precision floating point array.
+ * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
+ *             But it can also use dot notation to reference the value deep inside json.
+ *             e.g. `"jsonArray[1].bar"`
+ * @return NULL of not found.
  */
 static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount)
 {
@@ -925,11 +1641,11 @@ static void getJsonPathElements(char* fullJsonPath, char* variableName, char** p
 /**
  * Depending on the combination of options specified in a format string determine the target aida type
  *
- * @param env jni env for throwing errors
- * @param format the format character of the format string
- * @param isArray true if the array indicator is set
- * @param isLong true if the long indicator is set
- * @param isShort true if the short indicator is set
+ * @param env            The JNI environment.  Used in all functions involving JNI
+ * @param format 		 the format character of the format string
+ * @param isArray 		 true if the array indicator is set
+ * @param isLong 		 true if the long indicator is set
+ * @param isShort 		 true if the short indicator is set
  * @return the target aida type
  */
 static Type getAidaType(JNIEnv* env, char format, short isArray, short isLong, short isShort)
@@ -1019,289 +1735,6 @@ static Type getAidaType(JNIEnv* env, char format, short isArray, short isLong, s
 }
 
 /**
- * Make a table for return.  Specify the number of rows and columns, then call tableAddColumn() and tableAddStringColumn() to add
- * columns before returning the table
- *
- * @param env jni env for throwing errors
- * @param rows the number of rows
- * @param columns the number of columns
- * @return the newly created table
- */
-Table tableCreate(JNIEnv* env, int rows, int columns)
-{
-	Table table;
-	memset(&table, 0, sizeof(table));
-	table._currentColumn = 0;  // Reset current column so that any addColumn() calls are correct
-	table.columnCount = 0;
-
-	if (rows <= 0) {
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, "Attempt to allocate a zero length table");
-		return table;
-	}
-
-	// Allocate space for the table columns and column types
-	ALLOCATE_MEMORY_OR_RETURN(env, table.ppData, columns * sizeof(void*), "table columns", table)
-	ALLOCATE_MEMORY_OR_RETURN(env, table.types, columns * sizeof(Type*), "table column types", table)
-	table.rowCount = rows;
-	table.columnCount = columns;
-	return table;
-}
-
-/**
- * This reads data from a buffer that is itself a list of pointers to strings
- * We allocate just enough space to store the strings in our table
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
-{
-	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
-	CHECK_EXCEPTION_AND_RETURN_VOID
-
-	// allocate data for each string too
-	char** stringArray = table->ppData[table->_currentColumn];
-	for (int row = 0; row < table->rowCount; row++, data++) {
-		ALLOCATE_STRING_OR_RETURN_VOID(env, stringArray[row], *data, "table strings")
-	}
-
-	table->_currentColumn++;
-}
-
-/**
- * This reads data from an allocated space that is rows * width with each string occupying width characters
- * Though the strings are null terminated if there is space, there is no guarantee so an exact number of
- * bytes is copied.  Each string in the table is allocated maximally.
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column, a buffer of width * table->rowCount size
- * @param width the width of the strings
- */
-void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width)
-{
-	tableAddColumn(env, table, AIDA_STRING_ARRAY_TYPE, data, false);
-	CHECK_EXCEPTION_AND_RETURN_VOID
-
-	// allocate data for each string too
-	char** stringArray = table->ppData[table->_currentColumn];
-	char* dataPointer = (char*)data;
-	for (int row = 0; row < table->rowCount; row++, dataPointer += width) {
-		ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(env, stringArray[row], dataPointer, width + 1, "table strings")
-		stringArray[row][width] = 0x0;
-	}
-
-	table->_currentColumn++;
-}
-
-/**
- * Add a column of arbitrary type to a table.  Add the given data to the
- * column assuming that the data has the correct number of rows for the
- * table define by table->rowCount.  Don't call this for string types!
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param type the type of this table column
- * @param data the data to add to this column, a buffer of sizeof(type) * table->rowCount size
- * @param ieeeFormat true if the data provided is already in ieee format
- */
-void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat)
-{
-	// Table full?
-	if (table->_currentColumn == table->columnCount) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Internal Error: more columns added than table size");
-		return;
-	}
-
-	// No Data supplied ?
-	if (!data) {
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-				"Internal Error: Attempt to add column with no data");
-		return;
-	}
-
-	// Correct type for tables
-	type = tableArrayTypeOf(type);
-
-	// Set column type, and allocate space
-	allocateTableColumn(env, table, type, tableElementSizeOfOf(type));
-	CHECK_EXCEPTION_AND_RETURN_VOID
-
-	// Rest of processing for strings is done in addStringColumn
-	if (type == AIDA_STRING_ARRAY_TYPE) {
-		return;
-	}
-
-	if (!ieeeFormat) {
-		// Convert float values if float array
-		if (type == AIDA_FLOAT_ARRAY_TYPE) {
-			CONVERT_FROM_VMS_FLOAT(((float*)data), (int2u)table->rowCount)
-		}
-
-		// Convert double values if double array
-		if (type == AIDA_DOUBLE_ARRAY_TYPE) {
-			CONVERT_FROM_VMS_DOUBLE((double*)data, (int2u)table->rowCount)
-		}
-	}
-
-	// Add data to column
-	for (int row = 0; row < table->rowCount; row++) {
-		// add data and increment pointer based on type
-		switch (type) {
-		case AIDA_BOOLEAN_ARRAY_TYPE:
-		case AIDA_BYTE_ARRAY_TYPE:
-			((unsigned char*)(table->ppData[table->_currentColumn]))[row] = ((unsigned char*)data)[row];
-			break;
-		case AIDA_SHORT_ARRAY_TYPE:
-			((short*)(table->ppData[table->_currentColumn]))[row] = ((short*)data)[row];
-			break;
-		case AIDA_INTEGER_ARRAY_TYPE:
-			((int*)(table->ppData[table->_currentColumn]))[row] = ((int*)data)[row];
-			break;
-		case AIDA_LONG_ARRAY_TYPE:
-			((long*)(table->ppData[table->_currentColumn]))[row] = ((long*)data)[row];
-			break;
-		case AIDA_FLOAT_ARRAY_TYPE:
-			((float*)(table->ppData[table->_currentColumn]))[row] = ((float*)data)[row];
-			break;
-		case AIDA_DOUBLE_ARRAY_TYPE:
-			((double*)(table->ppData[table->_currentColumn]))[row] = ((double*)data)[row];
-			break;
-		default:
-			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-					"Internal Error: Call to tableAddColumn() un-supported type");
-			return;
-		}
-	}
-
-	table->_currentColumn++;
-}
-
-/**
- * Add a float column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat)
-{
-	tableAddColumn(env, table, AIDA_FLOAT_TYPE, &data, ieeeFloat);
-}
-
-/**
- * Add a long column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data)
-{
-	tableAddColumn(env, table, AIDA_LONG_TYPE, &data, false);
-}
-
-/**
- * Add a boolean column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data)
-{
-	tableAddColumn(env, table, AIDA_BOOLEAN_TYPE, &data, false);
-}
-
-/**
- * Add a byte column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data)
-{
-	tableAddColumn(env, table, AIDA_BYTE_TYPE, &data, false);
-}
-
-/**
- * Add a short column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data)
-{
-	tableAddColumn(env, table, AIDA_SHORT_TYPE, &data, false);
-}
-
-/**
- * Add a integer column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data)
-{
-	tableAddColumn(env, table, AIDA_INTEGER_TYPE, &data, false);
-}
-
-/**
- * Add a double column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble)
-{
-	tableAddColumn(env, table, AIDA_DOUBLE_TYPE, &data, ieeeDouble);
-}
-
-/**
- * Add a string column to a table with only one row
- *
- * @param env jni env for throwing errors
- * @param table the table to add the column to
- * @param data the data to add to this column
- */
-void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data)
-{
-	tableAddStringColumn(env, table, &data);
-}
-
-/**
- * Get a float from a given value
- *
- * @param value the value to extract the float from
- * @return the float
- */
-float valueGetFloat(Value value)
-{
-	float floatValue;
-	sscanf(value.value.stringValue, "%f", &floatValue);
-	return floatValue;
-}
-
-/**
- * Get a short from a given value
- *
- * @param value the value to extract the short from
- * @return the short
- */
-short valueGetShort(Value value)
-{
-	short shortValue;
-	sscanf(value.value.stringValue, "%hi", &shortValue);
-	return shortValue;
-}
-
-/**
  * Make a single entry json_value array from a string.  Use getJsonRoot() to get a
  * pointer to the array element directly.
  *
@@ -1326,7 +1759,7 @@ Value asArrayValue(char* stringValue)
 }
 
 /**
- * Return the corresponding array type of the given type
+ * Return the corresponding array type of the given type.
  *
  * @param type the given type
  * @return the corresponding array type
@@ -1413,9 +1846,9 @@ static size_t tableElementSizeOfOf(Type type)
 }
 
 /**
- * Add a column to a table specifying the type and element size
+ * Add a column to a Table specifying the type and element size
  *
- * @param table the table to add the column to
+ * @param table the Table to add the column to
  * @param aidaType the type of the column to add
  * @param elementSize the size of each element
  */

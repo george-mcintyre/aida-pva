@@ -1,3 +1,13 @@
+/** @file
+ *  @brief This file contain functions and MACROS that should be
+ *  used directly Native Channel Providers.
+ *  These functions provide all of the features that allow the Channel Provider to implement its service.
+ *
+ *  - MACROS to allocate, track and release memory
+ *  - Throwing exceptions and determining if one has been thrown
+ *  - Argument processing, except ascanf() and avscanf()
+ *  - MACROS and functions to construct and decode URIs into their constituent parts
+ */
 #include <string.h>
 #include <stsdef.h>               /* $VMS.. status manipulation */
 #include <ssdef.h>                /* SS$_NORMAL and other VMS general codes */
@@ -18,14 +28,14 @@ static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, boo
 static bool isOnlyNumbers(char* string);
 
 /**
- * To log any non-OS exceptions and throw back to java
+ * To log any non-OS exceptions and throw back to java.
  *
- * The exception is formatted in a standard way with the optionally supplied message
- * The exception is always assumed to be from the edu.stanford.slac.except package
+ * The #exception is formatted in a standard way with the optionally supplied #message.
+ * The #exception is always assumed to be from the {@link edu.stanford.slac.except} package
  *
- * @param env
- * @param exception
- * @param message
+ * @param env the JNI environment.  Used in all functions involving JNI
+ * @param exception the string representation of the exception class to throw.
+ * @param message the optional message to attach to the exception.  If NULL it is ignored.
  */
 void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
 {
@@ -33,16 +43,16 @@ void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
 }
 
 /**
- * To log any exceptions and throw back to java
+ * To log any exceptions and throw back to java.
  *
- * The exception is formatted in a standard way using the VMS status code and its associated message
- * and the optionally supplied message
- * The exception is always assumed to be from the edu.stanford.slac.except package
+ * The #exception is formatted in a standard way using the VMS status code and its associated message
+ * and the optionally supplied #message.
+ * The #exception is always assumed to be from the {@link edu.stanford.slac.except} package
  *
- * @param env
- * @param status
- * @param exception
- * @param message
+ * @param env the JNI environment.  Used in all functions involving JNI
+ * @param status the VMS status code to luck up and display text for.
+ * @param exception the string representation of the exception class to throw.
+ * @param message the optional message to attach to the exception.  If NULL it is ignored.
  */
 void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* message)
 {
@@ -94,10 +104,11 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
 }
 
 /**
- * Check if a string ends with another string
- * @param str
- * @param suffix
- * @return true if string ends with suffix
+ * Check if a string @p str, ends with another string @p suffix.
+ *
+ * @param str the string to check.
+ * @param suffix the @p suffix to look for at the end of @p str
+ * @return `true` if @p str ends with @p suffix.  `false`
  */
 int endsWith(const char* str, char* suffix)
 {
@@ -584,7 +595,7 @@ void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
  * Allocate memory and copy the source to it if specified.  If the null terminate flag is set
  * null terminate the allocate space, at the last position
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param source source of data to copy to newly allocated space, NULL to not copy
  * @param size the amount of space to allocate
  * @param nullTerminate true to null terminate

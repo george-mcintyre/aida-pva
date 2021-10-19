@@ -23,14 +23,14 @@ static void getTrimArgument(JNIEnv* env, Arguments arguments, char** trim);
 static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, short* klys_status);
 static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);
 
-Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
-Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+static Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
+static Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
 		char* pmu, char* secn);
-Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+static Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
 		char* pmu, char* secn);
-Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+static Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
 		char* trim, char* pmu, char* secn);
-void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn);
+static void setPconOrAconValue(JNIEnv* env, Arguments arguments, Value value, char* pmu, char* secn);
 
 // API Stubs
 REQUEST_STUB_BOOLEAN
@@ -49,7 +49,7 @@ REQUEST_STUB_STRING_ARRAY
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -68,7 +68,7 @@ void aidaServiceInit(JNIEnv* env)
  * Get a short
  *
  * @param uri the uri
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param arguments the arguments
  * @return the short
  */
@@ -84,7 +84,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a long
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long
@@ -101,7 +101,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a string.  Allocate memory for string and it will be freed for you by framework
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string
@@ -136,19 +136,19 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	bool isPphas = (short)(klystronStatus & LINKLYSTA_PPHAS) ? true : false;
 
 	Table table = tableCreate(env, 1, 7);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isInAccelerateState);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isInStandByState);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isInBadState);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isSledTuned);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isSleded);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isPampl);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowBooleanColumn(env, &table, isPphas);
 
 	return table;
@@ -157,7 +157,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Set a value
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -174,9 +174,9 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	PMU_STRING_FROM_URI(pmu_str, uri)
 
 	if (endsWith(uri, "PCON")) {
-		setPconOrAconValue(env, value, pmu_str, "PCON");
+		setPconOrAconValue(env, arguments, value, pmu_str, "PCON");
 	} else if (endsWith(uri, "ACON")) {
-		setPconOrAconValue(env, value, pmu_str, "ACON");
+		setPconOrAconValue(env, arguments, value, pmu_str, "ACON");
 	} else {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
 		return;
@@ -186,7 +186,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 /**
  * Set a value and return a table as a response
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -214,14 +214,17 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	}
 }
 
-void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn)
+static void setPconOrAconValue(JNIEnv* env, Arguments arguments, Value value, char* pmu, char* secn)
 {
 	if (value.type != AIDA_STRING_TYPE) {
 		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing value to PCON or ACON value");
 		return;
 	}
 
-	float floatValue = valueGetFloat(value);
+	float floatValue;
+	if (avscanf(env, &arguments, &value, "%f", &floatValue)) {
+		return;
+	}
 
 	// Set the value
 	vmsstat_t status;
@@ -233,12 +236,12 @@ void setPconOrAconValue(JNIEnv* env, Value value, char* pmu, char* secn)
 	}
 }
 
-Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
+static Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
 {
 	return setPdesOrKphrValue(env, uri, arguments, value, NULL, pmu, secn);
 }
 
-Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
+static Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
 {
 	char* trim = NULL;
 
@@ -246,7 +249,7 @@ Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 	return setPdesOrKphrValue(env, uri, arguments, value, trim ? trim : "NO", pmu, secn);
 }
 
-Table
+static Table
 setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* trim, char* pmu, char* secn)
 {
 	if (value.type != AIDA_STRING_TYPE) {
@@ -268,13 +271,13 @@ setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 	}
 
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowFloatColumn(env, &table, phas_value, false);
 
 	return table;
 }
 
-Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
+static Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
 	// Keep track of stuff to free
 	TRACK_ALLOCATED_MEMORY
@@ -347,7 +350,7 @@ Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value 
 
 	// Create table for return value
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowShortColumn(env, &table, klys_status);
 
 	return table;

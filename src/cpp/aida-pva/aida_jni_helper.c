@@ -1,3 +1,10 @@
+/** @file
+ *  @brief JNI Helper provides all the boilerplate JNI processing required.  It implements all the JNI
+ *  parameter marshalling and return value creation.  None of these functions should be called
+ *  by the Native Channel Provider because they are further abstracted away by the
+ *  aida_server_helper.
+ *
+ */
 #include <jni.h>
 #include <memory.h>
 #include <stdlib.h>
@@ -62,10 +69,10 @@ JavaObject newObject(JNIEnv* env, char* clazz)
 }
 
 /**
- * Convert given `jstring` to a C string.
+ * Convert given {@link jstring} to a C string.
  *
  * @param env environment.
- * @param string `jstring`.
+ * @param string {@link jstring} to convert to a C string.
  * @return C string.
  */
 char* toCString(JNIEnv* env, jstring string)
@@ -74,11 +81,11 @@ char* toCString(JNIEnv* env, jstring string)
 }
 
 /**
- * Convert C string to `jstring`.
+ * Convert C string to {@link jstring}.
  *
  * @param env environment.
  * @param string C string.
- * @return `jstring`.
+ * @return {@link jstring}.
  */
 jstring toJString(JNIEnv* env, const char* string)
 {
@@ -117,12 +124,12 @@ jmethodID getConstructorMethodId(JNIEnv* env, jclass clazz)
 }
 
 /**
- * Get an `Arguments` structure,
+ * Get an {@link Arguments} structure,
  * from the given java List<AidaArgument>
  *
  * @param env environment.
- * @param jArgs java arguments list - List<AidaArgument>
- * @return `Arguments` structure
+ * @param jArgs java arguments list - List<{@link edu.stanford.slac.aida.lib.model.AidaArgument}>
+ * @return {@link Arguments} structure
  */
 Arguments toArguments(JNIEnv* env, jobject jArguments)
 {
@@ -208,10 +215,10 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 }
 
 /**
- * Get java classes that will be used to process the java `AidaArgument` class in C
+ * Get java classes that will be used to process the java {@link edu.stanford.slac.aida.lib.model.AidaArgument} class in C
  *
   @param env environment.
- * @param argumentClasses the structure to store the list of classes needed to process the java `AidaArgument` class in C
+ * @param argumentClasses the structure to store the list of classes needed to process the java {@link edu.stanford.slac.aida.lib.model.AidaArgument} class in C
  */
 static int getArgumentClasses(JNIEnv* env, ArgumentClasses* argumentClasses)
 {
@@ -253,10 +260,10 @@ static int getArgumentClasses(JNIEnv* env, ArgumentClasses* argumentClasses)
 }
 
 /**
- * Get the method IDs of the java methods that will be used to process the java `AidaArgument` class in C
+ * Get the method IDs of the java methods that will be used to process the java {@link edu.stanford.slac.aida.lib.model.AidaArgument} class in C
  *
  * @param env environment.
- * @param argumentMethods the structure to store the methods needed to process the java `AidaArgument` class in C
+ * @param argumentMethods the structure to store the methods needed to process the java {@link edu.stanford.slac.aida.lib.model.AidaArgument} class in C
  */
 static void getArgumentClassMethods(JNIEnv* env, ArgumentMethods* argumentMethods)
 {
@@ -296,10 +303,10 @@ static void getArgumentClassMethods(JNIEnv* env, ArgumentMethods* argumentMethod
 }
 
 /**
- * Check that all the java methods that will be used to process the java `AidaArgument` class in C  were obtained successfully
+ * Check that all the java methods that will be used to process the java {@link edu.stanford.slac.aida.lib.model.AidaArgument} class in C  were obtained successfully
  *
  * @param env environment.
- * @param argumentMethods the list of methods needed to process the java `AidaArgument` class in C
+ * @param argumentMethods the list of methods needed to process the java {@link edu.stanford.slac.aida.lib.model.AidaArgument} class in C
  * @return EXIT_SUCCESS if they were and EXIT_FAILURE if not
  */
 static int checkMethods(JNIEnv* env, ArgumentMethods* argumentMethods)
@@ -370,7 +377,7 @@ static int checkMethods(JNIEnv* env, ArgumentMethods* argumentMethods)
 }
 
 /**
- * Allocate space for the given C `Arguments` structure including space for floating point numbers
+ * Allocate space for the given C {@link Arguments} structure including space for floating point numbers
  *
  * @param env the environment
  * @param cArgs the C arguments structure
@@ -403,8 +410,8 @@ static int allocateSpaceForArguments(JNIEnv* env, Arguments* cArgs, int totalFlo
 }
 
 /**
- * Get value from the `value` argument,
- * in the provided `arguments` structure,
+ * Get value from the `VALUE` request argument,
+ * in the provided {@link Arguments} structure,
  * when the value is a scalar.
  *
  * @param env environment.
@@ -417,8 +424,8 @@ Value getValue(JNIEnv* env, Arguments arguments)
 }
 
 /**
- * Get value from the `value` argument,
- * in the provided `arguments` structure,
+ * Get value from the `VALUE` argument,
+ * in the provided {@link Arguments} structure,
  * when the value is a scalar array.
  *
  * Even if the argument is not
@@ -449,12 +456,12 @@ void releaseValue(Value value)
 }
 
 /**
- * Create a new instance of a java `boolean[]`,
- * from the `Array` of boolean primitives.
+ * Create a new instance of a java boolean[],
+ * from the {@link Array} of boolean primitives.
  *
  * @param env environment.
- * @param array `Array` of boolean primitives provided.
- * @return new java `boolean[]`.
+ * @param array {@link Array} of boolean primitives provided.
+ * @return new java boolean[].
  */
 jbooleanArray toBooleanArray(JNIEnv* env, Array array)
 {
@@ -477,12 +484,12 @@ jbooleanArray toBooleanArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `byte[]`,
- * from the `Array` of byte primitives.
+ * Create a new instance of a java byte[],
+ * from the {@link Array} of byte primitives.
  *
  * @param env environment.
- * @param array `Array` of byte primitives provided.
- * @return new java `byte[]`.
+ * @param array {@link Array} of byte primitives provided.
+ * @return new java byte[].
  */
 jbyteArray toByteArray(JNIEnv* env, Array array)
 {
@@ -506,12 +513,12 @@ jbyteArray toByteArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `short[]`,
- * from the `Array` of short primitives.
+ * Create a new instance of a java short[],
+ * from the {@link Array} of short primitives.
  *
  * @param env environment.
- * @param array `Array` of short primitives provided.
- * @return new java `short[]`.
+ * @param array {@link Array} of short primitives provided.
+ * @return new java short[].
  */
 jshortArray toShortArray(JNIEnv* env, Array array)
 {
@@ -539,12 +546,12 @@ jshortArray toShortArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `int[]`,
- * from the `Array` of integer primitives.
+ * Create a new instance of a java int[],
+ * from the {@link Array} of integer primitives.
  *
  * @param env environment.
- * @param array `Array` of integer primitives provided.
- * @return new java `int[]`.
+ * @param array {@link Array} of integer primitives provided.
+ * @return new java int[].
  */
 jintArray toIntegerArray(JNIEnv* env, Array array)
 {
@@ -572,12 +579,12 @@ jintArray toIntegerArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `long[]`,
- * from the `Array` of long primitives.
+ * Create a new instance of a java long[],
+ * from the {@link Array} of long primitives.
  *
  * @param env environment.
- * @param array `Array` of long primitives provided.
- * @return new java `long[]`.
+ * @param array {@link Array} of long primitives provided.
+ * @return new java long[].
  */
 jlongArray toLongArray(JNIEnv* env, Array array)
 {
@@ -606,12 +613,12 @@ jlongArray toLongArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `float[]`,
- * from the `Array` of float primitives.
+ * Create a new instance of a java float[],
+ * from the {@link Array} of float primitives.
  *
  * @param env environment.
- * @param array `Array` of float primitives provided.
- * @return new java `float[]`.
+ * @param array {@link Array} of float primitives provided.
+ * @return new java float[].
  */
 jfloatArray toFloatArray(JNIEnv* env, Array array)
 {
@@ -635,12 +642,12 @@ jfloatArray toFloatArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `double[]`,
- * from the `Array` of double primitives.
+ * Create a new instance of a java double[],
+ * from the {@link Array} of double primitives.
  *
  * @param env environment.
- * @param array `Array` of double primitives provided.
- * @return new java `double[]`.
+ * @param array {@link Array} of double primitives provided.
+ * @return new java double[].
  */
 jdoubleArray toDoubleArray(JNIEnv* env, Array array)
 {
@@ -665,12 +672,12 @@ jdoubleArray toDoubleArray(JNIEnv* env, Array array)
 }
 
 /**
- * Create a new instance of a java `String[]`,
- * from the `StringArray` of C string primitives.
+ * Create a new instance of a java String[],
+ * from the {@link StringArray} of C string primitives.
  *
  * @param env environment.
- * @param array `StringArray` of C string primitives provided
- * @return new java `String[]`
+ * @param array {@link StringArray} of C string primitives provided
+ * @return new java String[]
  */
 jobjectArray toStringArray(JNIEnv* env, StringArray array)
 {
@@ -704,18 +711,18 @@ jobjectArray toStringArray(JNIEnv* env, StringArray array)
 }
 
 /**
- * Create a new instance of a java `List` of `List`s,
- * from the given `Table `structure.
+ * Create a new instance of a java List of Lists,
+ * from the given {@link Table} structure.
  *
  * Tables are returned as lists of Lists so:-
- * we create a java `ArrayList`
+ * we create a java ArrayList
  * then for each column in the table
  *   we create a sub list
- *   then we loop over each row to call `add()` to add entries to that list
- *   then we `add()` the sublist to the main list
+ *   then we loop over each row to call add() to add entries to that list
+ *   then we add() the sublist to the main list
  *
  * @param env environment.
- * @param table the `Table` provided
+ * @param table the {@link Table} provided
  * @return new java List of Lists
  */
 jobject toTable(JNIEnv* env, Table table)
@@ -723,7 +730,7 @@ jobject toTable(JNIEnv* env, Table table)
 	jobject tableToReturn;
 
 	JavaObject listObject = newObject(env, "edu/stanford/slac/aida/lib/model/AidaTable");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	tableToReturn = listObject.object;
 	jclass cList = listObject.class;
@@ -749,7 +756,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_BOOLEAN_ARRAY_TYPE : {
 				jboolean data = ((jboolean*)(table.ppData[column]))[row];
 				jobject dataObject = toBoolean(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -758,7 +765,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_BYTE_ARRAY_TYPE: {
 				jbyte data = ((jbyte*)(table.ppData[column]))[row];
 				jobject dataObject = toByte(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -767,7 +774,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_SHORT_ARRAY_TYPE: {
 				jshort data = (jshort)((short*)(table.ppData[column]))[row];
 				jobject dataObject = toShort(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -776,7 +783,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_INTEGER_ARRAY_TYPE: {
 				jint data = (jint)((int*)(table.ppData[column]))[row];
 				jobject dataObject = toInteger(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -785,7 +792,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_LONG_ARRAY_TYPE: {
 				jlong data = (jlong)((long*)(table.ppData[column]))[row];
 				jobject dataObject = toLong(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -794,7 +801,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_FLOAT_ARRAY_TYPE: {
 				jfloat data = ((jfloat*)(table.ppData[column]))[row];
 				jobject dataObject = toFloat(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -803,7 +810,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_DOUBLE_ARRAY_TYPE: {
 				jdouble data = ((jdouble*)(table.ppData[column]))[row];
 				jobject dataObject = toDouble(env, data);
-				CHECK_EXCEPTION_AND_RETURN_(NULL)
+				ON_EXCEPTION_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, dataObject);
 				(*env)->DeleteLocalRef(env, dataObject);
@@ -812,7 +819,7 @@ jobject toTable(JNIEnv* env, Table table)
 			case AIDA_STRING_ARRAY_TYPE: {
 				char* string = ((char**)(table.ppData[column]))[row];
 				jstring stringValue = toJString(env, string);
-				CHECK_EXCEPTION_FREE_STRING_AND_RETURN_(NULL)
+				ON_EXCEPTION_FREE_STRING_AND_RETURN_(NULL)
 
 				(*env)->CallBooleanMethod(env, tableToReturn, mAdd, column, stringValue);
 
@@ -940,7 +947,7 @@ ClassAndMethod getClassAndValueOfMethod(JNIEnv* env, char* boxedClassSignature, 
 }
 
 /**
- * Create a new instance of a java `Boolean`,
+ * Create a new instance of a java Boolean,
  * from the primitive boolean provided.
  *
  * @param env environment.
@@ -950,7 +957,7 @@ ClassAndMethod getClassAndValueOfMethod(JNIEnv* env, char* boxedClassSignature, 
 jobject toBoolean(JNIEnv* env, jboolean primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Boolean", "(Z)Ljava/lang/Boolean;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {
@@ -961,7 +968,7 @@ jobject toBoolean(JNIEnv* env, jboolean primitive)
 }
 
 /**
- * Create a new instance of a java `Byte`,
+ * Create a new instance of a java Byte,
  * from the primitive byte provided.
  *
  * @param env environment.
@@ -971,7 +978,7 @@ jobject toBoolean(JNIEnv* env, jboolean primitive)
 jobject toByte(JNIEnv* env, jbyte primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Byte", "(B)Ljava/lang/Byte;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {
@@ -982,7 +989,7 @@ jobject toByte(JNIEnv* env, jbyte primitive)
 }
 
 /**
- * Create a new instance of a java `Short`,
+ * Create a new instance of a java Short,
  * from the primitive short provided.
  *
  * @param env environment.
@@ -992,7 +999,7 @@ jobject toByte(JNIEnv* env, jbyte primitive)
 jobject toShort(JNIEnv* env, jshort primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Short", "(S)Ljava/lang/Short;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {
@@ -1003,17 +1010,17 @@ jobject toShort(JNIEnv* env, jshort primitive)
 }
 
 /**
- * Create a new instance of a java `Integer`,
+ * Create a new instance of a java Integer,
  * from the primitive int provided.
  *
  * @param env environment.
  * @param primitive primitive int provided
- * @return new java `Integer`
+ * @return new java Integer
  */
 jobject toInteger(JNIEnv* env, jint primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Integer", "(I)Ljava/lang/Integer;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {
@@ -1024,17 +1031,17 @@ jobject toInteger(JNIEnv* env, jint primitive)
 }
 
 /**
- * Create a new instance of a java `Long`,
+ * Create a new instance of a java Long,
  * from the primitive long provided.
  *
  * @param env environment.
  * @param primitive primitive long provided
- * @return new java `Long`
+ * @return new java Long
  */
 jobject toLong(JNIEnv* env, jlong primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Long", "(J)Ljava/lang/Long;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {
@@ -1045,17 +1052,17 @@ jobject toLong(JNIEnv* env, jlong primitive)
 }
 
 /**
- * Create a new instance of a java `Float`,
+ * Create a new instance of a java Float,
  * from the primitive float provided.
  *
  * @param env environment.
  * @param primitive primitive float provided
- * @return new java `Float`
+ * @return new java Float
  */
 jobject toFloat(JNIEnv* env, jfloat primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Float", "(F)Ljava/lang/Float;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {
@@ -1066,17 +1073,17 @@ jobject toFloat(JNIEnv* env, jfloat primitive)
 }
 
 /**
- * Create a new instance of a java `Double`,
+ * Create a new instance of a java Double,
  * from the primitive double provided.
  *
  * @param env environment.
  * @param primitive primitive double provided
- * @return new java `Double`
+ * @return new java Double
  */
 jobject toDouble(JNIEnv* env, jdouble primitive)
 {
 	ClassAndMethod classAndMethod = getClassAndValueOfMethod(env, "java/lang/Double", "(D)Ljava/lang/Double;");
-	CHECK_EXCEPTION_AND_RETURN_(NULL)
+	ON_EXCEPTION_RETURN_(NULL)
 
 	jobject dataObject = (*env)->CallStaticObjectMethod(env, classAndMethod.class, classAndMethod.methodId, primitive);
 	if (!dataObject) {

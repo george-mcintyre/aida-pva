@@ -37,7 +37,7 @@ SET_STUB_VOID
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -55,7 +55,7 @@ void aidaServiceInit(JNIEnv* env)
 /**
  * Get a double
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double
@@ -85,7 +85,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a table of data
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
@@ -94,11 +94,11 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	// Create table to return value
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 
 	// Get the value
 	double meas_abs_freq = aidaRequestDouble(env, uri, arguments);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 
 	// Add value to table
 	tableAddSingleRowDoubleColumn(env, &table, meas_abs_freq, true);
@@ -110,7 +110,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Set a value and return a table as a response
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -154,7 +154,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 
 	// Now create table to return
 	Table table = tableCreate(env, 1, 1);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddSingleRowDoubleColumn(env, &table, resulting_abs_freq, false);
 
 	return table;

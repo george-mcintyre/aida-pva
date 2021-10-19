@@ -25,7 +25,7 @@ SET_STUB_TABLE
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -42,7 +42,7 @@ void aidaServiceInit(JNIEnv* env)
 /**
  * Get a boolean.  In fact this is implemented by getting a short and returning true if it is 0 and false otherwise
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean
@@ -64,7 +64,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a byte
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte
@@ -86,7 +86,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments)
  * Get a short
  *
  * @param uri the uri
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param arguments the arguments
  * @return the short
  */
@@ -106,7 +106,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a integer
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer
@@ -127,7 +127,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a long.  In fact this is implemented by getting an integer and then converting the return value to a long
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long
@@ -148,7 +148,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a float
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float
@@ -169,7 +169,7 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a double.  In fact this is implemented by getting a float and converting the return to a double
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double
@@ -190,7 +190,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a string.  Allocate memory for string and it will be freed for you by framework
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string
@@ -211,7 +211,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a boolean array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean array
@@ -242,7 +242,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a byte array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte array
@@ -267,7 +267,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a short array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the short array
@@ -293,7 +293,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Copy shorts to new short array and free up returned short array
 	short* shortData;
-	ALLOCATE_SET_AND_TRACK_MEMORY(env, shortData, &((short*)shortArray.items)[1], shortArray.count * sizeof(short),
+	ALLOCATE_COPY_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, shortData, &((short*)shortArray.items)[1], shortArray.count * sizeof(short),
 			"SLC db short array device data", shortArray)
 	FREE_TRACKED_MEMORY(shortArray.items)
 	shortArray.items = shortData;
@@ -303,7 +303,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a integer array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer array
@@ -329,7 +329,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Copy integers to new integer array and free up returned integer array
 	int* integerData;
-	ALLOCATE_SET_AND_TRACK_MEMORY(env, integerData, &((int*)integerArray.items)[1], integerArray.count * sizeof(int),
+	ALLOCATE_COPY_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, integerData, &((int*)integerArray.items)[1], integerArray.count * sizeof(int),
 			"SLC db integer array device data", integerArray)
 	FREE_TRACKED_MEMORY(integerArray.items)
 	integerArray.items = integerData;
@@ -339,7 +339,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a long array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long array
@@ -365,7 +365,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Copy integers to new long array and free up returned integer array
 	long* longData;
-	ALLOCATE_AND_TRACK_MEMORY(env, longData, longArray.count * sizeof(long), "SLC db long array device data", longArray)
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, longData, longArray.count * sizeof(long), "SLC db long array device data", longArray)
 	for (int i = 0; i < longArray.count; i++) {
 		longData[i] = (long)((int*)longArray.items)[i + 1];
 	}
@@ -377,7 +377,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a float array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float array
@@ -403,7 +403,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Copy floats to new float array and free up returned float array
 	float* floatData;
-	ALLOCATE_SET_AND_TRACK_MEMORY(env, floatData, &((float*)floatArray.items)[1], floatArray.count * sizeof(float),
+	ALLOCATE_COPY_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, floatData, &((float*)floatArray.items)[1], floatArray.count * sizeof(float),
 			"SLC db float array device data", floatArray)
 	FREE_TRACKED_MEMORY(floatArray.items)
 	floatArray.items = floatData;
@@ -413,7 +413,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a double array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double array
@@ -439,7 +439,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Copy floats to new double array and free up returned float array
 	double* doubleData;
-	ALLOCATE_AND_TRACK_MEMORY(env, doubleData, doubleArray.count * sizeof(double), "SLC db float array device data",
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, doubleData, doubleArray.count * sizeof(double), "SLC db float array device data",
 			doubleArray)
 	for (int i = 0; i < doubleArray.count; i++) {
 		doubleData[i] = ((float*)doubleArray.items)[i + 1];
@@ -459,7 +459,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments)
  * returned by aidaRequestString().  The text, color, and flag
  * substrings are then returned in an array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string array
@@ -477,7 +477,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 	stringArray.count = 0;
 
 	char* colorString = aidaRequestString(env, uri, arguments);
-	CHECK_EXCEPTION_AND_RETURN_(stringArray)
+	ON_EXCEPTION_RETURN_(stringArray)
 	TRACK_MEMORY(colorString)
 
 	//	  The substring returned by aidaRequestString is 19
@@ -488,7 +488,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 
 	// Space for pointers for each string
 	stringArray.count = 3;
-	ALLOCATE_AND_TRACK_MEMORY(env, stringArray.items, stringArray.count * sizeof(char*),
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, stringArray.items, stringArray.count * sizeof(char*),
 			"color string array", stringArray)
 	char** strings = ((char**)(stringArray.items));
 
@@ -501,13 +501,13 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 		FREE_TRACKED_MEMORY(colorString)
 	}
 
-	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[0],
+	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_(env, strings[0],
 			localColorString,
 			TEXT_SUBSTRING + 1, "text substring in color string array", stringArray)
-	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[1],
+	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_(env, strings[1],
 			&localColorString[TEXT_SUBSTRING + 1],
 			COLOR_SUBSTRING + 1, "color substring in color string array", stringArray)
-	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(env, strings[2],
+	ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_(env, strings[2],
 			&localColorString[TEXT_SUBSTRING + COLOR_SUBSTRING + 2],
 			FLAG_SUBSTRING + 1, "flag substring in color string array", stringArray)
 	return stringArray;
@@ -516,7 +516,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 /**
  * Get a table of data
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
@@ -539,110 +539,110 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	// Add column based on TYPE
 	if (strcasecmp(specifiedType, "FLOAT") == 0) {
 		float value = aidaRequestFloat(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowFloatColumn(env, &table, value, true);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "DOUBLE") == 0) {
 		double value = aidaRequestDouble(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowDoubleColumn(env, &table, true, false);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BYTE") == 0) {
 		char value = aidaRequestByte(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowByteColumn(env, &table, value);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "SHORT") == 0) {
 		short value = aidaRequestShort(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowShortColumn(env, &table, value);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "INTEGER") == 0) {
 		int value = aidaRequestInteger(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowIntegerColumn(env, &table, value);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "LONG") == 0) {
 		long value = aidaRequestLong(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowLongColumn(env, &table, value);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BOOLEAN") == 0) {
 		int value = aidaRequestBoolean(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowBooleanColumn(env, &table, value);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "STRING") == 0) {
 		char* value = aidaRequestString(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, 1, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddSingleRowStringColumn(env, &table, value);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 
 	} else if (strcasecmp(specifiedType, "FLOAT_ARRAY") == 0) {
 		Array value = aidaRequestFloatArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_FLOAT_ARRAY_TYPE, value.items, true);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "DOUBLE_ARRAY") == 0) {
 		Array value = aidaRequestDoubleArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_DOUBLE_ARRAY_TYPE, value.items, true);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BYTE_ARRAY") == 0) {
 		Array value = aidaRequestByteArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_BYTE_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "SHORT_ARRAY") == 0) {
 		Array value = aidaRequestShortArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_SHORT_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "INTEGER_ARRAY") == 0) {
 		Array value = aidaRequestIntegerArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_INTEGER_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "LONG_ARRAY") == 0) {
 		Array value = aidaRequestLongArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_LONG_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	} else if (strcasecmp(specifiedType, "BOOLEAN_ARRAY") == 0) {
 		Array value = aidaRequestBooleanArray(env, uri, arguments);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		table = tableCreate(env, value.count, 1);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 		tableAddColumn(env, &table, AIDA_BOOLEAN_ARRAY_TYPE, value.items, false);
-		CHECK_EXCEPTION_AND_RETURN_(table)
+		ON_EXCEPTION_RETURN_(table)
 	}
 
 	// Return the table
@@ -652,7 +652,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Set a value
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set

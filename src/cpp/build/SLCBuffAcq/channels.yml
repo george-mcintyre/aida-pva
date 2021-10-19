@@ -1,3 +1,4 @@
+!!edu.stanford.slac.aida.lib.model.AidaProvider
 # Channels definition file for aida-pva
 #
 # DML:
@@ -9,11 +10,7 @@
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
 #
 # This file defines the available channels for the Buff Acq Service
-# Arguments:
-#   BPMD            : Integer Bpm Measurement Definition number
-#   NRPOS           : Number of pulses
-#   BPMS            : An array of BPM names
-#   DEVS            : An array of device names
+#
 id: 262
 name: SLCBuffacq
 description: SLC control system pulse synchronized Buffered Data

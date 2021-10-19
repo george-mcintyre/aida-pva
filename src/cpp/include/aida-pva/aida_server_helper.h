@@ -1,3 +1,4 @@
+/** @file */
 #ifndef _Included_aida_server_helper
 #define _Included_aida_server_helper
 #ifdef __cplusplus
@@ -40,85 +41,63 @@ void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msg
 #define MICRO_LEN 4
 
 /**
- * Create tracking variables so that memory can be freed with FREE_MEMORY
+ * Create tracking variables so that memory can be freed with FREE_MEMORY macro.
+ * Creates up to MAX_POINTERS pointers to track all memory allocations so that
+ * they can be safely freed, when needed.
+ * Creates local variables to store the tracking information so these macros can only
+ * be used within a single block.
  */
 #define TRACK_ALLOCATED_MEMORY \
-    int nAllocationsToFree = 0, nJsonValuesToFree = 0; \
-    void *memoryAllocationsToFree[MAX_POINTERS] ; \
-    json_value *jsonValuesToFree[MAX_POINTERS] ;
+    int _nAllocationsToFree = 0, _n_jsonValuesToFree = 0; \
+    void *_memoryAllocationsToFree[MAX_POINTERS] ; \
+    json_value *_jsonValuesToFree[MAX_POINTERS] ;
 
 /**
- * Register this newly allocated memory so that it will be freed by FREE_MEMORY
+ * Register this newly allocated memory so that it will be freed by FREE_MEMORY.
  */
 #define TRACK_MEMORY(_ptr) \
-    if (_ptr) memoryAllocationsToFree[nAllocationsToFree++] = (_ptr);
+    if (_ptr) _memoryAllocationsToFree[_nAllocationsToFree++] = (_ptr);
 
 /**
- * Register this newly allocated json value so that it will be freed by FREE_JSON_MEMORY
+ * Register this newly allocated json value so that it will be freed by FREE_JSON_MEMORY.
  */
 #define TRACK_JSON(_ptr) \
-    if (_ptr) jsonValuesToFree[nJsonValuesToFree++] = (_ptr);
+    if (_ptr) _jsonValuesToFree[_n_jsonValuesToFree++] = (_ptr);
 
 /**
- * Allocate memory.  Nothing fancy!
+ * Allocate memory.  Allocates memory of the given size
  *
- * @param _size size of memory to allocate
+ * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _size    size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  */
 #define ALLOCATE_MEMORY(_env, _size, _purpose) allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose)
 
 /**
- * Allocate memory.
- *
- * @param _var the specified variable is set to point to the allocated memory
- * @param _size size of memory to allocate
- * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
- * @param _r the specified return value
- * @return This MACRO will return the specified return value from your function if it fails
- */
-#define ALLOCATE_MEMORY_OR_RETURN(_env, _var, _size, _purpose, _r) { \
-    void * _aptr = allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose); \
-    if (!_aptr) \
-        return _r; \
-    (_var) = _aptr; \
-}
-
-/**
  * Allocate memory and set its contents to the given buffer of given size
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _source buffer to copy contents from
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  */
-#define ALLOCATE_AND_SET_MEMORY(_env, _source, _size, _purpose) allocateMemory(_env, _source, _size, false, "Could not allocate space for " _purpose)
-
-/**
- * Allocate memory and set its contents to the given buffer of given size
- *
- * @param _var the specified variable is set to point to the allocated memory
- * @param _source buffer to copy contents from
- * @param _size size of memory to allocate
- * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
- * @return This MACRO will return the specified return value from your function if it fails
- */
-#define ALLOCATE_AND_SET_MEMORY_OR_RETURN_VOID(_env, _var, _source, _size, _purpose) \
-if (!( (_var) = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, false, _purpose))) { \
-    return; \
-}
+#define ALLOCATE_AND_COPY_MEMORY(_env, _source, _size, _purpose) allocateMemory(_env, _source, _size, false, "Could not allocate space for " _purpose)
 
 /**
  * Allocate memory for a string and copy the given string into this allocated space
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  */
-#define ALLOCATE_STRING(_env, _string, _purpose) ALLOCATE_AND_SET_MEMORY(_env, _string, strlen(_string)+1, _purpose)
+#define ALLOCATE_STRING(_env, _string, _purpose) ALLOCATE_AND_COPY_MEMORY(_env, _string, strlen(_string)+1, _purpose)
 
 /**
  * Allocate space for a fixed length string and copy date from the given string into
  * the newly allocated space.  You need to specify size as one bigger than the
  * fixed length string so that it can be null terminated
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _string buffer to copy contents from
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -126,16 +105,49 @@ if (!( (_var) = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, false, _purpose)))
 #define ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose) allocateMemory(_env, _string, _size, true, "Could not allocate space for " _purpose)
 
 /**
+ * Allocate memory.
+ *
+ * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _size size of memory to allocate
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
+#define ALLOCATE_MEMORY_AND_ON_ERROR_RETURN(_env, _var, _size, _purpose, _r) { \
+    void * _aptr = allocateMemory(_env, NULL, _size, false, "Could not allocate space for " _purpose); \
+    if (!_aptr) \
+        return _r; \
+    (_var) = _aptr; \
+}
+
+/**
+ * Allocate memory for a string and copy the given string into this allocated space
+ *
+ * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _var the specified variable is set to point to the allocated memory
+ * @param _string buffer to copy contents from
+ * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function if it fails
+ */
+#define ALLOCATE_STRING_AND_ON_ERROR_RETURN_(_env, _var, _string, _purpose, _r) \
+if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
+    return _r; \
+}
+
+/**
  * Allocate memory for a string and copy the given string into this allocated space
  * The specified variable is set to point to the allocated memory
  * The given purpose is a string that will be contained in the error message if the allocation fails
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  * @return This MACRO will return from your function if it fails
  */
-#define ALLOCATE_STRING_OR_RETURN_VOID(_env, _var, _string, _purpose) \
+#define ALLOCATE_STRING_AND_ON_ERROR_RETURN_VOID(_env, _var, _string, _purpose) \
 if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return; \
 }
@@ -145,13 +157,14 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * the newly allocated space.  You need to specify size as one bigger than the
  * fixed length string so that it can be null terminated
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  * @return This MACRO will return from your function if it fails
  */
-#define ALLOCATE_FIXED_LENGTH_STRING_OR_RETURN_VOID(_env, _var, _string, _size, _purpose) \
+#define ALLOCATE_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_VOID(_env, _var, _string, _size, _purpose) \
 if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) { \
     return; \
 }
@@ -161,6 +174,7 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
  * the newly allocated space.  You need to specify size as one bigger than the
  * fixed length string so that it can be null terminated
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _size size of memory to allocate
@@ -168,7 +182,7 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function if it fails
  */
-#define ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING(_env, _var, _string, _size, _purpose, _r) \
+#define ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_(_env, _var, _string, _size, _purpose, _r) \
 { \
     void *_aptr = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose); \
     if ( !_aptr ) { \
@@ -180,29 +194,16 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
 }
 
 /**
- * Allocate memory for a string and copy the given string into this allocated space
- *
- * @param _var the specified variable is set to point to the allocated memory
- * @param _string buffer to copy contents from
- * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
- * @param _r the specified return value
- * @return This MACRO will return the specified return value from your function if it fails
- */
-#define ALLOCATE_STRING_OR_RETURN(_env, _var, _string, _purpose, _r) \
-if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
-    return _r; \
-}
-
-/**
  * Allocate memory and add it to the tracked memory list so that it can be freed automatically later
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function if it fails
  */
-#define ALLOCATE_AND_TRACK_MEMORY(_env, _var, _size, _purpose, _r) \
+#define ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(_env, _var, _size, _purpose, _r) \
 { \
     void *_aptr = ALLOCATE_MEMORY(_env, _size, _purpose); \
     if ( !_aptr ) { \
@@ -216,6 +217,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 /**
  * Allocate memory and set its contents to the given buffer of given size
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _source buffer to copy contents from
  * @param _size size of memory to allocate
@@ -223,9 +225,9 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function if it fails
  */
-#define ALLOCATE_SET_AND_TRACK_MEMORY(_env, _var, _source, _size, _purpose, _r) \
+#define ALLOCATE_COPY_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(_env, _var, _source, _size, _purpose, _r) \
 { \
-    void *_aptr = ALLOCATE_AND_SET_MEMORY(_env, _source, _size, _purpose); \
+    void *_aptr = ALLOCATE_AND_COPY_MEMORY(_env, _source, _size, _purpose); \
     if ( !_aptr ) { \
         FREE_MEMORY \
         return _r; \
@@ -237,13 +239,14 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 /**
  * Allocate and track a string
  *
+ * @param env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function if it fails
  */
-#define ALLOCATE_AND_TRACK_STRING(_env, _var, _string, _purpose, _r) \
+#define ALLOCATE_COPY_AND_TRACK_STRING_AND_ON_ERROR_RETURN_(_env, _var, _string, _purpose, _r) \
 { \
     void *_aptr = ALLOCATE_STRING(_env, _string, _purpose); \
     if ( !_aptr ) { \
@@ -259,9 +262,9 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  */
 #define FREE_JSON \
 {                              \
-    while ( nJsonValuesToFree-- > 0) { \
-        if ( jsonValuesToFree[nJsonValuesToFree] ) \
-            json_value_free(jsonValuesToFree[nJsonValuesToFree]); \
+    while ( _n_jsonValuesToFree-- > 0) { \
+        if ( _jsonValuesToFree[_n_jsonValuesToFree] ) \
+            json_value_free(_jsonValuesToFree[_n_jsonValuesToFree]); \
     } \
 }
 
@@ -270,9 +273,9 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  */
 #define FREE_MEMORY \
 {                              \
-    while ( nAllocationsToFree-- > 0) { \
-        if ( memoryAllocationsToFree[nAllocationsToFree])  \
-            free (memoryAllocationsToFree[nAllocationsToFree]); \
+    while ( _nAllocationsToFree-- > 0) { \
+        if ( _memoryAllocationsToFree[_nAllocationsToFree])  \
+            free (_memoryAllocationsToFree[_nAllocationsToFree]); \
     } \
     FREE_JSON \
 }
@@ -287,34 +290,17 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     if ( _ptr) {  \
     \
         bool found = false; \
-        for ( int i = 0 ; i < nAllocationsToFree; i++ ) { \
-            if ( (_ptr) == memoryAllocationsToFree[i] ) {   \
+        for ( int i = 0 ; i < _nAllocationsToFree; i++ ) { \
+            if ( (_ptr) == _memoryAllocationsToFree[i] ) {   \
                 free (_ptr);                    \
                 found = true;                    \
             } \
-            if ( found && i != (nAllocationsToFree-1) )   \
-                memoryAllocationsToFree[i] = memoryAllocationsToFree[i+1]; \
+            if ( found && i != (_nAllocationsToFree-1) )   \
+                _memoryAllocationsToFree[i] = _memoryAllocationsToFree[i+1]; \
         } \
         if ( found )   \
-            nAllocationsToFree--;     \
+            _nAllocationsToFree--;     \
     }\
-}
-
-/**
- * Format an error message, throw it in an exception, and return the error code
- *
- * @param _exception exception to raise (string)
- * @param _errorText the text of the error to raise
- * @param _ref a string that will be substituted in message with %s
- * @param _r the specified return value
- * @return This MACRO will return the specified return value from your function
- */
-#define SPRINF_ERROR(_exception, _errorText, _ref, _r) \
-{ \
-    char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
-    sprintf(error, _errorText,  _ref); \
-    aidaThrowNonOsException(env, _exception, error); \
-    return _r; \
 }
 
 /**
@@ -326,7 +312,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function
  */
-#define SPRINTF_ERROR_AND_FREE_MEMORY(_exception, _errorText, _ref, _r) \
+#define SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(_exception, _errorText, _ref, _r) \
 { \
     char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
     sprintf(error, _errorText,  _ref); \
@@ -343,7 +329,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * @param _r the specified return value
  * @return This MACRO will return the specified return value from your function
  */
-#define PRINT_ERROR_AND_FREE_MEMORY(_exception, _errorText, _r) \
+#define PRINT_ERROR_FREE_MEMORY_AND_RETURN_(_exception, _errorText, _r) \
 { \
     aidaThrowNonOsException(env, _exception, _errorText); \
     FREE_MEMORY \
@@ -351,7 +337,8 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
 }
 
 /**
- * Return an empty table response
+ * Return an empty table response.   Use this if you're implementing an api that returns
+ * a Table and you've encountered an error, just after you've raised an exception.
  */
 #define RETURN_NULL_TABLE \
     Table nullTable; \
@@ -359,7 +346,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return nullTable;
 
 /**
- * Throw unsupported channel exception and return a blank array
+ * Throw unsupported channel exception and return a blank array.
  */
 #define UNSUPPORTED_ARRAY_REQUEST \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
@@ -367,7 +354,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return array;
 
 /**
- * Throw an unsupported channel exception and return an empty string array
+ * Throw an unsupported channel exception and return an empty string array.
  */
 #define UNSUPPORTED_STRING_ARRAY_REQUEST \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
@@ -375,7 +362,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
     return stringArray;
 
 /**
- * Throw an unsupported channel exception and return an empty table
+ * Throw an unsupported channel exception and return an empty table.
  */
 #define UNSUPPORTED_TABLE_REQUEST \
     aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri); \
@@ -567,14 +554,14 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 
 /**
  * Initialise the aida service.  Called once by the framework when starting up.
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  */
 void aidaServiceInit(JNIEnv* env);
 
 /**
  * Get a table of data
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
@@ -584,7 +571,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a boolean
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean
@@ -594,7 +581,7 @@ int aidaRequestBoolean(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a byte
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte
@@ -604,7 +591,7 @@ char aidaRequestByte(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a short
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the short
@@ -614,7 +601,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a integer
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer
@@ -624,7 +611,7 @@ int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a long
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long
@@ -634,7 +621,7 @@ long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a float
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float
@@ -644,7 +631,7 @@ float aidaRequestFloat(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a double
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double
@@ -654,7 +641,7 @@ double aidaRequestDouble(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a string
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string
@@ -664,7 +651,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a boolean array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the boolean array
@@ -674,7 +661,7 @@ Array aidaRequestBooleanArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a byte array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the byte array
@@ -684,7 +671,7 @@ Array aidaRequestByteArray(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a short array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the short array
@@ -694,7 +681,7 @@ Array aidaRequestShortArray(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a integer array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the integer array
@@ -704,7 +691,7 @@ Array aidaRequestIntegerArray(JNIEnv* env, const char* uri, Arguments arguments)
 /**
  * Get a long array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the long array
@@ -714,7 +701,7 @@ Array aidaRequestLongArray(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a float array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the float array
@@ -724,7 +711,7 @@ Array aidaRequestFloatArray(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a double array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the double array
@@ -734,7 +721,7 @@ Array aidaRequestDoubleArray(JNIEnv* env, const char* uri, Arguments arguments);
 /**
  * Get a string array
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the string array
@@ -744,7 +731,7 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 /**
  * Set a value
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -755,7 +742,7 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 /**
  * Set a value and return a table as a response
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
@@ -923,7 +910,7 @@ void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri);
  * Allocate memory and copy the source to it if specified.  If the null terminate flag is set
  * null terminate the allocate space, at the last position
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param source source of data to copy to newly allocated space, NULL to not copy
  * @param size the amount of space to allocate
  * @param nullTerminate true to null terminate

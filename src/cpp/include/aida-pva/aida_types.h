@@ -145,12 +145,12 @@ typedef struct
 
 /**
  * An Arguments structure stores all of the arguments passed from the request to the Native Channel Provider.
- * It contains a count of the total number of arguments - `argumentCount` - and a pointer
- * to that many Arguments.
- * Arguments from the client are stored as strings, and converted to whatever type is required whenever
+ * It contains a count of the total number of arguments - #argumentCount - and a pointer
+ * to that many {@link Argument}s - #arguments.
+ * {@link Argument}s from the client are stored as strings, and converted to whatever type is required whenever
  * they are used.  But floating points are different because they require more precision and significance
  * than string representations can give.  For this reason floating points are additionally passed in the
- * FloatingPointValue array where `floatingPointValuesCountCount` is the count of how many of them there are.
+ * FloatingPointValue array - #floatingPointValues - where #floatingPointValuesCountCount is the count of how many of them there are.
  */
 typedef struct
 {
@@ -245,19 +245,17 @@ Table tableCreate(JNIEnv* env, int rows, int columns);
  * @param data
  */
 void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat);
-void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat);
-void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data);
+void tableAddStringColumn(JNIEnv* env, Table* table, char** data);
+void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, char* data, int width);
+
 void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
 void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
 void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data);
 void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
+void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data);
+void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat);
 void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble);
 void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
-void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
-void tableAddStringColumn(JNIEnv* env, Table* table, char** data);
-
-float valueGetFloat(Value value);
-short valueGetShort(Value value);
 
 /**
  * Convert Type to string name of Type e.g. AIDA_BOOLEAN_TYPE returns "BOOLEAN"
@@ -266,14 +264,6 @@ short valueGetShort(Value value);
  * @return string
  */
 jstring toTypeString(JNIEnv* env, Type type);
-
-/**
- * Make a single entry json_value array from a string.
- *
- * @param stringValue the string to add as the single entry in the json_value array
- * @return the Value
- */
-Value asArrayValue(char* stringValue);
 
 /**
  * ascanf, avscanf

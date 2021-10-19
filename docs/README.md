@@ -27,7 +27,7 @@ in the way they are launched.
 
 For more information:
 
-* [AIDA-PVA - Client Developer User Guide](UserGuide.md)
+* [AIDA-PVA - Client Developer Guide](UserGuide.md)
 * [AIDA-PVA - Native Channel Provider Programmer's Reference](ProviderReference.md)
 * [AIDA-PVA - Platform Technical Reference](Reference.md)
 * [AIDA-PVA - A DevOps Guide](DevOps.md)

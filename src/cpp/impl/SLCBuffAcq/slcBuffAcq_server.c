@@ -59,7 +59,7 @@ SET_STUB_TABLE
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -84,7 +84,7 @@ void aidaServiceInit(JNIEnv* env)
  *   DEVS:   json.  List of devices to read
  *   Note: cannot specify both BPMS and DEVS
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
@@ -178,19 +178,19 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Make and output table
 	Table table = tableCreate(env, rows, 7);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddStringColumn(env, &table, namesData);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_INTEGER_TYPE, pulseIdData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, tmitData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_SHORT_TYPE, statsData, false);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_SHORT_TYPE, goodMeasData, false);
 
 	endAcquireBuffAcq(env);
@@ -286,7 +286,7 @@ getBuffAcqData(JNIEnv* env,
 		float* xData, float* yData, float* tmitData,
 		unsigned long* pulseIdData, int2u* statsData, int2u* goodMeasData)
 {
-	int4u nNames = 0, nPulseId, nXdata, nYdata, ntmit, nstats, ngoodmeas;
+	int4u nNames, nPulseId, nXdata, nYdata, ntmit, nstats, ngoodmeas;
 
 	if (!(nNames = DPSLCBUFF_GETNAMES(namesData)) ||
 			!(nPulseId = DPSLCBUFF_GETPULSEIDS(pulseIdData)) ||

@@ -1,3 +1,6 @@
+/** @file
+ *  @brief This is the Native Channel Provider code for the SLC Magnet Service
+ */
 /**
  * Magnet Server implementation
  */
@@ -49,7 +52,7 @@ REQUEST_STUB_STRING_ARRAY
 
 /**
  * Initialise the service
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
  */
 void aidaServiceInit(JNIEnv* env)
@@ -66,7 +69,7 @@ void aidaServiceInit(JNIEnv* env)
 /**
  * Get a table of data
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @param uri the uri
  * @param arguments the arguments
  * @return the table
@@ -116,9 +119,9 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Make table and return results
 	Table table = tableCreate(env, numMagnetPvs, 2);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_PMU_STRING_LEN);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, secondaryValues, false);
 
 	// All read successfully
@@ -126,17 +129,22 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 }
 
 /**
- * Set a value
- * Sets specified BCON secondary values for specified array of magnet names to an array of corresponding set values.
- * The parameter `value` argument is Value containing two elements: an array of magnet names (name)
- * and an array of corresponding set values (values)
- * e.g. { "names": [], "values": [] }
+ * Sets specified `BCON` secondary values for specified array of
+ * magnet names to an array of corresponding values.
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @param value to set
- * @return the table
+ * The `VALUE` argument given in @p value will contain a structure containing two elements:
+ *   - `names`:  an array of magnet names
+ *   - `values`: an array of corresponding values
+ *
+ * e.g. `{ "names": [... ], "values": [... ] }`
+ *
+ * @param env: to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
+ * @param uri: the uri
+ * @param arguments: the arguments of type ::Arguments
+ * @param value: to set. Contains a structure containing two elements:
+ *  - `names`:  an array of magnet names
+ *  - `values`: an array of corresponding values.
+ * @return : the table
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
@@ -183,12 +191,34 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 }
 
 /**
- * Set a value and return a table as a response
+ * Sets specified `BDES` or `VDES` secondary values for specified array
+ * of magnet names to an array of corresponding set values.
+ * Then optionally performs a specified trim or perturb operation.
  *
- * @param env to be used to throw exceptions using aidaThrow() and aidaNonOsExceptionThrow()
- * @param uri the uri
- * @param arguments the arguments
- * @param value to set
+ * The `VALUE` argument will contain a structure containing two elements:
+ *   - `names`:  an array of magnet names
+ *   - `values`: an array of corresponding values
+ *
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException(env, exception, message)
+ * @param uri the uri - `MAGNETSET:BDES` or `MAGNETSET:BCON`
+ * @param arguments the arguments.
+ *  - `MAGFUNC`: required:  argument specifies whether a trim or perturb operation will be performed.
+ *    If `NOFUNC`, neither a trim nor a perturb operation will be performed
+ *    - `TRIM`,
+ *    - `PTRB`, or
+ *    - `NOFUNC`
+ *  - `LIMITCHECK`: optional:  Used to determine behavior when the set value for one or
+ *     more devices is outside of its low/high limits.
+ *     - `ALL` The entire request will fail resulting in an exception being
+ *     	  thrown and no `BDES` / `VDES` values being set for any of the requested devices.
+ *     - `SOME` the set value action will succeed for
+ *     	  those set values that are within limits and will not be performed for those
+ *     	  set values outside their limits (the state string return values for these
+ *     	  devices will be set to the string "Outside Limits").
+ *     The default setting of this parameter is `ALL`.
+ * @param value to set. Contains a structure containing two elements:
+ *  - `names`:  an array of magnet names
+ *  - `values`: an array of corresponding values.
  * @return a table
  */
 Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments, Value value)
@@ -309,9 +339,9 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	DPSLCMAGNET_SETCLEANUP();
 
 	Table table = tableCreate(env, rows, 2);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddFixedWidthStringColumn(env, &table, namesData, MAX_STATE_NAME_LEN);
-	CHECK_EXCEPTION_AND_RETURN_(table)
+	ON_EXCEPTION_RETURN_(table)
 	tableAddColumn(env, &table, AIDA_FLOAT_TYPE, bactData, false);
 
 	return table;
@@ -320,7 +350,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 /**
  * Get basic magnet arguments
  *
- * @param env
+ * @param env to be used to throw exceptions using {link aidaThrow} and {link aidaThrowNonOsException}
  * @param uri
  * @param value
  * @param count
@@ -365,9 +395,9 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	}
 
 	// Get names array - and break up names into their components for other lists
-	ALLOCATE_AND_TRACK_MEMORY(env, *prim_list, (*count * PRIM_LEN) + 1, "primary list", EXIT_FAILURE)
-	ALLOCATE_AND_TRACK_MEMORY(env, *micr_list, (*count * MICRO_LEN) + 1, "micro list", EXIT_FAILURE)
-	ALLOCATE_AND_TRACK_MEMORY(env, *unit_list, *count * sizeof(unsigned long), "unit list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *prim_list, (*count * PRIM_LEN) + 1, "primary list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *micr_list, (*count * MICRO_LEN) + 1, "micro list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *unit_list, *count * sizeof(unsigned long), "unit list", EXIT_FAILURE)
 	unsigned long longUnitList[*count];
 	for (int i = 0; i < nNames; i++) {
 		if (pmuFromDeviceName(env, names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i])) {
@@ -382,7 +412,7 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	secnFromUri(uri, secn);
 
 	// Call names validate to see which names are valid
-	ALLOCATE_AND_TRACK_MEMORY(env, *name_validity, (*count * MAX_VALIDITY_STRING_LEN) + 1, "name validity list",
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *name_validity, (*count * MAX_VALIDITY_STRING_LEN) + 1, "name validity list",
 			EXIT_FAILURE)
 	DPSLCMAGNET_SETNAMESVALIDATE(*count, *prim_list, *micr_list, *unit_list, *secn, *name_validity);
 
@@ -390,7 +420,7 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 	if (!isAllValid(*count, *name_validity)) {
 		char invalidNames[MAX_URI_LEN * nNames + 1];
 		getInvalidNames(invalidNames, *count, names, *name_validity);
-		SPRINTF_ERROR_AND_FREE_MEMORY(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s",
+		SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s",
 				invalidNames,
 				EXIT_FAILURE)
 	}
@@ -404,7 +434,7 @@ getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value 
 /**
  * Get full set of arguments
  *
- * @param env
+ * @param env to be used to throw exceptions using {link aidaThrow} and {link aidaThrowNonOsException}
  * @param uri
  * @param arguments
  * @param value
