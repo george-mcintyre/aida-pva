@@ -21,12 +21,12 @@ import java.util.*;
  * It has a {@link AidaProvider#description} displayed during startup alongside the {@link AidaProvider#id} and {@link AidaProvider#name}.
  * The {@link AidaProvider#configurations} define the different {@link AidaConfigGroup} we define for requests to this channel.
  * Finally, the {@link AidaProvider#channelProvider} defines the actual class that will implement the functionality to service this channel.
- * <p>
- * Note that it uses the {@link lombok.Data} annotation to provide all the getters and setters.
+ * @note
+ * It uses the `@Data` annotation to provide all the getters and setters,
  * a constructor with all required arguments,
  * and an equals(), hashcode() and toString()  method.
- * <p>
- * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
+ * @note
+ * It also uses the `@NoArgsConstructor` annotation to provide a constructor
  * with no arguments.
  */
 @Data

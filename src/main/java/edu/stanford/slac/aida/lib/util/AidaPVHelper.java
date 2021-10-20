@@ -1,3 +1,6 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.aida.lib.util;
 
 import edu.stanford.slac.aida.lib.model.*;

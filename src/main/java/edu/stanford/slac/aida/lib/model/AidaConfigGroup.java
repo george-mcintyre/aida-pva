@@ -21,12 +21,12 @@ import java.util.Set;
  * and a {@link AidaConfigGroup#setterConfig} for the `set` requests.
  * <p>
  * The List of {@link AidaConfigGroup#channels} are the names of the channels that will use the specified config
- * <p>
- * Note that it uses the {@link lombok.Data} annotation to provide all the getters and setters.
+ * @note
+ * It uses the `@Data` annotation to provide all the getters and setters,
  * a constructor with all required arguments,
  * and an equals(), hashcode() and toString()  method.
- * <p>
- * It also uses the {@link lombok.NoArgsConstructor} annotation to provide a constructor
+ * @note
+ * It also uses the `@NoArgsConstructor` annotation to provide a constructor
  * with no arguments.
  */
 @Data

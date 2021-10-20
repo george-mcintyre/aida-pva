@@ -18,8 +18,8 @@ import lombok.Data;
  * <p>
  * For the last leg of that journey, from AIDA-PVA to the Native Provider, the float arguments are
  * encapsulated in a {@link FloatArgument} object.
- * <p>
- * Note that it uses the {@link Data} annotation to provide all the getters and setters.
+ * @note
+ * It uses the `@Data` annotation to provide all the getters and setters,
  * a constructor with all required arguments,
  * and an equals(), hashcode() and toString()  method.
  */

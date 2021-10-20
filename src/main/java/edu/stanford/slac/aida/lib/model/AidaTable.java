@@ -14,8 +14,8 @@ import java.util.List;
  * It is the class that is returned from the Native Providers for requests that return a TABLE.
  * <p>
  * It contains a single property {@link AidaTable#data} that stores a List of column Lists.
- * <p>
- * Note that it uses the {@link lombok.ToString} annotation to provide the toString() method.
+ * @note
+ * Note that it uses the `lombok.ToString` annotation to provide the toString() method.
  */
 @ToString
 public class AidaTable {
