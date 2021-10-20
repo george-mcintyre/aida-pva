@@ -22,84 +22,188 @@ Legacy AIDA uses CORBA to transport requests to the Data Providers, while AIDA-P
 EPICS has become a staple for laboratories around the world, and leveraging its features allows scientists, and engineers
 who are already familiar with programming on EPICS, to access AIDA-PVA data providers with very little effort.
 
-![Aida Old and New](images/aida-old-and-new.png)
-
 # Components
-As you can see clients using AIDA-PVA will look like any any other EPICS client.  AIDA-PVA data providers are implemented
+As you can see below, clients using AIDA-PVA will look like any any other EPICS client.  AIDA-PVA data providers are implemented
 inside the EPICS framework and so will appear to EPICs clients as just another EPICS service.  
 In order to access an AIDA-PVA Provider you'll select a Channel Name that the Provider has published.  The EPICS framework
 will find the service that serves requests for that Channel and will direct your request to it.
 
-The AIDA-PVA Provider is made up of three parts 
- - there is the **AIDA-PVA jar** which is the runner that starts the Provider Process, 
- - the **Aida-PVA Module**, a glue that connects to the Native Chanel Provider shared library to the Channel Provider Module.
- - and, the **Native Chanel Provider** code itself.
- 
-# New naming conventions
+![Aida Old and New](images/aida-pva-simple.png)
 
-In AIDA names consist of `INSTANCE//ATTRIBUTE` where `INSTANCE` can have other sub-parts typically delimited by colons. 
-Though the `ATTRIBUTE` part is typically a single name, in rare cases it is also made up of parts, delimited by colons.
+# AIDA-PVA Channel Providers
+Here is the documentation for all the implemented AIDA-PVA channel providers.
+- [SLC Database Channel Provider](SLCUsersGuide.md)
+- [SLC BPM Orbit Data Channel Provider](SLCBPMUsersGuide.md)
+- [SLC Buffered Acquisition Channel Provider](SLCBuffAcqUsersGuide.md)
+- [SLC Klystron Channel Provider](SLCKlysUsersGuide.md)
+- [SLC Magnet Channel Provider](SLCMagnetUsersGuide.md)
+- [SLC Master Oscillator Channel Provider](SLCMoscUsersGuide.md)
+- [SLC Utilities Channel Provider](SLCUtilUsersGuide.md)
+- [Reference Data Provider for testing](Reference.md)
 
-In AIDA-PVA names have the same components but are all separated by colons so `PRIM:MICR:UNIT//ATTR` becomes `PRIM:MICR:UNIT:ATTR` 
-in AIDA-PVA.  In this way AIDA-PVA allows accessing services with the same naming conventions as EPICS.
+# Naming conventions
+In AIDA-PVA, channel name parts are all separated by colons e.g.,`PRIM:MICR:UNIT:ATTR`.  
+AIDA-PVA allows accessing services with the same naming conventions as EPICS.
 
 Even though AIDA-PVA has an updated naming scheme to align with EPICs it is backwards compatible with AIDA and allows legacy style
 names to be used.
 
+@note
+In AIDA, names consist of `INSTANCE//ATTRIBUTE` where `INSTANCE` can have other sub-parts typically delimited by colons. 
+Though the `ATTRIBUTE` part is typically a single name, in rare cases it is also made up of parts, delimited by colons.
+
+## Service identifier 
+In some cases there are name clashes that can exist between channels supported by one Channel Provider and another.  
+AIDA-PVA offers Channel Providers the possibility of prefixing a service identifier to the clashing channel names to
+disambiguate them for clients.  These prefixes are delimited by double colons.  e.g., 
+`SLC::KLYS:LI15:61:ACON` disambiguates the SLC Database Channel Provider channel from the Klystron Channel 
+Provider channel (`KLYS:LI15:61:ACON`) of the same name.
+
 # Call semantics
-## Request
-Requests (previously known as get in AIDA) request data from the specified Channel.  The requests can take optional arguments which are
-simple name/alue pairs.  The value can be either a simple string, a scalar value, or some json that allows specifying arrays,
-and objects.  The value can be set programmatically to allow complex types and arrays to be specified in any way required.
-The interpretation of these arguments is deferred until the Native Channel Provider reads them - except `TYPE` and `VALUE` explained below.  
-Each provider publishes the nanes of the arguments they accept for each of Channels they support, and describe the names, formats, requirements, defaults, and acceptable values of the parameters they support.
+## Get Requests
+AIDA-PVA allows you to `get` values associated with channels.  These requests are known as Getters.  
+Any request that does not have a `VALUE` argument will be interpreted as
+a Getter request by AIDA-PVA.
 
-EPICS allows synchronous and Asynchronous call semantics so either can be used with AIDA-PVA.  The only EPICS protocol AIDA-PVA implements is RPC.
-
-If an exception occurs in the Channel Provider Module, the Channel Provider Shared Library, or AIDA-PVA jar, the Exception will be propagated back up to the caller, and logged using the configured logger.
-
-## Set and the VALUE argument
+## Set Requests and the VALUE argument
 AIDA-PVA allows you to `set` values associated with channels.  These special requests are known as Setters.  To select 
-a Setter request simply add an argument called `VALUE`.  All Setters have a value which is the value that the
-Process Variable will be set to.  Other arguments can be specified as described by the provider.
+a Setter request simply add an argument called `VALUE`.  All Setters have a `VALUE` which is used by the
+Channel Provider to set a value in the Channel Data Source.  
 
-## TYPE
-When you need to specify the type of the response you can set the TYPE argument to one of the available types.  
+## Arguments
+Getter and Setter can take optional arguments which are
+simple name/value pairs.  The value can be either a simple string, a scalar value, or some json that allows specifying arrays,
+and objects.  
+
+The value can be set programmatically to any type of complex PVField structure, to allow complex types and arrays 
+to be specified in any way required.
+
+## Deferred interpretation of Arguments
+The interpretation of these arguments is deferred until the Channel Provider reads them - except `TYPE` and `VALUE` explained below.  
+This means that each Channel Provider can have its own interpretation of an argument.
+Each provider publishes the names of the arguments they accept for each of Channels/Operations they support, and describe the names, 
+formats, requirements, defaults, and acceptable values of the parameters they support.
+
+## Acceptable EPICs protocols and call types
+EPICS allows synchronous and Asynchronous call semantics so either can be used with AIDA-PVA.  
+
+The only EPICS protocol AIDA-PVA implements is RPC.
+
+# Setting the return type of the request
+When you need to specify the type of the response you can set the `TYPE` argument to one of the available types.  
 e.g. `TYPE=FLOAT`
-  * Scalar Types
-    * {@link BOOLEAN}            to return a boolean
-    * {@link BYTE}               to return a byte
-    * {@link SHORT}              to return a short
-    * {@link INTEGER}            to return an integer
-    * {@link LONG}               to return a long
-    * {@link FLOAT}              to return a float
-    * {@link DOUBLE}             to return a double
-    * {@link STRING}             to return a string
-  * Scalar Array Types
-    * {@link BOOLEAN_ARRAY}      to return a boolean array
-    * {@link BYTE_ARRAY}         to return a byte array
-    * {@link SHORT_ARRAY}        to return a short array
-    * {@link INTEGER_ARRAY}      to return an integer array
-    * {@link LONG_ARRAY}         to return a long array
-    * {@link FLOAT_ARRAY}        to return a float array
-    * {@link DOUBLE_ARRAY}       to return a double array
-    * {@link STRING_ARRAY}       to return a string array
+  * Scalar types
+    * `BOOLEAN`            to return a boolean : NTScalar
+    * `BYTE`               to return a byte : NTScalar
+    * `SHORT`              to return a short : NTScalar
+    * `INTEGER`            to return an integer : NTScalar
+    * `LONG`               to return a long : NTScalar
+    * `FLOAT`              to return a float : NTScalar
+    * `DOUBLE`             to return a double : NTScalar
+    * `STRING`             to return a string : NTScalar
+  * Scalar array types
+    * `BOOLEAN_ARRAY`      to return a boolean array  : NTScalarArray
+    * `BYTE_ARRAY`         to return a byte array  : NTScalarArray
+    * `SHORT_ARRAY`        to return a short array  : NTScalarArray
+    * `INTEGER_ARRAY`      to return an integer array  : NTScalarArray
+    * `LONG_ARRAY`         to return a long array  : NTScalarArray
+    * `FLOAT_ARRAY`        to return a float array  : NTScalarArray
+    * `DOUBLE_ARRAY`       to return a double array  : NTScalarArray
+    * `STRING_ARRAY`       to return a string array : NTScalarArray
   * Tables
-    * {@LINK TABLE}              to return an NT/TABLE
+    * `TABLE`              to return a table : NTTable
 
 ## TABLE_TYPE
 If supported you can specify the type for rows in a table by providing the `TABLE_TYPE` argument.  The 
-value can be any Scalar or Scalar Array type. eg. `TABLE_TYPE=FLOAT` for the SLC data provider will select a float for 
-single row in the single column table returned from a request.
+value can be any Scalar or Scalar Array type. eg. `TABLE_TYPE=FLOAT` so the SLC Channel Provider will select a float for 
+the single row in the single column table returned from a request.
 
-# Service Address 
-In EPICs `//` is used to delimit the optional host or service name from the PV (Process Variable).  e.g. ...
+## Exception Handling
+If an exception occurs in the Channel Provider the Exception will be propagated back up to the client, and logged using the configured logger.
 
 # Using AIDA-PVA
-## Important EPICS Environment variables
+## EPICS Environment variables
+All EPICS environment variables work in the same way they do for EPIC under AIDA-PVA.  
+- `EPICS_CA_ADDR_LIST`
+- `EPICS_CA_AUTO_ADDR_LIST`
+- `EPICS_CA_CONN_TMO`
+- `EPICS_CA_BEACON_PERIOD`
+- `EPICS_CA_REPEATER_PORT`
+- `EPICS_CA_SERVER_PORT`
+- `EPICS_TS_MIN_WEST`
+
+In order to get your client to connect you need to set the `EPICS_CA_ADDR_LIST` variable to point to the network you want to 
+handle your requests.  e.g., `export EPICS_CA_ADDR_LIST=mcc.stanford.edu` will allow your client to connect to the production network
+and its AIDA-PVA Channel Providers.
+
+For more information on EPICS variables see
+[EPICS Config Documentation](https://epics.anl.gov/EpicsDocumentation/AppDevManuals/ChannelAccess/cadoc_4.htm)
+
 ## From the command line
+You can access data in AIDA-PVA using the commandline.
+
+### pvcall
+```shell
+pvcall 'NDRFACET:BUFFACQ' BPMD=57 NRPOS=180 BPMS='["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]'
+```
+This will access the Buffered Acquisition Channel Provider requesting information on 4 BPMs with the specified parameters.
+
+### eget
+```shell
+eget 'NDRFACET:BUFFACQ' -a BPMD 57 -a NRPOS 180 -a BPMS '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]'
+```
 ## From Java
+From Java you can have more control over the data types sent and received.  
+
+```java
+        import org.epics.pvaccess.ClientFactory;
+        import org.epics.pvaccess.client.rpc.RPCClientImpl;
+        import org.epics.pvaccess.server.rpc.RPCRequestException;
+        import org.epics.pvdata.factory.FieldFactory;
+        import org.epics.pvdata.factory.PVDataFactory;
+        import org.epics.pvdata.pv.*;
+
+        ClientFactory.start();
+        var client = new RPCClientImpl("NDRFACET:BUFFACQ");
+
+        // Create the arguments structure that will host the fields
+        String []names = {"BPMD", "NRPOS", "BPMS"};
+        Field []fields = {new Field(), new Field(), new Field()};
+        var arguments = FieldFactory.getFieldCreate().createStructure(names,fields);
+
+        // Build the uri structure
+        var uriStructure =
+                FieldFactory.getFieldCreate().createStructure("epics:nt/NTURI:1.0",
+                        new String[]{"path", "scheme", "query"},
+                        new Field[]{
+                                FieldFactory.getFieldCreate().createScalar(ScalarType.pvString), 
+                                FieldFactory.getFieldCreate().createScalar(ScalarType.pvString), arguments}
+                );
+
+        // Make the query (contains the uri and arguments
+        var request = PVDataFactory.getPVDataCreate().createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+
+        // Set the request path
+        request.getStringField("path").put("NDRFACET:BUFFACQ");
+
+        // Set the request query values
+        var query = request.getStructureField("query");
+        ((PVInt) (query.getSubField("BPMD"))).put(57);
+        ((PVInt) (query.getSubField("NRPOS"))).put(180);
+        String [] bpms = {"BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"};
+        ((PVStringArray) (query.getSubField("BPMS"))).put(0, 3, bpms, 0);
+
+        // Execute the query with a timeout of 3 seconds
+        var result = client.request(request, 3.0);
+        client.destroy();
+        ClientFactory.stop();
+        
+        // Use result
+
+```
+
 ## From Matlab
-## From ...
+Example: TBA
 
 
