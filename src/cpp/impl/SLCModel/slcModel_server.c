@@ -1,5 +1,5 @@
 /** @file
- *  @brief Model Server implementation.
+ *  @brief Model Native Provider implementation.
  */
 #include <string.h>
 #include <stdlib.h>

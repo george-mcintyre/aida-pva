@@ -1,5 +1,5 @@
 /** @file
- *  @brief Buffered BPM Acquisition Server implementation.
+ *  @brief Buffered BPM Acquisition Native Provider implementation.
  */
 #include <stdio.h>
 #include <string.h>

@@ -1,5 +1,5 @@
 /** @file
- *  @brief SLC Magnet Service implementation.
+ *  @brief SLC Magnet Native Provider implementation.
  */
 /**
  * Magnet Server implementation

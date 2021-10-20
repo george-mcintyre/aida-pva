@@ -1,5 +1,5 @@
 /** @file
- *  @brief Klystron Server implementation.
+ *  @brief Klystron Native Provider implementation.
  */
 #include <stdio.h>
 #include <string.h>

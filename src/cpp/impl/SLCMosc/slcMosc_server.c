@@ -1,5 +1,5 @@
 /** @file
- *  @brief Master Oscillator Server implementation.
+ *  @brief Master Oscillator Native Provider implementation.
  */
 #include <stdio.h>
 #include <string.h>

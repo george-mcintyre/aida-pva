@@ -1,5 +1,5 @@
 /** @file
- *  @brief Utility Server implementation.
+ *  @brief Utility Native Provider implementation.
  */
 #include <stdio.h>
 #include <string.h>
