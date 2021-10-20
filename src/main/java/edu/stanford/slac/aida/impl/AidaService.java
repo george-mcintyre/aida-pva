@@ -1,5 +1,6 @@
 /*
  * @file
+ * The main class that gets run to start an AIDA-PVA Provider.
  */
 package edu.stanford.slac.aida.impl;
 

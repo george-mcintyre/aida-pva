@@ -1,5 +1,7 @@
 /*
  * @file
+ * For channels that return TABLEs, the AidaChannelOperationConfig contains the definition of the fields that the
+ * TABLE will contain, so this class allows configuration of these fields.
  */
 package edu.stanford.slac.aida.lib.model;
 
@@ -14,7 +16,7 @@ import org.epics.pvdata.pv.ScalarType;
 /**
  * This class encapsulates an {@link AidaField}.
  * <p>
- * It is used to represent a single field in {@link AidaChannelConfig#fields} that defines the configuration
+ * It is used to represent a single field in {@link AidaChannelOperationConfig#fields} that defines the configuration
  * of the ordinal TABLE column to which it is related by ordinal position in the list.
  * @note
  * It uses the `@Data` annotation to provide all the getters and setters,

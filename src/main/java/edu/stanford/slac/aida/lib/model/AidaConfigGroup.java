@@ -1,5 +1,6 @@
 /*
  * @file
+ * A channel configuration group represents an arbitrary grouping of channels that share the same configuration.
  */
 package edu.stanford.slac.aida.lib.model;
 
@@ -40,12 +41,12 @@ public class AidaConfigGroup {
     /**
      * This is the configuration to be used for `get` requests for the channel names listed in {@link AidaConfigGroup#channels}
      */
-    private AidaChannelConfig setterConfig;
+    private AidaChannelOperationConfig setterConfig;
 
     /**
      * This is the configuration to be used for `set` requests for the channel names listed in {@link AidaConfigGroup#channels}
      */
-    private AidaChannelConfig getterConfig;
+    private AidaChannelOperationConfig getterConfig;
 
     /**
      * This is the List of names of channels that will use the configurations specified in this {@link AidaConfigGroup}

@@ -1,5 +1,6 @@
 /*
  * @file
+ * Java class that is returned by the Native Channel Provider for requests that return TABLE.
  */
 package edu.stanford.slac.aida.lib.model;
 

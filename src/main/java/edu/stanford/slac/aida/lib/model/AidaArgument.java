@@ -1,5 +1,6 @@
 /*
  * @file
+ * Class that encapsulates a single request argument to be sent to the Native Channel Provider endpoint.
  */
 package edu.stanford.slac.aida.lib.model;
 

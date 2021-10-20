@@ -1,5 +1,6 @@
 /*
  * @file
+ * The AIDA-PVA Service which provides connection to the AIDA-PVA Native Channel Providers and the SLAC Network.
  */
 package edu.stanford.slac.aida.lib;
 
@@ -114,13 +115,13 @@ public class AidaRPCService implements RPCService {
      */
     private PVStructure request(String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
         AidaType aidaType;
-        AidaChannelConfig config;
+        AidaChannelOperationConfig config;
         String typeArgument = null;
         boolean isSetterRequest = false;
 
         {
-            AidaChannelConfig getterConfig = aidaChannelProvider.getGetterConfig(channelName);
-            AidaChannelConfig setterConfig = aidaChannelProvider.getSetterConfig(channelName);
+            AidaChannelOperationConfig getterConfig = aidaChannelProvider.getGetterConfig(channelName);
+            AidaChannelOperationConfig setterConfig = aidaChannelProvider.getSetterConfig(channelName);
             AidaType aidaGetterType = getterConfig == null ? NONE : getterConfig.getType();
             AidaType aidaSetterType = setterConfig == null ? NONE : setterConfig.getType();
 
@@ -185,7 +186,7 @@ public class AidaRPCService implements RPCService {
      * @return the PVStructure returned from the native call
      * @throws UnsupportedChannelException if operation is invalid for channel
      */
-    private PVStructure callNativeChannelProvider(String channelName, AidaArguments arguments, boolean isSetterRequest, AidaType aidaType, AidaChannelConfig config) throws UnsupportedChannelException {
+    private PVStructure callNativeChannelProvider(String channelName, AidaArguments arguments, boolean isSetterRequest, AidaType aidaType, AidaChannelOperationConfig config) throws UnsupportedChannelException {
         if (isSetterRequest) {  // Setter requests
             if (aidaType == VOID) { // Returning VOID
                 this.aidaChannelProvider.setValue(channelName, arguments);
@@ -265,7 +266,7 @@ public class AidaRPCService implements RPCService {
      * @param config   the configuration
      * @throws AidaInternalException if the configuration file has been mis-configured
      */
-    private void checkThatConfigDefinesFieldsForTableRequests(AidaType aidaType, AidaChannelConfig config) throws AidaInternalException {
+    private void checkThatConfigDefinesFieldsForTableRequests(AidaType aidaType, AidaChannelOperationConfig config) throws AidaInternalException {
         if (aidaType == TABLE && (config == null || config.getFields() == null)) {
             throw new AidaInternalException("Table channel configured without defining fields");
         }
@@ -328,7 +329,7 @@ public class AidaRPCService implements RPCService {
      * @param config          the configuration
      * @throws UnsupportedChannelException if any argument is not valid
      */
-    private void validateArguments(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaChannelConfig config) throws UnsupportedChannelException {
+    private void validateArguments(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaChannelOperationConfig config) throws UnsupportedChannelException {
         for (AidaArgument argument : argumentsList) {
             String argumentName = argument.getName().toUpperCase();
 

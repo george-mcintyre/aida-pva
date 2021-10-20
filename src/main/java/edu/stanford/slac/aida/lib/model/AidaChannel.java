@@ -1,5 +1,6 @@
 /*
  * @file
+ * This model class represents an AIDA-PVA channel.
  */
 package edu.stanford.slac.aida.lib.model;
 
@@ -39,12 +40,12 @@ public class AidaChannel {
     private @NonNull String channel;
 
     /**
-     * This is the {@link edu.stanford.slac.aida.lib.model.AidaChannelConfig} for all get requests to this channel
+     * This is the {@link AidaChannelOperationConfig} for all get requests to this channel
      */
-    private AidaChannelConfig getterConfig;
+    private AidaChannelOperationConfig getterConfig;
 
     /**
-     * This is the {@link edu.stanford.slac.aida.lib.model.AidaChannelConfig} for all set requests to this channel
+     * This is the {@link AidaChannelOperationConfig} for all set requests to this channel
      */
-    private AidaChannelConfig setterConfig;
+    private AidaChannelOperationConfig setterConfig;
 }

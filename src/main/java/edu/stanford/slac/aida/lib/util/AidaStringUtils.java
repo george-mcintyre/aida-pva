@@ -1,5 +1,6 @@
 /*
  * @file
+ * String helper functions.
  */
 package edu.stanford.slac.aida.lib.util;
 

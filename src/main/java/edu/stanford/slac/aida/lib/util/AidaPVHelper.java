@@ -1,5 +1,6 @@
 /*
  * @file
+ * Helper functions for PVData types used to construct and decode messages conforming to the Normative Types scheme.
  */
 package edu.stanford.slac.aida.lib.util;
 
@@ -382,7 +383,7 @@ public class AidaPVHelper {
      * @param aidaChannelConfig the configuration
      * @return the returned PVStructure containing the NT_TABLE
      */
-    public static PVStructure asNtTable(List<List<Object>> values, AidaChannelConfig aidaChannelConfig) {
+    public static PVStructure asNtTable(List<List<Object>> values, AidaChannelOperationConfig aidaChannelConfig) {
         // If there is nothing to add or that the list is empty or if the columns are empty return an empty
         //  {@link PVStructure}
         if (values == null || values.isEmpty() || values.get(0).isEmpty()) {
@@ -457,7 +458,7 @@ public class AidaPVHelper {
      * @param fieldTypesToPopulate  the types to populate - provide an empty list
      */
     private static void setFieldsWithNamesLabelsAndTypesFromConfig(
-            List<Field> fieldsToPopulate, AidaChannelConfig channelConfig, List<List<Object>> values,
+            List<Field> fieldsToPopulate, AidaChannelOperationConfig channelConfig, List<List<Object>> values,
             List<String> fieldNamesToPopulate, List<String> fieldLabelsToPopulate, List<AidaType> fieldTypesToPopulate) {
 
         // Loop over values and fields simultaneously

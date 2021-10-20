@@ -1,5 +1,6 @@
 /*
  * @file
+ * This class encapsulates an AIDA-PVA type.
  */
 package edu.stanford.slac.aida.lib.model;
 

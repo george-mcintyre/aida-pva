@@ -1,5 +1,6 @@
 /*
  * @file
+ * Implementation of an AIDA-PVA Channel Provider.
  */
 package edu.stanford.slac.aida.impl;
 

@@ -1,5 +1,6 @@
 /*
  * @file
+ * Factory class to create {@link edu.stanford.slac.aida.lib.ChannelProvider}s
  */
 package edu.stanford.slac.aida.lib;
 

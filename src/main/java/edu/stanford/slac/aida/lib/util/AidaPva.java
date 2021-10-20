@@ -1,5 +1,6 @@
 /*
  * @file
+ * Class to create string for startup banner.
  */
 package edu.stanford.slac.aida.lib.util;
 

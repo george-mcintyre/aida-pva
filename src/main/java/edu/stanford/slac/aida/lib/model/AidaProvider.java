@@ -1,5 +1,6 @@
 /*
  * @file
+ * This class captures the metadata associated with an AIDA-PVA Channel Provider.
  */
 package edu.stanford.slac.aida.lib.model;
 
@@ -120,8 +121,8 @@ public class AidaProvider {
             if (this.channelMap.isEmpty()) {
                 // Get all the configuration groups
                 for (AidaConfigGroup configuration : getConfigurations()) {
-                    AidaChannelConfig getterConfig = configuration.getGetterConfig();
-                    AidaChannelConfig setterConfig = configuration.getSetterConfig();
+                    AidaChannelOperationConfig getterConfig = configuration.getGetterConfig();
+                    AidaChannelOperationConfig setterConfig = configuration.getSetterConfig();
 
                     // In the getter config, set the labels to be the field names, if the labels are not specified
                     if (getterConfig != null) {

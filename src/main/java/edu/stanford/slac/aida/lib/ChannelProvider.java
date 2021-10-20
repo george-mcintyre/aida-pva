@@ -1,5 +1,7 @@
 /*
  * @file
+ * Implementation of a Channel Provider which handles requests for scalar, scalarArrays, and tables and transfers them
+ * to the appropriate Native Channel Provider endpoints.
  */
 package edu.stanford.slac.aida.lib;
 
@@ -199,7 +201,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param channelName the channel name to retrieve configuration
      * @return the configuration
      */
-    public AidaChannelConfig getSetterConfig(String channelName) {
+    public AidaChannelOperationConfig getSetterConfig(String channelName) {
         AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
         return (channel == null) ? null : channel.getSetterConfig();
     }
@@ -210,7 +212,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param channelName the channel name to retrieve configuration
      * @return the configuration
      */
-    public AidaChannelConfig getGetterConfig(String channelName) {
+    public AidaChannelOperationConfig getGetterConfig(String channelName) {
         AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
         return (channel == null) ? null : channel.getGetterConfig();
     }

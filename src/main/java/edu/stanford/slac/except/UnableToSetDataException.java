@@ -1,5 +1,7 @@
 /*
  * @file
+ * Unable to set data exception.
+ * This Exception is a general exception to be used in most cases when there's a problem satisfying a `set` request.
  */
 package edu.stanford.slac.except;
 

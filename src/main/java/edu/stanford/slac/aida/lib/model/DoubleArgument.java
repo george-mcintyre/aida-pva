@@ -1,5 +1,6 @@
 /*
  * @file
+ * This class encapsulates an argument that is a double precision floating point value.
  */
 package edu.stanford.slac.aida.lib.model;
 
