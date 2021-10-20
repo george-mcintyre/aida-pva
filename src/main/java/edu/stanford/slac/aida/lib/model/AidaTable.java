@@ -1,7 +1,3 @@
-/*
- * @file
- * Java class that is returned by the Native Channel Provider for requests that return TABLE.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.ToString;
@@ -10,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @file
+ * Java class that is returned by the Native Channel Provider for requests that return TABLE.
  * This class encapsulates an {@link AidaTable}.
  * <p>
  * It is the class that is returned from the Native Providers for requests that return a TABLE.

@@ -1,7 +1,3 @@
-/*
- * @file
- * The AIDA-PVA Service which provides connection to the AIDA-PVA Native Channel Providers and the SLAC Network.
- */
 package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.lib.model.*;
@@ -24,6 +20,10 @@ import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
+/**
+ * @file
+ * The AIDA-PVA Service which provides connection to the AIDA-PVA Native Channel Providers and the SLAC Network.
+ */
 public class AidaRPCService implements RPCService {
     /**
      * Logger to log info

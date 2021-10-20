@@ -1,13 +1,10 @@
-/*
- * @file
- * This class encapsulates an AIDA-PVA type.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import java.util.List;
 
 /**
- * This class encapsulates an {@link AidaType}.
+ * @file
+ * This class encapsulates an AIDA-PVA type.
  * <p>
  * All the data types that can be used in AIDA-PVA are represented here.
  */

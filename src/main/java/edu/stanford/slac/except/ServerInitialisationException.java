@@ -1,12 +1,7 @@
-/*
- * @file
- * Server initialisation error.
- * User this when there is an error during the server initialisation phase.
- * This is a fatal error and the service should stop when this exception is received.
- */
 package edu.stanford.slac.except;
 
 /**
+ * @file
  * Server initialisation error.
  * User this when there is an error during the server initialisation phase.
  * This is a fatal error and the service should stop when this exception is received.

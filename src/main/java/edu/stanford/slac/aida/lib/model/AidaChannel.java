@@ -1,7 +1,3 @@
-/*
- * @file
- * This model class represents an AIDA-PVA channel.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
+ * @file
  * This class encapsulates an {@link AidaChannel}.
  * <p>
  * It is used to represent a single channel that this AIDA-PVA Provider will support.

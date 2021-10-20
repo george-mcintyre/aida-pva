@@ -1,12 +1,7 @@
-/*
- * @file
- * Aida Internal Exception.
- * Use this when an anomaly is detected that is independent of the request being made.
- * i.e. a programming error or an unsupported edge case.
- */
 package edu.stanford.slac.except;
 
 /**
+ * @file
  * Aida Internal Exception.
  * Use this when an anomaly is detected that is independent of the request being made.
  * i.e. a programming error or an unsupported edge case.
@@ -19,7 +14,7 @@ public class AidaInternalException extends RuntimeException {
     public AidaInternalException() {
     }
 
-    /***
+    /**
      * Constructor with a message.
      * Use this constructor to create an exception that will indicate the problem using your message.
      * @param message A message explaining what the problem was

@@ -1,5 +1,5 @@
 /** @file
- *  @brief SLC Native Provider implementation.  This source file implements
+ *  @brief SLC Database Native Provider implementation.  This source file implements
  *  the AIDA-PVA SLC Database Provider.
  *  SLC Database provides data from the database values in the SLC Control System.
  *  It also allows the setting of float scalar database values.

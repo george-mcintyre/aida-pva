@@ -1,9 +1,3 @@
-/*
- * @file
- * This model class represents a channel operation's configuration.  A channel can have
- * support `get` operations and/or `set` operations.  This class represents the configuration for
- * any one of these operations.  A channel, therefore, can have up to two {@link edu.stanford.slac.aida.lib.model.AidaChannelOperationConfig}s.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.Data;
@@ -15,6 +9,11 @@ import java.util.List;
 import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
 
 /**
+ * @file
+ * This model class represents a channel operation's configuration.  A channel can have
+ * support `get` operations and/or `set` operations.  This class represents the configuration for
+ * any one of these operations.  A channel, therefore, can have up to two {@link edu.stanford.slac.aida.lib.model.AidaChannelOperationConfig}s.
+ *
  * This class encapsulates an {@link AidaChannelOperationConfig}.
  * The {@link AidaChannelOperationConfig} class controls how the AIDA-PVA Provider responds to a channel `get` or `set` request.
  * There is a different {@link AidaChannelOperationConfig} for `get` requests and `set` requests.

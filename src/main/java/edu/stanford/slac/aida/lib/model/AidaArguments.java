@@ -1,7 +1,3 @@
-/*
- * @file
- * Class that encapsulates a collection of all request arguments to be sent to the Native Channel Provider endpoint.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.Data;
@@ -10,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @file
  * This class encapsulates an {@link AidaArguments} structure.
  * <p>
  * It is used to represent all argument passed in an AIDA-PVA request.

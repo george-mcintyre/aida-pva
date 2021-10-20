@@ -1,13 +1,10 @@
-/*
- * @file
- * AIDA-PVA pvAccess RPC server implementation which provides access to PVAccess and the EPICS network.
- */
 package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.server.rpc.RPCServer;
 
 /**
- * AIDA-PVA pvAccess RPC server implementation
+ * @file
+ * AIDA-PVA pvAccess RPC server implementation which provides access to PVAccess and the EPICS network.
  */
 public class AidaRPCServer extends RPCServer {
     private final ChannelProvider aidaChannelProvider;

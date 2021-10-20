@@ -1,13 +1,10 @@
-/*
- * @file
- * This class encapsulates an argument that is a floating point value.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.Data;
 
 /**
- * This class encapsulates an {@link FloatArgument}.
+ * @file
+ * This class encapsulates an argument that is a floating point value.
  * <p>
  * Whenever arguments are passed with a channel request some they are all converted to string and converted back
  * in the Native Provider to their original types.  Floats and Doubles however are treated differently because

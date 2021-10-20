@@ -1,10 +1,8 @@
-/*
- * @file
- * Class to create string for startup banner.
- */
 package edu.stanford.slac.aida.lib.util;
 
 /**
+ * @file
+ * Class to create string for startup banner.
  * This class has one and only one job - Create a banner to be displayed the logs.
  * <p>
  * Go here for generator to try out different banner styles if you're bored with this one :)

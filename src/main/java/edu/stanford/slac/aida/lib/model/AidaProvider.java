@@ -1,7 +1,3 @@
-/*
- * @file
- * This class captures the metadata associated with an AIDA-PVA Channel Provider.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import edu.stanford.slac.aida.lib.ChannelProvider;
@@ -13,6 +9,8 @@ import org.epics.pvaccess.util.WildcardMatcher;
 import java.util.*;
 
 /**
+ * @file
+ * This class captures the metadata associated with an AIDA-PVA Channel Provider.
  * This class encapsulates an {@link AidaProvider}.
  * <p>
  * It is used configure how an AIDA-PVA will operate.

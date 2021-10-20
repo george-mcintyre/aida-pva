@@ -1,7 +1,3 @@
-/*
- * @file
- * A channel configuration group represents an arbitrary grouping of channels that share the same configuration.
- */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.Data;
@@ -12,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * @file
  * This class encapsulates an {@link AidaConfigGroup}.
  * <p>
  * It is used to represent the configuration that will apply to a single group of {@link AidaChannel}s.

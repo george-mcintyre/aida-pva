@@ -1,13 +1,13 @@
-/*
- * @file
- * String helper functions.
- */
 package edu.stanford.slac.aida.lib.util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @file
+ * String helper functions.
+ */
 public class AidaStringUtils {
 
     /**

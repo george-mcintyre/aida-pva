@@ -1,7 +1,3 @@
-/*
- * @file
- * Channel Provider Runner.
- */
 package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.PVAException;
@@ -11,6 +7,8 @@ import java.util.logging.Logger;
 import static edu.stanford.slac.aida.impl.AidaService.elapsedTime;
 
 /**
+ * @file
+ * Channel Provider Runner.
  * This class can run a Channel Provider so that it can service requests.
  * It is called by {@link edu.stanford.slac.aida.impl.AidaService#main}.
  */

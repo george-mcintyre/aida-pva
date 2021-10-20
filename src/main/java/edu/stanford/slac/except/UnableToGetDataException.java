@@ -1,11 +1,7 @@
-/*
- * @file
- * Unable to get data exception.
- * This Exception is a general exception to be used in most cases when there's a problem satisfying a `get` request.
- */
 package edu.stanford.slac.except;
 
 /**
+ * @file
  * Unable to get data exception.
  * This Exception is a general exception to be used in most cases when there's a problem satisfying a `get` request.
  * If this is a `set` request use the {@link UnableToSetDataException} exception instead.

@@ -1,7 +1,3 @@
-/*
- * @file
- * Factory class to create {@link edu.stanford.slac.aida.lib.ChannelProvider}s
- */
 package edu.stanford.slac.aida.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +8,8 @@ import java.io.File;
 import java.util.logging.Logger;
 
 /**
+ * @file
+ * Factory class to create {@link edu.stanford.slac.aida.lib.ChannelProvider}s
  * This class is a factory class that can create a channel based on environment and configuration files
  */
 public class ChannelProviderFactory {

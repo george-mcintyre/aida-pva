@@ -1,7 +1,3 @@
-/*
- * @file
- * Helper functions for PVData types used to construct and decode messages conforming to the Normative Types scheme.
- */
 package edu.stanford.slac.aida.lib.util;
 
 import edu.stanford.slac.aida.lib.model.*;
@@ -23,6 +19,8 @@ import static org.epics.pvdata.pv.ScalarType.pvString;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
+ * @file
+ * Helper functions for PVData types used to construct and decode messages conforming to the Normative Types scheme.
  * This class provides many functions that help with processing EPICS `Process Variables`.
  * APDA-PVA receives data from EPICS in {@link PVField} and
  * {@link PVStructure}, and we send data back to the EPICS network
