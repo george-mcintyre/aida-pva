@@ -1,3 +1,6 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.PVAException;

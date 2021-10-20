@@ -1,5 +1,7 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.except;
-
 
 /**
  * Aida Internal Exception

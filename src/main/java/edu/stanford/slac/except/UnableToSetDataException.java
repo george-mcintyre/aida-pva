@@ -1,5 +1,7 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.except;
-
 
 /**
  * Unable to set data exception.

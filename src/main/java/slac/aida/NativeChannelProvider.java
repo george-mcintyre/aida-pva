@@ -1,3 +1,6 @@
+/*
+ * @file
+ */
 package slac.aida;
 
 import edu.stanford.slac.aida.lib.model.AidaArguments;

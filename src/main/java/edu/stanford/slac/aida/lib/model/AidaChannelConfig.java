@@ -1,5 +1,7 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.aida.lib.model;
-
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

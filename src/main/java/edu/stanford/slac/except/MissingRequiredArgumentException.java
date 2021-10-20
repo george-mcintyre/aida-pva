@@ -1,5 +1,7 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.except;
-
 
 /**
  * Missing Required Argument Exception.

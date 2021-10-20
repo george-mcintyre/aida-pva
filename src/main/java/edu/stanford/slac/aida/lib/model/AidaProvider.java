@@ -1,3 +1,6 @@
+/*
+ * @file
+ */
 package edu.stanford.slac.aida.lib.model;
 
 import edu.stanford.slac.aida.lib.ChannelProvider;
