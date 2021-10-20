@@ -1,16 +1,16 @@
 !!edu.stanford.slac.aida.lib.model.AidaProvider
-# Channels definition file for aida-pva
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC BPM orbit data provider
 #
-# DML:
+# @section DML
+# @code
 #     SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #     FROM AIDA_DIRECTORY dir
 #     INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
 #     INNER JOIN AIDA_NAMES names ON dir.NAME_ID = names.ID
 #     WHERE service.NAME = 'SLCBpm'
 #     ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# This file defines the available channels for the SLC BPM service
-#
+# @endcode
 id: 102
 name: SLCBpm
 description: SLC BPM orbit data under a given measurement definition

@@ -1,3 +1,6 @@
+/** @file
+ *  @brief The Header File for the Native Channel Provider AIDA-PVA type related functions.
+ */
 #include <jni.h>
 #include <stdbool.h>
 #include "json.h"
@@ -18,24 +21,39 @@ void CVT_VMS_TO_IEEE_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p)
 void CVT_IEEE_TO_VMS_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
 void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
 
+/**
+ * @def CONVERT_TO_VMS_FLOAT
+ * Convert in-place, floating point numbers from ieee to VMS format. Give a pointer to
+ * an array of ieee floating point numbers and this macro will convert it in-place, to VMS format
+ * @param _float pointer to a single ieee floating point number or an array of them
+ * @param _count the number of ieee point numbers to convert
+ */
 #define CONVERT_TO_VMS_FLOAT(_float, _count) \
 {  \
     int2u _n = _count; \
     CVT_IEEE_TO_VMS_FLT(_float, _float, &_n); \
 }
 
+/**
+ * @def CONVERT_TO_VMS_DOUBLE
+ * Convert in-place, doubles from ieee to VMS format. Give a pointer to
+ * an array of ieee doubles and this macro will convert it in-place, to VMS format
+ * @param _double pointer to a single ieee double or an array of them
+ * @param _count the number of doubles to convert
+ */
 #define CONVERT_TO_VMS_DOUBLE(_double, _count) \
 {  \
     int2u _n = _count; \
     CVT_IEEE_TO_VMS_DBL(_double, _double, &_n); \
 }
 
-#define CONVERT_FROM_VMS_DOUBLE(_double, _count) \
-{  \
-    int2u _n = _count; \
-    CVT_VMS_TO_IEEE_DBL(_double, _double, &_n); \
-}
-
+/**
+ * @def CONVERT_FROM_VMS_FLOAT
+ * Convert in-place, floating point numbers from VMS to ieee format. Give a pointer to
+ * an array of VMS floating point numbers and this macro will convert it in-place, to ieee format
+ * @param _float pointer to a single VMS floating point number or an array of them
+ * @param _count the number of floating point numbers to convert
+ */
 #define CONVERT_FROM_VMS_FLOAT(_float, _count) \
 {  \
     int2u _n = _count; \
@@ -43,6 +61,20 @@ void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p)
 }
 
 /**
+ * @def CONVERT_FROM_VMS_DOUBLE
+ * Convert in-place, doubles from VMS to ieee format. Give a pointer to
+ * an array of VMS doubles and this macro will convert it in-place, to ieee format
+ * @param _double pointer to a single VMS double or an array of them
+ * @param _count the number of doubles to convert
+ */
+#define CONVERT_FROM_VMS_DOUBLE(_double, _count) \
+{  \
+    int2u _n = _count; \
+    CVT_VMS_TO_IEEE_DBL(_double, _double, &_n); \
+}
+
+/**
+ * @enum Type
  * The definition of Aida Types.
  * Defines the permissible types of fields.  This enumerated type defines all the possible AIDA-PVA types and classes.
  */
@@ -80,6 +112,7 @@ typedef enum
 } Type;
 
 /**
+ * @union FloatOrDoubleValue
  * This union stores the value part of a FloatingPointValue.
  * The `floatValue` member stores the float.
  * The `doubleValue` member stores the double.
@@ -91,6 +124,7 @@ typedef union
 } FloatOrDoubleValue;
 
 /**
+ * @typedef FloatingPointValue
  * Represents a floating point number.
  * This can be either a single or double precision value.
  * The `isFloat` flag
@@ -109,6 +143,7 @@ typedef struct
 } FloatingPointValue;
 
 /**
+ * @typedef Argument
  * A single request argument.
  * This is passed to an API endpoint in an Arguments structure.
  * It contains a `name` `value` pair representing a single argument that was included in the
@@ -121,6 +156,7 @@ typedef struct
 } Argument;
 
 /**
+ * @union ValueContents
  * This union stores either the string or the json_value of a Value.
  * An Value can be a string or can be a json structure.  If json is detected it
  * is automatically parsed and placed in the ValueContents union under the `jsonValue`
@@ -133,6 +169,7 @@ typedef union
 } ValueContents;
 
 /**
+ * @typedef Value
  * This special type represents a Value.
  * A Value is a special type that is used to pass complex data to the Native Channel Provider.
  * The value member, of type ValueContents, can hold either a simple string or a json_value.
@@ -144,6 +181,7 @@ typedef struct
 } Value;
 
 /**
+ * @typedef Arguments
  * An Arguments structure stores all of the arguments passed from the request to the Native Channel Provider.
  * It contains a count of the total number of arguments - #argumentCount - and a pointer
  * to that many {@link Argument}s - #arguments.
@@ -161,6 +199,7 @@ typedef struct
 } Arguments;
 
 /**
+ * @typedef Table structure.
  * Table structure.
  * This structure holds everything that a Native Channel Provider needs for returning a Table
  * to the client.  A table is a set of homogeneously sized vectors representing columns of data.

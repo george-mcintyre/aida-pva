@@ -1,5 +1,5 @@
 /** @file
- *  @brief This is the Native Channel Provider code for the SLC Magnet Service
+ *  @brief SLC Magnet Service implementation.
  */
 /**
  * Magnet Server implementation

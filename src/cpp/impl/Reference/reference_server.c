@@ -1,7 +1,5 @@
-/**
- * Reference Server implementation: IMPLEMENT ANY METHODS THAT YOUR SERVER SUPPORTS
-      **MEMBER**=SLCLIBS:AIDASHRLIB
-      **ATTRIBUTES**=JNI
+/** @file
+ *  @brief Reference Server implementation.
  */
 #include <string.h>
 #include <stdlib.h>

@@ -1,6 +1,8 @@
 !!edu.stanford.slac.aida.lib.model.AidaProvider
-# Channels definition file for aida-pva
-# DML: 1
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC Klystron provider
+# @section d1 DML 1
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -9,7 +11,8 @@
 #       AND names.ATTRIBUTE = 'TACT'
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
 #
-# DML: 2
+# @section d2 DML 2
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -18,7 +21,8 @@
 #       AND names.ATTRIBUTE IN ('PDES', 'KPHR')
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
 #
-# DML: 2
+# @section d3 DML 3
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -26,9 +30,7 @@
 #       WHERE service.NAME = 'SLCKlys'
 #       AND names.ATTRIBUTE IN ('PCON', 'ACON')
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# This file defines the available channels for the Klystron Service
-#
+# @endcode
 id: 162
 name: SLCKlys
 description: Klystron Server

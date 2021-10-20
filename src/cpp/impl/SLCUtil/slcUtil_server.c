@@ -1,5 +1,5 @@
-/**
- * Utility Server implementation
+/** @file
+ *  @brief Utility Server implementation.
  */
 #include <stdio.h>
 #include <string.h>

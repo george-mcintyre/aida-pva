@@ -1,5 +1,5 @@
-/**
- * Model Server implementation
+/** @file
+ *  @brief Model Server implementation.
  */
 #include <string.h>
 #include <stdlib.h>

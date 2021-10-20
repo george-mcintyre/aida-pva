@@ -1,6 +1,9 @@
 !!edu.stanford.slac.aida.lib.model.AidaProvider
-# Channels definition file for aida-pva
-# DML 1:
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC SLC Modelling provider
+
+# @section d1 DML 1
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -8,8 +11,9 @@
 #       WHERE service.NAME = 'SLCModel'
 #       AND names.ATTRIBUTE = 'twiss'
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# DML 2:
+# @endcode
+# @section d2 DML 2
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -17,9 +21,7 @@
 #       WHERE service.NAME = 'SLCModel'
 #       AND names.ATTRIBUTE = 'R'
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# This file defines the available channels for the Model Service
-#
+# @endcode
 id: 63
 name: Model
 description: SLC Modelling parameters

@@ -1,5 +1,5 @@
-/**
- * Master Oscillator Server implementation
+/** @file
+ *  @brief Master Oscillator Server implementation.
  */
 #include <stdio.h>
 #include <string.h>

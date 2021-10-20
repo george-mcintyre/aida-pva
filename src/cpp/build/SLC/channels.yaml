@@ -1,7 +1,9 @@
 !!edu.stanford.slac.aida.lib.model.AidaProvider
-# Channels definition file for aida-pva: SLC data provider
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC data provider.
 #
-# DML 1:
+# @section d1 DML 1
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -9,8 +11,9 @@
 #       WHERE service.NAME = 'SLC'
 #       AND names.ATTRIBUTE IN ('PDES', 'KPHR', 'PCON', 'ACON')
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# DML 2:
+# @endcode
+# @section d2 DML 2
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -18,9 +21,7 @@
 #       WHERE service.NAME = 'SLC'
 #       AND names.ATTRIBUTE NOT IN ('PDES', 'KPHR', 'PCON', 'ACON')
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# This file defines the available channels for the SLC aida service
-#
+# @endcode
 id: 8
 name: SLC
 description: Aida SLC Data Provider

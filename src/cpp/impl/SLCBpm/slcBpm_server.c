@@ -1,5 +1,5 @@
-/**
- * BPM Server implementation
+/** @file
+ *  @brief BPM Server implementation.
  */
 #include <stdio.h>
 #include <string.h>

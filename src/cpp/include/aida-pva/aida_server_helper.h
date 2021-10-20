@@ -1,5 +1,6 @@
-/** @file */
-#ifndef _Included_aida_server_helper
+/** @file
+ *  @brief The Header File for the Native Channel Provider Server Helper functions.
+ */#ifndef _Included_aida_server_helper
 #define _Included_aida_server_helper
 #ifdef __cplusplus
 extern "C" {

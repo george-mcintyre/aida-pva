@@ -1,7 +1,6 @@
 !!edu.stanford.slac.aida.lib.model.AidaProvider
-# Channels definition file for aida-pva
-#
-# This file defines the available channels for the Master Oscillator Service
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC Master Oscillator provider
 #
 id: 142
 name: SLCMosc

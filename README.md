@@ -13,6 +13,6 @@ the way they integrate and are deployed.
 
 For more information:
 
-* [AIDA-PVA Documentation](https://htmlpreview.github.io/?https://github.com/slaclab/aida-pva/blob/master/docGen/html/index.html)
+* [AIDA-PVA Documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/aida-pva/index.html)
 
 ![System Diagram](docs/images/aida-pva.png)

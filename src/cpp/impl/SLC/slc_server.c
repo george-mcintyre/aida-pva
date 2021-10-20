@@ -1,5 +1,11 @@
-/**
- * SLC Server implementation
+/** @file
+ *  @brief SLC Native Provider implementation.  This source file implements
+ *  the AIDA-PVA SLC Database Provider.
+ *  SLC Database provides data from the database values in the SLC Control System.
+ *  It also allows the setting of float scalar database values.
+ *
+ *  Acquires data for the named SLC device from the SLC database. Also allows setting of float scalar database values.
+ *
  */
 #include <stdio.h>
 #include <string.h>

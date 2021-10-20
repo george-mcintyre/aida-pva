@@ -1,5 +1,5 @@
-/**
- * Buffered BPM Acquisition Server implementation
+/** @file
+ *  @brief Buffered BPM Acquisition Server implementation.
  */
 #include <stdio.h>
 #include <string.h>

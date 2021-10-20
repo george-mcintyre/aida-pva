@@ -1,7 +1,9 @@
 !!edu.stanford.slac.aida.lib.model.AidaProvider
-# Channels definition file for aida-pva
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC Magnet provider
 #
-# DML:
+# @section DML
+# @code
 #       SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
 #       FROM AIDA_DIRECTORY dir
 #       INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
@@ -9,9 +11,7 @@
 #       WHERE service.NAME = 'SLCMagnet'
 #       AND names.ATTRIBUTE LIKE '%:BDES' OR names.ATTRIBUTE LIKE '%:VDES'
 #       ORDER BY names.ATTRIBUTE, names.INSTANCE
-#
-# This file defines the available channels for the Magnet Service
-#
+# @endcode
 id: 262
 name: SLCBMagnet
 description: SLC Magnet Data
