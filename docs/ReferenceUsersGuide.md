@@ -20,10 +20,10 @@ Supports **get** and **set** operations.
 
 | | | |
 |  ----------- |----------- |----------- |
-| pvcall examples | `pvcall AIDA:SAMPLE:TEST:attribute01` | Get the status code for the trigger device on the beam code |
-|  | `AIDA:SAMPLE:TEST:attribute02` |  Get the status string |
-|  | `AIDA:SAMPLE:TEST:attribute03 x=3` |  Perform specified operation to trigger device on beam code |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute30 VALUE=100` |  Perform set operation for multiknob file knob rotation |
+| pvcall examples | `pvcall AIDA:SAMPLE:TEST:attribute01` | Get value 1  |
+|  | `pvcall AIDA:SAMPLE:TEST:attribute02` |  get value 2 |
+|  | `pvcall AIDA:SAMPLE:TEST:attribute03 x=3` |  while passing in 3 as a parameter, return 3 + 3 = 6 |
+|  | `pvcall AIDA:SAMPLE:TEST:attribute30 VALUE=100` |  Simulate setting value with no return value |
 | Java Tests | ReferenceTest.java | |
 
 ## Instances and Attributes
