@@ -96,3 +96,179 @@ _Parameters_
 _Return value_
 
 None
+
+## Test Output
+```shell
+java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcTest" -c
+#################################################
+AIDA-PVA SLC TESTS
+#################################################
+
+████ Test 1: Acquire scalar types SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:LEFF => FLOAT
+    Float BACT: 0.262 ✔
+get: XCOR:LI03:120//LEFF => FLOAT
+    Backwards compatibility - using legacy channel format: Float BACT: 0.262 ✔
+get: XCOR:LI03:120:LEFF => DOUBLE
+    Double BACT: 0.2619999945163727 ✔
+get: XCOR:LI03:120:VSTA => BOOLEAN
+    Boolean VSTA: true ✔
+get: XCOR:LI03:120:SETL => SHORT
+    Short SETL: 3000 ✔
+get: XCOR:LI03:120:ADCP => BYTE
+    Byte ADCP: 48 ✔
+get: XCOR:LI03:120:ADCP => CHAR
+    Char ADCP: '0' ✔
+get: XCOR:LI03:120:ADCP => CHAR
+    WCHAR not possible in AIDA-PVA: Falling back to CHAR: ADCP: '0' ✔
+get: XCOR:LI03:120:PSNM => STRING
+    String PSNM: UNKNOWN  ✔
+get: XCOR:LI03:120:PSNM => STRING
+    WSTRING not possible in AIDA-PVA: Falling back to STRING: PSNM: UNKNOWN  ✔
+get: XCOR:LI03:120:PSNM => BYTE_ARRAY
+    Byte array PSNM:
+        85 ✔
+        78 ✔
+        75 ✔
+        78 ✔
+        79 ✔
+        87 ✔
+        78 ✔
+        32 ✔
+get: XCOR:LI03:120:PSNM => CHAR_ARRAY
+    Char array PSNM:
+        'U' ✔
+        'N' ✔
+        'K' ✔
+        'N' ✔
+        'O' ✔
+        'W' ✔
+        'N' ✔
+        ' ' ✔
+
+████ Test 2: Acquire FLOAT type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:BACT => FLOAT
+    BACT: 0.0 ✔
+
+████ Test 3: Acquire LONG INT type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:VSTA => LONG
+    VSTA: 8256 ✔
+
+████ Test 4: Acquire array of FLOAT type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:IMMS => FLOAT_ARRAY
+    IMMS:
+        -5.0 ✔
+        5.0 ✔
+        0.0 ✔
+
+████ Test 5: Acquire array of DOUBLE type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:IMMS => DOUBLE_ARRAY
+    IMMS:
+        -5.0 ✔
+        5.0 ✔
+        0.0 ✔
+
+████ Test 6: Acquire array of SHORT type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:NSCY => SHORT_ARRAY
+    NSCY:
+        0 ✔
+        0 ✔
+
+████ Test 7: Acquire array of LONG type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:RAMP => LONG_ARRAY
+    RAMP:
+        0 ✔
+        0 ✔
+
+████ Test 8: Acquire array of BOOLEAN type SLC PMUS
+_________________________________________________
+
+get: XCOR:LI03:120:RAMP => BOOLEAN_ARRAY
+    RAMP:
+        true ✔
+        false ✔
+
+████ Test 9: Acquire FLOAT type SLC Database PV
+_________________________________________________
+
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+
+████ Test 10: Looping acquire FLOAT type SLC Database PV pausing 10 seconds between each.
+_________________________________________________
+
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+get: XCOR:LI03:120:LEFF => FLOAT
+    LEFF: 0.262 ✔
+
+████ Test 11: ASTS channel name test
+_________________________________________________
+
+get: ASTS:LI00:ISOPLAN2:DATA => FLOAT
+    DATA: 0.0 ✔
+get: ASTS:PR02:VP3012:DATA => FLOAT
+    DATA: 0.0 ✔
+get: ASTS:PR02:VP3012:STAT => SHORT
+    STAT: 40 ✔
+get: ASTS:PR02:T2092BLW:LIM1 => FLOAT
+    LIM1: 32.0 ✔
+get: ASTS:PR02:T2092BLW:LIM2 => FLOAT
+    LIM2: 150.0 ✔
+get: ASTS:PR02:T2092BLW:LIMS => FLOAT_ARRAY
+    LIMS:
+        32.0 ✔
+        150.0 ✔
+get: ASTS:PR02:T2092QUA:SCAL => FLOAT_ARRAY
+    SCAL:
+        32.0 ✔
+        1.8 ✔
+get: ASTS:PR02:T2092QUA:RAW => FLOAT
+    RAW: 1.0E-9 ✔
+get: ASTS:PR02:T2092QUA:STAT => STRING
+    STAT: CamErr   RED        ✔
+
+████ Test 12: ASTS channel name with one of the pseudo-secondaries STAT, CTRL, or VSTA
+_________________________________________________
+
+get: ASTS:PR02:T2092QUA:STAT => STRING_ARRAY
+    STAT:
+        CamErr   ✔
+        RED      ✔
+          ✔
+
+████ Test 13: Set value test
+_________________________________________________
+
+set: XCOR:LI31:41:BCON (VALUE=[5.0]) ✔
+```
