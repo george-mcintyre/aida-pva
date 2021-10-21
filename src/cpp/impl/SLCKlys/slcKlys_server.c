@@ -222,7 +222,7 @@ static void setPconOrAconValue(JNIEnv* env, Arguments arguments, Value value, ch
 	}
 
 	float floatValue;
-	if (avscanf(env, &arguments, &value, "%f", &floatValue)) {
+	if (avscanf(env, &arguments, &value, "%f", "value", &floatValue)) {
 		return;
 	}
 
@@ -282,19 +282,13 @@ static Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments,
 	// Keep track of stuff to free
 	TRACK_ALLOCATED_MEMORY
 
-	// Validate and get value
-	if (value.type != AIDA_STRING_TYPE
-			|| (strcmp(value.value.stringValue, "1") != 0 && strcmp(value.value.stringValue, "0") != 0)) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Supplied value must be 0 or 1");
-		RETURN_NULL_TABLE;
-	}
-	int isActivateOperation = (*value.value.stringValue == '1') ? 1 : 0;
-
 	// Get the arguments
 	char* beam_c;
 	char* dgrp_c = NULL;
+	unsigned char isActivateOperation;
 
-	if (ascanf(env, &arguments, "%s %os",
+	if (avscanf(env, &arguments, &value, "%b %s %os",
+			"value", &isActivateOperation,
 			"beam", &beam_c,
 			"dgrp", &dgrp_c
 	)) {

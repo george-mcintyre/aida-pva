@@ -153,7 +153,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 
 	// To hold data
-	char namesData[MAX_DGRP_BPMS][NAME_SIZE];
+	char namesData[rows + 1][NAME_SIZE];
 	float xData[rows + 1], yData[rows + 1], tmitData[rows + 1], zData[rows + 1];
 	unsigned long hstasData[rows + 1], statsData[rows + 1];
 
