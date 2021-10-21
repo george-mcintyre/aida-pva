@@ -39,7 +39,7 @@ Here is the documentation for all the implemented AIDA-PVA channel providers.
 - [SLC Magnet Channel Provider](SLCMagnetUsersGuide.md)
 - [SLC Master Oscillator Channel Provider](SLCMoscUsersGuide.md)
 - [SLC Utilities Channel Provider](SLCUtilUsersGuide.md)
-- [Reference Data Provider for testing](Reference.md)
+- [Reference Data Provider for testing](ReferenceUsersGuide.md)
 
 # Naming conventions
 In AIDA-PVA, channel name parts are all separated by colons e.g.,`PRIM:MICR:UNIT:ATTR`.  
@@ -150,57 +150,64 @@ This will access the Buffered Acquisition Channel Provider requesting informatio
 
 ### eget
 ```shell
-eget 'NDRFACET:BUFFACQ' -a BPMD 57 -a NRPOS 180 -a BPMS '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]'
+eget -s NDRFACET:BUFFACQ -a BPMD 57 -a NRPOS 180 -a BPMS '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]'
 ```
 ## From Java
 From Java you can have more control over the data types sent and received.  
 
 ```java
-        import org.epics.pvaccess.ClientFactory;
-        import org.epics.pvaccess.client.rpc.RPCClientImpl;
-        import org.epics.pvaccess.server.rpc.RPCRequestException;
-        import org.epics.pvdata.factory.FieldFactory;
-        import org.epics.pvdata.factory.PVDataFactory;
-        import org.epics.pvdata.pv.*;
+import org.epics.pvaccess.ClientFactory;
+import org.epics.pvaccess.client.rpc.RPCClientImpl;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
 
+public class AidaPvaRunner {
+    public static void main(String[] args) {
         ClientFactory.start();
-        var client = new RPCClientImpl("NDRFACET:BUFFACQ");
+        RPCClientImpl client = new RPCClientImpl("NDRFACET:BUFFACQ");
 
         // Create the arguments structure that will host the fields
-        String []names = {"BPMD", "NRPOS", "BPMS"};
-        Field []fields = {new Field(), new Field(), new Field()};
-        var arguments = FieldFactory.getFieldCreate().createStructure(names,fields);
+        String[] names = {"BPMD", "NRPOS", "BPMS"};
+        Field[] fields = {new Field(), new Field(), new Field()};
+        Structure arguments = FieldFactory.getFieldCreate().createStructure(names, fields);
 
         // Build the uri structure
-        var uriStructure =
+        Structure uriStructure =
                 FieldFactory.getFieldCreate().createStructure("epics:nt/NTURI:1.0",
                         new String[]{"path", "scheme", "query"},
                         new Field[]{
-                                FieldFactory.getFieldCreate().createScalar(ScalarType.pvString), 
+                                FieldFactory.getFieldCreate().createScalar(ScalarType.pvString),
                                 FieldFactory.getFieldCreate().createScalar(ScalarType.pvString), arguments}
                 );
 
         // Make the query (contains the uri and arguments
-        var request = PVDataFactory.getPVDataCreate().createPVStructure(uriStructure);
+        PVStructure request = PVDataFactory.getPVDataCreate().createPVStructure(uriStructure);
         request.getStringField("scheme").put("pva");
 
         // Set the request path
         request.getStringField("path").put("NDRFACET:BUFFACQ");
 
         // Set the request query values
-        var query = request.getStructureField("query");
+        PVStructure query = request.getStructureField("query");
         ((PVInt) (query.getSubField("BPMD"))).put(57);
         ((PVInt) (query.getSubField("NRPOS"))).put(180);
-        String [] bpms = {"BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"};
+        String[] bpms = {"BPMS:LI11:501", "BPMS:LI11:601", "BPMS:LI11:701", "BPMS:LI11:801"};
         ((PVStringArray) (query.getSubField("BPMS"))).put(0, 3, bpms, 0);
 
         // Execute the query with a timeout of 3 seconds
-        var result = client.request(request, 3.0);
+        try {
+            PVStructure result = client.request(request, 3.0);
+
+            // Use result ...
+        } catch (RPCRequestException e) {
+            // Do something with error
+        }
         client.destroy();
         ClientFactory.stop();
-        
-        // Use result
-
+    }
+}
 ```
 
 ## From Matlab

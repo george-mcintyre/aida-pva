@@ -1,119 +1,145 @@
-This page provides documentation for users and programmers of AIDA's SLC Klystron Data Provider. This data provider allows the retrieval of the status code or a status string for a specified klystron on a beam code. It also allows the deactivation or reactivation of a specified klystron on a beam code. The PDES value for a klystron or subbooster may be set and the phase may be optionally trimmed. The KPHR value for a klystron or subboster may be set. Finally, a configuration value (PCON or ACON) of a specified klystron or subbooster may be set.
+# SLC Klystron Data Users Guide
 
-See Also: Basic Users Guide to Aida, REF_AIDASHR; AIDA SLC Peer Programmers Guide
+This section describes what an AIDA-PVA user should know about accessing the SLC Klystron Data through AIDA-PVA. This data provider allows the retrieval of the status code or a status string for a specified klystron on a beam code. It also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set. Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set.  For general
+information on using AIDA-PVA see [Basic Users Guide to Aida](UserGuide.md), and the EPICS javadoc.
 
-Users Guide
-This section descibes what an AIDA user should know about using the SLC Klystron data provider. For general information on using AIDA see Basic Users Guide to Aida, and the Aida javadoc, in particular the classes DaObject and DaReference, in aida.lib.da which form Aida's programming interface. One can also use Aida through Matlab.
+# AIDA-PVA Data Provider for SLC Klystron Data
 
-Table 1: Summary of AIDA Data Provider for SLC Klystron Data
+## Summary
+Supports **get** and **set** operations. 
 
-SUMMARY
-Supports get and set operations. The get operation obtains the status code or a status string for a specified klystron on a beam code. There are four set operations that can be performed: (1) deactivate or reactivate a specified klystron on a beam code, (2) set the PDES value and optionally trim the phase of a specified klystron or subbooster, (3) set the KPHR value of a specified klystron or subbooster, and (4) set a configuration value (PCON or ACON) of a specified klystron or subbooster.
-Status and limitations	
-The data provider is complete and there are no known limitations
+The **get** operation obtains the status code or a status string for a specified klystron on a beam code. 
 
-Plan	No active plans for extensions.
+There are four **set** operations that can be performed: 
+1. deactivate or reactivate a specified klystron on a beam code, 
+2. set the `PDES` value and optionally trim the phase of a specified klystron or subbooster, 
+3. set the `KPHR` value of a specified klystron or subbooster, and 
+4. set a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster
 
-EXAMPLES
-Schematic	Java examples, see DpSlcKlysTests.java for more examples:
-String query = "KLYS:LI31:31:TACT";
-da.setParam("BEAM=8");         /* Required parameter specifying a beam code. */
-da.setParam("DGRP=DEV_DGRP");  /* Display group must be specified if klystron is not in display group LIN_KLYS. */
-Short v = (Short) da.get(query, DaValue.Type.SHORT); /* Get the status code for the klystron on the beam code. */ 
+## Examples
+| | | |
+|  ----------- |----------- |----------- |
+| pvcall examples | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=SHORT`| Get the status code for the klystron on the beam code |
+|  | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=STRING` | Get the status string |
+|  | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP VALUE=0` | Deactivate klystron on beam code |
+|  | `pvcall KLYS:LI31:31:PDES VALUE=90.0f` | Perform set PDES and trim phase operation |
+|  | `pvcall KLYS:LI31:31:KPHR VALUE=60.0f` | Perform set KPHR value operation |
+|  | `pvcall KLYS:LI31:31:PCON VALUE=5.0f` | Perform set PCON value operation (no value is returned) |
+| Java Tests | SlcKlysTest.java | |
+| Matlab example |  | |
 
-String query = "KLYS:LI31:31:TACT";
-da.setParam("BEAM=8");         /* Required parameter specifying a beam code. */
-da.setParam("DGRP=DEV_DGRP");  /* Display group must be specified if klystron is not in display group LIN_KLYS. */
-String v = (String) da.get(query, DaValue.Type.STRING); /* String type indicates to get the status string. */ 
+## Instances and Attributes
 
-String query = "KLYS:LI31:31:TACT";
-da.setParam("BEAM=8");         /* Required parameter specifying a beam code. */
-da.setParam("DGRP=DEV_DGRP");  /* Display group must be specified if klystron is not in display group LIN_KLYS. */
-Short setValue = new Short((short) 0); /* Flag 0 indicates a deactivation operation. */
-DaValue inData = new DaValue(setValue); /* Creation a DaValue to hold operation flag. */
-DaValue outData = da.setDaValue(query, inData); /* Perform specified operation to klystron on beam code. */
+| | | |
+| ----------- | ----------- | ----------- |
+| **get** | Syntax    | `<prim>:<micr>:<unit>:TACT` |
+| | Examples | `KLYS:LI31:31:TACT` |
+| **set** | Syntax    | `<prim>:<micr>:<unit>:TACT` |
+| | | `<prim>:<micr>:<unit>:PDES` |
+| | | `<prim>:<micr>:<unit>:KPHR` |
+| | | `<prim>:<micr>:<unit>:PCON` |
+| | | `<prim>:<micr>:<unit>:ACON` |
+| | Examples | `KLYS:LI31:31:TACT` |
+| | | `KLYS:LI31:31:PDES` |
+| | | `KLYS:LI31:31:KPHR` |
+| | | `KLYS:LI31:31:PCON` |
+| | | `KLYS:LI31:31:ACON` |
 
-String query = "KLYS:LI31:31:PDES"; /* Indication of set PDES and optional trim phase operation. */
-Float pdesValue = new Float(90.0f); /* Specified desired PDES value. */
-DaValue inData = new DaValue(pdesValue); /* Creation of DaValue to hold pdesValue. */
-DaValue outData = da.setDaValue(query, inData); /* Perform set PDES and trim phase operation. */
+## Attribute operation summary
 
-String query = "KLYS:LI31:31:KPHR"; /* Indication of set KPHR value operation. */
-Float kphrValue = new Float(60.0f); /* Specified desired KPHR value. */
-DaValue inData = new DaValue(kphrValue); /* Creation of DaValue to hold kphrValue. */
-DaValue outData = da.setDaValue(query, inData); /* Perform set KPHR value operation. */
+| | | |
+| ----------- | -----------  | -----------  |
+| Attribute | operation |Description |
+| `TACT` | **get** |  Gets a status code or a status string for the specified klystron on a beam code |
+| `TACT` | **set** |  Deactivates or reactivates a specified klystron on a beam code |
+| `PDES` | **set** |  Sets the PDES value and optionally trims the phase for a specified klystron or subbooster |
+| `KPHR` | **set** |  Sets the KPHR value of a specified klystron or subbooster |
+| `PCON` | **set** |  Sets the PCON value of a specified klystron or subbooster |
+| `ACON` | **set** |  Sets the ACON value of a specified klystron or subbooster |
 
-String query = "KLYS:LI31:31:PCON"; /* Indication of set PCON value operation. */
-Float newValue = new Float(5.0f); /* Specified desired PCON value. */
-DaValue inData = new DaValue(newValue); /* Creation of DaValue to hold newValue. */
-da.setDaValue(query, inData); /* Perform set PCON value operation (no value is returned). */
-Java	$CD_SOFT/ref/package/aida/test/java/DpSlcKlysTests.java
-Matlab	$CD_SOFT/ref/package/aida/test/matlab/klysGetDemo.m gets status of a klystron;
-$CD_SOFT/ref/package/aida/test/matlab/klysSetDemo.m deactivates or reactivates a klystron.
-$CD_SOFT/ref/package/aida/test/matlab/klysSetTrimDemo.m sets the PDES value and trims the phase of a klystron or subbooster.
-$CD_SOFT/ref/package/aida/test/matlab/klysSetKphrDemo.m sets the KPHR value of a klystron or subbooster.
+## Attribute operations
+### TACT : get
+_Parameters_
 
-INSTANCES and ATTRIBUTES
-Instance Type	Description
-Get	Syntax	<prim>:<micr>:<unit>:TACT
-Examples	
-KLYS:LI31:31:TACT
+| | | |
+| ----------- | -----------| ----------- |
+| Parameter Names | Parameter Values |Description | 
+| `TYPE`*  |   return type  | Must be one of `SHORT`, `LONG`, or `STRING`  |
+| `BEAM`*  |   Integer  | Beam code number |
+| `DGRP`| Dgrp name |  A display group associated with the specified klystron. Must be specified if the klystron does not belong to display group `LIN_KLYS` |
 
-Set	Syntax	<prim>:<micr>:<unit>:TACT
-<prim>:<micr>:<unit>:PDES
-<prim>:<micr>:<unit>:KPHR
-<prim>:<micr>:<unit>:PCON
-<prim>:<micr>:<unit>:ACON
-Examples	
-KLYS:LI31:31:TACT
-KLYS:LI31:31:PDES
-KLYS:LI31:31:KPHR
-KLYS:LI31:31:PCON
-KLYS:LI31:31:ACON
+_Return value_
 
-Attributes
-Attribute	Description
-TACT	Gets a status code or a status string for the specified klystron on a beam code.
-Methods	Name*	Returns
-get(d,DaValue.Types.SHORT)	A short value containing the status code for the klystron on a beam code - see linklysta.txt
-get(d,DaValue.Types.LONG)	A long value containing the status code for the klystron on a beam code - see linklysta.txt
-get(d,DaValue.Types.STRING)	A string value containing a status string having one of two values: "deactivated" or "activated".
-Parameters	Name	
-Req/
-Opt
+@note
+Return value for BPM device shown below. `TORO`, `GAPM`, `KLYS` or `SBST` will be different.
 
-Syntax	Semantics
-BEAM	
-req
+| | |
+|-----------  |-----------  |
+| TYPE  |  Description |
+| `SHORT` |  A short value containing the status code for the klystron on a beam code.  See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)   |
+| `LONG` |  A long value containing the status code for the klystron on a beam code.  See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)   |
+| `STRING` |  A string value containing a status string having one of two values: "deactivated" or "activated"   |
 
-Integer	Beam code number
-DGRP	opt	Dgrp name	A display group associated with the specified klystron. Must be specified if the klystron does not belong to display group LIN_KLYS.
-TACT	Deactivates or reactivates a specified klystron on a beam code. The parameter data argument (p) is a DaValue containing a Short flag code indicating the desired operation: 0 => deactivate, 1 => reactivate.
-Methods	Name*	Returns
-setDaValue(q, p)	Returns a DaValue containing a matrix having one value of type short: the status code for the specified klystron on a beam code - see linklysta.txt
-Parameters	Name	
-Req/
-Opt
 
-Syntax	Semantics
-BEAM	req	Integer	Beam code number
-DGRP	opt	Dgrp name	A display group associated with the specified klystron. Must be specified if the klystron does not belong to display group LIN_KLYS.
-PDES	Sets the PDES value and optionally trims the phase for a specified klystron or subbooster. The parameter data argument (p) is a DaValue containing a Float with the desired PDES value.
-Methods	Name*	Returns
-setDaValue(q, p)	Returns a DaValue containing a matrix having one value of type float: the PHAS secondary value after the set PDES and optional trim phase operation.
-Parameters	Name	
-Req/
-Opt
+### TACT : set
+_Parameters_
 
-Syntax	Semantics
-TRIM	opt	YES or NO	If specified and set to NO, no trim phase operation will be performed after setting the PDES value. If not specified or set to YES, the trim phase operation will be performed.
-KPHR	Sets the KPHR value of a specified klystron or subbooster. The parameter data argument (p) is a DaValue containing a Float with the desired KPHR value.
-Methods	Name*	Returns
-setDaValue(q, p)	Returns a DaValue containing a matrix having one value of type float: the PHAS secondary value after the set KPHR operation.
-Parameters	None
-PCON or ACON	Sets the PCON or ACON value of a specified klystron or subbooster. The parameter data argument (p) is a DaValue containing a Float with the desired PCON or ACON value.
-Methods	Name*	Returns
-setDaValue(q, p)	No data is returned.
-Parameters	None
-* See DaObject and DaReference (and DaReference's parent _DaReference) in aida.lib.da for full API and method signatures.
+| | | |
+| ----------- | -----------| ----------- |
+| Parameter Names | Parameter Values |Description | 
+| `VALUE`*  |  Short   | Short flag code indicating the desired operation: `0` => deactivate, `1` => reactivate.  |
+| `BEAM`*  |   Integer  | Beam code number |
+| `DGRP`| Dgrp name |  A display group associated with the specified klystron. Must be specified if the klystron does not belong to display group `LIN_KLYS` |
+
+_Return value_
+
+| | | | |
+|----------- | ----------- | -----------  |-----------  |
+| TYPE  | Return Column | Column Type |Description |
+| `TABLE` | `status` | `SHORT_ARRAY` | Status code for the specified klystron on a beam code - See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)  |
+
+### PDES : set
+_Parameters_
+
+| | | |
+| ----------- | -----------| ----------- |
+| Parameter Names | Parameter Values |Description | 
+| `VALUE`*  |  Short   | Short flag code indicating the desired operation: `0` => deactivate, `1` => reactivate.  |
+| `TRIM`  |   Boolean  | `YES` or `NO`. If specified and set to `NO`, no trim phase operation will be performed after setting the `PDES` value. If not specified or set to `YES`, the trim phase operation will be performed. |
+
+_Return value_
+
+| | | | |
+|----------- | ----------- | -----------  |-----------  |
+| TYPE  | Return Column | Column Type |Description |
+| `TABLE` | `phas` | `FLOAT_ARRAY` | The PHAS secondary value after the set `PDES` and optional trim phase operation. |
+
+### KPHR : set
+_Parameters_
+
+| | | |
+| ----------- | -----------| ----------- |
+| Parameter Names | Parameter Values |Description | 
+| `VALUE`*  |  Float   | desired `KPHR` value.  |
+
+_Return value_
+
+| | | | |
+|----------- | ----------- | -----------  |-----------  |
+| TYPE  | Return Column | Column Type |Description |
+| `TABLE` | `phas` | `FLOAT_ARRAY` | The PHAS secondary value after the set `KPHR` operation |
+
+### PCON : set, ACON : set 
+_Parameters_
+
+| | | |
+| ----------- | -----------| ----------- |
+| Parameter Names | Parameter Values |Description | 
+| `VALUE`*  |  Float   | desired `PCON` or `ACON` value.  |
+
+_Return value_
+
+None
+
+
 
