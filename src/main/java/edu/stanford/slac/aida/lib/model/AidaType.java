@@ -181,7 +181,7 @@ public enum AidaType {
         if (configuredType == ANY) {
             return true;
         } else if (configuredType == SCALAR || configuredType == SCALAR_ARRAY) {
-            return specifiedAidaType.metaType() == configuredType;
+            return specifiedAidaType == TABLE || specifiedAidaType.metaType() == configuredType;
         } else
             return specifiedAidaType == configuredType;
     }
