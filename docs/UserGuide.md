@@ -89,6 +89,12 @@ EPICS allows synchronous and Asynchronous call semantics so either can be used w
 
 The only EPICS protocol AIDA-PVA implements is RPC.
 
+## Configuring EPICS
+The configuration of EPICS is important to make sure that your client application will connect to the correct Channel Provider. 
+The full documentation is available [here](https://epics.anl.gov/EpicsDocumentation/AppDevManuals/ChannelAccess/cadoc_4.htm) but the main things to set to get you going are:
+- `EPICS_PVA_ADDR_LIST` - this is the list of addresses to search for Channel Providers.  Set it to `mccdev.slac.stanford.edu` for testing against the development environment.
+- `EPICS_PVA_AUTO_ADDR_LIST` - set this to `FALSE` so that EPICS won't try to automatically create your address list
+
 # Setting the return type of the request
 When you need to specify the type of the response you can set the `TYPE` argument to one of the available types.  
 e.g. `TYPE=FLOAT`
