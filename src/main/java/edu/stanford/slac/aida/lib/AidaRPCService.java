@@ -21,8 +21,7 @@ import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
- * @file
- * The AIDA-PVA Service which provides connection to the AIDA-PVA Native Channel Providers and the SLAC Network.
+ * @file The AIDA-PVA Service which provides connection to the AIDA-PVA Native Channel Providers and the SLAC Network.
  */
 public class AidaRPCService implements RPCService {
     /**
@@ -333,9 +332,15 @@ public class AidaRPCService implements RPCService {
         for (AidaArgument argument : argumentsList) {
             String argumentName = argument.getName().toUpperCase();
 
-            if (!argumentName.equals("TYPE") && !argumentName.equals("VALUE")) { // Ignore TYPE and VALUE arguments because they are validated elsewhere
-                if (!config.getArguments().contains(argumentName)) { // if the given argument name is not in the acceptable set of argument names then error out
-                    throw new UnsupportedChannelException(channelName + ":  " + argumentName + " is not a valid argument for " + (isSetterRequest ? "set" : "get") + " requests to this channel. Valid arguments are: " + config.getArguments());
+            if (!"TYPE".equals(argumentName) && !"VALUE".equals(argumentName)) { // Ignore TYPE and VALUE arguments because they are validated elsewhere
+                List<String> arguments = config.getArguments();
+                if (arguments == null || !arguments.contains(argumentName)) { // if the given argument name is not in the acceptable set of argument names then error out
+                    throw new UnsupportedChannelException(channelName +
+                            ":  " + argumentName +
+                            " is not a valid argument for " +
+                            (isSetterRequest ? "set" : "get") +
+                            " requests to this channel.  " +
+                            (arguments == null ? "No arguments are allowed" : ("Valid arguments are: " + arguments)));
                 }
             }
         }

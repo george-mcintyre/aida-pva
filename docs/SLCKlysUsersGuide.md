@@ -141,5 +141,100 @@ _Return value_
 
 None
 
+## Test Output
+```shell
+java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcKlysTest" -c
+#################################################
+AIDA-PVA SLC Klystron TESTS
+#################################################
+
+████ Test 1: Acquire SHORT type
+_________________________________________________
+
+get: KLYS:LI31:31:TACT (BEAM=8, TYPE=SHORT, DGRP=DEV_DGRP) => SHORT
+    Short: 18 ✔
+
+████ Test 2: Acquire STRING type
+_________________________________________________
+
+get: KLYS:LI31:31:TACT (BEAM=8, TYPE=STRING, DGRP=DEV_DGRP) => STRING
+    String: activated ✔
+
+████ Test 3: Acquire TABLE type
+_________________________________________________
+
+get: KLYS:LI31:31:TACT (BEAM=8, TYPE=TABLE, DGRP=DEV_DGRP) => TABLE
+    Table:  1 rows retrieved: ✔
+ Accellerate Standby   Bad Sled Tuned Sleded Pampl pphas
+       accel standby   bad       sled sleded pampl pphas
+       false    true false      false   true false false
+
+████ Test 4: Deactivate the specified klystron
+_________________________________________________
+
+set: KLYS:LI31:31:TACT (BEAM=8, VALUE=0, DGRP=DEV_DGRP)
+ UnableToSetDataException; Cannot deactivate klystron when not in accelerate state ✘
+
+████ Test 5: Reactivate the specified klystron
+_________________________________________________
+
+set: KLYS:LI31:31:TACT (BEAM=8, VALUE=1, DGRP=DEV_DGRP)
+  SBST in; UnableToSetDataException; Could not set activation state ✘
+
+████ Test 6: Set a sub-booster or klystron PDES value and trim it
+_________________________________________________
+
+set: KLYS:LI31:31:PDES (VALUE=90.0)
+  Klystron; UnableToSetDataException; Error setting value ✘
+
+████ Test 7: Set a subbooster or klystron PDES value without the trim operation
+_________________________________________________
+
+set: KLYS:LI31:31:PDES (TRIM=NO, VALUE=90.0)
+    PDES:  1 rows retrieved: ✔
+ PHAS secondary value
+                 PHAS
+                  0.0
+
+████ Test 8: Set a subbooster or klystron KPHR value
+_________________________________________________
+
+set: KLYS:LI31:31:KPHR (VALUE=60.0)
+  Klystron; UnableToSetDataException; Error setting value ✘
+
+████ Test 9: Set configuration secondary PCON value
+_________________________________________________
+
+set: KLYS:LI31:31:PCON (VALUE=5.0) ✔
+
+████ Test 10: Set configuration secondary ACON value
+_________________________________________________
+
+set: KLYS:LI31:31:ACON (VALUE=5.0) ✔
+
+████ Test 11: Get configuration secondary PDES value
+_________________________________________________
+
+get: SLC::KLYS:LI31:31:PDES => FLOAT
+    PDES value: 0.0 ✔
+
+████ Test 12: Get configuration secondary KPHR value
+_________________________________________________
+
+get: SLC::KLYS:LI31:31:KPHR => FLOAT
+    KPHR value: 59.724426 ✔
+
+████ Test 13: Error Test: Invalid BEAM
+_________________________________________________
+
+set: KLYS:LI31:31:TACT (BEAM=XYZ, VALUE=1, DGRP=DEV_DGRP)
+ UnableToGetDataException; failed to get klystron status ✔
+
+████ Test 14: Error Test: Invalid BEAM
+_________________________________________________
+
+get: KLYS:LI31:31:TACT (BEAM=1, TYPE=SHORT, DGRP=LIN_KLYS) => SHORT
+ UnableToGetDataException; failed to get klystron status ✔
+```
 
 
