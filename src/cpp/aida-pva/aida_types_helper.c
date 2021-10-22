@@ -1,3 +1,7 @@
+/*
+       **MEMBER**=SLCLIBS:AIDASHRLIB
+       **CMS**=AIDASHR
+ */
 /** @file
  *  @brief This file contain functions that should be
  *  used directly by Native Channel Providers.

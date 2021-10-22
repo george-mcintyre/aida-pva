@@ -1,3 +1,7 @@
+/*
+       **MEMBER**=SLCLIBS:AIDASHRLIB
+       **CMS**=AIDASHR
+ */
 /** @file
  *  @brief JNI Helper provides all the boilerplate JNI processing required.  It implements all the JNI
  *  parameter marshalling and return value creation.  None of these functions should be called
