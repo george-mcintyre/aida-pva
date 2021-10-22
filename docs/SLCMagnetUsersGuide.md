@@ -107,5 +107,90 @@ _Return value_
 
 None
 
+## Test Output
 
+```shell
+java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcMagnetTest" -c
+#################################################
+AIDA-PVA SLC Magnet TESTS
+#################################################
+
+████ Test 1: Test of magnet get without parameters
+_________________________________________________
+
+get: DEV_DGRP:XCOR:BDES ()
+    BDES:  4 rows retrieved: ✔
+ name of magnet secondary values
+           name        secondary
+   XCOR:LI31:41              5.0
+  XCOR:LI31:201              0.0
+  XCOR:LI31:301              0.0
+  XCOR:LI31:401             0.03
+
+████ Test 2: Test of magnet "get" with parameters
+_________________________________________________
+
+get: DEV_DGRP:XCOR:BDES (MICROS=LI31-LI31, UNITS=1-100)
+    BDES:  1 rows retrieved: ✔
+ name of magnet secondary values
+           name        secondary
+   XCOR:LI31:41              5.0
+
+████ Test 3: Test of magnet get without parameters
+_________________________________________________
+
+get: DEV_DGRP:XCOR:BDES ()
+    BDES:  4 rows retrieved: ✔
+ name of magnet secondary values
+           name        secondary
+   XCOR:LI31:41              5.0
+  XCOR:LI31:201              0.0
+  XCOR:LI31:301              0.0
+  XCOR:LI31:401             0.03
+
+████ Test 4: Test of magnet set
+_________________________________________________
+
+set: MAGNETSET:BDES (MAGFUNC=TRIM, VALUE={names=[XCOR:LI31:41], values=[4.0]})
+  Magnet; UnableToSetDataException; while setting magnet values ✘
+
+████ Test 5: Test of magnet set using JSON
+_________________________________________________
+
+set: MAGNETSET:BDES (MAGFUNC=TRIM, VALUE={"names": ["XCOR:LI31:41"],"values": [4.0]})
+  Magnet; UnableToSetDataException; while setting magnet values ✘
+
+████ Test 6: Test of magnet set (duplicate)
+_________________________________________________
+
+set: MAGNETSET:BDES (MAGFUNC=TRIM, VALUE={names=[XCOR:LI31:41], values=[4.0]})
+  Magnet; UnableToSetDataException; while setting magnet values ✘
+
+████ Test 7: Error handling invalid name: magnet set
+_________________________________________________
+
+set: MAGNETSET:BDES (MAGFUNC=TRIM, VALUE={names=[XCOZ:LI31:41], values=[4.0]})
+ UnableToSetDataException; Some of the names were not valid: XCOZ ✔
+
+████ Test 8: Error handling values out of limits: magnet set
+_________________________________________________
+
+set: MAGNETSET:BDES (MAGFUNC=TRIM, VALUE={names=[XCOR:LI31:41], values=[10.0]})
+ UnableToSetDataException; Some or all of the set values are outside of the limits ✔
+
+████ Test 9: Test of magnet set without trim or perturb
+_________________________________________________
+
+set: MAGNETSET:BDES (MAGFUNC=NOFUNC, VALUE={names=[XCOR:LI31:41], values=[5.0]})
+    Magnet Set:  1 rows retrieved: ✔
+    status bact/vact
+    status bact_vact
+ OUT-RANGE 0.2965088
+
+████ Test 10: Test of magnet set, setting the configuration secondary BCON
+_________________________________________________
+
+set: MAGNETSET:BCON (VALUE={names=[XCOR:LI31:41], values=[5.0]})
+    Magnet Set:  ✔
+```
 

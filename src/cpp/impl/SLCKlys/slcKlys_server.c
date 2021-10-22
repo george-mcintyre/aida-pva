@@ -253,14 +253,11 @@ static Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Val
 static Table
 setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* trim, char* pmu, char* secn)
 {
-	if (value.type != AIDA_STRING_TYPE) {
-		aidaThrowNonOsException(env, MISSING_REQUIRED_ARGUMENT_EXCEPTION, "Missing value to PDES or KPHR value");
-		RETURN_NULL_TABLE
-	}
-
 	// Get the value to set
 	float secnValue;
-	avscanf(env, &arguments, &value, "%f", "value", &secnValue);
+	if ( avscanf(env, &arguments, &value, "%f", "value", &secnValue) ) {
+		RETURN_NULL_TABLE;
+	}
 
 	// Set the value
 	float phas_value;  /* Returned in ieee format */
