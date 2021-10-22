@@ -125,5 +125,107 @@ _Return value_
 
 None
 
+## Test Output
 
+```shell
+java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcUtilTest" -c
+#################################################
+AIDA-PVA SLC Utility TESTS
+#################################################
+
+████ Test 1: set value for MKB.  sleeping for 5 seconds between runs
+_________________________________________________
+
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+
+████ Test 2: set value for MKB.  sleeping for 5 seconds between runs
+_________________________________________________
+
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+set: MKB:VAL (MKB=mkb:gregstestli31.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✘
+
+████ Test 3: Test of specified absolute multiknob file, which is not permitted.  sleeping for 5 seconds between runs. The requested set operation should fail since the specified multiknob file is absolute, which is not permitted
+_________________________________________________
+
+set: MKB:VAL (MKB=mkb:li31test.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✔
+set: MKB:VAL (MKB=mkb:li31test.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✔
+set: MKB:VAL (MKB=mkb:li31test.mkb, VALUE=1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✔
+set: MKB:VAL (MKB=mkb:li31test.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✔
+set: MKB:VAL (MKB=mkb:li31test.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✔
+set: MKB:VAL (MKB=mkb:li31test.mkb, VALUE=-1.0)
+  Bad file name; UnableToSetDataException; unable to set value ✔
+
+████ Test 4: PROD environment test Extract device string and secondary value vectors.  This test should only be run in the PROD environment
+_________________________________________________
+
+Skipped
+
+████ Test 5: Acquire SHORT type
+_________________________________________________
+
+get: TRIG:LI31:109:TACT (BEAM=1, TYPE=SHORT) => SHORT
+    TACT: 1 ✔
+
+████ Test 6: Acquire STRING type
+_________________________________________________
+
+get: TRIG:LI31:109:TACT (BEAM=1, TYPE=STRING) => STRING
+    TACT: activated ✔
+
+████ Test 7: Deactivate the specified TRIG device
+_________________________________________________
+
+set: TRIG:LI31:109:TACT (BEAM=1, VALUE=0)
+    Deactivated:  1 rows retrieved: ✔
+ Status Code
+      status
+           0
+
+████ Test 8: Reactivate the specified TRIG device
+_________________________________________________
+
+set: TRIG:LI31:109:TACT (BEAM=1, VALUE=1)
+    Reactivated:  1 rows retrieved: ✔
+ Status Code
+      status
+           1
+
+████ Test 9: Set the specified variable of a specified BGRP to the new value "Y"
+_________________________________________________
+
+set: BGRP:VAL (VARNAME=T_CAV, VALUE=N, BGRP=LCLS)
+    Variable: T_CAV:  ✔
+
+████ Test 10: Set the specified variable of a specified BGRP to the new value "N"
+_________________________________________________
+
+set: BGRP:VAL (VARNAME=T_CAV, VALUE=Y, BGRP=LCLS)
+    Variable: T_CAV:  ✔
+```
 
