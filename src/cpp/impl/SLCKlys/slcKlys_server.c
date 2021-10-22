@@ -19,7 +19,6 @@
 
 #include "slcKlys_server.h"
 
-static void getTrimArgument(JNIEnv* env, Arguments arguments, char** trim);
 static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, short* klys_status);
 static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);
 
@@ -243,10 +242,12 @@ static Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Val
 
 static Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value, char* pmu, char* secn)
 {
-	char* trim = NULL;
+	unsigned char trim = true;
 
-	getTrimArgument(env, arguments, &trim);
-	return setPdesOrKphrValue(env, uri, arguments, value, trim ? trim : "NO", pmu, secn);
+	if (ascanf(env, &arguments, "%ob", "TRIM", &trim)) {
+		RETURN_NULL_TABLE
+	}
+	return setPdesOrKphrValue(env, uri, arguments, value, trim ? "YES" : "NO", pmu, secn);
 }
 
 static Table
@@ -400,20 +401,3 @@ static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgr
 
 	return EXIT_SUCCESS;
 }
-
-/**
- * Get Trim Argument
- *
- * @param env
- * @param arguments
- * @param trim
- * @return
- */
-static void getTrimArgument(JNIEnv* env, Arguments arguments, char** trim)
-{
-	Argument argument = getArgument(arguments, "trim");
-	if (argument.name) {
-		*trim = argument.value;
-	}
-}
-

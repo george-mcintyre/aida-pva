@@ -255,7 +255,7 @@ configurations:
       - KLYS:RF00:2:TACT
       - KLYS:RF00:3:TACT
       - KLYS:RF00:4:TACT
-  - name: Setter Returning Table
+  - name: Setter for KPHR
     getterConfig:
       type: NONE
     setterConfig:
@@ -479,6 +479,18 @@ configurations:
       - SBST:LI31:1:KPHR
       - SBST:LI32:1:KPHR
       - SBST:RF00:1:KPHR
+  - name: Setter for PDES
+    getterConfig:
+      type: NONE
+    setterConfig:
+      type: TABLE
+      arguments:
+        - TRIM
+      fields:
+        - label: PHAS secondary value
+          name: PHAS
+          description: PHAS secondary value after the set operation
+    channels:
       - KLYS:AM00:1:PDES
       - KLYS:AM00:2:PDES
       - KLYS:AM00:3:PDES
@@ -693,7 +705,7 @@ configurations:
       - SBST:LI31:1:PDES
       - SBST:LI32:1:PDES
       - SBST:RF00:1:PDES
-  - name: Setter With No Return
+  - name: Setter FOR PCON or ACON
     getterConfig:
       type: NONE
     setterConfig:
