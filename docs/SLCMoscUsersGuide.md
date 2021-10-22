@@ -80,5 +80,63 @@ _Return value_
 | TYPE  | Return Column | Column Type |Description |
 | `TABLE` | `value` | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
+## Test Output
+```shell
+java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcMoscTest" -c
+#################################################
+AIDA-PVA SLC Master Oscillator TESTS
+#################################################
 
+████ Test 1: Test of Master Oscillator get method
+_________________________________________________
+
+get: MASTEROSC:VAL => TABLE
+    VAL:  1 rows retrieved: ✔
+ Oscillator Value (KHz)
+                  value
+             476000.328
+
+████ Test 2: Test of Master Oscillator get method for double
+_________________________________________________
+
+get: MASTEROSC:VAL => DOUBLE
+    VAL: 476000.328 ✔
+
+████ Test 3: Test of Master Oscillator get method for table
+_________________________________________________
+
+get: MASTEROSC:VAL => TABLE
+    VAL:  1 rows retrieved: ✔
+ Oscillator Value (KHz)
+                  value
+             476000.328
+
+████ Test 4: Test of Master Oscillator set
+_________________________________________________
+
+set: MASTEROSC:VAL (VALUE=0.328) ✔
+
+████ Test 5: Test of Master Oscillator set method Set value is relative energy.  Ring is HER
+_________________________________________________
+
+set: MASTEROSC:VAL (RING=HER, VALUE=1.0, UNITS=ENERGY)
+    VAL:  1 rows retrieved: ✔
+ Oscillator Value (KHz)
+                  value
+               476000.0
+
+████ Test 6: Test of Master Oscillator set method Set value is relative energy.  Ring is LER
+_________________________________________________
+
+set: MASTEROSC:VAL (RING=LER, VALUE=1.0, UNITS=ENERGY)
+    VAL:  1 rows retrieved: ✔
+ Oscillator Value (KHz)
+                  value
+               476000.0
+
+████ Test 7: Test of Master Oscillator set
+_________________________________________________
+
+set: MASTEROSC:VAL (VALUE=0.328) ✔
+```
 
