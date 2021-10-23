@@ -1,0 +1,52 @@
+!!edu.stanford.slac.aida.lib.model.AidaProvider
+# Sample Channel Provider
+id: 42
+name: Channel Provider
+description: Your Channel Provider
+configurations:
+  - name: Boolean Getter Channels
+    getterConfig:
+      type: BOOLEAN
+    channels:
+      - AIDA:CHAN:*:INT
+      - AIDA:CHAN:P01:BOOL
+  - name: Float Getter Channels
+    getterConfig:
+      type: FLOAT
+      arguments:
+        - X
+        - Y
+    channels:
+      - AIDA:CHAN:???:FLT
+  - name: String Array Getter Channels
+    getterConfig:
+      type: STRING_ARRAY
+    channels:
+      - AIDA:CHAN:P01:STRA
+  - name: Table Getter Channels
+    getterConfig:
+      type: TABLE
+      fields:
+        - name: isActive
+          label: "Device is active?"
+          description: "Device activity status.  Active if true"
+        - name: mode
+          label: "Device Mode Code"
+          description: "Device mode code"
+    channels:
+      - AIDA:CHAN:P01:TABL
+  - name: Void Setter Channels
+    setterConfig:
+      type: VOID
+    channels:
+      - AIDA:CHAN:S01:VOID
+  - name: Table Setter Channels
+    setterConfig:
+      type: TABLE
+      fields:
+        - name: status
+          label: "Result of setting value"
+          description: "True if the value was set successfully"
+    channels:
+      - AIDA:CHAN:S01:DEFA
+      - AIDA:CHAN:S01:TABL

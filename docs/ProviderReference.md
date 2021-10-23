@@ -14,16 +14,16 @@ a set of at least two parts separated by colons.
 _The framework has five main features._
 
 * **Routing** client `Channel Requests` using EPICS' `PVAccess`, through the `AIDA-PVA Service` to the
-  registered `Channel Provider` endpoints.
+  registered Channel Provider endpoints.
 * Bi-directionally **Marshalling, Transporting, and Converting** arguments and data.
 * Raising, and **Propagating Exceptions** throughout the framework, back to clients, and on to logging services
 * Providing **AIDA-PVA utilities** that implement the boilerplate functions required to service channel requests
-* Providing access to `AIDASHR`, to allow `Channel Provider` code to leverage legacy **Channel Provider Modules** for
+* Providing access to `AIDASHR`, to allow Channel Provider code to leverage legacy **Channel Provider Modules** for
   accessing devices, databases and other services from `Channel Data Sources` on the `SLAC Network`.
 
 ## How it works
 
-1. When your `Channel Provider` starts up, the `AIDA-PVA` process that started it will read the `CHANNELS.YML` file that
+1. When your Channel Provider starts up, the `AIDA-PVA` process that started it will read the `CHANNELS.YML` file that
    you've provided to determine which EPICS search requests it should respond to.
 2. Subsequently, when clients send requests containing references to one of those **Channels**,
 3. and EPICS seach request is propagated across the EPICS network
@@ -32,7 +32,7 @@ _The framework has five main features._
 5. When your AIDA-PVA recognizes the channel and the request it will respond positively to the search request on your
    behalf,
 6. Opening a direct communications channel to the client once the client accepts the response.
-7. Now the AIDA-PVA will ask your `Channel Provider` to service the request and will return the results you give it.
+7. Now the AIDA-PVA will ask your Channel Provider to service the request and will return the results you give it.
 8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel
    Data source, you can service those requests.
 
@@ -40,9 +40,9 @@ _The framework has five main features._
 
 As an AIDA-PVA Service Provider writer you will be responsible for:
 
-* Creating the AIDA-PVA `Channel Provider` Shared Library.
+* Creating the AIDA-PVA Channel Provider Shared Library.
 * Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA-PVA `Channels` that
-  your `Channel Provider` will support.
+  your Channel Provider will support.
 
 ### Components
 
@@ -55,29 +55,40 @@ As an AIDA-PVA Service Provider writer you will be responsible for:
 * The **EPICS forwarder** - `epics-forwarder.jar`
 
 ## Topology
+As a Native Channel Provider programmer you will be primarily concerned with creating a shared library for SLCLIBS.
+Each Native Channel Provider is a distinct library in SLCLIBS.  The proceddure to create one will compile up 
+your C source file(s) and link them with AIDASHR to resolve the calls you make to functions in AIDA-PVA Module and 
+in any AIDA-MODULEs that you need to implement your service. 
+
+AIDA-PVA Jar is the process that will launch your shared library, calling the entrypoints you implement as needed.
 
 ![Aida-PVA Topology](images/aida-pva-system-components.png)
 
 ## Normative Types
-see [Normative Types](NormativeTypes.md)
+The clients will be expecting data that corresponds to the Normative Type standard.  
+The framework does all the work representing your data as Normative Types.  You don't have to know, or do, anything
+for this.  For reference only see [Normative Types](NormativeTypes.md)
 
 ## Supported Data Types
+What you will do is use primitive data types in most cases and some simple AIDA-PVA typedefs where 
+required.  In all cases there are helper functions to help you marshall and unmarshal your data.
+
 see [Supported Data Types](SuportedTypes.md)
 
 # Implementation
+This section details the steps you need to follow for implementing your Service.
 
 ## Overview
-
 There are three things to write before you can compile, run, test and deploy your service. Here
 
-* Write a `CHANNELS.YML` file
-* Create a `Channel Provider`
-* Create some tests
+* Write a `CHANNELS.YML` file.
+* Create a Channel Provider - one C file and optionally one header file.
+* Create some tests using the test framework aida-pva-tests.
 
-## Creating an `CHANNELS.YML` file
+## Creating an CHANNELS.YML file
 
-Definition of the `Channels` supported by your `Channel Service Provider` is done in the `CHANNELS.YML` file. If you're
-unfamiliar with the the YAML format you
+Definition of the channels supported by your Channel Service Provider is done in the `CHANNELS.YML` file. If you're
+unfamiliar with the YAML (Yet Another Markup Language) format you
 can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading
 further.
 
@@ -90,29 +101,27 @@ configuration file is shown below:
 id: 42
 name: Channel Provider
 description: Your Channel Provider
-getterConfig:
-  type: INTEGER
-setterConfig:
-  type: TABLE
-    fields:
-        - name: isActive
-          label: "Device is active?"
-          description: "Device activity status.  Active if true"
-          - name: mode
-            label: "Device Mode Code"
-            description: "Device mode code"
-channels:
-  - channel: AIDA:CHAN:*:INT
-  - channel: AIDA:CHAN:P01:BOOL
+configurations:
+  - name: Boolean Getter Channels
     getterConfig:
       type: BOOLEAN
-  - channel: AIDA:CHAN:???:FLT
+    channels:
+      - AIDA:CHAN:*:INT
+      - AIDA:CHAN:P01:BOOL
+  - name: Float Getter Channels
     getterConfig:
       type: FLOAT
-  - channel: AIDA:CHAN:P01:STRA
+      arguments:
+        - X
+        - Y
+    channels:
+      - AIDA:CHAN:???:FLT
+  - name: String Array Getter Channels
     getterConfig:
       type: STRING_ARRAY
-  - channel: AIDA:CHAN:P01:TABL
+    channels:
+      - AIDA:CHAN:P01:STRA
+  - name: Table Getter Channels
     getterConfig:
       type: TABLE
       fields:
@@ -122,32 +131,34 @@ channels:
         - name: mode
           label: "Device Mode Code"
           description: "Device mode code"
-  - channel: AIDA:CHAN:S01:VOID
+    channels:
+      - AIDA:CHAN:P01:TABL
+  - name: Void Setter Channels
     setterConfig:
       type: VOID
-  - channel: AIDA:CHAN:S01:DEFA
-  - channel: AIDA:CHAN:S01:TABL
+    channels:
+      - AIDA:CHAN:S01:VOID
+  - name: Table Setter Channels
     setterConfig:
       type: TABLE
       fields:
         - name: status
           label: "Result of setting value"
           description: "True if the value was set successfully"
+    channels:
+      - AIDA:CHAN:S01:DEFA
+      - AIDA:CHAN:S01:TABL
 ```
 
-## Creating a `Channel Provider`
+## Creating a Channel Provider
 
-Thanks to the `AIDA-PVA Module` creating a service provider is easy. There is only one file to write and here is the
-code template.
+You have to implement all the endpoints defined in aida_pva_api.h.  
+Thanks to the AIDA-PVA Module doing this is easy.  
+There is only one file to write and here is the code template that stubs out the endpoints using provided macros.
+aida_pva_api.h also defines the "STUB" macros you will use for the endpoints that you don't need to implement.
 
 ```c
-#include <string.h>
-#include <stdlib.h>
-
-#include "aida_server_helper.h"
-#include "json.h"
-
-#include "slc_macros.h"           /* vmsstat_t, int2u, int4u, etc. */
+#include "aida_pva.h"
 
 // API Stubs
 REQUEST_STUB_CHANNEL_CONFIG
@@ -178,534 +189,209 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	DO_STANDALONE_INIT_NO_MSG("AIDA-PVA_SLCMYPROVIDER", "My Provider",
-			true,        // db init
-			false,       // query init
-			false)       // set init
+	printf("My Service Provider Initialised\n");
 }
 ```
 
-For any of the types that your `Channel Provider` will support you need to remove the corresponding _STUB_ line and
-replace it with the implementation. You'll find the prototypes below:
-
+For any of the types that your Channel Provider will support you need to remove the corresponding "STUB" line and
+replace it with the implementation. Here are the endpoints from which to choose.  For full prototypes click the links or, see aida_pva_api.h. 
+- Initialisation
+  - aidaServiceInit() - _Called by the AIDA-PVA framework on startup to initialise the Channel Provider._
+- Scalar Getters
+  - aidaRequestBoolean() - _Called by the AIDA-PVA framework when a boolean value is requested._
+  - aidaRequestByte() - _Called by the AIDA-PVA framework when a byte value is requested._
+  - aidaRequestShort() - _Called by the AIDA-PVA framework when a short value is requested._
+  - aidaRequestInteger() - _Called by the AIDA-PVA framework when a integer value is requested._
+  - aidaRequestLong() - _Called by the AIDA-PVA framework when a long value is requested._
+  - aidaRequestFloat() - _Called by the AIDA-PVA framework when a float value is requested._
+  - aidaRequestDouble() - _Called by the AIDA-PVA framework when a double value is requested._
+  - aidaRequestString() - _Called by the AIDA-PVA framework when a string value is requested._
+- Scalar Array Getters
+  - aidaRequestBooleanArray() - _Called by the AIDA-PVA framework when a boolean array is requested._
+  - aidaRequestByteArray() - _Called by the AIDA-PVA framework when a byte array is requested._
+  - aidaRequestShortArray() - _Called by the AIDA-PVA framework when a short array is requested._
+  - aidaRequestIntegerArray() - _Called by the AIDA-PVA framework when a integer array is requested._ 
+  - aidaRequestLongArray() - _Called by the AIDA-PVA framework when a long array is requested._ 
+  - aidaRequestFloatArray() - _Called by the AIDA-PVA framework when a float array is requested._ 
+  - aidaRequestDoubleArray() - _Called by the AIDA-PVA framework when a double array is requested._ 
+  - aidaRequestStringArray() - _Called by the AIDA-PVA framework when a string array is requested._ 
+  - aidaRequestTable() - _Called by the AIDA-PVA framework when a table of data is requested._
+- Setters
+  - aidaSetValue() - _Called by the AIDA-PVA framework when a request to set a value is made._
+  - aidaSetValueWithResponse() - _Called by the AIDA-PVA framework when a request to set a value and return a table is made._
+  
 ### AIDA-PVA Module
 
-The `AIDA-PVA Module` is a module contained in the `AIDASHR` shared library that provides all the boilerplate
-functionality needed to respond to `get` and `set` requests, marshal and unmarshal objects, and simple types across the
-JNI boundary and between your `Channel Provider` and VMS and the Channel Provider module in `AIDASHR`.
+The AIDA-PVA Module is a module contained in the `AIDASHR` shared library that provides all the boilerplate
+functionality needed to respond to **get** and **set** requests, marshal and unmarshal objects, and simple types across the
+JNI boundary and between your Channel Provider and VMS and the Channel Provider module in `AIDASHR`.
 
-#### Types
-
-These are defined in `aida_types.h` but are automatically loaded by including `aida_server_helper.c`.
-
-##### Type
-
-This enumerated type will be used throughout your code to identify the data types you are manipulating.
-
-```c
-typedef enum
-{
-    AIDA_NO_TYPE,                        // Used to indicate that no type was provided as an argument
-    AIDA_VOID_TYPE,                      // Used when no return value is to be returned from a channel
-
-    AIDA_BOOLEAN_TYPE,                   // Represents a boolean
-    AIDA_BYTE_TYPE,                      // Represents a byte
-    AIDA_SHORT_TYPE,                     // Represents a short
-    AIDA_INTEGER_TYPE,                   // Represents an integer
-    AIDA_LONG_TYPE,                      // Represents a long
-    AIDA_FLOAT_TYPE,                     // Represents a float
-    AIDA_DOUBLE_TYPE,                    // Represents a double
-    AIDA_STRING_TYPE,                    // Represents a string
-    AIDA_BOOLEAN_ARRAY_TYPE,             // Represents a boolean array
-    AIDA_BYTE_ARRAY_TYPE,                // Represents a byte array
-    AIDA_SHORT_ARRAY_TYPE,               // Represents a short array
-    AIDA_INTEGER_ARRAY_TYPE,             // Represents an integer array
-    AIDA_LONG_ARRAY_TYPE,                // Represents a long array
-    AIDA_FLOAT_ARRAY_TYPE,               // Represents a float array
-    AIDA_DOUBLE_ARRAY_TYPE,              // Represents a double array
-    AIDA_STRING_ARRAY_TYPE,              // Represents a string array
-    AIDA_TABLE_TYPE,                     // Represents a table
-    AIDA_JSON_TYPE,                      // Argument was provided as JSON text
-
-    // Internal use only: DO NOT USE IN SERVICE IMPLEMENTATIONS!!
-    AIDA_UNSIGNED_SHORT_TYPE,            // Represents an internal type of unsigned short
-    AIDA_UNSIGNED_INTEGER_TYPE,          // Represents an internal type of unsigned integer
-    AIDA_UNSIGNED_LONG_TYPE,             // Represents an internal type of unsigned long
-    AIDA_UNSIGNED_SHORT_ARRAY_TYPE,      // Represents an internal type of unsigned short array
-    AIDA_UNSIGNED_INTEGER_ARRAY_TYPE,    // Represents an internal type of unsigned integer array
-    AIDA_UNSIGNED_LONG_ARRAY_TYPE        // Represents an internal type of unsigned long array
-} Type;
-```
-
-###### _aidaChannelConfig_ endpoint
-
-Normally you will never implement this endpoint but if you want to, you will need these three types:
-
-1. `Config`
-2. `Layout`
-3. `Field`
-
-_Config_
-As you can see this type allows you to specify everything you need to configure either a getter or a setter for a
-channel.
-
-```c
-typedef struct
-{
-	Type type;
-	char* description;
-	Layout layout;
-	int fieldCount;
-	Field* fields;
-} Config;
-```
-
-_Layout_
-
-The `Layout` allows you to specify table orientation in the rare case you don't want the default `COLUMN_MAJOR` table
-orientation.
-
-```c
-typedef enum
-{
-	AIDA_NO_LAYOUT,
-	AIDA_COLUMN_MAJOR_LAYOUT,  // Each top level array entry is a column containing row data
-	AIDA_ROW_MAJOR_LAYOUT      // Each top level array entry is a row containing column data
-} Layout;
-```
-
-_Field_
-
-The `Field` allows you to specify any fields in any table you define.
-
-```c
-typedef struct
-{
-	char* name;
-	char* label;
-	char* description;
-	char* units;
-} Field;
-```
-
-###### Arguments and Values
-
-When your endpoints are called, the framework passes them Arguments and Values. The following types are defined for you.
-The helper functions presented later make knowledge of these details irrelevant but here they are for your edification.
-
-_Arguments_
-
-```c
-typedef struct
-{
-	int argumentCount;
-	Argument* arguments;
-} Arguments;
-```
-
-_Argument_
-
-```c
-typedef struct
-{
-	char* name;
-	char* value;
-} Argument;
-```
-
-_Value_
-This is passed to you when one of the arguments name is `VALUE`. It will contain the value as specified in the argument
-field but also a pre-parsed json structure if the argument value was properly formatted json.
-
-```c
-typedef struct
-{
-	Type type;    // AIDA_STRING_TYPE or AIDA_JSON_TYPE
-	ValueContents value;
-} Value;
-```
-
-```c
-typedef union
-{
-	char* stringValue;
-	json_value* jsonValue;
-} ValueContents;
-```
-
-###### Table
-
-This structure is used when processing requests that require tables.
-
-```c 
-typedef struct
-{
-	int columnCount;
-	int rowCount;
-	Type* types;
-	void** ppData;
-	int _currentColumn; // For internal use by addColumn() etc
-} Table;
-```
-
-###### Arrays
-
-To process data in any scalar array endpoint you need to use the following structures. As with other data types you
-won't need to manipulate them directly as helper functions obviate the need.
-
-_Array_
-
-```c
-typedef struct
-{
-	int count;
-	void* items;
-} Array;
-```
-
-_StringArray_
-
-```c 
-typedef struct
-{
-	int count;
-	char** items;
-} StringArray;
-```
+#### Functions provided in AIDA-PVA Module
+The AIDA-PVA Module contains the following functions that you should use to process arguments, extract parts of URIs, create tables, allocate memory and raise exceptions:
+- Argument Processing
+  - ascanf() 
+  - avscanf()
+- URI and PMU Handling
+  - groupNameFromUri() - _Get the Display group name from a URI._
+  - pmuFromDeviceName() - _Get primary, micro and unit from a device name._
+  - pmuStringFromUri() - _Get the pmu part of a URI._
+  - secnFromUri() - _Get secondary from pseudo secondary (containing a colon) number from URI._
+  - secondaryFromUri() - _Get secondary from URI._
+  - uriLegacyName() - _Convert the given URI to the legacy AIDA name for low level functions that still require it that way._
+  - uriToSlcName() - _Convert all URIs to slac names before making queries._
+- Table Management
+  - tableCreate() - _Make a Table for return to client._
+  - tableAddStringColumn() - _Add a String column to the given Table._
+  - tableAddFixedWidthStringColumn() - _Add fixed-width string data to a column in the given Table._
+  - tableAddSingleRowBooleanColumn() - _Add a boolean column to a Table with only one row._
+  - tableAddSingleRowByteColumn() - _Add a byte column to a Table with only one row._
+  - tableAddSingleRowShortColumn() - _Add a short column to a Table with only one row._
+  - tableAddSingleRowIntegerColumn() - _Add a integer column to a Table with only one row._
+  - tableAddSingleRowLongColumn() - _Add a long column to a Table with only one row._
+  - tableAddSingleRowFloatColumn() - _Add a float column to a Table with only one row._
+  - tableAddSingleRowDoubleColumn() - _Add a double column to a Table with only one row._
+  - tableAddSingleRowStringColumn() - _Add a string column to a Table with only one row._
+- String Handling
+  - endsWith() - _Check if a string ends with another string._
+  - startsWith() - _Check if a string starts with another string._
+- Memory Management
+  - allocateMemory() - _Allocate memory and copy the source to it if specified._
+  - releaseArguments() - _Free up any memory allocated for the given Arguments._
+  - releaseArray() - _Free up any memory allocated the given scalar Array._
+  - releaseStringArray() - _Free up any memory allocated for a StringArray._
+  - releaseTable() - _Free up any memory allocated for the given table._
+  - releaseValue() - _Release all allocated memory in the given Value._
+- Exception Handling:
+  - aidaThrow() - _To log any exceptions and throw back to java._
+  - aidaThrowNonOsException() - _To log any non-OS exceptions and throw back to java._
 
 #### Macros
+There are a bunch of Macros that are provided with the AIDA-PVA Module, in the following header files:
+- aida_pva_convert.h
+  - CONVERT_TO_VMS_FLOAT() - _Convert a single float or an array of floats from ieee to VMS format._
+  - CONVERT_TO_VMS_DOUBLE() - _Convert a single double or an array of doubles from ieee to VMS format._
+  - CONVERT_FROM_VMS_FLOAT() - _Convert a single float or an array of floats from VMS to ieee format._
+  - CONVERT_FROM_VMS_DOUBLE() - _Convert a single double or an array of doubles from VMS to ieee format._
+- aida_pva_exceptions.h
+  - ON_EXCEPTION_RETURN_()
+    - _check to see if an exception has been raised,_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_MEMORY_AND_RETURN_()
+    - _check to see if an exception has been raised,_ 
+    - _free local all tracked memory, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_RETURN_VOID()
+    - _check to see if an exception has been raised,_ 
+    - _return void._
+  - ON_EXCEPTION_FREE_ARGUMENTS_AND_RETURN_()
+    - _check to see if an exception has been raised,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_ARGUMENTS_AND_RETURN_VOID()
+    - _check to see if an exception has been raised,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return void._
+  - ON_EXCEPTION_FREE_STRING_AND_ARGS_AND_RETURN_() 
+    - _check to see if an exception has been raised,_ 
+    - _free local char * variable `string`,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_STRING_AND_RETURN__()
+    - _Check to see if an exception has been raised, 
+    - free local char * variable `string`,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_ARRAY_AND_ARGS_AND_RETURN_()
+    - _Check to see if an exception has been raised,_ 
+    - _free local Array variable `array`,_ 
+    - _free local variable `arguments`, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_STRING_ARRAY_AND_ARGS_AND_RETURN_NULL()
+    - _Check to see if an exception has been raised,_ 
+    - _free local StringArray variable `array`,_ 
+    - _free local variable `arguments`, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_TABLE_AND_ARGS_AND_RETURN_()
+    - _Check to see if an exception has been raised,_ 
+    - _free local Table variable `table`,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return the given value._
+  - ON_EXCEPTION_FREE_VALUE_AND_ARGS_AND_RETURN_VOID()
+    - _Check to see if an exception has been raised,_ 
+    - _free local Value variable `value`,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return void._
+  - ON_EXCEPTION_FREE_VALUE_AND_ARGS_AND_RETURN_()
+    - _check to see if an exception has been raised,_ 
+    - _local Value variable `value`,_ 
+    - _free local Arguments variable `arguments`, and_ 
+    - _return the given value._
+  - SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_()
+    - _Format an error message,_ 
+    - _throw it in an exception,_,
+    - _free any allocated memory and_ 
+    - _return the error code._
+  - PRINT_ERROR_FREE_MEMORY_AND_RETURN_()
+    - _Throw error message in an exception,_ 
+    - _free any allocated memory and_ 
+    - _return the error code._
+  - UNSUPPORTED_ARRAY_REQUEST() - _Throw unsupported channel exception and return a blank array._
+  - UNSUPPORTED_STRING_ARRAY_REQUEST() - _Throw an unsupported channel exception and return an empty string array._
+  - UNSUPPORTED_TABLE_REQUEST() - _Throw an unsupported channel exception and return an empty table._
+- aida_pva_memory.h
+  - TRACK_ALLOCATED_MEMORY() - _Create tracking variables so that memory can be freed with FREE_MEMORY()_.
+  - TRACK_MEMORY() - _Register this newly allocated memory so that it will be freed by FREE_MEMORY()_
+  - ALLOCATE_MEMORY() - _Allocate Memory with checking_
+  - ALLOCATE_AND_COPY_MEMORY() - _Allocate memory and set its contents to the given buffer of given size_
+  - ALLOCATE_STRING() - _Allocate memory for a string and copy the given string into this allocated space_
+  - ALLOCATE_FIXED_LENGTH_STRING() - _Allocate space for a fixed length string and copy data from the given string into the newly allocated space_
+  - ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_() - _Allocate memory and on error return the given value_
+  - ALLOCATE_STRING_AND_ON_ERROR_RETURN_() - _Allocate memory for a string and copy the given string into this allocated space and on error return the given value_
+  - ALLOCATE_STRING_AND_ON_ERROR_RETURN_VOID() - _Allocate memory for a string and copy the given string into this allocated space and on error return void_
+  - ALLOCATE_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_VOID() - _Allocate memory for a fixed length string and copy the given string into this allocated space and on error return void_
+  - ALLOCATE_AND_TRACK_FIXED_LENGTH_STRING_AND_ON_ERROR_RETURN_() - _Allocate memory for a fixed length string and copy the given string into this allocated space and on error return the given value_
+  - ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_() - _Allocate memory and add it to the tracked memory list so that it can be freed automatically later returning the given value on error_
+  - ALLOCATE_COPY_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_() - _Allocate and track memory and set its contents to the given buffer of given size returning the given value on error_
+  - ALLOCATE_COPY_AND_TRACK_STRING_AND_ON_ERROR_RETURN_() - _Allocate and track memory and set its contents to the given string returning the given value on error_
+  - FREE_TRACKED_MEMORY() - _Free any tracked memory_
+- aida_pca_uri.h
+  - PMU_STRING_FROM_URI() - _Get a PMU (Primary-Micro-Unit) string from the supplied URI_
+  - TO_SLC_NAME() - _Get a slcName from the provided uri and store it in the given variable name_
+  - TO_LEGACY_NAME() - _Get a legacy AIDA name from the provided uri and store it in the given variable name_
+  - TO_DGROUP() - _Get a display group name from the provided uri and store it in the given variable name_
 
-This section describes the macros that are defined to make your life easier.
-
-##### General
-
-##### Exceptions
-
-##### Data Conversion
-
-##### Memory Management
-
-#### Helper Functions
-
-#### Argument processing
-
-##### ascanf, avscanf
-
-Synopsis
-
-```c 
-int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
-int avscanf(JNIEnv* env, Arguments* arguments, Value* value, const char* formatString, ...);
+You don't have to load all of these header files individually, just:
+```c
+#include "aida_pva.h"
 ```
 
-Details
+#### Types
+There are some special data types that you'll need to be able to get Arguments in the endpoint implementation, and to return 
+package up data for return.
 
-Reads data from the given arguments and stores them according to parameter format into the locations given by the
-additional arguments, as if `scanf` was used, but reading from arguments instead of the standard input (stdin).
-
-The additional arguments should point to already allocated objects of the type specified by their corresponding format
-specifier. For strings and arrays only the pointer needs to be pre-allocated - not the data that the pointer will
-reference.
-
-The only space allocated by this function is for strings, and arrays. You need to free those when you're done.
-
-In this example, only the provided pointer needs to be freed as only one allocation is made:
-
-```c 
-     Arguments arguments;
-     float theFloat;
-     int *intArray;
-     ascanf(arguments "$of, %da", "f", &theFloat, "fooArray", &intArray);
-
-     // Do stuff
-     free(intArray);
-```  
-
-There are a number of other differences from scanf which are best described by example:
-
-_Scan into simple variable_
-
-```c 
-     int n;
-     ascanf("%d", "NPOS", &n);
-```
-
-You must always provide the name of the variable and the pointer to the place to put the value in pairs
-
-_Optional arguments_
-Optional arguments are specified with the o character before the format character.
-
-```c 
-     short flag = 10;  // 10 is the default value
-     ascanf("%ohd", "flag", &flag);
-```
-
-By default all arguments are considered required unless this character is specified. For optional arguments the pointer
-provided must point to the default value. In the case of arrays and strings this will be copied into allocated storage
-that will need to be freed as normal. i.e. strings themselves don't need to be freed.
-
-_Variable Names_
-
-1. You can specify simple variable names
-
- ```c 
-     int simpleInt;
-     ascanf(&arguments "%d, "simple", &simpleInt);
- ```
-
-2. You can specify simple names or you can use dot and square brace notation to refer to arguments that refer to json
-   structures. e.g. given a variable named json and presented as
-
-```c 
-     json=' { "foo": {"bar": 0} }}'
-```
-
-You can specify the name as `json.foo.bar` to retrieve the `0` value *
-
-3. Also given a variable named jsonArray and presented as
-
-```c 
-     jsonArray=' [ {"foo": 10}, {"bar": 20} ]'
-```
-
-You can specify the name as `jsonArray[1].bar` to retrieve the `20` value
-
-4. Finally, if you use the variable name `value` in the call, the `avscanf()` function will use the supplied `value` to
-   get the data for that parameter
-
-```c 
-    Arguments arguments;
-    Value value;
-    int *intArray;
-    avscanf(&arguments &value, "%da", fooArray", &intArray);
-
-    // Do stuff
-    free(intArray);
-```
-
-Format Specifiers
-
-_Supported formats specifiers_
-
-- `d` : `int *` - extract an integer into the corresponding variable (see `l` & `h` below).
-- `u` : `unsigned int *` - extract an unsigned integer into the corresponding variable (see `l` & `h` below)
-- `f`  : ``float *` - extract a floating point number (see `l` below)
-- `s` : ``char *` - extract a string of characters into allocated space and point the corresponding variable to it
-- `c` : ``char *` - extract a single character into the corresponding variable
-
-_Required flag_
-
-- `o` - optional precede the format with `o` to indicate that the argument is optional
-
-_Prefixes_
-
-- `h` - `short *` - preceding `d` will retrieve a short e.g. `%hd`
-- `l` - `long *`, double * - preceding d will retrieve a long e.g. `%ld`, preceding `f` will retrieve a double e.g. `%lf`
-
-_Suffixes_
-
-- `a` - extract an array of the preceding type into a block of allocated space and point the corresponding variable to
-  it. the variable will have an extra level of indirection than the non-array version e.g. `%d`, `int *` becomes `%da`
-  , `int **`
-
-Parameters:
-
-- `env` - just pass in the `env` parameter that your endpoint was given by the framework
-- `arguments` - arguments that the function processes as its source to retrieve the data.
-- `value` value that the function processes as its source to retrieve the data
-- `formatString` C string that contains a format string as described above
-- `...` Depending on the format string, the function may expect a sequence of additional arguments, containing pairs of names and pointers to allocated storage (except as indicated above), where the interpretation of the extracted data is
-  stored with the appropriate type. There should be at least as many pairs of these arguments as the number of values
-  stored by the format specifiers. Additional arguments are ignored by the function @return true if all required
-  arguments were read and no errors occurred @throw MissingRequiredArgument if one of the required arguments are missing
-
-##### Table Manipulation
-
-If order to return a table you need to do the following.
-
-```c 
-	Table table = tableCreate(env, 1, 8);
-	CHECK_EXCEPTION(table)
-
-    // Call one or more of the tableAdd functions to add data to the table
-	tableAddSingleRowBooleanColumn(env, &table, 1);
-	CHECK_EXCEPTION(table)
-	tableAddSingleRowStringColumn(env, &table, "eight");
-
-	// Return the table
-	return table;
-
-```
-
-These are the list of table manipuation functions:
-
-```c 
-// Create a table and set the number of rows and columns
-Table tableCreate(JNIEnv* env, int rows, int columns);
-
-// Add a column of arbitrary type (except string) to the table
-void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat);
-
-// Add a string column of arbitrary length to the table
-void tableAddStringColumn(JNIEnv* env, Table* table, char** data);
-
-// Add a single row of float data to the table
-void tableAddSingleRowFloatColumn(JNIEnv* env, Table* table, float data, bool ieeeFloat);
-
-// Add a single row of long data to the table
-void tableAddSingleRowLongColumn(JNIEnv* env, Table* table, long data);
-
-// Add a single row of boolean data to the table
-void tableAddSingleRowBooleanColumn(JNIEnv* env, Table* table, unsigned char data);
-
-// Adda a single row of byte data to the table
-void tableAddSingleRowByteColumn(JNIEnv* env, Table* table, unsigned char data);
-
-// Add a single row of short data to the table
-void tableAddSingleRowShortColumn(JNIEnv* env, Table* table, short data);
-
-// Add a single row of int data to the table
-void tableAddSingleRowIntegerColumn(JNIEnv* env, Table* table, int data);
-
-// Add a single row of double data to the table
-void tableAddSingleRowDoubleColumn(JNIEnv* env, Table* table, double data, bool ieeeDouble);
-
-// Add a single row of string data to the table
-void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data);
-
-// Add a single row of fixed width string data to the table
-void tableAddFixedWidthStringColumn(JNIEnv* env, Table* table, void* data, int width);
-
-```
+These are defined in aida_pva_types.h but are also automatically loaded by including aida_pva.h.
+- Type - _Types of return value, or arguments see [Supported Types Documentation](SupportedTypes.md)_
+- Arguments - _All the arguments passed from the request to the Native Channel Provider_
+- Argument - _A single request argument_
+- Value - _Contents of the VALUE argument_ 
+- Table - _Represents a TABLE to be returned to the client_ 
+- Array - _Represents an Array of scalar types to be returned to the client_ 
+- StringArray - _Represents an Array of string type to be returned to the client_
 
 ## Building your Shared Service
 
 ## Writing and running tests
 
 ## Deploying a Service Provider
+See [Deploying a Service Provider Documentation](DevOps.md) for imformation on how to deply your newly built Service Provider.
 
-To implement a service (`yourService`) simply duplicate the `Reference` directories under `src/cpp/build`
-, `src/cpp/impl`
-and `src/cpp/include` and implement your code as appropriate to your service.
-
-You will also need to provide a yaml file (`channels.yaml`) containing the channel definition which you'll place in you
-new `src/cpp/build{yourService}` directory.
-
-From the `src/cpp/build{yourService}` directory, compile up the service using the `build` script which will deploy the
-library (`AIDA.EXE`) in the `lib/{yourService}` directory and copy the `channels.yml` file to the appropriate location.
-
-```shell
-MCCDEV> src
-Default:= DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC]
-MCCDEV> cd [.build.reference]
-MCCDEV> @build
-DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]AIDA_JNI_HELPER.OBJ;7
-DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]AIDA_SERVER_HELPER.OBJ;7
-DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]AIDA_TYPES_HELPER.OBJ;7
-DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]NATIVECHANNELPROVIDERJNI.OBJ;7
-DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.SRC.BUILD.REFERENCE]REFERENCE_SERVER.OBJ;7
-```
-
-From the `lib/{yourlibrary}` directory start the service with `java -jar "-Djava.library.path=./" ../aida-pva.jar` where
-{yourLibrary} is the name of the library.
-`
-e.g.
-
-```shell
-MCCDEV> lib
-Default:= DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.LIB]
-MCCDEV> cd [.reference]
-MCCDEV> java -jar "-Djava.library.path=./" ../aida-pva.jar
-Aida Service Initialised
- 
-       db         88  88888888ba,           db
-      d88b        88  88      `"8b         d88b
-     d8'`8b       88  88        `8b       d8'`8b
-    d8'  `8b      88  88         88      d8'  `8b                8b,dPPYba,   8b       d8  ,adPPYYba,
-   d8YaaaaY8b     88  88         88     d8YaaaaY8b     aaaaaaaa  88P'    "8a  `8b     d8'  ""     `Y8
-  d8""""""""8b    88  88         8P    d8""""""""8b    """"""""  88       d8   `8b   d8'   ,adPPPPP88
- d8'        `8b   88  88      .a8P    d8'        `8b             88b,   ,a8"    `8b,d8'    88,    ,88
-d8'          `8b  88  88888888Y"'    d8'          `8b            88`YbbdP"'       "8"      `"8bbdP"Y8
-                                                                 88
-                                                                 88
-AIDA-pva Channel Provider : Sample
-Channels hosted:
-  [AIDA:SAMPLE:DEVICE01:attribute04, AIDA:SAMPLE:DEVICE01//attribute14, AIDA:SAMPLE:DEVICE01:attribute15, AIDA:SAMPLE:DEVICE01//attribute03
-, AIDA:SAMPLE:DEVICE01:attribute18, AIDA:SAMPLE:DEVICE01:attribute20, AIDA:SAMPLE:DEVICE01:attribute02, AIDA:SAMPLE:DEVICE01//attribute18,
-AIDA:SAMPLE:DEVICE01//attribute06, ...]
-
-```
-
-Note that this assumes the library (EXE) is deployed in the current working directory and that the aida-pva jar is also
-deployed there.
-
-## Deployment
-
-Deployment is very simple.
-
-- aida-pva.jar
-- service
-- epics forwarder
-
-### AIDA-PVA library
-
-A shaded jar has been created (aida-pva) to implement AIDA-PVA. This jar contains all the EPICS and other libraries that
-are required, and it is also runnable. The only thing that you need to make sure is that your native service library is
-available on the java library path (specified with `-Djava.library.path=<path_where_service_library_resides>` on the
-commandline). You also need to make sure that a `channels.yaml` file, is found in the working directory of the service.
-
-### Service
-
-### EPICS Forwarder
-
-This component will be required for EPICS on Open-VMS to workaround an issue related to multi-cast sockets in Java 1.5.
-It simply listens for any EPICS requests and forwards them to any listening AIDA-PVA services.
-
-## Framework
-
-![Aida-PVA Topology](docs/aida-pva.png)
-
-# Running
-
-To run AIDA-PVA and tests you'll need to start the service and also use some tool to test it
-
-## Required Service Files
-
-- `aida-pva.jar` - anywhere in the java classpath
-- `channels.yml` - in current working directory where you start service
-- `AIDA-PVA.EXE` - anywhere in the java load library path
-
-## Start the forwarder once
-
-On any site (networking terminology for a host) one EPICS Forwarder must be running.  
-It must be started before any AIDA-PVA services are started on that site. One, and only one, must be running.
-
-To start the EPICS forwarded:
-
-```shell
-MCCDEV> java -jar epics-forwarder.jar
-Jun 30, 2021 9:16:27 AM org.epics.forwarder.PVAForwarder main
-INFO: EPICS Request Forwarder started: 1824 milliseconds
-16:16 > .....
-
-```
-
-Note: You will see a '.' show for each request that is forwarded by the EPICS Forwarder, and a new line will start for
-each hour that there is at least one request. You can use this display to get an idea of the request rates.
-
-## Start the service
-
-You can start the service by executing the following command.
-
-```shell
-MCCDEV> java -jar "-Djava.library.path=." aida-pva.jar
-```
-
-The foregoing assumes that all required files are in the current working directory
 
 ## Reference Service
 
-AIDA-PVA provides a reference service implementation. You can use this to verify your configuration before deploying
+AIDA-PVA provides a reference service implementation. You can explore this code to help you understand how to implement 
+your Service Provider.  The code is available here: https://github.com/
+
+You can use this to verify your configuration before deploying
 your service. The reference implementation provides the following channels:
 
 - `AIDA:SAMPLE:DEVICE01:attribute01` - simple boolean

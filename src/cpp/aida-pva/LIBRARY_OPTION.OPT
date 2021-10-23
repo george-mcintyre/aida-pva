@@ -1,0 +1,19 @@
+aida_pva_jni_helper.obj
+aida_pva_json.obj
+aida_pva_server_helper.obj
+aida_pva_types_helper.obj
+nativechannelproviderjni.obj
+!
+JAVA$JAVA_G_SHR/SHARE
+!
+SLCLIBS:STANDALONELIB.OLB/LIB
+!
+  RMS_RELATED_CONTEXT=NO
+!
+  DSPSHR/shareable
+  DBSSHR/shareable
+  IOBSIC/shareable
+  MISCSHR/shareable
+  MSGSHR/shareable
+  SYSUTIL/shareable
+  UTILSHR/shareable

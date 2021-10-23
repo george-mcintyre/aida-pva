@@ -7,43 +7,42 @@ include_directories(include
         /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include
         /Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin
         /Users/george/Projects/com/SLAC/include
-        include/aida-pva
-        include/Reference
-        include/SLC
-        include/SLCBpm
-        include/SLCBuffAcq
-        include/SLCKlys
-        include/SLCModel
-        include/SLCmagnet
-        include/SLCMosc
-        include/SLCUtil
+        include
         )
 
 add_executable(cpp
-        impl/Reference/reference_server.c
-        include/Reference/reference_server.h
-        impl/SLC/slc_server.c
-        include/SLC/slc_server.h
-        impl/SLCBpm/slcBpm_server.c
-        include/SLCBpm/slcBpm_server.h
-        impl/SLCBuffAcq/slcBuffAcq_server.c
-        include/SLCBuffAcq/slcBuffAcq_server.h
-        impl/SLCKlys/slcKlys_server.c
-        include/SLCKlys/slcKlys_server.h
-        impl/SLCMagnet/SLCMagnet_server.c
-        include/SLCMagnet/slcMagnet_server.h
-        impl/SLCModel/slcModel_server.c
-        include/SLCModel/slcModel_server.h
-        impl/SLCMosc/slcMosc_server.c
-        include/SLCMosc/slcMosc_server.h
-        impl/SLCUtil/slcUtil_server.c
-        include/SLCUtil/slcUtil_server.h
-        include/aida-pva/aida_jni_helper.h
-        include/aida-pva/aida_server_helper.h
-        include/aida-pva/aida_types.h
-        include/aida-pva/slac_aida_NativeChannelProvider.h
-        aida-pva/aida_jni_helper.c
-        aida-pva/aida_server_helper.c
-        aida-pva/aida_types_helper.c
+        aida-pva/aida_pva_jni_helper.c
+        aida-pva/aida_pva_jni_helper.h
+        aida-pva/aida_pva_server_helper.c
+        aida-pva/aida_pva_server_helper.h
+        aida-pva/aida_pva_types_helper.c
+        aida-pva/aida_pva_types_helper.h
         aida-pva/NativeChannelProviderJni.c
-        aida-pva/json.c)
+        aida-pva/slac_aida_NativeChannelProvider.h
+        aida-pva/aida_pva_json.c
+        include/aida_pva_json.h
+        include/aida_pva.h
+        include/aida_pva_api.h
+        include/aida_pva_convert.h
+        include/aida_pva_exceptions.h
+        include/aida_pva_memory.h
+        include/aida_pva_types.h
+        include/aida_pva_uri.h
+        providers/Reference/reference_server.c
+        providers/Reference/reference_server.h
+        providers/SLC/slc_server.c
+        providers/SLC/slc_server.h
+        providers/SLCBpm/slcBpm_server.c
+        providers/SLCBpm/slcBpm_server.h
+        providers/SLCBuffAcq/slcBuffAcq_server.c
+        providers/SLCBuffAcq/slcBuffAcq_server.h
+        providers/SLCKlys/slcKlys_server.c
+        providers/SLCKlys/slcKlys_server.h
+        providers/SLCMagnet/SLCMagnet_server.c
+        providers/SLCMagnet/slcMagnet_server.h
+        providers/SLCModel/slcModel_server.c
+        providers/SLCModel/slcModel_server.h
+        providers/SLCMosc/slcMosc_server.c
+        providers/SLCMosc/slcMosc_server.h
+        providers/SLCUtil/slcUtil_server.c
+        providers/SLCUtil/slcUtil_server.h)
