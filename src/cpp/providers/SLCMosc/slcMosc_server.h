@@ -3,7 +3,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+/*
+ *
+ *  **CMS**=C_INC
+ *
+ */
 extern vmsstat_t DPSLCMOSC_DB_INIT(void);
 extern vmsstat_t DPSLCMOSC_MEASMASTEROSC(double*);
 extern int DPSLCMOSC_ACCESSENABLED(void);

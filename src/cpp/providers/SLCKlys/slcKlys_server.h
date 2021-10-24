@@ -4,6 +4,10 @@
 extern "C" {
 #endif
 
+/*
+ *
+ *  **CMS**=C_INC
+ */
 extern vmsstat_t DPSLCKLYS_DB_INIT(void);
 extern int DPSLCKLYS_DBGETKLYSFLOAT(char*, float*);
 extern int DPSLCKLYS_GETSTATUS(char*, char*, char*, short*);

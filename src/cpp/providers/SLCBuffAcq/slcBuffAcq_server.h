@@ -3,7 +3,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+/*
+ *
+ *  **CMS**=C_INC
+ *
+ */
 #include "slc_types.h"            /* prev of dpslcbpm.h */
 
 #include "bpmparamv.h"            /* prev of dpslcbuffacq.h */

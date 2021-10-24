@@ -1,5 +1,7 @@
 /** @file
  *  @brief The Header File for the AIDA-PVA Module functions.
+ *
+ *  **CMS**=C_INC
  */
 #ifndef _Included_aida_pva
 #define _Included_aida_pva

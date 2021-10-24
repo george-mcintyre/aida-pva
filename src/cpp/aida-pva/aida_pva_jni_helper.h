@@ -1,5 +1,7 @@
 /** @file
  *  @brief The Header File for the JNI helper functions.
+ *
+ *  **CMS**=C_INC
  */
 #ifndef _Included_aida_jni_helper
 #define _Included_aida_jni_helper

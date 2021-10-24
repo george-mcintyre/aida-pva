@@ -3,6 +3,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+ *
+ *  **CMS**=C_INC
+ *
+ */
 
 #include "slc_types.h"            /* prev of dpslcbpm.h */
 
@@ -15,7 +20,7 @@ extern "C" {
 #define AIDAPVA_SLCBPMID 192
 
 #define NAVG  1
-#define BPMD_ROGUE 0     		// 0 is invalid, used as rogue value
+#define BPMD_ROGUE 0            // 0 is invalid, used as rogue value
 #define SORTORDER_Z  1
 #define SORTORDER_DISPLAY  2
 #define CNFTYPE_NONE  0
@@ -28,8 +33,8 @@ extern "C" {
 #define CHECK_VMS_STATUS \
 if (!$VMS_STATUS_SUCCESS(status)) { \
     endAcquireBpmData(env); \
-	aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values"); \
-	return EXIT_FAILURE; \
+    aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "reading BPM values"); \
+    return EXIT_FAILURE; \
 } \
 
 #ifdef __cplusplus

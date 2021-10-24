@@ -335,6 +335,8 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 
 /**
  * aidaRequestTable API stub
+ *
+ *  **CMS**=C_INC
  */
 #define REQUEST_STUB_TABLE \
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments) \

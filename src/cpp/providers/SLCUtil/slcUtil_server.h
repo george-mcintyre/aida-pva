@@ -3,7 +3,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+/*
+ *
+ *  **CMS**=C_INC
+ *
+ */
 #define MAX_DEVICE_STRING_LEN 20
 
 extern vmsstat_t DPSLCUTIL_DB_INIT(void);

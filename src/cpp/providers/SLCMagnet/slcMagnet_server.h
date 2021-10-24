@@ -4,6 +4,10 @@
 extern "C" {
 #endif
 
+/*
+ *
+ *  **CMS**=C_INC
+ */
 #define MAX_PMU_STRING_LEN 15
 #define MAX_STATE_NAME_LEN 9
 #define MAX_VALIDITY_STRING_LEN 40

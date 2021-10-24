@@ -5,7 +5,9 @@ extern "C" {
 #endif
 
 /*
-** Routines in dpslc_jni_helper.c to call into SLC shareables
+ * Routines in dpslc_jni_helper.c to call into SLC shareables
+ *
+ *  **CMS**=C_INC
 */
 extern vmsstat_t DB_INIT(void);
 extern vmsstat_t JNI_DBGETBYTE(const char*, unsigned char*);
