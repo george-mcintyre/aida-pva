@@ -183,7 +183,7 @@ static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, boo
 		// Json arrays can only be parsed by this parser by wrapping them in a json object, so we always
 		// create {"_array": [ ... ]} and when pulling out values we always replace
 		// the element "_array" by its value
-		char arrayValueToParse[strlen(valueToParse + 30)];
+		char arrayValueToParse[strlen(valueToParse) + 30];
 
 		if (*valueToParse == '[') {
 			sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);

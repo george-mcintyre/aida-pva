@@ -229,6 +229,10 @@ see [AIDA-PVA Module Functions documentation](AidaPVAModuleFunctions.md) for mor
 see [AIDA-PVA Module Macros documentation](AidaPVAModuleMacros.md) for more information on MACROS you can leverage.
 see [AIDA-PVA Module Types documentation](AidaPVAModuleMacros.md) for more information on available types.
 
+## Building the AIDA-PVA Module
+This does not need to be done for each new Native Channel Provider.  It only needs to be done once.  But if it has not been done 
+you will need to do it first.  Follow instructions [here](BuildingAIDAPVAModule.md) to build the AIDA-PVA Module and add it to AIDASHR.
+
 ## Building your Shared Service
 
 ## Writing and running tests

@@ -1,6 +1,6 @@
 /** @file
  *  @brief The Header File for the Provider API and Stubs MACROS.
- *
+ *       **CMS**=C_INC
  */
 #ifndef _Included_aida_pva_api
 #define _Included_aida_pva_api
@@ -336,7 +336,6 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
 /**
  * aidaRequestTable API stub
  *
- *  **CMS**=C_INC
  */
 #define REQUEST_STUB_TABLE \
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments) \

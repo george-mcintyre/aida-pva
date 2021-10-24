@@ -1,7 +1,6 @@
 /** @file
  *  @brief The Header File for the Native Channel Provider AIDA-PVA type related functions.
- *
- *  **CMS**=C_INC
+ *       **CMS**=C_INC
  */
 
 #ifndef _Included_aida_types_helper

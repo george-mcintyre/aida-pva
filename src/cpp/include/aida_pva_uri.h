@@ -1,7 +1,6 @@
 /** @file
  *  @brief The Header File for the Native Channel Provider Server Helper functions.
- *
- *  **CMS**=C_INC
+ *       **CMS**=C_INC
  */
 #ifndef _Included_aida_uri
 #define _Included_aida_uri

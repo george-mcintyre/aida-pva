@@ -4,9 +4,7 @@
 extern "C" {
 #endif
 /*
- *
- *  **CMS**=C_INC
- *
+         **CMS**=C_INC
  */
 #include "slc_types.h"            /* prev of dpslcbpm.h */
 

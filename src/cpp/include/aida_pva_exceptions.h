@@ -1,7 +1,6 @@
 /** @file
  *  @brief The Header File for the exceptions helper MACROS.
- *
- *  **CMS**=C_INC
+ *       **CMS**=C_INC
  */
 #ifndef _Included_aida_exceptions
 #define _Included_aida_exceptions

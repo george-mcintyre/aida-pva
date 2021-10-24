@@ -1,7 +1,6 @@
 /** @file
  *  @brief The Header File for the Native Channel Provider types.
- *
- *  **CMS**=C_INC
+ *       **CMS**=C_INC
  */
 #include <jni.h>
 #include <stdbool.h>
