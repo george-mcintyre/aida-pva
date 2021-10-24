@@ -227,7 +227,7 @@ JNI boundary and between your Channel Provider and VMS and the Channel Provider 
 
 see [AIDA-PVA Module Functions documentation](AidaPVAModuleFunctions.md) for more information on the available functions.
 see [AIDA-PVA Module Macros documentation](AidaPVAModuleMacros.md) for more information on MACROS you can leverage.
-see [AIDA-PVA Module Types documentation](AidaPVAModuleMacros.md) for more information on available types.
+see [AIDA-PVA Module Types documentation](AidaPVAModuleTypes.md) for more information available types.
 
 ## Building the AIDA-PVA Module
 This does not need to be done for each new Native Channel Provider.  It only needs to be done once.  But if it has not been done 

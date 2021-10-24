@@ -4,8 +4,8 @@
  *  by the Native Channel Provider because they are further abstracted away by the
  *  aida_server_helper.
  *
- *     **MEMBER**=SLCLIBS:AIDASHRLIB
- *     **CMS**=AIDASHR
+ *     **MEMBER**=SLCLIBS:AIDAPVA
+ *     **CMS**=AIDAPVA
  *
  */
 #include "aida_pva_server_helper.h"
