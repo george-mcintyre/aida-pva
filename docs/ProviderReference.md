@@ -234,6 +234,7 @@ This does not need to be done for each new Native Channel Provider.  It only nee
 you will need to do it first.  Follow instructions [here](BuildingAIDAPVAModule.md) to build the AIDA-PVA Module and add it to AIDASHR.
 
 ## Building your Shared Service
+Follow instructions [here](BuildingNativeProviderShareable.md) to build your AIDA-PVA Native Channel Provider.
 
 ## Writing and running tests
 

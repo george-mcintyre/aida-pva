@@ -1,7 +1,7 @@
 /** @file
  *  @brief SLC Magnet Native Provider implementation.
- */
-/**
+ *     **MEMBER**=SLCLIBS:AIDASLCMAGNETLIB
+ *
  * Magnet Server implementation
  */
 #include "aida_pva.h"

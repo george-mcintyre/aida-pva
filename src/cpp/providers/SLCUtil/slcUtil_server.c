@@ -1,5 +1,6 @@
 /** @file
  *  @brief Utility Native Provider implementation.
+ *     **MEMBER**=SLCLIBS:AIDASLCUTILLIB
  */
 #include "aida_pva.h"
 #include "slcUtil_server.h"
