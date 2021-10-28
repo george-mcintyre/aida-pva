@@ -26,8 +26,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *     **MEMBER**=SLCLIBS:AIDAPVA
- *     **CMS**=AIDAPVA
+ *     **MEMBER**=SLCLIBS:STANDALONELIB
  *
  */
 
@@ -40,7 +39,7 @@
 #include <stdint.h>
 #endif
 
-const struct _json_value json_value_none;
+const struct _json_value json_value_none = {0};
 
 #include <stdio.h>
 #include <stdlib.h>

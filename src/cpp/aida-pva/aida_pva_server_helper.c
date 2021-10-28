@@ -3,8 +3,7 @@
  *  used directly Native Channel Providers.
  *  These functions provide all of the features that allow the Channel Provider to implement its service.
  *
- *     **MEMBER**=SLCLIBS:AIDAPVA
- *     **CMS**=AIDAPVA
+ *     **MEMBER**=SLCLIBS:STANDALONELIB
  *
  *  - MACROS to allocate, track and release memory
  *  - Throwing exceptions and determining if one has been thrown

@@ -4,8 +4,7 @@
  *  These functions provide all of the features related to processing of Arguments and Table
  *  that allow the Channel Provider to implement its service.
  *
- *     **MEMBER**=SLCLIBS:AIDAPVA
- *     **CMS**=AIDAPVA
+ *     **MEMBER**=SLCLIBS:STANDALONELIB
  *
  *  - ascanf() and avscanf() to scan arguments into provided variables.
  *  - Table creation and building functions: tableAddColumn(),
