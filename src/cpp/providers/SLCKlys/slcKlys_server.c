@@ -2,6 +2,7 @@
  *  @brief Klystron Native Provider implementation.
  *     **MEMBER**=SLCLIBS:AIDASLCKLYSLIB
  */
+#include "aida_provider.h"
 #include "aida_pva.h"
 #include "slcKlys_server.h"
 

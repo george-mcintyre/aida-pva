@@ -2,6 +2,7 @@
  *  @brief BPM Native Provider implementation.
  *     **MEMBER**=SLCLIBS:AIDASLCBPMLIB
  */
+#include "aida_provider.h"
 #include "aida_pva.h"
 #include "slcBpm_server.h"
 

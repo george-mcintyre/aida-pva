@@ -1,8 +1,8 @@
 # AIDA-PVA Module Types
 
-The AIDA-PVA Module is a module contained in the `AIDASHR` shared library that provides all the boilerplate
+The AIDA-PVA Module is a module contained in the `STANDALONELIB` library that provides all the boilerplate
 functionality needed to respond to **get** and **set** requests, marshal and unmarshal objects, and simple types across the
-JNI boundary and between your Channel Provider and VMS and the Channel Provider module in `AIDASHR`.
+JNI boundary and between your Channel Provider, VMS, and the Channel Provider module in `AIDASHR`.
 
 ## Types provided in AIDA-PVA Module
 There are some special data types that you'll need to be able to get Arguments in the endpoint implementation, and to return 

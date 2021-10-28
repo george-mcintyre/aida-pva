@@ -4,6 +4,7 @@
  *
  * Magnet Server implementation
  */
+#include "aida_provider.h"
 #include "aida_pva.h"
 #include "slcMagnet_server.h"
 

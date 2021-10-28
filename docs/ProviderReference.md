@@ -33,7 +33,7 @@ _The framework has five main features._
    behalf,
 6. Opening a direct communications channel to the client once the client accepts the response.
 7. Now the AIDA-PVA will ask your Channel Provider to service the request and will return the results you give it.
-8. By leveraging services in the AIDA-PVA module and legacy Channel Provider module in AIDASHR to access the Channel
+8. By leveraging services in the AIDA-PVA module in STANDALONELIB and legacy Channel Provider module in AIDASHR to access the Channel
    Data source, you can service those requests.
 
 ![Usine a gaz with annotations](images/usine-a-gaz-wa.png)
@@ -48,7 +48,7 @@ As an AIDA-PVA Service Provider writer you will be responsible for:
 
 * The **Provider Code** => produces `SLC<provider_name>.EXE` shared Library
 * The **AIDA-PVA** - `aida-pva.jar`, that loads the Provider Code
-* The **AIDA-PVA Module** - extensions to AIDASHR that provide helper functions for the Provider Code
+* The **AIDA-PVA Module** - module in STANDALONELIB that provides helper functions for the Provider Code
 * The **back-ported EPICS 7** libraries
     * `epics-pvaccess.jar`
     * `epics-pvdata.jar `
@@ -56,9 +56,9 @@ As an AIDA-PVA Service Provider writer you will be responsible for:
 
 ## Topology
 As a Native Channel Provider programmer you will be primarily concerned with creating a shared library for SLCLIBS.
-Each Native Channel Provider is a distinct library in SLCLIBS.  The proceddure to create one will compile up 
-your C source file(s) and link them with AIDASHR to resolve the calls you make to functions in AIDA-PVA Module and 
-in any AIDA-MODULEs that you need to implement your service. 
+Each Native Channel Provider is a distinct library in SLCLIBS.  The procedure to create one will compile up 
+your C source file(s) and link them with STANDALONELIB to resolve the calls you make to functions in AIDA-PVA Module, and 
+to AIDASHR for any AIDA-MODULEs that you need to implement your service. 
 
 AIDA-PVA Jar is the process that will launch your shared library, calling the entrypoints you implement as needed.
 
@@ -221,9 +221,9 @@ replace it with the implementation. Here are the endpoints from which to choose.
   
 ### AIDA-PVA Module
 
-The AIDA-PVA Module is a module contained in the `AIDASHR` shared library that provides all the boilerplate
+The AIDA-PVA Module is a module contained in the `STANDALONELIB` library that provides all the boilerplate
 functionality needed to respond to **get** and **set** requests, marshal and unmarshal objects, and simple types across the
-JNI boundary and between your Channel Provider and VMS and the Channel Provider module in `AIDASHR`.
+JNI boundary and between your Channel Provider, VMS, and the Channel Provider module in `AIDASHR`.
 
 see [AIDA-PVA Module Functions documentation](AidaPVAModuleFunctions.md) for more information on the available functions.
 see [AIDA-PVA Module Macros documentation](AidaPVAModuleMacros.md) for more information on MACROS you can leverage.
@@ -231,7 +231,7 @@ see [AIDA-PVA Module Types documentation](AidaPVAModuleTypes.md) for more inform
 
 ## Building the AIDA-PVA Module
 This does not need to be done for each new Native Channel Provider.  It only needs to be done once.  But if it has not been done 
-you will need to do it first.  Follow instructions [here](BuildingAIDAPVAModule.md) to build the AIDA-PVA Module and add it to AIDASHR.
+you will need to do it first.  Follow instructions [here](BuildingAIDAPVAModule.md) to build the AIDA-PVA Module and add it to STANDALONELIB.
 
 ## Building your Shared Service
 Follow instructions [here](BuildingNativeProviderShareable.md) to build your AIDA-PVA Native Channel Provider.
@@ -239,7 +239,7 @@ Follow instructions [here](BuildingNativeProviderShareable.md) to build your AID
 ## Writing and running tests
 
 ## Deploying a Service Provider
-See [Deploying a Service Provider Documentation](DevOps.md) for imformation on how to deply your newly built Service Provider.
+See [Deploying a Service Provider Documentation](DevOps.md) for information on how to deploy your newly built Service Provider.
 
 
 ## Reference Service

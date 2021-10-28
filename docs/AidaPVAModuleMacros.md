@@ -1,8 +1,8 @@
 # AIDA-PVA Module Macros
 
-The AIDA-PVA Module is a module contained in the `AIDASHR` shared library that provides all the boilerplate
+The AIDA-PVA Module is a module contained in the `STANDALONELIB` library that provides all the boilerplate
 functionality needed to respond to **get** and **set** requests, marshal and unmarshal objects, and simple types across the
-JNI boundary and between your Channel Provider and VMS and the Channel Provider module in `AIDASHR`.
+JNI boundary and between your Channel Provider, VMS, and the Channel Provider module in `AIDASHR`.
 
 ## Macros provided in AIDA-PVA Module
 There are a bunch of Macros that are provided with the AIDA-PVA Module, in the following header files:

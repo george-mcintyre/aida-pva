@@ -407,7 +407,7 @@ public class AidaRPCService implements RPCService {
             throw new RPCRequestException(ERROR, "Invalid argument value: <blank>");
         }
 
-        // json parser in AIDA-PVA Module in AIDASHR is a bit flaky and crashes when it does not
+        // json parser in AIDA-PVA Module in STANDALONELIB is a bit flaky and crashes when it does not
         // get properly formed json, so we'll parse it here to make sure it's ok
         String trimmedValue = value.trim();
         if (trimmedValue.startsWith("[")) {

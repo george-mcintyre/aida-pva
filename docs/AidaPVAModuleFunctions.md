@@ -1,8 +1,8 @@
 # AIDA-PVA Module Functions
 
-The AIDA-PVA Module is a module contained in the `AIDASHR` shared library that provides all the boilerplate
+The AIDA-PVA Module is a module contained in the `STANDALONELIB` shared library that provides all the boilerplate
 functionality needed to respond to **get** and **set** requests, marshal and unmarshal objects, and simple types across the
-JNI boundary and between your Channel Provider and VMS and the Channel Provider module in `AIDASHR`.
+JNI boundary and between your Channel Provider, VMS, and the Channel Provider module in `AIDASHR`.
 
 ## Functions provided in AIDA-PVA Module
 The AIDA-PVA Module contains the following functions that you should use to process arguments, extract parts of URIs, create tables, allocate memory and raise exceptions:
