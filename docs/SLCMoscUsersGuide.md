@@ -1,3 +1,4 @@
+@tableofcontents
 # SLC Master Oscillator Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Magnet Data through AIDA-PVA. This data provider allows for the retrieval of the Master Oscillator setting in units of absolute frequency. It also allows the setting of the Master Oscillator by specifying the relative value in units of frequency (the default) or energy. This set operation returns the new measurement value of the Master Oscillator in units of absolute frequency. For general information on using AIDA-PVA

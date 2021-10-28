@@ -1,3 +1,4 @@
+@tableofcontents
 # Reference Provider Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the Reference Provider through AIDA-PVA. This data provider:

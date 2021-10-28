@@ -1,3 +1,4 @@
+@tableofcontents
 # SLC Buffered Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Buffered Data through AIDA-PVA. This data service gives access to the so called "Buffered BPM Data" acquisition facilities of the SLC Control System, in the SLAC accelerator complex. Buffered BPM data, is the name given to the pulse-by-pulse data acquisition system, in which a user names the devices whose values they want to be acquired, for how many beam pulses, and the service then returns a table of results - the x and y position values and the Tmit, given in one row per device, per pulse.  For general

@@ -1,3 +1,4 @@
+@tableofcontents
 # Technical Reference
 
 Guied to the implementation of `AIDA-PVA` in Stanford National Laboratory.

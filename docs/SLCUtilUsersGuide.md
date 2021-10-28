@@ -1,3 +1,4 @@
+@tableofcontents
 # SLC Utilities Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Utilities through AIDA-PVA. This data provider:

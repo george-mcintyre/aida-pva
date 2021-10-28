@@ -1,3 +1,4 @@
+@tableofcontents
 # EPICS and AIDA-PVA
 
 ## Overview

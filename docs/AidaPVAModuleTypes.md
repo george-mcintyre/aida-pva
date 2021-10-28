@@ -1,3 +1,4 @@
+@tableofcontents
 # AIDA-PVA Module Types
 
 The AIDA-PVA Module is a module contained in the `STANDALONELIB` library that provides all the boilerplate

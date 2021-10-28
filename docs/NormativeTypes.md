@@ -1,3 +1,4 @@
+@tableofcontents
 # Normative Types
 
 EPICS `PVAccess`is used to provide the protocol and transport for the `AIDA-PVA` framework. EPICS `PVData` is used to

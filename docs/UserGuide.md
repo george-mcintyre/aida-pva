@@ -1,3 +1,4 @@
+@tableofcontents
 # User Guide to AIDA-PVA
 
 This is the guide to using the AIDA-PVA system at Stanford National Laboratory. AIDA is the Accelerator Integrated Data

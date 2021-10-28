@@ -1,3 +1,4 @@
+@tableofcontents
 # Supported Data Types
 
 ## Scalar Types

@@ -1,3 +1,4 @@
+@tableofcontents
 # Building AIDA-PVA Module and adding to STANDALONELIB
  
 - [ ] Make sure all include files have correct CMS header

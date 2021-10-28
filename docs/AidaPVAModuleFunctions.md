@@ -1,3 +1,4 @@
+@tableofcontents
 # AIDA-PVA Module Functions
 
 The AIDA-PVA Module is a module contained in the `STANDALONELIB` shared library that provides all the boilerplate

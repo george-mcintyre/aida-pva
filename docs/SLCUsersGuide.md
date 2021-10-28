@@ -1,3 +1,4 @@
+@tableofcontents
 # SLC Database Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Database data through AIDA-PVA. 

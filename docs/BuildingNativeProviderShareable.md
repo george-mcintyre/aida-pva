@@ -1,3 +1,4 @@
+@tableofcontents
 # Building AIDA-PVA Native Channel Provider
  
 - [ ] Make sure all include files have correct CMS header

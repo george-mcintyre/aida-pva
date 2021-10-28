@@ -1,3 +1,4 @@
+@tableofcontents
 # Differences between AIDA and AIDA-PVA
 
 ## Overview

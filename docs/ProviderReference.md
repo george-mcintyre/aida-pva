@@ -1,3 +1,4 @@
+@tableofcontents
 # Writing an AIDA-PVA Service - Programmers Reference Manual
 
 ## Overview

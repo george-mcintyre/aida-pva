@@ -1,3 +1,4 @@
+@tableofcontents
 # SLC Klystron Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Klystron Data through AIDA-PVA. This data provider allows the retrieval of the status code or a status string for a specified klystron on a beam code. It also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set. Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set.  For general
