@@ -2,8 +2,8 @@
  *  @brief The Header File for the exceptions helper MACROS.
  *       **CMS**=C_INC
  */
-#ifndef _Included_aida_exceptions
-#define _Included_aida_exceptions
+#ifndef aida_pva_exceptions_h
+#define aida_pva_exceptions_h
 #ifdef __cplusplus
 extern "C" {
 #endif

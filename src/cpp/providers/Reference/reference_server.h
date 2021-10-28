@@ -1,5 +1,5 @@
-#ifndef _Included_reference_server
-#define _Included_reference_server
+#ifndef reference_server_h
+#define reference_server_h
 #ifdef __cplusplus
 extern "C" {
 #endif

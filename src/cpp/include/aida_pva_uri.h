@@ -2,8 +2,8 @@
  *  @brief The Header File for the Native Channel Provider Server Helper functions.
  *       **CMS**=C_INC
  */
-#ifndef _Included_aida_uri
-#define _Included_aida_uri
+#ifndef aida_pva_uri_h
+#define aida_pva_uri_h
 #ifdef __cplusplus
 extern "C" {
 #endif

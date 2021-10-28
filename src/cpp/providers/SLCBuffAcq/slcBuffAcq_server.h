@@ -1,5 +1,5 @@
-#ifndef _Included_slcBuffAcq_server
-#define _Included_slcBuffAcq_server
+#ifndef slcBuffAcq_server_h
+#define slcBuffAcq_server_h
 #ifdef __cplusplus
 extern "C" {
 #endif

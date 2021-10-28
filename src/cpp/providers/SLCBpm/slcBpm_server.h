@@ -1,5 +1,5 @@
-#ifndef _Included_slcBpm_server
-#define _Included_slcBpm_server
+#ifndef slcBpm_server_h
+#define slcBpm_server_h
 #ifdef __cplusplus
 extern "C" {
 #endif

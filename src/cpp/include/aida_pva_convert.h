@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include "aida_pva_json.h"
 
-#ifndef _Included_aida_convert
-#define _Included_aida_convert
+#ifndef aida_pva_convert_h
+#define aida_pva_convert_h
 #ifdef __cplusplus
 extern "C" {
 #endif

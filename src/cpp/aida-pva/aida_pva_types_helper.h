@@ -3,8 +3,8 @@
  *       **CMS**=C_INC
  */
 
-#ifndef _Included_aida_types_helper
-#define _Included_aida_types_helper
+#ifndef aida_pva_types_helper_h
+#define aida_pva_types_helper_h
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -2,8 +2,8 @@
  *  @brief The Header File for the Provider API and Stubs MACROS.
  *       **CMS**=C_INC
  */
-#ifndef _Included_aida_pva_api
-#define _Included_aida_pva_api
+#ifndef aida_pva_api_h
+#define aida_pva_api_h
 #ifdef __cplusplus
 extern "C" {
 #endif

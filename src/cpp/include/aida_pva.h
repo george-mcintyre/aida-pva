@@ -2,8 +2,8 @@
  *  @brief The Header File for the AIDA-PVA Module functions.
  *       **CMS**=C_INC
  */
-#ifndef _Included_aida_pva
-#define _Included_aida_pva
+#ifndef aida_pva_h
+#define aida_pva_h
 #ifdef __cplusplus
 extern "C" {
 #endif

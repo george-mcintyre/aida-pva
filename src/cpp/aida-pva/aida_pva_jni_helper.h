@@ -2,8 +2,8 @@
  *  @brief The Header File for the JNI helper functions.
  *       **CMS**=C_INC
  */
-#ifndef _Included_aida_jni_helper
-#define _Included_aida_jni_helper
+#ifndef aida_pva_jni_helper_h
+#define aida_pva_jni_helper_h
 #ifdef __cplusplus
 extern "C" {
 #endif

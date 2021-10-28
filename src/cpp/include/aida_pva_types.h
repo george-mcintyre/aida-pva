@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include "aida_pva_json.h"
 
-#ifndef _Included_aida_types
-#define _Included_aida_types
+#ifndef aida_pva_types_h
+#define aida_pva_types_h
 #ifdef __cplusplus
 extern "C" {
 #endif

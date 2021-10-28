@@ -5,8 +5,8 @@
 #include <jni.h>
 /* Header for class slac_aida_NativeChannelProvider */
 
-#ifndef _Included_slac_aida_NativeChannelProvider
-#define _Included_slac_aida_NativeChannelProvider
+#ifndef slac_aida_NativeChannelProvider_h
+#define slac_aida_NativeChannelProvider_h
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +16,7 @@ extern "C" {
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit
-		(JNIEnv *, jclass);
+		(JNIEnv*, jclass);
 
 /*
  * Class:     slac_aida_NativeChannelProvider

@@ -1,5 +1,5 @@
-#ifndef _Included_slc_server
-#define _Included_slc_server
+#ifndef slc_server_h
+#define slc_server_h
 #ifdef __cplusplus
 extern "C" {
 #endif

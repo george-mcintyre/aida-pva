@@ -2,8 +2,8 @@
  *  @brief Conversion of camelCase to uppercase references from providers to AIDA-PVA Module.
  *       **CMS**=C_INC
  */
-#ifndef _Included_aida_lib
-#define _Included_aida_lib
+#ifndef aida_provider_h
+#define aida_provider_h
 #ifdef __cplusplus
 extern "C" {
 #endif
