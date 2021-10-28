@@ -581,7 +581,6 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
- * @return the table
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {

@@ -205,7 +205,6 @@ StringArray aidaRequestStringArray(JNIEnv* env, const char* uri, Arguments argum
  * @param uri the uri
  * @param arguments the arguments
  * @param value to set
- * @return the table
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
 

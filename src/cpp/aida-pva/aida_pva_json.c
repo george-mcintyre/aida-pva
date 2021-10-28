@@ -27,6 +27,7 @@
  * SUCH DAMAGE.
  *
  *     **MEMBER**=SLCLIBS:STANDALONELIB
+ *     **ATTRIBUTES**=JNI
  *
  */
 

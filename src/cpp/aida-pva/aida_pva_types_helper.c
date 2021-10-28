@@ -5,6 +5,7 @@
  *  that allow the Channel Provider to implement its service.
  *
  *     **MEMBER**=SLCLIBS:STANDALONELIB
+ *     **ATTRIBUTES**=JNI
  *
  *  - ascanf() and avscanf() to scan arguments into provided variables.
  *  - Table creation and building functions: tableAddColumn(),

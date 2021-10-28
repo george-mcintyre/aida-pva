@@ -7,8 +7,8 @@
  *  Acquires data for the named SLC device from the SLC database. Also allows setting of float scalar database values.
  *
  *     **MEMBER**=SLCLIBS:AIDASLCDBLIB
+ *     **ATTRIBUTES**=JNI
  */
-#include "aida_provider.h"
 #include "aida_pva.h"
 #include "slc_server.h"
 

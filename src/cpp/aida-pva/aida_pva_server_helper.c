@@ -4,6 +4,7 @@
  *  These functions provide all of the features that allow the Channel Provider to implement its service.
  *
  *     **MEMBER**=SLCLIBS:STANDALONELIB
+ *     **ATTRIBUTES**=JNI
  *
  *  - MACROS to allocate, track and release memory
  *  - Throwing exceptions and determining if one has been thrown

@@ -3,7 +3,6 @@
  *     **MEMBER**=SLCLIBS:STANDALONELIB
  *     **ATTRIBUTES**=JNI
  */
-#include "aida_pva_lib.h"
 #include "aida_pva_types_helper.h"
 #include "aida_pva_server_helper.h"
 #include "aida_pva_jni_helper.h"

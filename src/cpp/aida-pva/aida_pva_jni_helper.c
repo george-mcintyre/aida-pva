@@ -5,6 +5,7 @@
  *  aida_server_helper.
  *
  *     **MEMBER**=SLCLIBS:STANDALONELIB
+ *     **ATTRIBUTES**=JNI
  *
  */
 #include "aida_pva_server_helper.h"
