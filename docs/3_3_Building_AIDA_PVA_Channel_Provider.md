@@ -1,4 +1,4 @@
-# 3.2 - Building an AIDA-PVA Channel Provider
+# 3.3 - Building an AIDA-PVA Channel Provider
 
 1. Make sure all include files have correct CMS header
 

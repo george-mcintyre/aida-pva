@@ -1,4 +1,4 @@
-# 3.1 - Building AIDA-PVA into STANDALONELIB
+# 3.2 - Building AIDA-PVA into STANDALONELIB
 This does not need to be done for each new Channel Provider. It only needs to be done once. But if it has not been done
 you will need to do it first.
 

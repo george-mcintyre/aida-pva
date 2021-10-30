@@ -7,11 +7,11 @@ AIDA-PVA is made up of the following components:
 * AIDA-PVA core
     * `AIDA-PVA.JAR`
         * launches the service providers integrating them into the EPICS PV-Access network
-* EPICS 7 that run on VMS (specially ported for AIDA-PVA)
+* EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These are not on VMS.  They exist only in Linux for building AIDA-PVA.JAR
     * `EPICS-PVACCESS-bp15.JAR`
     * `EPICS-PVDATA-bp15.JAR`
 * EPICS-7 Forwarder (specially built for AIDA-PVA)
-    * `EPICS-FORWARDER.jar`
+    * `EPICS-FORWARDER.JAR`
 * Individual shared libraries for each provider service loaded by AIDA-PVA jar
     * `AIDASLCDB.EXE`
     * `AIDASLCBPM.EXE`
@@ -69,7 +69,7 @@ contention that exists if the Forwarder finds any other provider service running
 ```shell
 MCCDEV> lib
 Default:= DATA_DISK_SLC:[DEV.AIDA-PVA.LIB]
-MCCDEV> java -jar "-Djava.library.path=./" "-Daida.pva.lib.name=SLCAPVA-BPM" AIDA-PVA.JAR
+MCCDEV> java -jar "-Djava.library.path=/SLCLIBS" "-Daida.pva.lib.name=AIDASLCBPM" SLCLIBS:AIDA-PVA.JAR
 Aida BPM Service Initialised
 
        db         88  88888888ba,           db
