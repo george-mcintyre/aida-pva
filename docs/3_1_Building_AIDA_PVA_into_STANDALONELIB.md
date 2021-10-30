@@ -1,17 +1,24 @@
-@tableofcontents
-# Building AIDA-PVA Module and adding to STANDALONELIB
- 
-- [ ] Make sure all include files have correct CMS header
+# 3.1 - Building AIDA-PVA into STANDALONELIB
+This does not need to be done for each new Channel Provider. It only needs to be done once. But if it has not been done
+you will need to do it first.
+
+
+1. Make sure all include files have correct CMS header
+
 ```c
   /*   **CMS**=C_INC   */
 ```
-- [ ] Check out original code from github (first time only)
+
+2. Check out original code from github (first time only)
+
 ```shell
 cd dev
 git clone  git@github.com:slaclab/aida-pva.git
 cd aida-pva/src/cpp/include/
 ```
-- [ ] copy contents of this directory to VMS
+
+3. copy contents of this directory to VMS
+
 ```shell
 > sftp mccdev
 Connecting to mccdev...
@@ -21,7 +28,9 @@ sftp> mkdir include
 sftp> cd include
 sftp> mput *.h 
 ```
-- [ ] On VMS, add all the AIDA-PVA API headers to CMS
+
+4. On VMS, add all the AIDA-PVA API headers to CMS
+
 ```shell
  MCCDEV> CMP AIDA_*.h
   Processing file DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.INCLUDE]AIDA_PVA_API.H;11
@@ -94,11 +103,15 @@ sftp> mput *.h
  %STRIP_C_COMMENTS-I, producing file REF_C_INC:AIDA_PVA_URI.NO_COMMENTS_H
  MCCDEV>
 ```
-- [ ] Back on Unix, go to AIDA-PVA source directory
+
+5. Back on Unix, go to AIDA-PVA source directory
+
 ```shell
 cd ../aida-pva
 ```
-- [ ] copy source code in this directory to VMS
+
+6. copy source code in this directory to VMS
+
 ```shell
 > sftp mccdev
 Connecting to mccdev...
@@ -109,11 +122,15 @@ sftp> cd aida-pva
 sftp> mput *.c 
 sftp> mput *.h 
 ```
-- [ ] On VMS, Go into development directory for AIDA-PVA module that you've created in the last step
+
+7. On VMS, Go into development directory for AIDA-PVA module that you've created in the last step
+
 ```shell
 MCCDEV> set def [-.AIDA-PVA] 
 ```
-- [ ] Compile this source code into STANDALONE_DEVLIB.OLB
+
+8. Compile this source code into STANDALONE_DEVLIB.OLB
+
 ```shell
 MCCDEV> LIBRARY /CREATE STANDALONE_DEVLIB.OLB
 MCCDEV> CINC *.C
@@ -139,7 +156,9 @@ Note:  using NOOPT by default for DECC
 %LIBRAR-S-REPLACED, module NATIVECHANNELPROVIDERJNI replaced in DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.AIDA-PVA]STANDALONE_DEVLIB.OLB;1
 MCCDEV>
 ```
-- [ ] Create a STANDALONELIB_XFR_ALPHA.OPT
+
+9. Create a STANDALONELIB_XFR_ALPHA.OPT
+
 ```shell
 MCCDEV> LIBRARY/EXTRACT=NATIVECHANNELPROVIDERJNI/output=NATIVECHANNELPROVIDERJNI STANDALONE_DEVLIB
 MCCDEV> @java$jni_example:scan_globals_for_option *.OBJ STANDALONELIB_XFR_ALPHA.OPT

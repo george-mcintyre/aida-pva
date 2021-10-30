@@ -130,7 +130,6 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  * @param value: to set. Contains a structure containing two elements:
  *  - `names`:  an array of magnet names
  *  - `values`: an array of corresponding values.
- * @return : the table
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {

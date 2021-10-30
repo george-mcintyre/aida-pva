@@ -1,0 +1,37 @@
+/* aida-pva.css */
+html {
+    /* define light-mode variable overrides here */
+    --primary-color: #74431f;
+    --primary-dark-color: #4d2e1f;
+    --primary-light-color: #bf922f;
+    --primary-lighter-color: #917948;
+    --primary-lightest-color: #7f6f58;
+
+    /* page base colors */
+    --page-background-color: white;
+    --page-foreground-color: #3b414e;
+    --page-secondary-foreground-color: #67727e;
+
+    /* color for all separators on the website: hr, borders, ... */
+    --separator-color: #dedede;
+
+    /* table colors */
+    --tablehead-background: #bf922f;
+    --tablehead-foreground: var(--page-foreground-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not(.light-mode) {
+        /* define dark-mode variable overrides here if you DON'T use doxygen-awesome-darkmode-toggle.js */
+        --primary-color: #897a55;
+        --primary-dark-color: #7a522d;
+
+        /* table colors */
+        --tablehead-background: #bf922f;
+        --tablehead-foreground: var(--page-foreground-color);
+    }
+}
+
+html.dark-mode {
+    /* define dark-mode variable overrides here if you DO use doxygen-awesome-darkmode-toggle.js */
+}

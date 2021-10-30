@@ -21,7 +21,7 @@ import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
- * @file The AIDA-PVA Service which provides connection to the AIDA-PVA Native Channel Providers and the SLAC Network.
+ * @file The AIDA-PVA Service which provides connection to the AIDA-PVA Channel Providers and the SLAC Network.
  */
 public class AidaRPCService implements RPCService {
     /**
@@ -156,15 +156,15 @@ public class AidaRPCService implements RPCService {
         // If channelName contains a service (<service>::channelName) then remove the service part before calling the service implementation
         // This is a special measure put in place to disambiguate some channels that are used by more than one Service.
         // It allows for channels to be prefixed by "<serviceName>::".  This is done in the channel configuration file and also
-        // by clients accessing the service.  But the Native Channel Provider will not know about this prefix so we need to
-        // remove it before passing the request on to the Native Channel Provider
+        // by clients accessing the service.  But the Channel Provider will not know about this prefix so we need to
+        // remove it before passing the request on to the Channel Provider
         channelName = removeServicePrefixIfPresent(channelName);
 
         // If the client has specified the channel with the legacy formatted channel name we need to change it to the new format before
-        // passing it to the Native Channel Provider which will be expecting only new format names
+        // passing it to the Channel Provider which will be expecting only new format names
         channelName = ensureNewFormatChannelName(channelName);
 
-        // Display the log entry that indicated the request that is being passed to the Native Channel Provider with its parameters and its expected return type
+        // Display the log entry that indicated the request that is being passed to the Channel Provider with its parameters and its expected return type
         logRequest(channelName, argumentsList, isSetterRequest, aidaType);
 
         // Make an arguments object to pass to requests
@@ -214,8 +214,8 @@ public class AidaRPCService implements RPCService {
      * If channelName contains a service (<service>::channelName) then remove the service part before calling the service implementation
      * This is a special measure put in place to disambiguate some channels that are used by more than one Service.
      * It allows for channels to be prefixed by "<serviceName>::".  This is done in the channel configuration file and also
-     * by clients accessing the service.  But the Native Channel Provider will not know about this prefix so we need to
-     * remove it before passing the request on to the Native Channel Provider
+     * by clients accessing the service.  But the Channel Provider will not know about this prefix so we need to
+     * remove it before passing the request on to the Channel Provider
      *
      * @param channelName the channel name to check for prefix
      * @return the channel name without the prefix if it was present
@@ -230,7 +230,7 @@ public class AidaRPCService implements RPCService {
 
     /**
      * If the client has specified the channel with the legacy formatted channel name we need to change it to the new format before
-     * passing it to the Native Channel Provider which will be expecting only new format names
+     * passing it to the Channel Provider which will be expecting only new format names
      *
      * @param channelName the channel name
      * @return the channel name in the new format
@@ -348,7 +348,7 @@ public class AidaRPCService implements RPCService {
 
     /**
      * Display the log entry that indicated the request that is being passed to the
-     * Native Channel Provider with its parameters and its expected return type
+     * Channel Provider with its parameters and its expected return type
      *
      * @param channelName     the channel name
      * @param argumentsList   the arguments

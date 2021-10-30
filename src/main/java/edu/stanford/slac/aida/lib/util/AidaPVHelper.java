@@ -32,7 +32,7 @@ import static org.epics.pvdata.pv.Status.StatusType.ERROR;
  * Furthermore, we use Normative Types to represent data in a standard way.  This is layered on top
  * of Process Variables.   So this class also provides constants and standard structures for use with
  * Normative Types.
- * <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>
+ * <a href="{@docRoot}/docs/2_2_Normative_Types.md">AIDA-PVA Normative Types Documentation</a>
  */
 public class AidaPVHelper {
     /**
@@ -122,7 +122,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for a complete empty NTTable {@link PVStructure} for when no data is returned from the Native Channel Provider
+     * Shortcut for a complete empty NTTable {@link PVStructure} for when no data is returned from the Channel Provider
      * from a request
      */
     public static final PVStructure NT_SCALAR_EMPTY_STRUCTURE =

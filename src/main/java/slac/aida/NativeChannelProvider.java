@@ -7,7 +7,7 @@ import edu.stanford.slac.aida.lib.model.AidaTable;
  * @file
  * This class defines the entry points to all NativeChannel Providers.  All
  * {@link edu.stanford.slac.aida.impl.AidaChannelProvider}s extend this class
- * so that they can access the native Channel Providers to implement their functionality.
+ * so that they can access the Channel Providers to implement their functionality.
  */
 public class NativeChannelProvider {
 

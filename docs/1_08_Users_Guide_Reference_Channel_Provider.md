@@ -1,31 +1,20 @@
-@tableofcontents
-# Reference Provider Users Guide
+# 1.8 - Reference Provider Users Guide
 
-This section describes what an AIDA-PVA user should know about accessing the Reference Provider through AIDA-PVA. This data provider:
+This section describes what an AIDA-PVA user should know about accessing the Reference Provider through AIDA-PVA. This
+data provider:
+
 - Testing of your application by providing data in any way you want it.
 - Allowing you to test most scenarios with predicable results.
 - Provides a way to test the AIDA-PVA framework
 
-see [Basic Users Guide to Aida](UserGuide.md), and the EPICS javadoc.
-
-# AIDA-PVA Reference Provider
+see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
 ## Summary
 
-Supports **get** and **set** operations. 
+Supports **get** and **set** operations.
 
-- The **get** operation allows getting channels of all supported types. 
+- The **get** operation allows getting channels of all supported types.
 - The **set** operation allows setting channels returning all supported types.
-
-## Examples
-
-| | | |
-|  ----------- |----------- |----------- |
-| pvcall examples | `pvcall AIDA:SAMPLE:TEST:attribute01` | Get value 1  |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute02` |  get value 2 |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute03 x=3` |  while passing in 3 as a parameter, return 3 + 3 = 6 |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute30 VALUE=100` |  Simulate setting value with no return value |
-| Java Tests | ReferenceTest.java | |
 
 ## Instances and Attributes
 
@@ -225,7 +214,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `BYTE_ARRAY` |  `12` unless parameter `X` is present in which case every element in array `X` bitwise OR with `12` will be returned from the call |
+| `BYTE_ARRAY` |  `12` unless parameter `X` is present in which case every element in <br />array `X` bitwise OR with `12` will be returned from the call |
 
 ### attribute13 : get
 
@@ -241,7 +230,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `SHORT_ARRAY` |  `13` unless parameter `X` is present in which case every element in array `X` + `13` will be returned from the call |
+| `SHORT_ARRAY` |  `13` unless parameter `X` is present in which case every element in <br />array `X` + `13` will be returned from the call |
 
 ### attribute14 : get
 
@@ -257,7 +246,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `INTEGER_ARRAY` |  `14` unless parameter `X` is present in which case every element in array `X` + `14` will be returned from the call |
+| `INTEGER_ARRAY` |  `14` unless parameter `X` is present in which case every element in <br />array `X` + `14` will be returned from the call |
 
 ### attribute15 : get
 
@@ -273,7 +262,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `LONG_ARRAY` |  `15L` unless parameter `X` is present in which case every element in array `X` + `15L` will be returned from the call |
+| `LONG_ARRAY` |  `15L` unless parameter `X` is present in which case every element in <br />array `X` + `15L` will be returned from the call |
 
 ### attribute16 : get
 
@@ -289,7 +278,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `FLOAT_ARRAY` |  `6.6f` unless parameter `X` is present in which case every element in array `X` * `16.6f` will be returned from the call |
+| `FLOAT_ARRAY` |  `6.6f` unless parameter `X` is present in which case every element <br />in array `X` * `16.6f` will be returned from the call |
 
 ### attribute17 : get
 
@@ -305,7 +294,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `DOUBLE_ARRAY` |  `7.7` unless parameter `X` is present in which case every element in array `X` * `17.7` will be returned from the call |
+| `DOUBLE_ARRAY` |  `7.7` unless parameter `X` is present in which case every element <br />in array `X` * `17.7` will be returned from the call |
 
 ### attribute18 : get
 
@@ -321,8 +310,7 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `STRING_ARRAY` |  `"eighteen"` unless parameter `X` is present in which case every element in array `X` will be returned as `"eighteen: " + X`|
-
+| `STRING_ARRAY` |  `"eighteen"` unless parameter `X` is present in which case every <br />element in array `X` will be returned as `"eighteen: " + X`|
 
 ### attribute20 : get
 
@@ -331,7 +319,7 @@ _Parameters_
 | | | |
 | ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values | Description | 
-| `X` | structure with each of the supported scalar types in field names as follows: | If present every element in array `X` be subjected to the same operation as the scalar channel would undergo.  e.g., the integer value would be increased by 4.   |
+| `X` | structure with each of the supported scalar types in field names as follows: | If present every element in array `X` be subjected to the same operation as the scalar channel would undergo. e.g., the integer value would be increased by 4.   |
 | | `"boolean"`| a boolean value  |
 | | `"byte"`| a byte value  |
 | | `"short"`| a short value  |
@@ -346,9 +334,20 @@ _Return value_
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `STRING_ARRAY` |  If `X` present every element in array `X` be subjected to the same operation as the scalar channel would undergo.  e.g., the integer value would be increased by 4.  |
+| `STRING_ARRAY` |  If `X` present every element in array `X` be subjected to the same operation as the scalar channel would undergo. e.g., the integer value would be increased by 4.  |
+
+## Examples
+
+| | | |
+|  ----------- |----------- |----------- |
+| pvcall examples | `pvcall AIDA:SAMPLE:TEST:attribute01` | Get value 1  |
+|  | `pvcall AIDA:SAMPLE:TEST:attribute02` |  get value 2 |
+|  | `pvcall AIDA:SAMPLE:TEST:attribute03 x=3` |  while passing in 3 as a parameter, <br />return 3 + 3 = 6 |
+|  | `pvcall AIDA:SAMPLE:TEST:attribute30 VALUE=100` |  Simulate setting value with <br />no return value |
+| Java Tests | ReferenceTest.java | |
 
 ## Test Output
+
 ```shell
 java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.ReferenceTest" -c
 #################################################

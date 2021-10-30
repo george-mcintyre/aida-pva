@@ -1,5 +1,5 @@
 /** @file
- *  @brief The Header File for the Native Channel Provider types.
+ *  @brief The Header File for the type enumerations, unions, and typedefs.
  *       **CMS**=C_INC
  */
 #include <jni.h>
@@ -15,7 +15,6 @@ extern "C" {
 #include "aida_pva.h"
 
 /**
- * @enum Type
  * The definition of Aida Types.
  * Defines the permissible types of fields.  This enumerated type defines all the possible AIDA-PVA types and classes.
  */
@@ -53,7 +52,6 @@ typedef enum
 } Type;
 
 /**
- * @union FloatOrDoubleValue
  * This union stores the value part of a FloatingPointValue.
  * The `floatValue` member stores the float.
  * The `doubleValue` member stores the double.
@@ -65,7 +63,6 @@ typedef union
 } FloatOrDoubleValue;
 
 /**
- * @typedef FloatingPointValue
  * Represents a floating point number.
  * This can be either a single or double precision value.
  * The `isFloat` flag
@@ -84,7 +81,6 @@ typedef struct
 } FloatingPointValue;
 
 /**
- * @typedef Argument
  * A single request argument.
  * This is passed to an API endpoint in an Arguments structure.
  * It contains a `name` `value` pair representing a single argument that was included in the
@@ -97,7 +93,6 @@ typedef struct
 } Argument;
 
 /**
- * @union ValueContents
  * This union stores either the string or the json_value of a Value.
  * An Value can be a string or can be a json structure.  If json is detected it
  * is automatically parsed and placed in the ValueContents union under the `jsonValue`
@@ -110,7 +105,6 @@ typedef union
 } ValueContents;
 
 /**
- * @typedef Value
  * This special type represents a Value.
  * A Value is a special type that is used to pass complex data to the Native Channel Provider.
  * The value member, of type ValueContents, can hold either a simple string or a json_value.
@@ -122,7 +116,6 @@ typedef struct
 } Value;
 
 /**
- * @typedef Arguments
  * An Arguments structure stores all of the arguments passed from the request to the Native Channel Provider.
  * It contains a count of the total number of arguments - #argumentCount - and a pointer
  * to that many {@link Argument}s - #arguments.
@@ -140,28 +133,27 @@ typedef struct
 } Arguments;
 
 /**
- * @typedef Table structure.
  * Table structure.
  * This structure holds everything that a Native Channel Provider needs for returning a Table
  * to the client.  A table is a set of homogeneously sized vectors representing columns of data.
  * The configuration of the table (labels, names, descriptions, etc) is handled outside of the
  * Native Channel Provider, so all the implementation needs to do is provide the raw data for the
  * columns.
- *
- * Implementors don't manipulate these structures directly as AIDA-PVA Module provides
+ * @see
+ * Implementors don't manipulate these structures directly as [AIDA-PVA Module](../../../docs/4_0_AIDA-PVA_Module.md) provides
  * table manipulation functions:
- *  - tableCreate.
- *  - tableAddColumn.
- *  - tableAddSingleRowFloatColumn.
- *  - tableAddSingleRowLongColumn.
- *  - tableAddSingleRowBooleanColumn.
- *  - tableAddSingleRowByteColumn.
- *  - tableAddSingleRowShortColumn.
- *  - tableAddSingleRowIntegerColumn.
- *  - tableAddSingleRowDoubleColumn.
- *  - tableAddSingleRowStringColumn.
- *  - tableAddFixedWidthStringColumn.
- *  - tableAddStringColumn.
+ *  - tableCreate()
+ *  - tableAddColumn()
+ *  - tableAddSingleRowFloatColumn()
+ *  - tableAddSingleRowLongColumn()
+ *  - tableAddSingleRowBooleanColumn()
+ *  - tableAddSingleRowByteColumn()
+ *  - tableAddSingleRowShortColumn()
+ *  - tableAddSingleRowIntegerColumn()
+ *  - tableAddSingleRowDoubleColumn()
+ *  - tableAddSingleRowStringColumn()
+ *  - tableAddFixedWidthStringColumn()
+ *  - tableAddStringColumn()
  */
 typedef struct
 {
@@ -183,7 +175,7 @@ typedef struct
  */
 typedef struct
 {
-	int count;                ///< The number of items in this array
+	int count;              ///< The number of items in this array
 	void* items;            ///< The items in this array
 } Array;
 
@@ -201,7 +193,7 @@ typedef struct
  */
 typedef struct
 {
-	int count;                ///< The number of items in this array
+	int count;               ///< The number of items in this array
 	char** items;            ///< The items in this array - pointers to the strings you allocate
 } StringArray;
 

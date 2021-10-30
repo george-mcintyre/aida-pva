@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * @file
- * Java class that is returned by the Native Channel Provider for requests that return TABLE.
+ * Java class that is returned by the Channel Provider for requests that return TABLE.
  * This class encapsulates an {@link AidaTable}.
  * <p>
  * It is the class that is returned from the Native Providers for requests that return a TABLE.
@@ -31,7 +31,7 @@ public class AidaTable {
      * Each new column is added by successive calls to {@link AidaTable#add}
      * and so the columnId specified will either have to be inserted, or added at the end.
      * <p>
-     * This is called by the Native Channel Provider code in C so be careful if refactoring the signature or name.
+     * This is called by the Channel Provider code in C so be careful if refactoring the signature or name.
      *
      * @param columnId the number representing the number of the column to add to
      * @param object   the object to add to that column

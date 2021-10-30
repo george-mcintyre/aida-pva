@@ -1,33 +1,24 @@
-@tableofcontents
-# SLC Klystron Data Users Guide
+# 1.4 - SLC Klystron Data Users Guide
 
-This section describes what an AIDA-PVA user should know about accessing the SLC Klystron Data through AIDA-PVA. This data provider allows the retrieval of the status code or a status string for a specified klystron on a beam code. It also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set. Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set.  For general
-information on using AIDA-PVA see [Basic Users Guide to Aida](UserGuide.md), and the EPICS javadoc.
-
-# AIDA-PVA Data Provider for SLC Klystron Data
+This section describes what an AIDA-PVA user should know about accessing the SLC Klystron Data through AIDA-PVA. This
+data provider allows the retrieval of the status code or a status string for a specified klystron on a beam code. It
+also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or
+subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set.
+Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set. For general
+information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
 ## Summary
-Supports **get** and **set** operations. 
 
-The **get** operation obtains the status code or a status string for a specified klystron on a beam code. 
+Supports **get** and **set** operations.
 
-There are four **set** operations that can be performed: 
-1. deactivate or reactivate a specified klystron on a beam code, 
-2. set the `PDES` value and optionally trim the phase of a specified klystron or subbooster, 
-3. set the `KPHR` value of a specified klystron or subbooster, and 
+The **get** operation obtains the status code or a status string for a specified klystron on a beam code.
+
+There are four **set** operations that can be performed:
+
+1. deactivate or reactivate a specified klystron on a beam code,
+2. set the `PDES` value and optionally trim the phase of a specified klystron or subbooster,
+3. set the `KPHR` value of a specified klystron or subbooster, and
 4. set a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster
-
-## Examples
-| | | |
-|  ----------- |----------- |----------- |
-| pvcall examples | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=SHORT`| Get the status code for the klystron on the beam code |
-|  | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=STRING` | Get the status string |
-|  | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP VALUE=0` | Deactivate klystron on beam code |
-|  | `pvcall KLYS:LI31:31:PDES VALUE=90.0f` | Perform set PDES and trim phase operation |
-|  | `pvcall KLYS:LI31:31:KPHR VALUE=60.0f` | Perform set KPHR value operation |
-|  | `pvcall KLYS:LI31:31:PCON VALUE=5.0f` | Perform set PCON value operation (no value is returned) |
-| Java Tests | SlcKlysTest.java | |
-| Matlab example |  | |
 
 ## Instances and Attributes
 
@@ -59,7 +50,9 @@ There are four **set** operations that can be performed:
 | `ACON` | **set** |  Sets the ACON value of a specified klystron or subbooster |
 
 ## Attribute operations
+
 ### TACT : get
+
 _Parameters_
 
 | | | |
@@ -71,18 +64,17 @@ _Parameters_
 
 _Return value_
 
-@note
-Return value for BPM device shown below. `TORO`, `GAPM`, `KLYS` or `SBST` will be different.
+@note Return value for BPM device shown below. `TORO`, `GAPM`, `KLYS` or `SBST` will be different.
 
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `SHORT` |  A short value containing the status code for the klystron on a beam code.  See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)   |
-| `LONG` |  A long value containing the status code for the klystron on a beam code.  See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)   |
+| `SHORT` |  A short value containing the status code for the klystron on a beam code. See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)   |
+| `LONG` |  A long value containing the status code for the klystron on a beam code. See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)   |
 | `STRING` |  A string value containing a status string having one of two values: "deactivated" or "activated"   |
 
-
 ### TACT : set
+
 _Parameters_
 
 | | | |
@@ -100,6 +92,7 @@ _Return value_
 | `TABLE` | `status` | `SHORT_ARRAY` | Status code for the specified klystron on a beam code - See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)  |
 
 ### PDES : set
+
 _Parameters_
 
 | | | |
@@ -113,9 +106,10 @@ _Return value_
 | | | | |
 |----------- | ----------- | -----------  |-----------  |
 | TYPE  | Return Column | Column Type |Description |
-| `TABLE` | `phas` | `FLOAT_ARRAY` | The PHAS secondary value after the set `PDES` and optional trim phase operation. |
+| `TABLE` | `phas` | `FLOAT_ARRAY` | The PHAS secondary value after the set `PDES` and <br />optional trim phase operation. |
 
 ### KPHR : set
+
 _Parameters_
 
 | | | |
@@ -130,7 +124,8 @@ _Return value_
 | TYPE  | Return Column | Column Type |Description |
 | `TABLE` | `phas` | `FLOAT_ARRAY` | The PHAS secondary value after the set `KPHR` operation |
 
-### PCON : set, ACON : set 
+### PCON : set, ACON : set
+
 _Parameters_
 
 | | | |
@@ -142,7 +137,21 @@ _Return value_
 
 None
 
+## Examples
+
+| | | |
+|  ----------- |----------- |----------- |
+| pvcall examples | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=SHORT`| Get the status code <br />for the klystron on <br />the beam code |
+|  | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=STRING` | Get the status string |
+|  | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP VALUE=0` | Deactivate klystron on <br />beam code |
+|  | `pvcall KLYS:LI31:31:PDES VALUE=90.0f` | Perform set PDES and <br />trim phase operation |
+|  | `pvcall KLYS:LI31:31:KPHR VALUE=60.0f` | Perform set KPHR value operation |
+|  | `pvcall KLYS:LI31:31:PCON VALUE=5.0f` | Perform set PCON value operation <br />(no value is returned) |
+| Java Tests | SlcKlysTest.java | |
+| Matlab example |  | |
+
 ## Test Output
+
 ```shell
 java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcKlysTest" -c
 #################################################

@@ -1,5 +1,5 @@
 /** @file
- *  @brief The Header File for the Native Channel Provider AIDA-PVA type related functions.
+ *  @brief The Header File for the type conversion functions.
  *       **CMS**=C_INC
  */
 #include <jni.h>

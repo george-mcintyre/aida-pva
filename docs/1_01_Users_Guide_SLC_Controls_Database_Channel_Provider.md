@@ -1,24 +1,13 @@
-@tableofcontents
-# SLC Database Users Guide
+# 1.1 - SLC Database Users Guide
 
-This section describes what an AIDA-PVA user should know about accessing the SLC Database data through AIDA-PVA. 
-SLC Database provides data from the database values in the SLC Control System. 
-It also allows the setting of float scalar database values.  For general
-information on using AIDA-PVA see [Basic Users Guide to Aida](UserGuide.md), and the EPICS javadoc. 
-
-# AIDA-PVA Data Provider for SLC Database Data
+This section describes what an AIDA-PVA user should know about accessing the SLC Database data through AIDA-PVA. SLC
+Database provides data from the database values in the SLC Control System. It also allows the setting of float scalar
+database values. For general information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md), and the
+EPICS javadoc.
 
 ## Summary
 
 Acquires data for the named SLC device from the SLC database. Also allows setting of float scalar database values
-
-## Examples
-| | | 
-|  ----------- |----------- |
-| pvcall example | `pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT`|
-|  | `pvcall "XCOR:LI31:41:BCON" VALUE=5.0`|
-| Java Tests | SlcTest.java | 
-| Matlab example |  |
 
 ## Instances and Attributes
 
@@ -37,9 +26,10 @@ Acquires data for the named SLC device from the SLC database. Also allows settin
 | ----------- | -----------  |
 | Attribute | Description |
 | `<secn>` | Gets SLC db device data for a named device - the channel name |
-| `<secn>` | Sets the value of a float scalar secondary in the SLC database. The `VALUE` argument is a float with the desired value. |
+| `<secn>` | Sets the value of a float scalar secondary in the SLC database. <br />The `VALUE` argument is a float with the desired value. |
 
 ## Attribute operations
+
 ### <secn>  : get
 
 _Parameters_
@@ -65,8 +55,8 @@ _Parameters_
 | | `FLOAT_ARRAY`     | return an array of float values |
 | | `DOUBLE_ARRAY`    | return an array of double values |
 | | `STRING_ARRAY`    | return an array of string values |
-| | `TABLE`    | return an table corresponding to the required accompanying `TABLE_TYPE` argument |
-| `TABLE_TYPE`|     | return table with one column and one or more rows with the type specified |
+| | `TABLE`    | return an table corresponding to the <br />required accompanying `TABLE_TYPE` argument |
+| `TABLE_TYPE`|     | return table with one column and one <br />or more rows with the type specified |
 | | `BOOLEAN_ARRAY`   | table contains a single boolean value |
 | | `BYTE_ARRAY`      | table contains a single byte value |
 | | `SHORT_ARRAY`     | table contains a single short value |
@@ -83,10 +73,10 @@ _Return value_
 | TYPE  | Return Column | Column Type |Description |
 | any scalar type |  |  | the scalar value |
 | any scalar array type |  |  | the scalar array |
-| `TABLE` | `value` | depends on the accompanying `TABLE_TYPE` argument | the scalar_array with one or more values |
-
+| `TABLE` | `value` | depends on the accompanying <br />`TABLE_TYPE` argument | the scalar_array with <br />one or more values |
 
 ### <secn>  : set
+
 _Parameters_
 
 | | | |
@@ -98,7 +88,17 @@ _Return value_
 
 None
 
+## Examples
+
+| | | 
+|  ----------- |----------- |
+| pvcall example | `pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT`|
+|  | `pvcall "XCOR:LI31:41:BCON" VALUE=5.0`|
+| Java Tests | SlcTest.java | 
+| Matlab example |  |
+
 ## Test Output
+
 ```shell
 java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcTest" -c
 #################################################

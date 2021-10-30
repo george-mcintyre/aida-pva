@@ -1,5 +1,5 @@
 /** @file
- *  @brief The Header File for the Native Channel Provider Server Helper functions.
+ *  @brief The Header File for uri and channel name manipulation functions.
  *       **CMS**=C_INC
  */
 #ifndef aida_pva_uri_h

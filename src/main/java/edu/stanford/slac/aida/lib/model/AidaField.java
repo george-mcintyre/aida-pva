@@ -29,7 +29,7 @@ import org.epics.pvdata.pv.ScalarType;
 public class AidaField {
     /**
      * TABLE's are returned as Normative Type {@link PVStructure}s.
-     * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
+     * {@see <a href="{@docRoot}/docs/2_2_Normative_Types.md">AIDA-PVA Normative Types Documentation</a>}
      * <p>
      * It contains a `value` field which is also a {@link PVStructure}, which contains subfields for each `TABLE` column
      * which are simple {@link ScalarArray} of the column's data.
@@ -40,7 +40,7 @@ public class AidaField {
 
     /**
      * TABLE's are returned as Normative Type {@link PVStructure}s.
-     * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
+     * {@see <a href="{@docRoot}/docs/2_2_Normative_Types.md">AIDA-PVA Normative Types Documentation</a>}
      * <p>
      * It contains a `labels` field which is a list of {@link ScalarType#pvString}, which are labels for each `TABLE` column.
      * <p>
@@ -51,7 +51,7 @@ public class AidaField {
 
     /**
      * TABLE's are returned as Normative Type {@link PVStructure}s.
-     * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
+     * {@see <a href="{@docRoot}/docs/2_2_Normative_Types.md">AIDA-PVA Normative Types Documentation</a>}
      * <p>
      * But TABLEs don't contain {@link PVScalarArray} which contains a `display` subfield
      * which stores `description` and `units` for a field.  So we can't currently use the `description`
@@ -63,7 +63,7 @@ public class AidaField {
 
     /**
      * TABLE's are returned as Normative Type `PVStructures`.
-     * {@see <a href="{@docRoot}/docs/NormativeTypes.md">AIDA-PVA Normative Types Documentation</a>}
+     * {@see <a href="{@docRoot}/docs/2_2_Normative_Types.md">AIDA-PVA Normative Types Documentation</a>}
      * <p>
      * But TABLEs don't contain {@link PVScalarArray} which contains a `display` subfield
      * which stores `description` and `units` for a field.  So we can't currently use the `description`

@@ -1,5 +1,5 @@
 /** @file
- *  @brief The Header File for the Provider API and Stubs MACROS.
+ *  @brief The Header File for the Channel Provider API endpoints and endpoint-stubs MACROS.
  *       **CMS**=C_INC
  */
 #ifndef aida_pva_api_h

@@ -1,5 +1,5 @@
 /** @file
- *  @brief The Header File for the Native Channel Provider Server Helper functions.
+ *  @brief The Header File for the memory management functions and macros.
  *       **CMS**=C_INC
  */
 #ifndef aida_pva_memory_h

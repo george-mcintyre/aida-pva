@@ -729,13 +729,17 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
  * ___
  * @paragraph sfs Type specifiers
  * - **b** : `unsigned char *` - interpret the input as a boolean, then extract a single byte into the corresponding variable.
- *   - The following translate to `true` - `1` :
+ *   - The following translate to `true`
+ *     - not `0`  - integer, short, long,
+ *     - not `0.0` - float, double
  *     - `“true”` - char string
  *     - `“t”`  - char string
  *     - `“yes”` - char string
  *     - `“y”`  - char string
  *     - `!0` - short, int, long, float, or double
- *   - The following translate to `false` - `0`:
+ *   - The following translate to `false`
+ *     - `0`  - integer, short, long,
+ *     - `0.0` - float, double
  *     - `“false”` - char string
  *     - `“f”`- char string
  *     - `“no”`- char string
@@ -777,8 +781,8 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
  * @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
  * 						 containing pairs of names and pointers to allocated storage (except as indicated above),
  * 						 where the interpretation of the extracted data is stored with the appropriate type.
- *                       There should be at least as many pairs of these arguments as the number of values stored
- *                       by the format specifiers.
+ *                       There should be at least as many pairs of these arguments as the number of references
+ *                       in the format specifiers.
  *                       Additional arguments are ignored by the function
  * @return `EXIT_SUCCESS` if all required arguments were read and no errors occurred, otherwise `EXIT_FAILURE`
  * @throw MissingRequiredArgumentException if one of the required arguments are missing

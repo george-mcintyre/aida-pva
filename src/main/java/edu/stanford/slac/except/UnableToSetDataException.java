@@ -6,7 +6,7 @@ package edu.stanford.slac.except;
  * This Exception is a general exception to be used in most cases when there's a problem satisfying a `set` request.
  * If this is a `get` request use the {@link UnableToGetDataException} exception instead.
  * <p>
- * This can be used when there are problems calling the lower level Native Channel Provider module.
+ * This can be used when there are problems calling the lower level Channel Provider module.
  * It can also be used if the set of arguments given are not coherent or are out or bounds.
  * <p>
  * Use this when there is an error that occurs during a set operation.

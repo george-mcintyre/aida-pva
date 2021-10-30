@@ -56,7 +56,7 @@ public enum AidaType {
      * When a channel is configured with any of these meta-types, all requests for that channel must be presented with TYPE parameter.
      *
      * All of these meta-types allow you to set TABLE as the value of the mandatory TYPE parameter so in the configuration,
-     * you must also provide field definitions if the Native Channel Provider will support TABLE requests.
+     * you must also provide field definitions if the Channel Provider will support TABLE requests.
      */
     ANY,                // Getter or setter returns any type defined by the mandatory accompanying TYPE argument, for setters this can only be VOID or TABLE
     SCALAR,             // Constrains the TYPE parameter to be set to any scalar type or TABLE
