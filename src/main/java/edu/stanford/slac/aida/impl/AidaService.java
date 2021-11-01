@@ -47,7 +47,7 @@ public class AidaService {
 
         // If we've overridden the default name then log it to the console
         if (!aidaPvaLibName.equals(AIDA_PVA_LIB_NAME)) {
-            logger.info("Loading Provider Shared Library: " + aidaPvaLibName);
+            logger.info("Loading Chanel Provider Shared Library: " + aidaPvaLibName);
         }
 
         // Load the Native Provider Library

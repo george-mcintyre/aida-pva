@@ -1,76 +1,86 @@
 # 4 - A DevOps Guide to AIDA-PVA
 
-## Overview
+## Components
 
 AIDA-PVA is made up of the following components:
 
-* AIDA-PVA core
+* AIDA-PVA SERVICE
     * `AIDA-PVA.JAR`
-        * launches the service providers integrating them into the EPICS PV-Access network
-* EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These are not on VMS.  They exist only in Linux for building AIDA-PVA.JAR
+        * launches the Channel Providers integrating them into the EPICS PV-Access network
+        * Built from [AIDA-PVA Github Repo](https://github.com/slaclab/aida-pva) on Linux and copied to SLCLIBS
+* EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in VMS SLCLIBS.  They exist only in Linux for building AIDA-PVA.JAR
     * `EPICS-PVACCESS-bp15.JAR`
     * `EPICS-PVDATA-bp15.JAR`
+    * Built from [EPICS Backport GitHub Repo](https://github.com/slaclab/epics-server-java-backport-1.5) on Linux.
 * EPICS-7 Forwarder (specially built for AIDA-PVA)
     * `EPICS-FORWARDER.JAR`
-* Individual shared libraries for each provider service loaded by AIDA-PVA jar
-    * `AIDASLCDB.EXE`
-    * `AIDASLCBPM.EXE`
-    * `AIDASLCBPMBUFF.EXE`
-    * `AIDASLCKLYS.EXE`
-    * `AIDASLCMAGNET.EXE`
-    * `AIDASLCMODEL.EXE`
-    * `AIDASLCMOSC.EXE`
-    * `AIDASLCUTIL.EXE`
-* The updated STANDALONELIB with the following module collectively known as AIDA-PVA Module:
-    * `AIDA_PVA_SERVER_HELPER` - **Helper functions for the AIDA-PVA Providers**
-    * `AIDA_PVA_JNI_HELPER` - Used by the AIDA-PVA Module to interoperate in a JNI environment
-    * `AIDA_PVA_TYPES_HELPER` - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
-    * `NATIVECHANNELPROVIDERJNI` - JNI Entry points from AIDA-PVA.JAR
-    * `AIDA_PVA_JSON` - Used by AIDA-PVA Module to parse JSON
+  * Built from [EPICS Backport GitHub Repo](https://github.com/slaclab/epics-server-java-backport-1.5) on Linux and copied to SLCLIBS.
+* Individual shared libraries for each Channel Provider loaded by the AIDA-PVA SERVICE
+  * Libraries (CMS Library):
+      * `AIDASLCDB.EXE` - (AIDASLCDBLIB)
+      * `AIDASLCBPM.EXE` - (AIDASLCBPMLIB)
+      * `AIDASLCBPMBUFF.EXE` - (AIDASLCBPMBUFFLIB)
+      * `AIDASLCKLYS.EXE` - (AIDASLCKLYSLIB)
+      * `AIDASLCMAGNET.EXE` - (AIDASLCMAGNETLIB)
+      * `AIDASLCMODEL.EXE` - (AIDASLCMODELLIB)
+      * `AIDASLCMOSC.EXE` - (AIDASLCMOSCLIB)
+      * `AIDASLCUTIL.EXE` - (AIDASLCUTILLIB)
+  * Build from CMS but original source code [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers)
+* The updated STANDALONELIB with the following modules collectively known as AIDA-PVA Module:
+  * Modules:
+      * `AIDA_PVA_SERVER_HELPER` - **Helper functions for the AIDA-PVA Providers**
+      * `AIDA_PVA_JNI_HELPER` - Used by the AIDA-PVA Module to interoperate in a JNI environment
+      * `AIDA_PVA_TYPES_HELPER` - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
+      * `NATIVECHANNELPROVIDERJNI` - JNI Entry points from AIDA-PVA.JAR
+      * `AIDA_PVA_JSON` - Used by AIDA-PVA Module to parse JSON
+  * Build from CMS STANDALONELIB but original code from [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/aida-pva)
+* AIDA-PVA Header Files
+  * Channel Provider Header files in C_INC
+    * slc_server.h
+    * slcBpm_server.h
+    * slcBuffAcq_server.h
+    * slcKlys_server.h
+    * slcMagnet_server.h
+    * slcModel_server.h
+    * slcMosc_server.h
+    * slcUtil_server.h
+    * reference_server.h
+  * AIDA-PVA Header API Header files in C_INC
+    * aida_pva.h 
+    * aida_pva_api.h 
+    * aida_pva_convert.h 
+    * aida_pva_exceptions.h 
+    * aida_pva_json.h 
+    * aida_pva_memory.h 
+    * aida_pva_types.h 
+    * aida_pva_uri.h
+  * AIDA-PVA Header internal files in C_INC
+    * aida_pva_jni_helper.h
+    * aida_pva_server_helper.h
+    * aida_pva_types_helper.h
+    * slac_aida_NativeChannelProvider.h
+  * Maintained in CMS in C_INC but original code from [AIDA-PVA github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp)
 
-## Running
+## Running AIDA-PVA
 
-It is imperative that the Forwarder is started before any of the provider services. If the Forwarder dies then all of
-the other services must be shutdown and only restarted after starting the forwarder. This is because of a port
-contention that exists if the Forwarder finds any other provider service running when it starts up.
+![Running AIDA-PVA](images/aida-pva-system-components-wa.png)
 
-## Running a Provider Service
-
-* Selection of Provider Service
-    * The AIDA-PVA jar loads the service provider shared library based on the following rules:
-        * An Environment Variable `AIDA_PVA_LIB_NAME`
-            * fully qualified path name of library or
-            * library name to search in the working directory and standard library locations
-        * A property set on the launch commandline with the `-D` option named `aida.pva.lib.name`
-            * fully qualified path name of library or
-            * library name which will search in the working directory and standard library locations
-        * A file in the working directory called `AIDA.EXE`
-    * Note that the file extension is assumed to be `.EXE` if it is omitted
-
-    * The AIDA-PVA jar loads the service provider shared library from based on:
-        * A property set on the launch commandline with the `-D` option named `java.library.path`
-            * fully qualified path name or
-            * relative path
-        * By default the standard library locations or working directory
-
-* Specifying the channels the provider will support
-    * The channels are configured in a yaml file. The default name for the file is `CHANNELS.YML`
-    * The AIDA-PVA jar loads the service provider's channels definition file based on the following rules:
-        * An Environment Variable `AIDA_PVA_CHANNELS_FILENAME`
-            * fully qualified path name of channels file or
-            * channels file name to search in the working directory
-        * A property set on the launch commandline with the `-D` option named `aida.pva.channels.filename`
-            * fully qualified path name of channels file or
-            * channels file name to search in the working directory
-        * A file in the working directory called `CHANNELS.YML`
-
-### Example
-
+1. **Run the Forwarder**
+   * It is imperative that the Forwarder is started before any of the provider services. 
+   * If the Forwarder dies then all the other services must be shutdown and only restarted after starting the forwarder. This is because of a port contention that exists if the Forwarder finds any other provider service running when it starts up.
+   * startup with the following command:
 ```shell
-MCCDEV> lib
-Default:= DATA_DISK_SLC:[DEV.AIDA-PVA.LIB]
-MCCDEV> java -jar "-Djava.library.path=/SLCLIBS" "-Daida.pva.lib.name=AIDASLCBPM" SLCLIBS:AIDA-PVA.JAR
-Aida BPM Service Initialised
+MCCDEV> java -jar /SLCLIBS/EPICS-FORWARDER.JAR
+Oct 24, 2021 2:35:33 AM org.epics.forwarder.PVAForwarder main
+INFO: EPICS Request Forwarder started: 2344 milliseconds
+9:35 > 
+```
+2. **Run the AIDA-PVA SERVICE for each Channel Provider**
+   * e.g. 
+```shell
+java -jar "-Daida.pva.channels.filename=channels.yaml" "-Daida.pva.lib.name=AIDASLCDB" SLCLIBS:AIDA-PVA.JAR
+Oct 24, 2021 12:58:50 PM edu.stanford.slac.aida.impl.AidaService <clinit>
+INFO: Loading Channel Provider Shared Library: AIDASLCDB
 
        db         88  88888888ba,           db
       d88b        88  88      `"8b         d88b
@@ -82,14 +92,48 @@ Aida BPM Service Initialised
 d8'          `8b  88  88888888Y"'    d8'          `8b            88`YbbdP"'       "8"      `"8bbdP"Y8
                                                                  88
                                                                  88
-
-AIDA-pva Channel Provider : SLCBpm
-Channels hosted:
-  [????????//BPMS, ???????:BPMS, ???????//BPMS, ????????:BPMS]
-
+Oct 24, 2021 12:58:51 PM edu.stanford.slac.aida.lib.ChannelProviderFactory create
+INFO: Loading channel configuration from: channels.yaml
+Oct 24, 2021 12:59:02 PM edu.stanford.slac.aida.lib.ChannelProvider logHostedChannels
+INFO:
+AIDA-pva Channel Provider : SLC
+Oct 24, 2021 12:59:02 PM edu.stanford.slac.aida.lib.ChannelProvider logHostedChannels
+INFO: Channels hosted:
+  [LEMG:????:*//EEND, RADS:????:*//MTIM, WIRE:????:*:SK2P, FDBK:????:*//CDEL, SOLN:????:*//BMAX, PTGM:????:*:RSOF, MPSI:????:*:CGID, FDBK:????:*:ULBL,
+LENS:????:*//DVIC, ...]
 ```
-
-There are no health checks so in order to see if a service is running you'll have to check with the operating system.
+3. **AIDA-PVA SERVICE is linked with EPICS BACKPORT jars** prior to installing in SLCLIBS
+4. **AIDA-PVA SERVICE loads the Channel Provider**
+   * _Selection of Provider Service_
+     * Channel Provider shared library location selection:
+       1. A property set on the launch commandline with the `-D` option named `java.library.path`
+           * fully qualified path name or
+           * relative path
+           * e.g. `-Djava.library.path=/SLCLIBS`
+       2. * By default, the standard library locations and working directory are searched
+     * Channel Provider shared library name selection:
+       1. An Environment Variable `AIDA_PVA_LIB_NAME`
+           * fully qualified path name of library (without the .EXE) or
+           * library name (without the .EXE) to search in the working directory and standard library locations
+           * e.g. `AIDA_PVA_LIB_NAME :== AIDASLCDB` 
+       2. A property set on the launch commandline with the `-D` option named `aida.pva.lib.name`
+           * fully qualified path name (without the .EXE) of library or
+           * library name (without the .EXE) which will search in the working directory and standard library locations
+           * e.g. `-Daida.pva.lib.name=AIDASLCDB`
+       3. A file called `AIDA.EXE`
+       4. Note that the file extension is assumed to be `.EXE` and is always omitted.
+   * _Specifying the Supported Channels_.  [Channels YAML file](2_3_CHANNELS_YML_file) selection: 
+     1. An Environment Variable `AIDA_PVA_CHANNELS_FILENAME`
+         * fully qualified path name of channels file or
+         * channels file name to search for in the working directory
+         * e.g. `AIDA_PVA_CHANNELS_FILENAME :== SLCTXT:AIDASLCDB_CHANNELS.YML`
+     2. A property set on the launch commandline with the `-D` option named `aida.pva.channels.filename`
+         * fully qualified path name of channels file or
+         * channels file name to search in the working directory
+         * e.g. `-Daida.pva.channels.filename=/SLCTXT/AIDASLCDB_CHANNELS.YML`
+         * A file in the working directory called `CHANNELS.YML`
+5. The Channel Provider will load Modules in AIDASHR
+6. The Channel Provider will also load Modules in STANDALONELIB
 
 ## Submitting jobs
 
