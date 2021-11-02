@@ -2,16 +2,15 @@
  *  @brief The Header File for the type conversion functions.
  *       **CMS**=C_INC
  */
-#include <jni.h>
-#include <stdbool.h>
-#include "aida_pva_json.h"
-
 #ifndef aida_pva_convert_h
 #define aida_pva_convert_h
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <jni.h>
+#include <stdbool.h>
+#include "aida_pva_json.h"
 #include "aida_pva.h"
 
 /* Override prototypes of externals to uppercase names since
