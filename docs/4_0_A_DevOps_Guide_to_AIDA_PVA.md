@@ -88,15 +88,16 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
    * If the Forwarder dies then all the other services must be shutdown and only restarted after starting the forwarder. This is because of a port contention that exists if the Forwarder finds any other provider service running when it starts up.
    * startup with the following command:
 ```shell
-MCCDEV> java -jar /SLCLIBS/EPICS-FORWARDER.JAR
+MCCDEV> java -jar SLCLIBS:EPICS-FORWARDER.JAR
 Oct 24, 2021 2:35:33 AM org.epics.forwarder.PVAForwarder main
 INFO: EPICS Request Forwarder started: 2344 milliseconds
 9:35 > 
 ```
+   * You can also run it using `java -jar /SLCLIBS/EPICS-FORWARDER.JAR`
 2. **Run the AIDA-PVA SERVICE for each Channel Provider**
    * e.g. 
 ```shell
-java -jar "-Daida.pva.channels.filename=channels.yaml" "-Daida.pva.lib.name=AIDASLCDB" SLCLIBS:AIDA-PVA.JAR
+java -jar "-Daida.pva.channels.filename=channels.yaml" "-Djava.library.path=/SLCLIBS" "-Daida.pva.lib.name=AIDASLCDB" SLCLIBS:AIDA-PVA.JAR
 Oct 24, 2021 12:58:50 PM edu.stanford.slac.aida.impl.AidaService <clinit>
 INFO: Loading Channel Provider Shared Library: AIDASLCDB
 
