@@ -1,0 +1,46 @@
+name: CI for AIDA-PVA Documentation
+
+on:
+  push:
+    paths:
+      - .github/workflows/ci-docs.yml
+      - docs/**
+      - src/main/java/**
+      - README.md
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout aida-pva
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          path: aida-pva
+      - name: Checkout aida-pva-tests
+        uses: actions/checkout@v2
+        with:
+          repository: slaclab/aida-pva-tests
+          path: aida-pva-tests
+      - name: Get Lombok
+        continue-on-error: false
+        run: curl https://projectlombok.org/downloads/lombok.jar -o aida-pva/lombok.jar
+      - name: De-lombok tests
+        continue-on-error: false
+        run: java -jar aida-pva/lombok.jar delombok aida-pva-tests/src/main/java -d aida-pva/root/test/java
+      - name: De-lombok src
+        continue-on-error: false
+        run: java -jar aida-pva/lombok.jar delombok aida-pva/src -d aida-pva/root
+      - name: Generate Documentation
+        uses: mattnotmitt/doxygen-action@v1
+        with:
+          working-directory: 'aida-pva'
+          doxyfile-path: 'docs/doxygenConfig'
+#      - name: Deploy Documentation
+#        uses: burnett01/rsync-deployments@5.1
+#        with:
+#          switches: -avzr --delete
+#          path: aida-pva/docGen/html/
+#          remote_path: /afs/slac/www/grp/cd/soft/aida/aida-pva/
+#          remote_host: rhel6-64a.slac.stanford.edu
+#          remote_user: sly
+#          remote_key: ${{ secrets.DEPLOY_KEY }}
