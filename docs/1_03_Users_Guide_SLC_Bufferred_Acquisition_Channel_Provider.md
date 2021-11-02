@@ -79,7 +79,7 @@ _Return value_
 |  ----------- |----------- |
 | pvcall example | ```pvcall NDRFACET:BUFFACQ BPMD=57 NRPOS=5 DEVS='["KLYS:LI03:31","SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"]'```|
 | Java Tests | SlcBuffAcqTest.java | 
-| Matlab example |  |
+| Matlab example | `>> devs= 'KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'<br /> >>lcaGet('NDRFACET:BUFFACQ' 'BPMD=57' 'NRPOS=57' 'DEVS='+devs)` |
 
 ## Test Output
 

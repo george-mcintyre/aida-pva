@@ -205,83 +205,8 @@ you can leverage.
 @see [AIDA-PVA Module Types documentation](2_5_3_AIDA-PVA_Module_Types.md) for more information available
 types, enumerations, and unions.
 
-## Create some tests using the test framework 
-The test framework consists of a number of classes that can help you build simple tests for your provider.
-  - edu.stanford.slac.aida.test.utils.AidaPvaTestUtils - Utility class to facilitate running all the AIDA-PVA tests 
-  - edu.stanford.slac.aida.test.utils.AidaPvaRequest  - Class to create and execute AIDA-PVA requests
-  - edu.stanford.slac.aida.test.utils.AidaType - Enumerated type representing an AIDA-PVA data type 
-
-1. First create your main
-```java
-package edu.stanford.slac.aida.test;
- 
-import edu.stanford.slac.aida.test.utils.AidaPvaTestUtils;
- 
-import java.util.Arrays;
- 
-public class MyProviderTest {
-
-  public static void main(String[] args) {
-    var argString = Arrays.toString(args).replace("]", ",").replace("[", " ");
-    AidaPvaTestUtils.NO_COLOR_FLAG = !argString.contains("-c") && !argString.contains("-color");
-    var allTests = (AidaPvaTestUtils.NO_COLOR_FLAG ? args.length == 0 : args.length == 1);
-    var testId = 0;
-    
-    // Test Suites Go Here ...
-    
-    // Because of threads started in background to process requests
-    System.exit(0);
-  }
-}
-```
-2. Add your first test suite
-```java
-    AidaPvaTestUtils.testSuiteHeader("My Channel Provider Test Suite");
-```
-3. Add a test
-```java
-    AidaPvaTestUtils.testHeader(testId, "My First Test");
-```
-4. Then add as many test cases as you want
-```java
-    AidaPvaTestUtils.getWithNoArguments("MYCHANNEL:NAME", AidaType.FLOAT, "Check Float Return with no parameter");
-    AidaPvaTestUtils.channel("MYCHANNEL:NAME", "Check Integer Return with X parameter").with("X", 55).get();
-```
-5. To add tests with lists do the following
-```java
-     AidaPvaTestUtils.channel("MYCHANNEL:", "BPM Values")
-        .with("BPMD", 57)
-        .with("NRPOS", 180)
-        .with("BPMS", Arrays.asList(
-                "BPMS:LI11:501",
-                "BPMS:LI11:601",
-                "BPMS:LI11:701",
-                "BPMS:LI11:801"))
-        .get();
-```
-6. To add tests with complex structures do the following
-```java
-    var value = "{" +
-            "\"names\": [\"XCOR:LI31:41\"]," +
-            "\"values\": [4.0]" +
-            "}";
-    AidaPvaTestUtils.channel("MAGNETSET:BDES", "Magnet Set")
-            .with("MAGFUNC", "TRIM")
-            .set(value);
-```
-7. If you expect the tests to fail use the following patterns
-```java
-    AidaPvaTestUtils.channel("KLYS:LI31:31:TACT", "PDES")
-      .with("BEAM", "XYZ")
-      .with("DGRP", "DEV_DGRP")
-      .setAndExpectFailure(1);
-
-    AidaPvaTestUtils.channel("KLYS:LI31:31:TACT", "PDES")
-      .with("BEAM", 1)
-      .with("DGRP", "LIN_KLYS")
-      .returning(AidaType.SHORT)
-      .getAndExpectFailure();
-```
+## Test Framework
+see [Test Framework Documentation](2_5_4_Testing_Framework.md) for more information on testing framework
 
 ## Building and Deploying your Channel Provider
 

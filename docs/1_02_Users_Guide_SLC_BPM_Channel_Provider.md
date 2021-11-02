@@ -61,7 +61,7 @@ _Return value_
 |  ----------- |----------- |
 | pvcall example | `pvcall "P2BPMHER:BPMS" BPMD=38 CNFTYPE=GOLD N=1024`|
 | Java Tests | SlcBpmTest.java | 
-| Matlab example |  |
+| Matlab example | `>> lcaGet('P2BPMHER:BPMS' 'BPMD=38' 'CNFTYPE=GOLD' 'N=1024')` |
 
 ## Test Output
 

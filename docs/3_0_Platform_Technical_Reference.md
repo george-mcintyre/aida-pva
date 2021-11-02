@@ -180,3 +180,221 @@ see [Building AIDA-PVA SERVICE](3_1_Building_AIDA_PVA_Service.md)
 see [Building AIDA-PVA Module](3_2_Building_AIDA_PVA_into_STANDALONELIB.md)
 ## Building AIDA-PVA a Channel Provider
 see [Building AIDA-PVA a Channel Provider](3_3_Building_AIDA_PVA_Channel_Provider.md)
+
+## Test Framework
+see [Test Framework Documentation](2_5_4_Testing_Framework.md) for more information on testing framework
+
+## Useful Stuff
+### Documentation production
+Most of the documentation is a set of Markdown files.  They are rooted at [/docs](https://github.com/slaclab/aida-pva/tree/master/docs) in the source tree.
+
+Huge swathes of documentation are generated using [Doxygen](https://www.doxygen.nl/manual) a source code documentation generator.  
+For this reason you will see documentation in source code comments that follows the Doxygen format.  Even documentation in the Markdown
+files follows this format. 
+
+The configuration file for Doxygen [doxygenConfig](https://github.com/slaclab/aida-pva/blob/master/docs/doxygenConfig) is in the
+/docs directory also.
+A images are stored in /docs/images, included there are also [Photoshop](https://www.adobe.com/products/photoshop.html) files 
+and [Omnigraffle](https://www.omnigroup.com/omnigraffle) image source files so that modifications can be made.
+
+To enhance the look of the documentation [doxygen-awesome css](https://jothepro.github.io/doxygen-awesome-css/) was included.
+This is added as a git submodule under /docs.  You won't have to do this again:
+```shell
+git submodule add https://github.com/jothepro/doxygen-awesome-css.git
+```
+
+To get the documentation to read like a book with sections ordered sequentially, the Markdown files are numbered 
+with their section numbers.
+
+#### Generating Documentation
+In order to generate documentation you'll need to [get Doxygen](https://www.doxygen.nl/download.html).
+
+Also, as the source is spread out over Java and C and in multiple repositories a some pre-processing steps are required.
+
+1. De-Lombok the Java Source Code
+The source relies heavily on the [Lombok](https://projectlombok.org/) to simplify POJO generation and other tasks in Java.But this hides many methods and properties from the doxygen documentation processor.  To unpack all the Lombok annotations into plain old Java we need to run a De-Lombok process.
+2. Source needs to be merged into one tree so that doxygen can make references to any code in any of the repositories.  This is handled by the script included below.
+
+```shell
+java -jar ~/.m2/repository/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar delombok <source-dir> -d <target-dir>
+```
+
+A script to generate the entire documentation including that for the Test Suite is shown below.  The script requires that the source
+for the test is checked out. 
+
+```shell
+# To Generate documentation for AIDA-PVA
+
+## Go to source root
+cd $DEV_HOME/aida-pva
+
+## Clean directory where we'll process the combined source files
+rm -rf root
+
+# De-lombok test source into /root/test
+java -jar ~/.m2/repository/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar delombok $DEV_HOME/aida-pva-tests/src/main/java -d root/test/java
+
+# De-lombok main source into /root
+java -jar ~/.m2/repository/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar delombok src -d root
+
+## Generate documentation using doxygen using the doxygen configuration file into /docGen/html
+doxygen docs/doxygenConfig
+
+## Upload the documentation to the SLAC documentation website
+rsync -avz docGen/html/* sly@rhel6-64a.slac.stanford.edu:/afs/slac/www/grp/cd/soft/aida/aida-pva
+
+```
+
+### SSH setup
+#### ssh config file
+```text
+StrictHostKeyChecking no
+
+HashKnownHosts no
+
+Host github.com
+	AddKeysToAgent yes
+	UseKeychain yes
+	IdentityFile ~/.ssh/github_rsa
+
+Host *.slac.stanford.edu
+	User sly
+	GSSAPIAuthentication yes
+	GSSAPIDelegateCredentials yes
+
+Host mccdev.slac.stanford.edu mcc.slac.stanford.edu mcca2.slac.stanford.edu
+	User <your_user_name>
+	HostkeyAlgorithms +ssh-dss
+	PasswordAuthentication no
+	GSSAPIAuthentication yes
+	GSSAPIDelegateCredentials yes
+```
+
+You need to have an identify file for github (you'll probably already have one).  If not, [try this](https://gist.github.com/jexchan/2351996).
+
+This also sets up access without password to any slac unix machine by ssh.   The access to VMS should work when you're
+connected via VPN, although I found the VPN unsatisfactory because it forces all traffic through the SLAC network.
+
+#### Kerberos
+First time out just type the following to store your password in your keychain so that it is used automatically from then on.
+
+```shell
+kinit --keychain --renewable --forwardable <YOUR_USERNAME>@SLAC.STANFORD.EDU
+```
+
+### Proxy Configuration
+```text
+// This file configures the hosts that must be accessed via the proxy
+
+function FindProxyForURL(url, host)
+{
+   proxy_yes = "SOCKS5 127.0.0.1:1080; SOCKS 127.0.0.1:1080";
+   proxy_no = "DIRECT";
+
+   if (shExpMatch(url, "http*://www*.slac.stanford.edu*")          ||
+       shExpMatch(url, "http*://physics-elog.slac.stanford.edu*")  ||
+       shExpMatch(url, "http*://ad-ops.slac.stanford.edu*")        ||
+       shExpMatch(url, "http*://aosd.slac.stanford.edu*")          ||
+       shExpMatch(url, "http*://intranet.slac.stanford.edu*")      ||
+       shExpMatch(url, "http*://lcls-archapp.slac.stanford.edu*")  ||
+       shExpMatch(url, "http*://slacspace.slac.stanford.edu*")     ||
+       shExpMatch(url, "http*://mccas0.slac.stanford.edu*")        ||
+       shExpMatch(url, "http*://mccelog.slac.stanford.edu*")       ||
+       shExpMatch(url, "http*://oraweb.slac.stanford.edu*")        ||
+       shExpMatch(url, "http*://erp-fsprd.erp.slac.stanford.edu*") ||
+       shExpMatch(url, "http*://lcls-dev3.slac.stanford.edu*")     ||
+       shExpMatch(url, "http://www-mcc.slac.stanford.edu*")        ||
+       shExpMatch(url, "http*://webmcc.slac.stanford.edu*")        ||
+       shExpMatch(url, "http*://portal.slac.stanford.edu*")        ||
+       shExpMatch(url, "https://www.apple.com")        ||
+       shExpMatch(url, "https://www-public.slac.stanford.edu*")) {
+	       return proxy_yes;
+       }
+
+   else {
+       return proxy_no;
+   }
+}
+```
+
+Then in your **Network Configuration/Advanced/Proxies/Automatic Proxy Configuration**  set URL = `http://localhost/proxy.pac`
+
+You have to enable a web server on your local machine running on port 80 that serves the proxy configuration file.
+
+### Script for Kerberos and proxy configuration
+
+```shell
+# Get a kerberos ticket if we don't already have one
+kinit sly@SLAC.STANFORD.EDU
+
+# Ket a token
+aklog
+
+#
+# establish a proxy to stanford so that we can access protected pages as per proxy.pac configuration file
+# Note: it always uses a specific host rhel6-64a, if you use rhel6 it will choose a random host and the token won't work half the time.
+#
+ps -e | sed 's/^.........................//' | grep -e '^ssh -N -D 1080' > /dev/null || ssh -N -D 1080 -g <your_username>@rhel6-64a.slac.stanford.edu &
+
+```
+
+### Git Configuration
+```shell
+cat ~/.gitconfig
+[user]
+	name = <git_username>
+	email = <git-email>
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[push]
+	default = matching
+[credential]
+	helper = osxkeychain
+[diff "zip"]
+	textconv = unzip -c -a
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	autocrlf = input
+[merge "ours"]
+	driver = false
+[merge "theirs"]
+	driver = false
+```
+
+### JDK Versions on Linux 
+Two utilities to list and also set jdk version on Linux.   Add to your .bashrc on RHEL.
+
+```shell
+function jdk-versions() {
+	ls -d /afs/slac/g/lcls/package/java/jdk* | sed 's/[^0-9._]*//g'
+}
+
+function jdk() {
+        local new_version=$1
+        if [[ "$1" == "" ]]
+        then
+                java -version
+        else
+                vstring=$(ls -ld /afs/slac/g/lcls/package/java/*${new_version} | sed 's/.*jdk//')
+                export PATH="/afs/slac/g/lcls/package/java/jdk${vstring}/bin:$(echo ${PATH} | sed -e 's/[^:]*jdk[^:]*://g')"
+                export JAVA_VERSION=${new_version}
+        fi
+}
+
+```
+
+### To set environment for running EPICS 
+```shell 
+source /afs/slac/g/lcls/epics/setup/epicsenv-7.0.2-1.1.bash
+export EPICS_PVA_ADDR_LIST=mccdev.slac.stanford.edu
+```
+## References
+@see
+- [Connecting to SLAC Networks ](https://sites.slac.stanford.edu/remote-tool-kit/connecting-slac-networks-remotely)
+- [VAX to Unix to VAX commands](https://www3.physnet.uni-hamburg.de/physnet/vms-unix-commands.html)
+- 
