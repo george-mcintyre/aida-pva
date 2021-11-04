@@ -80,6 +80,36 @@ The source code is found in the github repository [slaclab/aida-pva](https://git
   - @ref slac.aida.NativeChannelProvider "NativeChannelProvider"
     - _The native endpoints that link to the JNI entry-points in the Channel Provider C code, implemented in AIDA-PVA Module in `STANDALONELIB`_.
 
+### AIDA-PVA is Strangely Linked :)
+![](images/aida-pva-link.png)
+1. The AIDA-PVA Service loads the Channel Provider shared image but it does not call any functions in the image that it loads.
+2. The AIDA-PVA Service calls JNI Entry points implemented in the AIDA-PVA Module in `STANDALONELIB`
+3. It has access to them because the Channel Provider is linked with the AIDA-PVA Module to resolve those JNI references.
+4. AIDA-PVA Module calls the Channel Provider entrypoints when it is called by the AIDA-PVA Service.
+5. Whenever the Channel Provider needs help it calls the Helper functions in AIDA-PVA Module
+ 
+Though it could look like it would be impossible to build the AIDA-PVA Module because it would have unresolved references 
+to an as-yet-undefined Channel Provider's entrypoints, it does work because unless the Module that makes those calls is referenced
+by an image being linked it, won't try to resolve the references.
+
+@note
+When linking the Channel Provider to the AIDA-PVA Module you need to explicitly request the Modules with the JNI Entry points
+because even though the Channel Provider code doesn't reference them, the AIDA-PVA Service will need to have them available
+when it loads the Channel Provider image.
+
+Use the following snippet to reference the JNI Entry points and force them to be included in the Channel Provider image during linking. (excerpt from GENERAL OPT file)
+```text
+SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
+ NATIVECHANNELPROVIDERJNI, -
+ AIDA_PVA_SERVER_HELPER, -
+ AIDA_PVA_JNI_HELPER, -
+ AIDA_PVA_TYPES_HELPER, -
+ AIDA_PVA_JSON) / LIB
+```
+
+This means, pull out the **NATIVECHANNELPROVIDERJNI** module (among others) even though it is not referenced.  That module contains
+the JNI entrypoints that the AIDA-PVA Service will call.
+
 ### AIDA-PVA Service Execution Flow
 ![AIDA-PVA Execution](images/aida-pva-execution.png)
 1. Process is started by calling main() in @ref edu.stanford.slac.aida.impl.AidaService "AidaService".  This starts the three motors of AIDA-PVA Service.  @ref edu.stanford.slac.aida.lib.AidaRPCServer "AidaRPCServer", @ref edu.stanford.slac.aida.impl.AidaService "AidaService", and @ref edu.stanford.slac.aida.lib.ChannelProvider "ChannelProvider".
