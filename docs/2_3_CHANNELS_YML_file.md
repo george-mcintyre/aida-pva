@@ -1,5 +1,4 @@
-# 2.3 - Anatomy the Channel Configuration file (CHANNELS.YML)
-
+# 2.3 - Anatomy of the Channel Configuration file
 1. Always add the annotation `!!edu.stanford.slac.aida.lib.model.AidaProvider` to the beginning of the yaml file so that
    the processor will recognise the type of yaml file you're providing.
 2. You can place comments anywhere you want by preceding them by a hash character

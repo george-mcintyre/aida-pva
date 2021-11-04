@@ -68,7 +68,9 @@ _Parameters_
 | `RING`  | `HER` or `LER`  | If the specified relative set value is in units of energy, this parameter is required and specifies the ring (HER or LER).  |
 
 _Return value_
-| | | | | |----------- | ----------- | ----------- |----------- | | TYPE | Return Column | Column Type |Description |
+| | | | | 
+|----------- | ----------- | ----------- |----------- | 
+| TYPE | Return Column | Column Type |Description |
 | `TABLE` | `value` | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
 ## Examples

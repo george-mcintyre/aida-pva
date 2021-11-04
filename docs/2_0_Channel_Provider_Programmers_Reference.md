@@ -42,13 +42,13 @@ _The framework has five main features._
 
 As an AIDA-PVA Channel Provider writer you will be responsible for:
 
-* Creating the AIDA-PVA Channel Provider Shared Library.
+* Creating the AIDA-PVA Channel Provider Shared Image.
 * Creating the initial Channel Configuration File that identifies and describes all the AIDA-PVA `Channels` that your Channel
   Provider will support.
 
 ### Components
 
-* Your **Channel Provider Code** => produces `AIDASLC<provider_name>.EXE` shared Library.  e.g.:
+* Your **Channel Provider Code** => produces `AIDASLC<provider_name>.EXE` shared image.  e.g.:
   * `AIDASLCDB.EXE`
   * `AIDASLCBPM.EXE`
   * `AIDASLCBPMBUFF.EXE`

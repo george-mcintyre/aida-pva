@@ -50,6 +50,17 @@ things to set to get you going are:
   to `mccdev.slac.stanford.edu` for testing against the development environment.
 - `EPICS_PVA_AUTO_ADDR_LIST` - set this to `FALSE` so that EPICS won't try to automatically create your address list
 
+## Naming conventions
+
+In AIDA-PVA, channel name parts are all separated by colons e.g.,`PRIM:MICR:UNIT:ATTR`. AIDA-PVA allows accessing services with the same naming conventions as EPICS.
+
+Even though AIDA-PVA has an updated naming scheme to align with EPICs it is backwards compatible with AIDA and allows
+legacy style names to be used.
+
+@note In AIDA, names consist of `INSTANCE//ATTRIBUTE` where `INSTANCE` can have other sub-parts typically delimited by
+colons. Though the `ATTRIBUTE` part is typically a single name, in rare cases it is also made up of parts, delimited by
+colons.
+
 ## Changes to call semantics
 
 ### Getter vs Setter

@@ -321,20 +321,20 @@ _Parameters_
 | Parameter Names | Parameter Values | Description | 
 | `X` | structure with each of the supported scalar types in field names as follows: | If present every element in array `X` be subjected to the same operation as the scalar channel would undergo. e.g., the integer value would be increased by 4.   |
 | | `"boolean"`| a boolean value  |
-| | `"byte"`| a byte value  |
-| | `"short"`| a short value  |
-| | `"integer"`| a integer value  |
-| | `"long"`| a long value |  |
-| | `"float"`| a float value |  |
-| | `"double"`| a double value | |
-| | `"string"`| a string value  |
+| | `"byte"` |  a byte value  |
+| | `"short"` | a short value  |
+| | `"integer"` | an integer value  |
+| | `"long"` | a long value  |
+| | `"float"` | a float value  |
+| | `"double"` | a double value  |
+| | `"string"` | a string value | 
 
 _Return value_
 
 | | |
 |-----------  |-----------  |
 | TYPE  |  Description |
-| `STRING_ARRAY` |  If `X` present every element in array `X` be subjected to the same operation as the scalar channel would undergo. e.g., the integer value would be increased by 4.  |
+| `STRING_ARRAY` |  If `X` present every element in array<br /> `X` be subjected to the same operation<br /> as the scalar channel would undergo. <br />e.g., the integer value would be <br />increased by 4.  |
 
 ## Examples
 
