@@ -1,6 +1,6 @@
 /** @file
  *  @brief Buffered BPM Acquisition Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDSLCBPMBUFFLIB
+ *     **MEMBER**=SLCLIBS:AIDASLCBPMBUFFLIB
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
