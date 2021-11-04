@@ -25,7 +25,7 @@ _The framework has five main features._
 
 ## How it works
 
-1. When your Channel Provider starts up, the AIDA-PVA Service that started it will read the [CHANNELS.YML](2_3_CHANNELS_YML_file.md) file that
+1. When your Channel Provider starts up, the AIDA-PVA Service that started it will read the [Channel Configuration File](2_3_CHANNELS_YML_file.md) that
    you've provided to determine which EPICS search requests it should respond to.
 2. Subsequently, when clients send requests containing references to one of those **Channels**,
 3. and EPICS search request is propagated across the EPICS network
@@ -43,12 +43,12 @@ _The framework has five main features._
 As an AIDA-PVA Channel Provider writer you will be responsible for:
 
 * Creating the AIDA-PVA Channel Provider Shared Library.
-* Creating the initial `CHANNELS.YML` file that identifies and describes all the AIDA-PVA `Channels` that your Channel
+* Creating the initial Channel Configuration File that identifies and describes all the AIDA-PVA `Channels` that your Channel
   Provider will support.
 
 ### Components
 
-* Your **Provider Code** => produces `AIDASLC<provider_name>.EXE` shared Library.  e.g.:
+* Your **Channel Provider Code** => produces `AIDASLC<provider_name>.EXE` shared Library.  e.g.:
   * `AIDASLCDB.EXE`
   * `AIDASLCBPM.EXE`
   * `AIDASLCBPMBUFF.EXE`
@@ -71,7 +71,7 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
   * aida_pva_memory.h - The Header File for the memory management functions and macros
   * aida_pva_types.h - The Header File for the type enumerations, unions, and typedefs
   * aida_pva_uri.h - The Header File for uri and channel name manipulation functions
-* The **AIDA-PVA SERVICE** - Service that loads the Provider Code
+* The **AIDA-PVA SERVICE** - Service that loads the Channel Provider Code
   * `AIDA-PVA.JAR`
 * The **back-ported EPICS 7** libraries
   * `EPICS-PVACCESS-bp15.JAR`

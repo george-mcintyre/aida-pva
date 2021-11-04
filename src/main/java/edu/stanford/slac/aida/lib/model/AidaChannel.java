@@ -9,7 +9,7 @@ import lombok.NonNull;
  * @file
  * This class encapsulates an {@link AidaChannel}.
  * <p>
- * It is used to represent a single channel that this AIDA-PVA Provider will support.
+ * It is used to represent a single channel that this Channel Provider will support.
  * <p>
  * @note
  * It uses the `@Data` annotation to provide all the getters and setters,

@@ -1,0 +1,25 @@
+!==============================================================================
+!       **CMS**=OPT
+!
+! Name: AIDASLCBPM_GENERAL.OPT
+!
+! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
+
+case_sensitive=YES
+SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
+ NATIVECHANNELPROVIDERJNI, -
+ AIDA_PVA_SERVER_HELPER, -
+ AIDA_PVA_JNI_HELPER, -
+ AIDA_PVA_TYPES_HELPER, -
+ AIDA_PVA_JSON) / LIB
+SLCLIBS:AIDASHRLIB.OLB/LIB
+case_sensitive=NO
+
+  BPMSHR/shareable
+  BPMUTIL/shareable
+  CNFUTIL/shareable
+  DBSSHR/shareable
+  IOBSIC/shareable
+  MSGSHR/shareable
+  SYSUTIL/shareable
+  UTILSHR/shareable

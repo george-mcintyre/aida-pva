@@ -1,0 +1,69 @@
+!!edu.stanford.slac.aida.lib.model.AidaProvider
+
+# @file
+# @brief Channels definition file for AIDA-PVA: SLC BPM orbit data provider
+#       **CMS**=SLCTXT
+#
+# @section DML
+# @code
+#     SELECT CONCAT('      - ', CONCAT(names.INSTANCE, CONCAT(':', names.ATTRIBUTE))) pv
+#     FROM AIDA_DIRECTORY dir
+#     INNER JOIN AIDA_SERVICES service ON dir.SERVICE_ID = service.ID
+#     INNER JOIN AIDA_NAMES names ON dir.NAME_ID = names.ID
+#     WHERE service.NAME = 'SLCBpm'
+#     ORDER BY names.ATTRIBUTE, names.INSTANCE
+# @endcode
+id: 102
+name: SLCBpm
+description: SLC BPM orbit data under a given measurement definition
+configurations:
+  - name: Standard Configuration
+    getterConfig:
+      # Heterogeneous vector of 7 homogenous congruent vectors
+      type: TABLE
+      arguments:
+        - BPMD
+        - CNFNUM
+        - CNFTYPE
+        - N
+        - SORTORDER
+      fields:
+        - label: BPM Name
+          name: name
+          description: Name of BPM
+        - label: x offset
+          name: x
+          units: mm
+          description: BPM x offset
+        - label: y offset
+          name: y
+          units: mm
+          description: BPM y offset
+        - label: num particles
+          name: tmits
+          units: coulomb
+          description: Number of particles
+        - label: z position
+          name: z
+          units: meters
+          description: BPM z position
+        - label: HSTA
+          name: HSTA
+          description: 32 bit field
+        - label: STATS
+          name: STATS
+          description: 32 bit field
+    channels:
+      - E163BMLN:BPMS
+      - ELECEP01:BPMS
+      - FACET-II:BPMS
+      - INJ_ELEC:BPMS
+      - INJ_POSI:BPMS
+      - LCLS_SL2:BPMS
+      - NDRFACET:BPMS
+      - P2BPMHER:BPMS
+      - P2BPMLER:BPMS
+      - PEP2INJF:BPMS
+      - SCAVPOSI:BPMS
+      - SDRFACET:BPMS
+      - TAXXALL:BPMS

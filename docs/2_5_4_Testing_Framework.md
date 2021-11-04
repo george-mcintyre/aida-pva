@@ -1,4 +1,4 @@
-# Testing Framework
+# 2.5.4 - Testing Framework
 The test framework is found in the [AIDA-PVA test git repository](https://github.com/slaclab/aida-pva-tests).
 
 ## Summary
@@ -14,7 +14,7 @@ For developers of new Providers this repository is where you'll write tests for 
 ```java
 package edu.stanford.slac.aida.test;
  
-import edu.stanford.slac.aida.test.utils.AidaPvaTestUtils;
+import edu.stanford.slac.aida.test.utils.AidaPvaTestUtils.*;
  
 import java.util.Arrays;
  
@@ -22,8 +22,8 @@ public class MyProviderTest {
 
   public static void main(String[] args) {
     var argString = Arrays.toString(args).replace("]", ",").replace("[", " ");
-    AidaPvaTestUtils.NO_COLOR_FLAG = !argString.contains("-c") && !argString.contains("-color");
-    var allTests = (AidaPvaTestUtils.NO_COLOR_FLAG ? args.length == 0 : args.length == 1);
+    NO_COLOR_FLAG = !argString.contains("-c") && !argString.contains("-color");
+    var allTests = (NO_COLOR_FLAG ? args.length == 0 : args.length == 1);
     var testId = 0;
     
     // Test Suites Go Here ...
@@ -33,74 +33,72 @@ public class MyProviderTest {
   }
 }
 ```
-
-3. Add your first test suite
-
+2. Add your first test suite
 ```java
-    AidaPvaTestUtils.testSuiteHeader("My Channel Provider Test Suite");
+    testSuiteHeader("My Channel Provider Test Suite");
 ```
-
 3. Add a test
-
 ```java
-    AidaPvaTestUtils.testHeader(testId, "My First Test");
+    testHeader(testId, "My First Test");
 ```
-
 4. Then add as many test cases as you want
-
 ```java
-    AidaPvaTestUtils.getWithNoArguments("MYCHANNEL:NAME", AidaType.FLOAT, "Check Float Return with no parameter");
-    AidaPvaTestUtils.channel("MYCHANNEL:NAME", "Check Integer Return with X parameter").with("X", 55).get();
+    getRequest("MYCHANNEL:NAME", AidaType.FLOAT, "Check Float Return with no parameter");
+        
+    request("MYCHANNEL:NAME", "Check Integer Return with X parameter").with("X", 55).get();
 ```
-
 5. To add tests with lists do the following
-
 ```java
-     AidaPvaTestUtils.channel("MYCHANNEL:", "BPM Values")
+     request("MYCHANNEL:", "BPM Values")
         .with("BPMD", 57)
         .with("NRPOS", 180)
-        .with("BPMS", Arrays.asList(
+        .with("BPMS", List.of(
                 "BPMS:LI11:501",
                 "BPMS:LI11:601",
                 "BPMS:LI11:701",
                 "BPMS:LI11:801"))
         .get();
 ```
-
 6. To add tests with complex structures do the following
-
+```java
+    request("MAGNETSET:BDES", "Magnet Set")
+            .with("MAGFUNC", "TRIM")
+            .set(Map.of(
+                    "names", List.of("XCOR:LI31:41"),
+                    "values", List.of(4.0f)
+            ));
+```
+7. To add tests with JSON do the following
 ```java
     var value = "{" +
             "\"names\": [\"XCOR:LI31:41\"]," +
             "\"values\": [4.0]" +
             "}";
-    AidaPvaTestUtils.channel("MAGNETSET:BDES", "Magnet Set")
+    request("MAGNETSET:BDES", "Magnet Set")
             .with("MAGFUNC", "TRIM")
             .set(value);
 ```
-
-7. If you expect the tests to fail use the following patterns
-
+8. If you expect the tests to fail use the following patterns
 ```java
-    AidaPvaTestUtils.channel("KLYS:LI31:31:TACT", "PDES")
+    request("KLYS:LI31:31:TACT", "PDES")
       .with("BEAM", "XYZ")
       .with("DGRP", "DEV_DGRP")
       .setAndExpectFailure(1);
 
-    AidaPvaTestUtils.channel("KLYS:LI31:31:TACT", "PDES")
+    request("KLYS:LI31:31:TACT", "PDES")
       .with("BEAM", 1)
       .with("DGRP", "LIN_KLYS")
       .returning(AidaType.SHORT)
       .getAndExpectFailure();
 ```
 
-## More test exxamples
+## More test examples
 ### e.g. 1: Simple get
 
 ```java
      testSuiteHeader("AIDA-PVA SLC TESTS");
      testHeader(1, "Acquire scalar types SLC PMUS");
-     getWithNoArguments("XCOR:LI03:120:LEFF", FLOAT, "Float BACT"
+     getRequest("XCOR:LI03:120:LEFF", FLOAT, "Float BACT"
 ```
 
 ### e.g. 2: Multiple arguments
@@ -108,10 +106,10 @@ public class MyProviderTest {
 ```java
      testSuiteHeader("AIDA-PVA SLC Buffered Acquisition TESTS");
      testHeader(2, "Get values of 4 BPMs");
-     channel("NDRFACET:BUFFACQ", "BPM Values")
+     request("NDRFACET:BUFFACQ", "BPM Values")
                     .with("BPMD", 57)
                     .with("NRPOS", 180)
-                    .with("BPMS", Arrays.asList(
+                    .with("BPMS", List.of(
                             "BPMS:LI11:501",
                             "BPMS:LI11:601",
                             "BPMS:LI11:701",
@@ -119,32 +117,32 @@ public class MyProviderTest {
                     .get();
 ```
 
-#### e.g. 3: Simple set
+### e.g. 3: Simple set
 
 ```java
      testSuiteHeader("AIDA-PVA SLC TESTS");
      testHeader(testId, "Set value test");
-     setWithNoArguments("XCOR:LI31:41:BCON", 5.0f);
+     setRequest("XCOR:LI31:41:BCON", 5.0f);
 
 ```
-#### e.g. 4: Advanced set
+### e.g. 4: Advanced set
 
 ```java
      testSuiteHeader("AIDA-PVA SLC Klystron TESTS");
      testHeader(testId, "Deactivate the specified klystron");
-     channel("KLYS:LI31:31:TACT", "Deactivated")
+     request("KLYS:LI31:31:TACT", "Deactivated")
                     .with("BEAM", 8)
                     .with("DGRP", "DEV_DGRP")
                     .set(0);
 
 ```
 
-#### e.g. 5: Selecting the return value type
+### e.g. 5: Selecting the return value type
 
 ```java
      testSuiteHeader("AIDA-PVA SLC Klystron TESTS");
      testHeader(testId, "Acquire STRING type");
-     channel("KLYS:LI31:31:TACT", "String")
+     request("KLYS:LI31:31:TACT", "String")
                     .with("BEAM", 8)
                     .with("DGRP", "DEV_DGRP")
                     .returning(STRING)
@@ -166,16 +164,16 @@ The shaded jar file is found in the target directory. `./target/aida-pva-tests-1
 Running the tests are equally simple. You need to make sure that your environment is set up so that you can find the epics providers. All you need to do is to set the `EPICS_PVA_ADDR_LIST` variable to identify the network or host you want to search.
 
 Test are all named starting with SLC and then the short code identifying the provider followed by Test. e.g. SlcBpmTest.
-Each test is in the `edu.stanford.slac.aida` package.
+Each test is in the `edu.stanford.slac.aida.test` package.
 
 As the jar is shaded it includes everything it needs so no need for a complicated classpath. The full procedure to run the tests is as follows:
 
-#### e.g. 1 Run the SLC Utility Provider tests
+#### e.g. 1 Run the SLC Utility Channel Provider tests
 _commands_
 ```shell 
 export EPICS_PVA_ADDR_LIST=mccdev.slac.stanford.edu
 cd ./target
-java -cp aida-pva-tests-1.0-SNAPSHOT.jar  "SlcTest"
+java -cp aida-pva-tests-1.0-SNAPSHOT.jar  "edu.stanford.slac.aida.test.SlcTest"
 ```
 
 _output_
@@ -353,14 +351,14 @@ _________________________________________________
 set: XCOR:LI31:41:BCON (VALUE=[5.0]) ✔    
 ```
 
-#### e.g. 2 Run one test from the SLC Utility Provider test suite
+#### e.g. 2 Run one test from the SLC Utility Channel Provider test suite
 
 _commands_
 
 ```shell
 export EPICS_PVA_ADDR_LIST=mccdev.slac.stanford.edu
 cd ./target
-java -cp aida-pva-tests.jar "SlcUtilTest" 2
+java -cp aida-pva-tests.jar "edu.stanford.slac.aida.test.SlcUtilTest" 2
 ```
 
 _output_

@@ -24,7 +24,7 @@ EPICS 7 had to be back-ported to these operating systems and JVM versions.  As p
 needed to be created to work around some platform limitations.
 
 Finally, the AIDA service providers have been reimplemented, and rebranded AIDA-PVA _Channel Providers_,  in this new framework and 
-there are significant changes, in the way they integrate with the Native Provider Modules ( in `AIDASHR`), in the way they are deployed, and 
+there are significant changes, in the way they integrate with the Legacy AIDA Modules ( in `AIDASHR`), in the way they are deployed, and 
 in the way they are launched.
 
 For more information:

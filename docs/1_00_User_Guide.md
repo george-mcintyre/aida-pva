@@ -31,7 +31,7 @@ engineers who are already familiar with programming on EPICS, to access AIDA-PVA
 
 As you can see below, clients using AIDA-PVA will look like any any other EPICS client. AIDA-PVA data providers are
 implemented inside the EPICS framework and so will appear to EPICs clients as just another EPICS service.  
-In order to access an AIDA-PVA Provider you'll select a Channel Name that the Provider has published. The EPICS
+In order to access an AIDA-PVA Channel Provider you'll select a Channel Name that the Channel Provider has published. The EPICS
 framework will find the service that serves requests for that Channel and will direct your request to it.
 
 ![Aida Old and New](images/aida-pva-simple.png)

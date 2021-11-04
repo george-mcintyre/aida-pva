@@ -397,7 +397,7 @@ public class AidaPVHelper {
         }
 
         // The field names, labels and types for an NTTable come from the Channel Configuration specified in the
-        // CHANNELS.YML file loaded when the service initialises.
+        // Channel Configuration File loaded when the service initialises.
         // We need to retrieve these configured values from the given configuration associated with the
         // request we're processing
         List<String> fieldNames = new ArrayList<String>();

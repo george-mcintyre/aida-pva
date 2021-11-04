@@ -14,16 +14,19 @@ import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
 
 /**
  * @file
- * Implementation of a Channel Provider which handles requests for scalar, scalarArrays, and tables and transfers them
+ * Abstract implementation of a ChannelProvider which handles requests for scalar, scalarArrays, and tables and transfers them
  * to the appropriate Channel Provider endpoints.
- * A Channel Provider is responsible for communicating with the Channel Provider
+ * A ChannelProvider is responsible for communicating with the Channel Provider
  * to get and receive information from the AIDA-PVA network.
  * <p>
- * This class encodes generic functionality common to all Channel Providers on the AIDA-PVA network.
+ * This class encodes generic functionality common to all ChannelProviders on the AIDA-PVA network.
  * Specific customisations should be coded in the {@link edu.stanford.slac.aida.impl.AidaChannelProvider}
  * class.
+ *
+ * @note  This facility if subclassing ChannelProvider will be deprecated
+ *
  * <p>
- * This class automatically calls the initialisation of the underlying Native Provider
+ * This class automatically calls the initialisation of the underlying Channel Provider
  * and shows the AIDA-PVA banner.
  * <p>
  * It also handles the five main classes of requests routing them to the correct underlying

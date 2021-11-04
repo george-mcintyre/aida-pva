@@ -21,7 +21,7 @@ path to load the Channel Provider library from.  In our SLAC environment this is
 - It checks the value of a property (`aida.pva.lib.name`) or environment variable (`AIDA_PVA_LIB_NAME`) to determine which
 Channel Provider library to load.  e.g. `AIDASLCDB` to load `AIDASLCDB.EXE` library.
 - It checks the value of a property (`aida.pva.channels.filename`) or environment variable (`AIDA_PVA_CHANNELS_FILENAME`) to determine which
- channel configuration file to load. This can be a full path name.  e.g. `/SLCTXT/AIDASLCDB_CHANNELS.YML`
+  Channel Configuration File to load. This can be a full path name.  e.g. `/SLCTXT/AIDASLCDB_CHANNELS.YML`
 - It reads configuration from the selected channel configuration file.
 
 This determines which channels the Channel Provider will support, and where it will find implementations for the endpoints required to service the supported channels. 
@@ -92,7 +92,7 @@ The source code is found in the github repository [slaclab/aida-pva](https://git
    * Forward the request to the appropriate AIDA-PVA Module endpoint.
    * Intercept Exceptions thrown by the AIDA-PVA Module and forward them to the EPICs network
    * Convert any return values to Normative Types and return data back to EPICs network via @ref edu.stanford.slac.aida.impl.AidaService "AidaService"
-* AIDA-PVA Module endpoints are called and will return results from the Channel Providers
+5. AIDA-PVA Module endpoints are called and will return results from the Channel Providers
 
 ## AIDA-PVA Module
 The AIDA-PVA module is a set of C files compiled into Modules and inserted into `STANDALONELIB`, as well as a set of 
@@ -174,6 +174,12 @@ _Specific Code for each legacy module_:
 * [SLC Master Oscillator](http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCMOSC_JNI_HELPER.C)
 * [SLC Util](http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCUTIL_JNI_HELPER.C)
 
+## Deployment
+
+![AIDA-PVA Deployment](images/aida-pva-files.png)
+
+For a full description of how to deploy AIDA-PVA in SLAC see [A DevOps Guide to AIDA-PVA](4_0_A_DevOps_Guide_to_AIDA_PVA.md)
+
 ## Building AIDA-PVA SERVICE
 see [Building AIDA-PVA SERVICE](3_1_Building_AIDA_PVA_Service.md)
 ## Building AIDA-PVA Module
@@ -244,6 +250,17 @@ doxygen docs/doxygenConfig
 rsync -avz docGen/html/* sly@rhel6-64a.slac.stanford.edu:/afs/slac/www/grp/cd/soft/aida/aida-pva
 
 ```
+
+#### Generating and Deploying Documentation automatically
+GitHub Actions have been created that will automatically regenerate the documentation each time any change is made.  This allows 
+Markdown files to be edited directly in github and this documentation to be updated automatically.  It also means that any
+source file comment that is changed will automatically be updated in the documentation.
+
+At the time of writing the last step - pushing generated documentation to the web service in SLAC - is failing due to a
+permissions problem - Greg needs to fix this :)
+
+The workflows are defined [here for aida-pva](https://github.com/slaclab/aida-pva/blob/master/.github/workflows/ci-docs.yml) and
+[here for aida-pva-tests](https://github.com/slaclab/aida-pva-tests/blob/main/.github/workflows/ci-docs.yml).
 
 ### SSH setup
 #### ssh config file
@@ -396,5 +413,4 @@ export EPICS_PVA_ADDR_LIST=mccdev.slac.stanford.edu
 ## References
 @see
 - [Connecting to SLAC Networks ](https://sites.slac.stanford.edu/remote-tool-kit/connecting-slac-networks-remotely)
-- [VAX to Unix to VAX commands](https://www3.physnet.uni-hamburg.de/physnet/vms-unix-commands.html)
-- 
+- [Unix to VMS cheatsheet](https://www3.physnet.uni-hamburg.de/physnet/vms-unix-commands.html)

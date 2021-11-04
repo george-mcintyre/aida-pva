@@ -46,7 +46,7 @@ public class AidaRPCService implements RPCService {
      * @throws UnableToGetDataException         when server fails to retrieve data
      * @throws UnableToSetDataException         when server fails to set data
      * @throws UnsupportedChannelException      when server does not yet support the specified channel.
-     *                                          Usually caused when channel matches a pattern specified in the channels.yml file
+     *                                          Usually caused when channel matches a pattern specified in the Channel Configuration File
      *                                          but is not yet supported in the service implementation
      */
     public PVStructure request(PVStructure pvUri) throws RPCRequestException, UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
@@ -109,7 +109,7 @@ public class AidaRPCService implements RPCService {
      * @throws UnableToGetDataException         when server fails to retrieve data
      * @throws UnableToSetDataException         when server fails to set data
      * @throws UnsupportedChannelException      when server does not yet support the specified channel.
-     *                                          Usually caused when channel matches a pattern specified in the channels.yml file
+     *                                          Usually caused when channel matches a pattern specified in the Channel Configuration File
      *                                          but is not yet supported in the service implementation
      */
     private PVStructure request(String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
@@ -156,7 +156,7 @@ public class AidaRPCService implements RPCService {
         // If channelName contains a service (<service>::channelName) then remove the service part before calling the service implementation
         // This is a special measure put in place to disambiguate some channels that are used by more than one Service.
         // It allows for channels to be prefixed by "<serviceName>::".  This is done in the channel configuration file and also
-        // by clients accessing the service.  But the Channel Provider will not know about this prefix so we need to
+        // by clients accessing the service.  But the Channel Provider will not know about this prefix, so we need to
         // remove it before passing the request on to the Channel Provider
         channelName = removeServicePrefixIfPresent(channelName);
 

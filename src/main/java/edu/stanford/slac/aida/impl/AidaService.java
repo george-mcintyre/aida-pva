@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class AidaService {
     /**
-     * This is the default name for the AIDA-PVA Native Provider Library.
+     * This is the default name for the AIDA-PVA Channel Provider library file.
      * Note that it is operating system agnostic, so it does not add the extension
      * e.g. `.so`, `.dll`, `.EXE`, etc.
      */
@@ -33,7 +33,7 @@ public class AidaService {
     private static final Logger logger = Logger.getLogger(AidaService.class.getName());
 
     /*
-     * This static block is run once whenever the  Service is started to load the Native Provider Library
+     * This static block is run once whenever the AIDA-PVA Service is started to load the Channel Provider library
      */
     static {
         // Get library name from property (commandline or resource file).
@@ -47,10 +47,10 @@ public class AidaService {
 
         // If we've overridden the default name then log it to the console
         if (!aidaPvaLibName.equals(AIDA_PVA_LIB_NAME)) {
-            logger.info("Loading Chanel Provider Shared Library: " + aidaPvaLibName);
+            logger.info("Loading Channel Provider Shared Library: " + aidaPvaLibName);
         }
 
-        // Load the Native Provider Library
+        // Load the Channel Provider library
         System.loadLibrary(aidaPvaLibName);
     }
 

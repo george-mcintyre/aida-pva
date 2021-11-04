@@ -143,6 +143,7 @@ Note:  using NOOPT by default for DECC
 MCCDEV>
 ```
 4. Create a STANDALONELIB_XFR_ALPHA.OPT
+This file will be used when [Building a Channel Provider](3_3_Building_AIDA_PVA_Channel_Provider.md) so keep it safe! 
 ```shell
 MCCDEV> LIBRARY/EXTRACT=NATIVECHANNELPROVIDERJNI/output=NATIVECHANNELPROVIDERJNI STANDALONE_DEVLIB
 MCCDEV> @java$jni_example:scan_globals_for_option *.OBJ STANDALONELIB_XFR_ALPHA.OPT

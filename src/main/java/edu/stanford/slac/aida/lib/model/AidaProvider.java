@@ -10,12 +10,12 @@ import java.util.*;
 
 /**
  * @file
- * This class captures the metadata associated with an AIDA-PVA Channel Provider.
+ * This class captures the metadata associated with a Channel Provider.
  * This class encapsulates an {@link AidaProvider}.
  * <p>
  * It is used configure how an AIDA-PVA will operate.
  * <p>
- * It has an {@link AidaProvider#id} to identify the Provider.
+ * It has an {@link AidaProvider#id} to identify the Channel Provider.
  * It has an {@link AidaProvider#name} to give it a name.
  * It has a {@link AidaProvider#description} displayed during startup alongside the {@link AidaProvider#id} and {@link AidaProvider#name}.
  * The {@link AidaProvider#configurations} define the different {@link AidaConfigGroup} we define for requests to this channel.
@@ -32,26 +32,26 @@ import java.util.*;
 @NoArgsConstructor
 public class AidaProvider {
     /**
-     * The {@link AidaProvider#id} identifies the Provider.  By convention, we use the `AIDA_SERVICES.ID` from the
+     * The {@link AidaProvider#id} identifies the Channel Provider.  By convention, we use the `AIDA_SERVICES.ID` from the
      * AIDA Oracle Database.
      */
     private @NonNull Long id;
 
     /**
-     * The {@link AidaProvider#name} identifies the Provider by name.  By convention, we use the `AIDA_SERVICES.NAME` from the
+     * The {@link AidaProvider#name} identifies the Channel Provider by name.  By convention, we use the `AIDA_SERVICES.NAME` from the
      * AIDA Oracle Database.
      */
     private @NonNull String name;
 
     /**
-     * The {@link AidaProvider#description} describes what the Provider does.  By convention, we use the `AIDA_SERVICES.DESCRIPTION` from the
+     * The {@link AidaProvider#description} describes what the Channel Provider does.  By convention, we use the `AIDA_SERVICES.DESCRIPTION` from the
      * AIDA Oracle Database.
      */
     private String description;
 
     /**
      * The {@link AidaProvider#configurations} lists the different {@link AidaConfigGroup} we define for requests to this channel.
-     * The groups are defined with reference to the appropriate documentation for the Provider. https://www.slac.stanford.edu/grp/cd/soft/aida
+     * The groups are defined with reference to the appropriate documentation for the Channel Provider. {@link /docs/1_00_User_Guide.md}
      */
     private @NonNull List<AidaConfigGroup> configurations = new ArrayList<AidaConfigGroup>();
 
@@ -110,7 +110,7 @@ public class AidaProvider {
      * For speed the list of channels and their configurations are cached in a memory resident
      * {@link HashMap}.  This method is used to prime that {@link HashMap} from the list of
      * {@link AidaProvider#configurations} that have been loaded in from the Channel Provider's
-     * CHANNELS.YML file.
+     * Channel Configuration File.
      */
     private void loadChannelMapIfNotLoaded() {
         /// Make sure that no other thread does this at the same time

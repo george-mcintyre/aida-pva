@@ -9,7 +9,7 @@ information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md
 
 ## Summary
 
-The SLC Buffered Acquisition Provider gets SLC control system pulse synchronized "Buffered Data", for the following
+The SLC Buffered Acquisition Channel Provider gets SLC control system pulse synchronized "Buffered Data", for the following
 device types:
 
 - BPM

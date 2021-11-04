@@ -15,7 +15,7 @@ import static edu.stanford.slac.aida.lib.model.AidaType.STRING;
  * any one of these operations.  A channel, therefore, can have up to two {@link edu.stanford.slac.aida.lib.model.AidaChannelOperationConfig}s.
  *
  * This class encapsulates an {@link AidaChannelOperationConfig}.
- * The {@link AidaChannelOperationConfig} class controls how the AIDA-PVA Provider responds to a channel `get` or `set` request.
+ * The {@link AidaChannelOperationConfig} class controls how the Channel Provider responds to a channel `get` or `set` request.
  * There is a different {@link AidaChannelOperationConfig} for `get` requests and `set` requests.
  * <p>
  * All `set` requests are differentiated by containing a `VALUE` {@link AidaArgument} - that is one with the name = VALUE.
@@ -79,8 +79,9 @@ public class AidaChannelOperationConfig {
      * or if a `TYPE` argument is specified with value = `TABLE` then {@link AidaChannelOperationConfig#fields} contains the
      * configuration of the fields that will be in the returned structure.
      *
-     * Note that the Channel Provider may only return tables of a single configuration for any one channel.
-     * The table configuration cannot change with different parameters.
+     * @note
+     * the Channel Provider may only return tables of a single configuration for any one channel therefore
+     * the table configuration cannot change with different parameters on that channel request.
      *
      * The type of data returned in a column in a table MAY change based on parameters because the
      * table configuration is type agnostic!

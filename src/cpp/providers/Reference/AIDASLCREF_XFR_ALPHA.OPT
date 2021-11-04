@@ -1,0 +1,23 @@
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_slac_aida_NativeCh1dgccee$=PROCEDURE,-
+     Java_slac_aida_NativeCh25dfjd6$=PROCEDURE,-
+     Java_slac_aida_NativeCh3nsgvff$=PROCEDURE,-
+     Java_slac_aida_NativeCh33ufh3u$=PROCEDURE,-
+     Java_slac_aida_NativeCh1d5rrm5$=PROCEDURE,-
+     Java_slac_aida_NativeCh14pujn9$=PROCEDURE,-
+     Java_slac_aida_NativeCh20mk2i9$=PROCEDURE,-
+     Java_slac_aida_NativeCh23sgj69$=PROCEDURE,-
+     Java_slac_aida_NativeCh31p234f$=PROCEDURE,-
+     Java_slac_aida_NativeCh2a0ae9n$=PROCEDURE,-
+     Java_slac_aida_NativeCh39m8dhq$=PROCEDURE,-
+     Java_slac_aida_NativeCh0oj95nt$=PROCEDURE,-
+     Java_slac_aida_NativeCh2aokrpj$=PROCEDURE,-
+     Java_slac_aida_NativeCh0nh9dsf$=PROCEDURE,-
+     Java_slac_aida_NativeCh3tmi2oe$=PROCEDURE,-
+     Java_slac_aida_NativeCh1s5d4nl$=PROCEDURE,-
+     Java_slac_aida_NativeCh31oju0v$=PROCEDURE,-
+     Java_slac_aida_NativeCh2vedmsq$=PROCEDURE,-
+     Java_slac_aida_NativeCh25vb1ur$=PROCEDURE,-
+     Java_slac_aida_NativeCh2sdrgol$=PROCEDURE)
+
+case_sensitive=NO

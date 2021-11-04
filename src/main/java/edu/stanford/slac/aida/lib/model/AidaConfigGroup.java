@@ -13,7 +13,7 @@ import java.util.Set;
  * <p>
  * It is used to represent the configuration that will apply to a single group of {@link AidaChannel}s.
  * <p>
- * The {@link AidaConfigGroup} class controls how the AIDA-PVA Channel Provider responds to a channel request.
+ * The {@link AidaConfigGroup} class controls how the Channel Provider responds to a channel request.
  * <p>
  * There is a {@link AidaConfigGroup#getterConfig} for the `get` requests,
  * and a {@link AidaConfigGroup#setterConfig} for the `set` requests.

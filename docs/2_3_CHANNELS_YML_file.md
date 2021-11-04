@@ -1,4 +1,4 @@
-# 2.3 - Anatomy the CHANNELS.YML file
+# 2.3 - Anatomy the Channel Configuration file (CHANNELS.YML)
 
 1. Always add the annotation `!!edu.stanford.slac.aida.lib.model.AidaProvider` to the beginning of the yaml file so that
    the processor will recognise the type of yaml file you're providing.
@@ -39,7 +39,7 @@
     can't override.
 13. Listing arguments here does not mean that these parameters are mandatory. It simply means that arguments that are
     not listed here will be rejected.
-    [![Anatomy of CHANNELS.YML](images/example_channels.png)](channels.yml)
+    [![Anatomy of a Channel Configuration File](images/example_channels.png)](channels.yml)
 14. In our example we have getter configuration as `TABLE` so we need to define a fields section. The fields section
     contains a list of fields which are defined by `name`, `label`, and `description` entries. There are other elements
     that are included in the Normative Type specification such as `units` and `unit label`, but they are not yet

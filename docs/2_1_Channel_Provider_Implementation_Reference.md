@@ -3,18 +3,18 @@
 
 There are three things to write before you can compile, run, test, and deploy your service.
 
-* Write a `CHANNELS.YML` file.
+* Write a Channel Configuration File.
 * Create your Channel Provider source file - one C file and optionally one header file.
 * Create some tests using the test framework.
 
-## Creating a CHANNELS.YML file
+## Creating a Channel Configuration File
 
-Definition of the channels supported by your Channel Service Provider is done in the `CHANNELS.YML` file. If you're
+Definition of the channels supported by your Channel Provider service is done in the Channel Configuration File (CHANNELS.YML). If you're
 unfamiliar with the YAML (Yet Another Markup Language) format you
 can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading
 further.
 
-Please read [documentation on the CHANNELS.YML](2_3_CHANNELS_YML_file.md) file for information on how to create one. An
+Please read [documentation on the Channel Configuration File](2_3_CHANNELS_YML_file.md) file for information on how to create one. An
 example configuration file is shown below:
 
 ```yaml
@@ -162,7 +162,7 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	printf("My Service Provider Initialised\n");
+	printf("My Channel Provider Initialised\n");
 }
 ```
 
@@ -215,5 +215,5 @@ Follow instructions [here](3_3_Building_AIDA_PVA_Channel_Provider.md) to build y
 ## Reference Service
  
 AIDA-PVA provides a reference service implementation. You can explore this code to help you understand how to implement
-your Service Provider. The code is available [here](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers/Reference).
+your Channel Provider. The code is available [here](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers/Reference).
 

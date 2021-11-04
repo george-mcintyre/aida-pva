@@ -9,7 +9,7 @@ procedure calls and obtaining results in any format, including rich formats with
 provides security, logging and reliability to allow it to be used in a variety of applications from logging, and
 monitoring, to modeling and control.
 
-AIDA-PVA supersedes AIDA, but both AIDA and AIDA-PVA now co-exist, sharing many of the low level AIDA Native Provider
+AIDA-PVA supersedes AIDA, but both AIDA and AIDA-PVA now co-exist, sharing many of the Legacy AIDA
 Modules from AIDASHR, so results obtained by using either version remain consistent.
 
 Legacy AIDA uses CORBA to transport requests to the Data Providers, while AIDA-PVA uses EPICS-7's PVAccess mechanism.

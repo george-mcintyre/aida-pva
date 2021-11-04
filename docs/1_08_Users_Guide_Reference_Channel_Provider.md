@@ -1,6 +1,6 @@
-# 1.8 - Reference Provider Users Guide
+# 1.8 - Reference Channel Provider Users Guide
 
-This section describes what an AIDA-PVA user should know about accessing the Reference Provider through AIDA-PVA. This
+This section describes what an AIDA-PVA user should know about accessing the Reference Channel Provider through AIDA-PVA. This
 data provider:
 
 - Testing of your application by providing data in any way you want it.
