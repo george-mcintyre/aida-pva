@@ -92,8 +92,8 @@ AIDA-PVA SERVICE is the process that will launch your shared library, calling th
 
 ## Normative Types
 
-The clients will be expecting data that corresponds to the Normative Type standard.  
-The framework does all the work representing your data as Normative Types. You don't have to know, or do, anything for
+The clients will be expecting data that corresponds to the Normative Type standard. The framework 
+does all the work representing your data as Normative Types. You don't have to know, or do, anything for
 this. For reference see [Normative Types](2_2_Normative_Types.md)
 
 ## Supported Data Types
