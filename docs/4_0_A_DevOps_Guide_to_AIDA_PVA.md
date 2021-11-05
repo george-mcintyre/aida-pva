@@ -10,7 +10,7 @@ AIDA-PVA is made up of the following components:
 The Model and Master Oscillator Channel Providers have been mostly implemented but have not been deployed.  The code is only in the github repository.  [AIDASLCMOSC code](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers/SLCMosc), [AIDASLCMODEL code](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers/SLCModel).  Documentation: [MOSC](1_06_Users_Guide_SLC_Master_Oscillator_Channel_Provider.md), Tests: [MOSC](https://www.slac.stanford.edu/grp/cd/soft/aida/aida-pva/classedu_1_1stanford_1_1slac_1_1aida_1_1test_1_1_slc_mosc_test.html) 
 
 ### AIDA-PVA SERVICE (AIDA-PVA.JAR)
-* launches the Channel Provider Shared Libraries integrating them into the EPICS PV-Access network
+* launches the Channel Provider Shared Images integrating them into the EPICS PV-Access network
 * Built from [AIDA-PVA Github Repo](https://github.com/slaclab/aida-pva) on Linux and copied to SLCLIBS
 
 @see [Building AIDA-PVA Service](3_1_Building_AIDA_PVA_Service.md) for instructions on how to build it.
@@ -29,28 +29,28 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
 
 @see [Porting EPICS to Java 1.5](5_0_Porting_EPICS_to_Java_1_5_on_VMS.md) for instructions on how to build it.
 
-### Channel Provider Shared Libraries loaded by the AIDA-PVA SERVICE
-* Libraries (CMS Library):
-    * `AIDASLCDB.EXE` - (AIDASLCDBLIB)
-    * `AIDASLCBPM.EXE` - (AIDASLCBPMLIB)
-    * `AIDASLCBPMBUFF.EXE` - (AIDASLCBPMBUFFLIB)
-    * `AIDASLCKLYS.EXE` - (AIDASLCKLYSLIB)
-    * `AIDASLCMAGNET.EXE` - (AIDASLCMAGNETLIB)
-    * `AIDASLCMODEL.EXE` - (AIDASLCMODELLIB)
-    * `AIDASLCMOSC.EXE` - (AIDASLCMOSCLIB)
-    * `AIDASLCUTIL.EXE` - (AIDASLCUTILLIB)
+### Channel Provider Shared Images loaded by the AIDA-PVA SERVICE
+* Shared Images (CMS Library):
+    * `AIDASLCDB.EXE` - (CMS_AIDASLCDB)
+    * `AIDASLCBPM.EXE` - (CMS_AIDASLCBPM)
+    * `AIDASLCBPMBUFF.EXE` - (CMS_AIDASLCBPMBUFF)
+    * `AIDASLCKLYS.EXE` - (CMS_AIDASLCKLYS)
+    * `AIDASLCMAGNET.EXE` - (CMS_AIDASLCMAGNET)
+    * `AIDASLCMODEL.EXE` - (CMS_AIDASLCMODEL)
+    * `AIDASLCMOSC.EXE` - (CMS_AIDASLCMOSC)
+    * `AIDASLCUTIL.EXE` - (CMS_AIDASLCUTIL)
 * Built from CMS but original source code [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers)
 
 @see [Building an AIDA-PVA Channel Provider](3_3_Building_AIDA_PVA_Channel_Provider.md) for instructions on how to build one.
 
-### AIDA-PVA Module in STANDALONELIB
+### AIDA-PVA Module in STANDALONELIB.OLB
 * Modules:
     * `AIDA_PVA_SERVER_HELPER` - **Helper functions for the AIDA-PVA Providers**
     * `AIDA_PVA_JNI_HELPER` - Used by the AIDA-PVA Module to interoperate in a JNI environment
     * `AIDA_PVA_TYPES_HELPER` - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
     * `NATIVECHANNELPROVIDERJNI` - JNI Entry points from AIDA-PVA.JAR
     * `AIDA_PVA_JSON` - Used by AIDA-PVA Module to parse JSON
-* Build from CMS but original code from [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/aida-pva)
+* Build from CMS_STANDALONE but original code from [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/aida-pva)
 
 @see [Building AIDA-PVA Service](3_2_Building_AIDA_PVA_into_STANDALONELIB.md) for instructions on how to build it.
 
@@ -80,17 +80,17 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
   * aida_pva_types_helper.h
   * slac_aida_NativeChannelProvider.h
 * Maintained in CMS in C_INC but original code from [AIDA-PVA github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp)
-### AIDA-PVA Option Files
+### AIDA-PVA Option Files in CMS_SLCSHR_CONTROL
 * For Channel Provider linking
-    * AIDASLCDB.OPT
-    * AIDASLCBPM.OPT
-    * AIDASLCBPMBUFF.OPT
-    * AIDASLCKLYS.OPT
-    * AIDASLCMAGNET.OPT
-    * AIDASLCMODEL.OPT
-    * AIDASLCMOSC.OPT
-    * AIDASLCUTIL.OPT
-### AIDA-PVA Channel Configuration Files
+    * AIDASLCDB_GENERAL.OPT, AIDASLCDB_XFR_ALPHA.OPT
+    * AIDASLCBPM_GENERAL.OPT, AIDASLCBPM_XFR_ALPHA.OPT
+    * AIDASLCBPMBUFF_GENERAL.OPT, AIDASLCBPMBUFF_XFR_ALPHA.OPT
+    * AIDASLCKLYS_GENERAL.OPT, AIDASLCKLYS_XFR_ALPHA.OPT
+    * AIDASLCMAGNET_GENERAL.OPT, AIDASLCMAGNET_XFR_ALPHA.OPT
+    * AIDASLCMODEL_GENERAL.OPT, AIDASLCMODEL_XFR_ALPHA.OPT
+    * AIDASLCMOSC_GENERAL.OPT, AIDASLCMOSC_XFR_ALPHA.OPT
+    * AIDASLCUTIL_GENERAL.OPT, AIDASLCUTIL_XFR_ALPHA.OPT
+### AIDA-PVA Channel Configuration Files in CMS_SLCTXT
 * For Supported Channel Definition and Configuration
     * AIDASLCDB_CHANNELS.YML - Full channel listing
     * AIDASLCDB_CHANNELS.YAML - Uses wildcards to keep file size small
