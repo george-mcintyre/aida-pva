@@ -1,5 +1,5 @@
-#ifndef slcBuffAcq_server_h
-#define slcBuffAcq_server_h
+#ifndef AIDASLCBPMBUFF_SERVER_H
+#define AIDASLCBPMBUFF_SERVER_H
 #ifdef __cplusplus
 extern "C" {
 #endif

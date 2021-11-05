@@ -1,5 +1,5 @@
-#ifndef slcUtil_server_h
-#define slcUtil_server_h
+#ifndef AIDASLCUTIL_SERVER_H
+#define AIDASLCUTIL_SERVER_H
 #ifdef __cplusplus
 extern "C" {
 #endif

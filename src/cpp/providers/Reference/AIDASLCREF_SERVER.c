@@ -2,7 +2,7 @@
  *  @brief Reference Server implementation.
  */
 #include "aida_pva.h"
-#include "reference_server.h"
+#include "AIDASLCREF_SERVER.h"
 
 /**
  * Initialise the service

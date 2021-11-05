@@ -4,7 +4,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slcModel_server.h"
+#include "AIDASLCMODEL_SERVER.h"
 
 // API Stubs
 REQUEST_STUB_BOOLEAN

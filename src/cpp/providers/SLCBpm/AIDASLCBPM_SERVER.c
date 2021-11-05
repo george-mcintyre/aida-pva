@@ -4,7 +4,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slcBpm_server.h"
+#include "AIDASLCBPM_SERVER.h"
 
 static int checkArguments(JNIEnv* env, int bpmd, int navg, int cnfnum, int sortOrder, int cnftype);
 static int acquireBpmData(JNIEnv* env, int* rows, int bpmd, int n, int cnftype, int cnfnum, int sortOrder);

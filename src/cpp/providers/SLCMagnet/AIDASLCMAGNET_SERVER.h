@@ -1,5 +1,5 @@
-#ifndef slcMagnet_server_h
-#define slcMagnet_server_h
+#ifndef AIDASLCKLYS_SERVER_H
+#define AIDASLCKLYS_SERVER_H
 #ifdef __cplusplus
 extern "C" {
 #endif

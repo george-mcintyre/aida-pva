@@ -10,7 +10,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slc_server.h"
+#include "AIDASLCDB_SERVER.h"
 
 // API Stubs
 SET_STUB_TABLE

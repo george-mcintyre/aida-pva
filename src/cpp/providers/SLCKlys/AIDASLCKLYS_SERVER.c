@@ -4,7 +4,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slcKlys_server.h"
+#include "AIDASLCKLYS_SERVER.h"
 
 static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, short* klys_status);
 static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);

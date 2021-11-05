@@ -6,7 +6,7 @@
  * Magnet Server implementation
  */
 #include "aida_pva.h"
-#include "slcMagnet_server.h"
+#include "AIDASLCMAGNET_SERVER.h"
 
 static int getBaseMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value,
 		int* count, char** prim_list,

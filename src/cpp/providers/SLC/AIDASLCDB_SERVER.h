@@ -1,5 +1,5 @@
-#ifndef slc_server_h
-#define slc_server_h
+#ifndef AIDASLCDB_SERVER_H
+#define AIDASLCDB_SERVER_H
 #ifdef __cplusplus
 extern "C" {
 #endif

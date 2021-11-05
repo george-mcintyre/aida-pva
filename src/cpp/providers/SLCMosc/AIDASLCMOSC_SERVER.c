@@ -4,7 +4,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slcMosc_server.h"
+#include "AIDASLCMOSC_SERVER.h"
 
 static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char** units, char** ring, float* floatValue);
 

@@ -4,7 +4,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slcBuffAcq_server.h"
+#include "AIDASLCBPMBUFF_SERVER.h"
 
 static int
 acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceNames, char* dGroupName,

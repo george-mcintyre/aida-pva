@@ -4,7 +4,7 @@
  *     **ATTRIBUTES**=JNI
  */
 #include "aida_pva.h"
-#include "slcUtil_server.h"
+#include "AIDASLCUTIL_SERVER.h"
 
 static Table setTriggerValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
 static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);

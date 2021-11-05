@@ -1,5 +1,5 @@
-#ifndef reference_server_h
-#define reference_server_h
+#ifndef AIDASLCREF_SERVER_H
+#define AIDASLCREF_SERVER_H
 #ifdef __cplusplus
 extern "C" {
 #endif
