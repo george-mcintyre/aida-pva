@@ -56,15 +56,15 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
 
 ### AIDA-PVA Header Files
 * Channel Provider header files in C_INC
-  * slc_server.h
-  * slcBpm_server.h
-  * slcBuffAcq_server.h
-  * slcKlys_server.h
-  * slcMagnet_server.h
-  * slcModel_server.h
-  * slcMosc_server.h
-  * slcUtil_server.h
-  * reference_server.h
+  * AIDASLCDB_SERVER.H
+  * AIDASLCBPM_SERVER.H
+  * AIDASLCBPMBUFF_SERVER.H
+  * AIDASLCKLYS_SERVER.H
+  * AIDASLCMAGNET_SERVER.H
+  * AIDASLCMODEL_SERVER.H
+  * AIDASLCMOSC_SERVER.H
+  * AIDASLCUTIL_SERVER.H
+  * AIDASLCREF_SERVER.H
 * AIDA-PVA Module API header files in C_INC
   * aida_pva.h
   * aida_pva_api.h
