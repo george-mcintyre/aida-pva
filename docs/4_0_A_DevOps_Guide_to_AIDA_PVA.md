@@ -55,7 +55,7 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
 @see [Building AIDA-PVA Service](3_2_Building_AIDA_PVA_into_STANDALONELIB.md) for instructions on how to build it.
 
 ### AIDA-PVA Header Files
-* Channel Provider header files in C_INC
+* Channel Provider header files in CMS_C_INC
   * AIDASLCDB_SERVER.H
   * AIDASLCBPM_SERVER.H
   * AIDASLCBPMBUFF_SERVER.H
@@ -65,7 +65,7 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
   * AIDASLCMOSC_SERVER.H
   * AIDASLCUTIL_SERVER.H
   * AIDASLCREF_SERVER.H
-* AIDA-PVA Module API header files in C_INC
+* AIDA-PVA Module API header files in CMS_C_INC
   * aida_pva.h
   * aida_pva_api.h
   * aida_pva_convert.h 
@@ -74,14 +74,14 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
   * aida_pva_memory.h 
   * aida_pva_types.h 
   * aida_pva_uri.h
-* AIDA-PVA Module internal header files in C_INC
+* AIDA-PVA Module internal header files in CMS_C_INC
   * aida_pva_jni_helper.h
   * aida_pva_server_helper.h
   * aida_pva_types_helper.h
   * slac_aida_NativeChannelProvider.h
-* Maintained in CMS in C_INC but original code from [AIDA-PVA github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp)
-### AIDA-PVA Option Files in CMS_SLCSHR_CONTROL
-* For Channel Provider linking
+* Maintained in CMS in CMS_C_INC but original code from [AIDA-PVA github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp)
+### AIDA-PVA Option Files
+* For Channel Provider linking in CMS_SLCSHR_CONTROL
     * AIDASLCDB_GENERAL.OPT, AIDASLCDB_XFR_ALPHA.OPT
     * AIDASLCBPM_GENERAL.OPT, AIDASLCBPM_XFR_ALPHA.OPT
     * AIDASLCBPMBUFF_GENERAL.OPT, AIDASLCBPMBUFF_XFR_ALPHA.OPT
@@ -90,8 +90,8 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
     * AIDASLCMODEL_GENERAL.OPT, AIDASLCMODEL_XFR_ALPHA.OPT
     * AIDASLCMOSC_GENERAL.OPT, AIDASLCMOSC_XFR_ALPHA.OPT
     * AIDASLCUTIL_GENERAL.OPT, AIDASLCUTIL_XFR_ALPHA.OPT
-### AIDA-PVA Channel Configuration Files in CMS_SLCTXT
-* For Supported Channel Definition and Configuration
+### AIDA-PVA Channel Configuration Files
+* For Supported Channel Definition and Configuration in CMS_SLCTXT
     * AIDASLCDB_CHANNELS.YML - Full channel listing
     * AIDASLCDB_CHANNELS.YAML - Uses wildcards to keep file size small
     * AIDASLCBPM_CHANNELS.YML
