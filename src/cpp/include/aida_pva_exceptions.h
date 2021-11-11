@@ -9,12 +9,7 @@ extern "C" {
 #endif
 
 #include "aida_pva.h"
-
-// Override prototypes of externals to uppercase names, since compile.com
-// adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
-// is in effect (as is for this module), then it's /names=AS_IS.
-
-void ERRTRANSLATE(const unsigned long int* errcode_p, struct dsc$descriptor* msgdsc_ps);
+#include "errtranslate.h"
 
 // Supported exceptions
 #define AIDA_INTERNAL_EXCEPTION "AidaInternalException"

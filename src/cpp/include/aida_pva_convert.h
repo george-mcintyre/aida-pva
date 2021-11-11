@@ -10,18 +10,9 @@ extern "C" {
 
 #include <jni.h>
 #include <stdbool.h>
+#include "sysutil_proto.h"
 #include "aida_pva_json.h"
 #include "aida_pva.h"
-
-/* Override prototypes of externals to uppercase names since
-compile.com adds cc/name=UPPERCASE on compiles by default.
-However, if the ATTRIBUTE=JNI is in effect (as it is for
-this module), then it is /names=AS_IS.
--------------------------------------------------------------*/
-void CVT_VMS_TO_IEEE_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
-void CVT_VMS_TO_IEEE_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
-void CVT_IEEE_TO_VMS_FLT(void* sorc_a, float dest_a[], unsigned short* nlong_p);
-void CVT_IEEE_TO_VMS_DBL(void* sorc_a, double dest_a[], unsigned short* nlong_p);
 
 /**
  * @def CONVERT_TO_VMS_FLOAT
