@@ -23,8 +23,15 @@ html {
 @media (prefers-color-scheme: dark) {
     html:not(.light-mode) {
         /* define dark-mode variable overrides here if you DON'T use doxygen-awesome-darkmode-toggle.js */
-        --primary-color: #897a55;
-        --primary-dark-color: #7a522d;
+        --primary-color: #c9975f;
+        --primary-dark-color: #a97343;
+        --primary-light-color: #e0c077;
+        --primary-lighter-color: #f2e0a9;
+        --primary-lightest-color: #f5e6bf;
+
+        --note-color: rgba(255, 183, 0, 0.85);
+        --note-color-dark: #624715;
+        --note-color-darker: #fefefe;
 
         /* table colors */
         --tablehead-background: #bf922f;

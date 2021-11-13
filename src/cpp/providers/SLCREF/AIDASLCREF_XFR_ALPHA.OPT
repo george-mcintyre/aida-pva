@@ -1,3 +1,5 @@
+!==============================================================================
+!       **CMS**=SLCSHR_CONTROL
 case_sensitive=YES
 SYMBOL_VECTOR=(Java_slac_aida_NativeCh1dgccee$=PROCEDURE,-
      Java_slac_aida_NativeCh25dfjd6$=PROCEDURE,-

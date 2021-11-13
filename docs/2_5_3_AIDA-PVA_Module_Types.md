@@ -11,7 +11,7 @@ return package up data for return.
 
 These are defined in aida_pva_types.h but are also automatically loaded by including aida_pva.h.
 
-- Type - _Types of return value, or arguments see [Supported Types Documentation](Supported_Types.md)_
+- @ref Type - _Types of return value, or arguments see [Supported Types Documentation](Supported_Types.md)_
 - Arguments - _All the arguments passed from the request to the Channel Provider_
 - Argument - _A single request argument_
 - Value - _Contents of the VALUE argument_

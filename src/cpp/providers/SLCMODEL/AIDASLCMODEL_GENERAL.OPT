@@ -1,11 +1,12 @@
 !==============================================================================
-!       **CMS**=OPT
+!       **CMS**=SLCSHR_CONTROL
 !
 ! Name: AIDASLCMODEL_GENERAL.OPT
 !
 ! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
 
 case_sensitive=YES
+SLCLIBS:AIDASLCMODELLIB.OLB/INCLUDE=(AIDASLCMODEL_SERVER)
 SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
  NATIVECHANNELPROVIDERJNI, -
  AIDA_PVA_SERVER_HELPER, -

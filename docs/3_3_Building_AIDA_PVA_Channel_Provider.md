@@ -47,13 +47,20 @@ MCCDEV>
 ```c
   /*   **CMS**=C_INC   */
 ```
-3. Check out original code from github (first time only - afterwards maintain code in CMS)
+3. Make sure all OPT files have correct CMS header
+```text
+!==============================================================================
+!       **CMS**=OPT
+!
+! Name: AIDASLCDB_GENERAL.OPT
+```
+4. Check out original code from github (first time only - afterwards maintain code in CMS)
 ```shell
 cd dev
 git clone  git@github.com:slaclab/aida-pva.git
 cd aida-pva/src/cpp/providers/slc
 ```
-4. Copy your code (1 C file, 1 header file, and 1 OPT file usually) to a directory on MCCDEV
+5. Copy your code (1 C file, 1 header file, and 1 OPT file usually) to a directory on MCCDEV
 ```shell
 > sftp mccdev
 Connecting to mccdev...
@@ -64,12 +71,12 @@ sftp> mput *.c
 sftp> mput *.h
 sftp> mput *.OPT
 ```
-5. On VMS, Go into development directory
+6. On VMS, Go into development directory
 ```shell
 MCCDEV> set def [.AIDASLCDB] 
 ```
 
-### Compile the code
+@subsection cbtd Compiling, Building, Testing, and Deploying
 1. Push headers to CMS
 ```shell
  MCCDEV> CMP *.h
@@ -96,10 +103,10 @@ MCCDEV> set def [.AIDASLCDB]
 ```shell
 MCCDEV> LIBRARY /CREATE AIDASLCDB_DEVLIB
 MCCDEV> CINC *.C
- Processing file DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.PROVIDERS.SLCDB]AIDASLCDB_SERVERC;13
+ Processing file DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_SERVERC;13
 **MEMBER**=SLCLIBS:AIDASLCDBLIB overridden to AIDASLCDB_DEVLIB
 Note:  using NOOPT by default for DECC
-%LIBRAR-S-INSERTED, module SLC_SERVER inserted in DATA_DISK_SLC:[SCRATCH.SLY.DEV.AIDA-PVA.PROVIDERS.SLCDB]AIDASLCDB_DEVLIB.OLB;1
+    %LIBRAR-S-INSERTED, module SLC_SERVER inserted in DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_DEVLIB.OLB;1
 ```
 4. Make sure your provided `AIDASLCDB_GENERAL.OPT` file contains the correct CMS Card, and references to all the Legacy AIDA Modules you require
 ```text
@@ -186,3 +193,69 @@ INFO: Server Ready: 27.064s
 8. Leave for a few days to make sure no problems surface 
 9. `NEWSHR AIDASLCDB` - create production shareable and releases it into production - so all servers and clients are using it
 
+## Making Changes to a Channel Provider
+### Reserve the code for changes
+1. Go into working directory
+```shell
+MCCDEV> set def [.AIDASLCDB]  
+```
+2. Go into CMS command line
+```shell
+MCCDEV> SLCCMS
+SlcCMS> 
+```
+3. If you are updating the C source file reserve it
+```shell
+SlcCMS> SET LIBR CMS_AIDASLCDB
+%CMS-I-LIBIS, library is CMS_:[AIDASLCDB]
+%CMS-S-LIBSET, library set
+SlcCMS> RESERVE AIDASLCDB_SERVER.C
+_Remark: Update SLC DB Channel Configuration C File
+%CMS-S-RESERVED, generation 6 of element CMS_:[AIDASLCDB]AIDASLCDB_SERVER.C reserved
+SlcCMS> 
+```
+4. If you are updating the header file reserve it
+```shell
+SlcCMS> SET LIBR CMS_C_INC
+%CMS-I-LIBIS, library is CMS_:[C_INC]
+%CMS-S-LIBSET, library set
+SlcCMS> RESERVE AIDASLCDB_SERVER.H
+_Remark: Update SLC DB Channel Configuration Header File
+%CMS-S-RESERVED, generation 3 of element CMS_:[C_INC]AIDASLCDB_SERVER.H reserved
+SlcCMS> 
+```
+5. If you are updating the OPT file reserve it
+```shell
+SlcCMS> SET LIBR CMS_OPT
+%CMS-I-LIBIS, library is CMS_:[OPT]
+%CMS-S-LIBSET, library set
+SlcCMS> RESERVE AIDASLCDB_GENERAL.OPT
+_Remark: Update SLC DB Channel Configuration OPT File
+%CMS-S-RESERVED, generation 2 of element CMS_:[OPT]AIDASLCDB_GENERAL.OPT reserved
+SlcCMS> exit 
+MCCDEV>
+```
+6. After you've made changes, push Header and OPT back to CMS
+@note The C file will be pushed back to CMS during build process later
+
+```shell
+MCCDEV> CMP AIDASLCDB_SERVER.H,AIDASLCDB_GENERAL.OPT
+ Processing file DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_SERVER.H;11
+
+SLY, Why are You doing this?
+Data:	Update SLC DB Channel Configuration Header File
+%CMS-I-LIBIS, library is CMS_:[C_INC]
+%CMS-S-LIBSET, library set
+-CMS-I-SUPERSEDE, library list superseded
+Please enter CMS REPLACE/IF_CHANGED remark. [Update SLC DB Channel Configuration Header File]:
+%CMS-S-GENCREATED, generation 3 of element CMS_:[C_INC]AIDASLCDB_SERVER.H created
+%STRIP_C_COMMENTS-I, producing file REF_C_INC:AIDASLCDB_SERVER.NO_COMMENTS_H
+ Processing file DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_GENERAL.OPT;11
+%CMS-I-LIBIS, library is CMS_:[OPT]
+%CMS-S-LIBSET, library set
+-CMS-I-SUPERSEDE, library list superseded
+Please enter CMS REPLACE/IF_CHANGED remark. [Update SLC DB Channel Configuration Header File]: Update SLC DB Channel Configuration Opt File
+%CMS-S-GENCREATED, generation 2 of element CMS_:[OPT]AIDASLCDB_GENERAL.OPT created
+MCCDEV> 
+```
+7. Go to @ref cbtd to complete deployment process
