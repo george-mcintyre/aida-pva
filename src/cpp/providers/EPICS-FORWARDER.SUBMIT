@@ -1,0 +1,29 @@
+$!       **CMS**=COM_GEN
+$!
+$!=========================================================================
+$!
+$! Name: EPICS-FORWARDER.SUBMIT
+$!
+$! Abs:   A warmslcx batch job to run the EPICS FORWARDER.
+$!
+$!=========================================================================
+$!
+$set noon
+$!
+$! Change how often we write to the log file in batch. Default is 1 min.
+$! We do this so we can see what the heck is going on without waiting 1min.
+$!
+$set output_rate=:0:10
+$on error then continue
+$!
+$write sys$output "Starting EPICS-FORWARDER ..."
+$@SLCCOM:USERLOGIN FORCE               ! Define java logicals.
+$ procname == "EPICS-FORWARDER"
+$set proc/name='procname'
+$!
+$@slccom:STARTAIDASLC.COM
+$goto egress
+$!
+$egress:
+$write sys$output "Exiting EPICS-FORWARDER.SUBMIT"
+$exit

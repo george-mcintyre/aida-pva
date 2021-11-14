@@ -1,0 +1,30 @@
+$!       **CMS**=COM_GEN
+$!
+$!=========================================================================
+$!
+$! Name: AIDASLCUTIL.SUBMIT
+$!
+$! Abs:   A warmslcx batch job to run the AIDA-PVA AIDASLCUTIL data source.
+$!
+$!=========================================================================
+$!
+$set noon
+$!
+$! Change how often we write to the log file in batch. Default is 1 min.
+$! We do this so we can see what the heck is going on without waiting 1min.
+$!
+$set output_rate=:0:10
+$on error then continue
+$!
+$write sys$output "Starting AIDASLCUTIL datasource...."
+$@SLCCOM:USERLOGIN FORCE               ! Define java logicals.
+$ procname == "AIDASLCUTIL"
+$ config == "AIDASLCUTIL_CHANNELS.YML"
+$set proc/name='procname'
+$!
+$@slccom:STARTAIDASLC.COM
+$goto egress
+$!
+$egress:
+$write sys$output "Exiting AIDASLCUTIL.SUBMIT"
+$exit
