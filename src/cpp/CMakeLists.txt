@@ -29,21 +29,21 @@ add_executable(cpp
         include/aida_pva_memory.h
         include/aida_pva_types.h
         include/aida_pva_uri.h
-        providers/Reference/AIDASLCREF_SERVER.c
-        providers/Reference/AIDASLCREF_SERVER.h
-        providers/SLC/AIDASLCDB_SERVER.c
-        providers/SLC/AIDASLCDB_SERVER.h
-        providers/SLCBpm/AIDASLCBPM_SERVER.c
-        providers/SLCBpm/AIDASLCBPM_SERVER.h
-        providers/SLCBuffAcq/AIDASLCBPMBUFF_SERVER.c
-        providers/SLCBuffAcq/AIDASLCBPMBUFF_SERVER.h
-        providers/SLCKlys/AIDASLCKLYS_SERVER.c
-        providers/SLCKlys/AIDASLCKLYS_SERVER.h
-        providers/SLCMagnet/AIDASLCMAGNET_SERVER.c
-        providers/SLCMagnet/AIDASLCMAGNET_SERVER.h
-        providers/SLCModel/AIDASLCMODEL_SERVER.c
-        providers/SLCModel/AIDASLCMODEL_SERVER.h
-        providers/SLCMosc/AIDASLCMOSC_SERVER.c
-        providers/SLCMosc/AIDASLCMOSC_SERVER.h
-        providers/SLCUtil/AIDASLCUTIL_SERVER.c
-        providers/SLCUtil/AIDASLCUTIL_SERVER.h)
+        providers/SLCREF/AIDASLCREF_SERVER.c
+        providers/SLCREF/AIDASLCREF_SERVER.h
+        providers/SLCDB/AIDASLCDB_SERVER.c
+        providers/SLCDB/AIDASLCDB_SERVER.h
+        providers/SLCBPM/AIDASLCBPM_SERVER.c
+        providers/SLCBPM/AIDASLCBPM_SERVER.h
+        providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.c
+        providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.h
+        providers/SLCKKLYS/AIDASLCKLYS_SERVER.c
+        providers/SLCKLYS/AIDASLCKLYS_SERVER.h
+        providers/SLCMAGNET/AIDASLCMAGNET_SERVER.c
+        providers/SLCMAGNET/AIDASLCMAGNET_SERVER.h
+        providers/SLCMODEL/AIDASLCMODEL_SERVER.c
+        providers/SLCMODEL/AIDASLCMODEL_SERVER.h
+        providers/SLCMOSC/AIDASLCMOSC_SERVER.c
+        providers/SLCMOSC/AIDASLCMOSC_SERVER.h
+        providers/SLCUTIL/AIDASLCUTIL_SERVER.c
+        providers/SLCUTIL/AIDASLCUTIL_SERVER.h)

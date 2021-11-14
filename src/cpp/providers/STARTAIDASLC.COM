@@ -19,7 +19,8 @@ $!
 $  IF procname .EQS. "EPICS-FORWARDER" THEN GOTO STARTFORWARDER
 $ libpath == "-Djava.library.path=/SLCSHR"
 $ conf == "-Daida.pva.channels.filename=/SLCTXT/''config'"
-$ lib == "-Daida.pva.lib.name=''procname'"
+$ libname = procname - "_"
+$ lib == "-Daida.pva.lib.name=''libname'"
 $!
 $!
 $ write sys$output "Starting ''procname' Server"

@@ -33,6 +33,24 @@ REQUEST_STUB_STRING_ARRAY
 SET_STUB_VOID
 SET_STUB_TABLE
 
+unsigned long int STANDALONE_INIT(
+		const struct dsc$descriptor_s* name,
+		const long int* dbinit,
+		const struct msginit* msginit,
+		const long int* query,
+		const long int* set
+);
+
+static vmsstat_t INIT()
+{
+	vmsstat_t status;
+	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCBPM");
+
+	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
+			NULL, &((long)(FALSE)), &((long)(FALSE)));
+	return status;
+}
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
@@ -42,7 +60,7 @@ void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
 
-	if (!$VMS_STATUS_SUCCESS(status = DPSLCBPM_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = INIT())) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC BPM Service");
 		return;
 	}

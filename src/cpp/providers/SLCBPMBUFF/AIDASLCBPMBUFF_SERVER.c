@@ -17,6 +17,25 @@ static int getBuffAcqData(JNIEnv* env,
 static int endAcquireBuffAcq(JNIEnv* env);
 static int checkArguments(JNIEnv* env, int bpmd, int nrpos, int nDevices);
 
+unsigned long int STANDALONE_INIT(
+		const struct dsc$descriptor_s* name,
+		const long int* dbinit,
+		const struct msginit* msginit,
+		const long int* query,
+		const long int* set
+);
+
+static vmsstat_t INIT()
+{
+	vmsstat_t status;
+	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCBPM");
+
+	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
+			NULL, &((long)(FALSE)), &((long)(FALSE)));
+	return status;
+}
+
+
 // API Stubs
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
@@ -46,7 +65,7 @@ void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
 
-	if (!$VMS_STATUS_SUCCESS(status = DPSLCBUFF_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = INIT())) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "while initializing Buffered BPM service");
 		return;
 	}
