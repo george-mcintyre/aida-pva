@@ -10,6 +10,8 @@ $!
 $!
 $!===============================================================================
 $!
+$! Set the correct java version 1.5 for running AIDA-PVA
+$ @DISK$JAVA:[JAVA$150.COM]JAVA$150_SETUP.COM
 $!
 $! Make intermediate logicals to pass system properties
 $! and avoid the VMS DCL 255 char limit.
