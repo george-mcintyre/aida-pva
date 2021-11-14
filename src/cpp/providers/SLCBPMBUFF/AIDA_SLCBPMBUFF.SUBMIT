@@ -2,7 +2,7 @@ $!       **CMS**=COM_GEN
 $!
 $!=========================================================================
 $!
-$! Name: AIDASLCBPMBUFF.SUBMIT
+$! Name: AIDA_SLCBPMBUFF.SUBMIT
 $!
 $! Abs:   A warmslcx batch job to run the AIDA-PVA AIDASLCBPMBUFF data source.
 $!
@@ -18,7 +18,7 @@ $on error then continue
 $!
 $write sys$output "Starting AIDASLCBPMBUFF datasource...."
 $@SLCCOM:USERLOGIN FORCE               ! Define java logicals.
-$ procname == "AIDASLCBPMBUFF"
+$ procname == "AIDA_SLCBPMBUFF"
 $ config == "AIDASLCBPMBUFF_CHANNELS.YML"
 $set proc/name='procname'
 $!
@@ -26,5 +26,5 @@ $@slccom:STARTAIDASLC.COM
 $goto egress
 $!
 $egress:
-$write sys$output "Exiting AIDASLCBPMBUFF.SUBMIT"
+$write sys$output "Exiting AIDA_SLCBPMBUFF.SUBMIT"
 $exit

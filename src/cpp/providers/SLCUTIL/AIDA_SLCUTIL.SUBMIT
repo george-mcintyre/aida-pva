@@ -2,7 +2,7 @@ $!       **CMS**=COM_GEN
 $!
 $!=========================================================================
 $!
-$! Name: AIDASLCUTIL.SUBMIT
+$! Name: AIDA_SLCUTIL.SUBMIT
 $!
 $! Abs:   A warmslcx batch job to run the AIDA-PVA AIDASLCUTIL data source.
 $!
@@ -18,7 +18,7 @@ $on error then continue
 $!
 $write sys$output "Starting AIDASLCUTIL datasource...."
 $@SLCCOM:USERLOGIN FORCE               ! Define java logicals.
-$ procname == "AIDASLCUTIL"
+$ procname == "AIDA_SLCUTIL"
 $ config == "AIDASLCUTIL_CHANNELS.YML"
 $set proc/name='procname'
 $!
@@ -26,5 +26,5 @@ $@slccom:STARTAIDASLC.COM
 $goto egress
 $!
 $egress:
-$write sys$output "Exiting AIDASLCUTIL.SUBMIT"
+$write sys$output "Exiting AIDA_SLCUTIL.SUBMIT"
 $exit

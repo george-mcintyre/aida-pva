@@ -2,7 +2,7 @@ $!       **CMS**=COM_GEN
 $!
 $!=========================================================================
 $!
-$! Name: AIDASLCDB.SUBMIT
+$! Name: AIDA_SLCDB.SUBMIT
 $!
 $! Abs:   A warmslcx batch job to run the AIDA-PVA AIDASLCDB data source.
 $!
@@ -18,7 +18,7 @@ $on error then continue
 $!
 $write sys$output "Starting AIDASLCDB datasource...."
 $@SLCCOM:USERLOGIN FORCE               ! Define java logicals.
-$ procname == "AIDASLCDB"
+$ procname == "AIDA_SLCDB"
 $ config == "AIDASLCDB_CHANNELS.YAML"
 $set proc/name='procname'
 $!
@@ -26,5 +26,5 @@ $@slccom:STARTAIDASLC.COM
 $goto egress
 $!
 $egress:
-$write sys$output "Exiting AIDASLCDB.SUBMIT"
+$write sys$output "Exiting AIDA_SLCDB.SUBMIT"
 $exit
