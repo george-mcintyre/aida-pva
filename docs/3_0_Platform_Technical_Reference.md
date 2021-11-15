@@ -7,7 +7,7 @@ In order to make AIDA-PVA work on VMS EPICS had to be backported to Java 1.5. Th
 the following libraries that were used to build the AIDA-PVA SERVICE Jar and run the EPICS framework on VMS.
 - EPICS-PVACCESS-bp15.JAR - Backported version of PVACCESS.JAR.
 - EPICS-PVDATA-bp15.JAR - Backported version of PVDATA.JAR.
-- EPICS-FORWARDER.JAR - New component of EPICS required for the framework on VMS.
+- EPICS_FORWARDER.JAR - New component of EPICS required for the framework on VMS.
 
 @see [Porting EPICS to Java 1.5 on VMS](5_0_Porting_EPICS_to_Java_1_5_on_VMS.md) for more information
 

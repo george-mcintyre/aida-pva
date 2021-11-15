@@ -24,7 +24,7 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
 @see [Porting EPICS to Java 1.5](5_0_Porting_EPICS_to_Java_1_5_on_VMS.md) for instructions on how to build it.
 
 ### EPICS-7 Forwarder (specially built for AIDA-PVA)
-* `EPICS-FORWARDER.JAR`
+* `EPICS_FORWARDER.JAR`
 * Built from [EPICS Backport GitHub Repo](https://github.com/slaclab/epics-server-java-backport-1.5) on Linux and copied to SLCLIBS.
 
 @see [Porting EPICS to Java 1.5](5_0_Porting_EPICS_to_Java_1_5_on_VMS.md) for instructions on how to build it.
@@ -216,12 +216,12 @@ the JNI entrypoints that the AIDA-PVA Service will call.
 ### 1 - Run the Forwarder
 * startup with the following command:
 ```shell
-MCCDEV> java -jar SLCLIBS:EPICS-FORWARDER.JAR
+MCCDEV> java -jar SLCLIBS:EPICS_FORWARDER.JAR
 Oct 24, 2021 2:35:33 AM org.epics.forwarder.PVAForwarder main
 INFO: EPICS Request Forwarder started: 2344 milliseconds
 9:35 > 
 ```
-* You can also run it using `java -jar /SLCLIBS/EPICS-FORWARDER.JAR`
+* You can also run it using `java -jar /SLCLIBS/EPICS_FORWARDER.JAR`
 @warning 
 It is imperative that the Forwarder is started before any Channel Provider service. If the Forwarder dies then all the Channel Provider services must be shutdown and only restarted after starting the Forwarder. This is because of a port contention that exists if the Forwarder finds any Channel Provider service running when it starts up.
 

@@ -149,6 +149,11 @@ MCCDEV> LIBRARY/EXTRACT=NATIVECHANNELPROVIDERJNI/output=NATIVECHANNELPROVIDERJNI
 MCCDEV> @java$jni_example:scan_globals_for_option *.OBJ STANDALONELIB_XFR_ALPHA.OPT
 DATA_DISK_SLC:[.AIDA-PVA]NATIVECHANNELPROVIDERJNI.OBJ;1
 ```
+Then edit this file to add the correct CMS member card at the top:
+```text
+!==============================================================================
+!       **CMS**=SLCSHR_CONTROL
+```
 ## Making Changes to AIDA-PVA Module
 To make changes you need to check out the source from CMS. Make changes and then check them back in again.
 1. Check out the code from CMS

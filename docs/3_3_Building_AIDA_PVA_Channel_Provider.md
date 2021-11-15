@@ -94,7 +94,7 @@ MCCDEV> set def [.AIDASLCDB]
  %STRIP_C_COMMENTS-I, producing file REF_C_INC:AIDASLCDB_SERVERNO_COMMENTS_H
  MCCDEV>
 ```
-2. Copy STANDALONELIB_XFR_ALPHA.OPT to your directory
+2. Copy STANDALONELIB_XFR_ALPHA.OPT to your directory and rename
 ```shell
  MCCDEV> COPY [-.AIDA-PVA]STANDALONELIB_XFR_ALPHA.OPT AIDASLCDB_XFR_ALPHA.OPT
  MCCDEV>
@@ -145,7 +145,7 @@ MCCDEV>
 You can run your provider by starting the forwarder in another terminal and then starting your Channel Provider.
 1. Start the Forwarder
 ```shell
-MCCDEV> java -jar SLCLIBS:EPICS-FORWARDER.JAR
+MCCDEV> java -jar SLCLIBS:EPICS_FORWARDER.JAR
 Nov 4, 2021 2:22:29 AM org.epics.forwarder.PVAForwarder main
 INFO: EPICS Request Forwarder started: 1987 milliseconds
 9:22 >

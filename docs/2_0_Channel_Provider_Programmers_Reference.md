@@ -77,7 +77,7 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
   * `EPICS-PVACCESS-bp15.JAR`
   * `EPICS-PVDATA-bp15.JAR`
 * The **EPICS forwarder** - the EPICS forwarder
-  * `EPICS-FORWARDER.jar`
+  * `EPICS_FORWARDER.jar`
 
 ## Topology
 
