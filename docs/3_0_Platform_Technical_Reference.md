@@ -193,6 +193,9 @@ Provider in the build process.
 
 General Documentation for these AIDA Modules can be [found here](https://www.slac.stanford.edu/grp/cd/soft/aida/)
 
+@note One module has been updated to support AIDA-PVA. The [SLC Buffered Data Module](http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLCBUFF_JNI_HELPER.C) was updated to add an entry point DPSLCBUFF_SETMODE() which is called
+from the AIDA_SLCBPMBUFF Channel Provider.
+
 _Specific Code for each legacy module_:
 
 * [SLC Control Database Module](http://www-mcc.slac.stanford.edu/ref_0/AIDASHR/DPSLC_JNI_HELPER.C)
