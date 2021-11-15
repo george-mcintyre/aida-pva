@@ -217,9 +217,10 @@ the JNI entrypoints that the AIDA-PVA Service will call.
 * startup with the following command:
 ```shell
 MCCDEV> java -jar SLCLIBS:EPICS_FORWARDER.JAR
-Oct 24, 2021 2:35:33 AM org.epics.forwarder.PVAForwarder main
-INFO: EPICS Request Forwarder started: 2344 milliseconds
-9:35 > 
+Nov 15, 2021 4:17:05 AM org.epics.forwarder.PVAForwarder main
+INFO: EPICS Request Forwarder started: 1530 milliseconds
+12:17 >
+13:17 > 78 requests/h
 ```
 * You can also run it using `java -jar /SLCLIBS/EPICS_FORWARDER.JAR`
 @warning 

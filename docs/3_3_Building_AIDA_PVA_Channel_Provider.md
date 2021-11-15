@@ -198,9 +198,10 @@ You can run your provider by starting the forwarder in another terminal and then
 1. Start the Forwarder
 ```shell
 MCCDEV> java -jar SLCLIBS:EPICS_FORWARDER.JAR
-Nov 4, 2021 2:22:29 AM org.epics.forwarder.PVAForwarder main
-INFO: EPICS Request Forwarder started: 1987 milliseconds
-9:22 >
+Nov 15, 2021 4:17:05 AM org.epics.forwarder.PVAForwarder main
+INFO: EPICS Request Forwarder started: 1530 milliseconds
+12:17 >
+13:17 > 78 requests/h
 ```
 2. Start your Channel Provider
 ```shell
