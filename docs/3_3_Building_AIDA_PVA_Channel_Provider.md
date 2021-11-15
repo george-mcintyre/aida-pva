@@ -111,13 +111,14 @@ Note:  using NOOPT by default for DECC
 4. Make sure your provided `AIDASLCDB_GENERAL.OPT` file contains the correct CMS Card, and references to all the Legacy AIDA Modules you require
 ```text
 !==============================================================================
-!       **CMS**=OPT
+!       **CMS**=SLCSHR_CONTROL
 !
 ! Name: AIDASLCDB_GENERAL.OPT
 !
 ! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
 
 case_sensitive=YES
+SLCLIBS:AIDASLCDBLIB.OLB/INCLUDE=(AIDASLCDB_SERVER)
 SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
  NATIVECHANNELPROVIDERJNI, -
  AIDA_PVA_SERVER_HELPER, -
@@ -125,6 +126,7 @@ SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
  AIDA_PVA_TYPES_HELPER, -
  AIDA_PVA_JSON) / LIB
 SLCLIBS:AIDASHRLIB.OLB/LIB
+SLCLIBS:AIDASLCDBLIB.OLB/LIB
 case_sensitive=NO
 
   DBSSHR/shareable
@@ -132,6 +134,9 @@ case_sensitive=NO
   SYSUTIL/shareable
   UTILSHR/shareable
 ```
+When you are running `BUILDTEST` in the following step, temporarily comment out the line
+`SLCLIBS:AIDASLCDBLIB.OLB/INCLUDE=(AIDASLCDB_SERVER)` by preceding it with an exclamation mark.  Don't forget 
+to uncomment it before committing to CMS.
 5. Link your Channel Provider
 ```shell
 MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
