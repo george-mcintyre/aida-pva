@@ -6,6 +6,18 @@
 #include "aida_pva.h"
 #include "AIDASLCBPM_SERVER.h"
 
+/* Override prototypes of externals to uppercase names, since compile.com
+   adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
+   is in effect (as is for this module), then it's /names=AS_IS.
+*/
+unsigned long int STANDALONE_INIT(
+		const struct dsc$descriptor_s* name,
+		const long int* dbinit,
+		const struct msginit* msginit,
+		const long int* query,
+		const long int* set
+);
+
 static int checkArguments(JNIEnv* env, int bpmd, int navg, int cnfnum, int sortOrder, int cnftype);
 static int acquireBpmData(JNIEnv* env, int* rows, int bpmd, int n, int cnftype, int cnfnum, int sortOrder);
 static int getBpmData(JNIEnv* env,
@@ -33,21 +45,21 @@ REQUEST_STUB_STRING_ARRAY
 SET_STUB_VOID
 SET_STUB_TABLE
 
-unsigned long int STANDALONE_INIT(
-		const struct dsc$descriptor_s* name,
-		const long int* dbinit,
-		const struct msginit* msginit,
-		const long int* query,
-		const long int* set
-);
-
+/**
+ * Call Standalone init
+ * @return vms status code
+ */
 static vmsstat_t INIT()
 {
+	const struct msginit msg_init_s = { 1,    /* init msg service */
+										1 };    /* init slcnet */
+
 	vmsstat_t status;
-	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCBPM");
+	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCBPM");    // Ignored in standalone_init() call
 
 	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
-			NULL, &((long)(FALSE)), &((long)(FALSE)));
+			&msg_init_s, &((long)(FALSE)), &((long)(FALSE)));
+
 	return status;
 }
 
