@@ -1,11 +1,11 @@
 $!       **CMS**=COM_GEN
 $!
 $!===============================================================================
-$!
+$! @file
 $!
 $! Name:  STARTAIDASLC.COM
 $!
-$! Abs:   Starts an AIDA-PVA Channel Provider on VMS.
+$! @brief  Starts an AIDA-PVA Channel Provider or EPICS forwarder on VMS.
 $!
 $!
 $!===============================================================================

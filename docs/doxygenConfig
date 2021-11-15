@@ -959,7 +959,12 @@ FILE_PATTERNS          = *.c \
                          *.vhdl \
                          *.ucf \
                          *.qsf \
-                         *.ice
+                         *.ice \
+                         *.yaml \
+                         *.yml \
+                         *.opt \
+                         *.com \
+                         *.submit
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -974,12 +979,13 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = root/cpp/aida-pva/json.c \
+EXCLUDE                = root/cpp/aida-pva/aida_pva_json.c \
                          root/cpp/aida-pva/NativeChannelProviderJni.c \
                          root/cpp/cmake-build-debug \
                          root/cpp/include/aida-pva/json.h \
                          root/cpp/include/aida-pva/slac_aida_NativeChannelProvider.h \
-                         root/cpp/slac_aida_NativeChannelProvider.h
+                         root/cpp/slac_aida_NativeChannelProvider.h \
+                         root/cpp/providers/SLCDB/AIDASLCDB_CHANNELS.YML
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

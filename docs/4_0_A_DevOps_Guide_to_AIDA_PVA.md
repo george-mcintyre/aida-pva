@@ -290,8 +290,25 @@ LENS:????:*//DVIC, ...]
 ### 6 - The Channel Provider will have also been linked with AIDA-PVA Modules in STANDALONELIB
 
 ## Submitting jobs
+To enable AIDA-PVA to be fully integrated into control system startup, submit files have been provided to start the jobs.
+- General Startup script called by all other startup scripts
+  - STARTAIDASLC.COM
+- Channel Provider Submit Files
+  - AIDA_SLCDB.SUBMIT
+  - AIDA_SLCBPM.SUBMIT
+  - AIDA_SLCBPMBUFF.SUBMIT
+  - AIDA_SLCKLYS.SUBMIT
+  - AIDA_SLCMAGNET.SUBMIT
+  - AIDA_SLCUTIL.SUBMIT
+- EPICS Forwarder Submit File
+  - EPICS_FORWARDER.SUBMIT
 
-## Restarting
+![Starting Batch Jobs](images/batch-jobs.png)
 
-## Verification of service status
+1. Start the forwarder first.  If it fails then you need to stop all other services then restart it before restarting them.
+2. Start the other services last.
+3. The Channel Provider and EPICS-FORWARDER submit files set logicals to indicate the process name to start
+4. The Channel Provider submit files also set logicals to indicate the configuration file to use
+5. The `STARTAIDASLC.COM` script will set the correct Java 1.5 environment
+6. It will also construct a logical called `java_argstring` that is used as commandline parameters to the JVM.
 

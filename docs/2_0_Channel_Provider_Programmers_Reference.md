@@ -58,9 +58,9 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
   * `AIDASLCMOSC.EXE`
   * `AIDASLCUTIL.EXE`
 * The **STANDALONELIB** - with the following modules collectively known as **AIDA-PVA Module**:
-  * `AIDA_PVA_SERVER_HELPER` - **Helper functions for the AIDA-PVA Providers**
-  * `AIDA_PVA_JNI_HELPER` - Used by the AIDA-PVA Module to interoperate in a JNI environment
-  * `AIDA_PVA_TYPES_HELPER` - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
+  * AIDA_PVA_SERVER_HELPER.c - **Helper functions for the AIDA-PVA Providers**
+  * AIDA_PVA_JNI_HELPER.c - Used by the AIDA-PVA Module to interoperate in a JNI environment
+  * AIDA_PVA_TYPES_HELPER.c - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
   * `NATIVECHANNELPROVIDERJNI` - JNI Entry points from AIDA-PVA.JAR
   * `AIDA_PVA_JSON` - Used by AIDA-PVA Module to parse JSON
 * The **C_INC** - **AIDA-PVA Module** header files:
