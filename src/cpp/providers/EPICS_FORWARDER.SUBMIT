@@ -2,7 +2,7 @@ $!       **CMS**=COM_GEN
 $!
 $!=========================================================================
 $!
-$! Name: EPICS-FORWARDER.SUBMIT
+$! Name: EPICS_FORWARDER.SUBMIT
 $!
 $! Abs:   A warmslcx batch job to run the EPICS FORWARDER.
 $!
@@ -16,14 +16,14 @@ $!
 $set output_rate=:0:10
 $on error then continue
 $!
-$write sys$output "Starting EPICS-FORWARDER ..."
+$write sys$output "Starting EPICS_FORWARDER ..."
 $@SLCCOM:USERLOGIN FORCE               ! Define java logicals.
-$ procname == "EPICS-FORWARDER"
+$ procname == "EPICS_FORWARDER"
 $set proc/name='procname'
 $!
 $@slccom:STARTAIDASLC.COM
 $goto egress
 $!
 $egress:
-$write sys$output "Exiting EPICS-FORWARDER.SUBMIT"
+$write sys$output "Exiting EPICS_FORWARDER.SUBMIT"
 $exit

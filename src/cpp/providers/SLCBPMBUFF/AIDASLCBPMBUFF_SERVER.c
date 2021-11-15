@@ -27,11 +27,17 @@ unsigned long int STANDALONE_INIT(
 
 static vmsstat_t INIT()
 {
+	const struct msginit msg_init_s = { 1,    /* init msg service */
+										1 };  /* init slcnet */
+
 	vmsstat_t status;
 	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCBPM");
 
 	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
-			NULL, &((long)(FALSE)), &((long)(FALSE)));
+			&msg_init_s, &((long)(FALSE)), &((long)(FALSE)));
+
+	DPSLCBUFF_SETMODE();
+
 	return status;
 }
 
