@@ -9,7 +9,7 @@ All examples below show AIDASLCDB.
 ```shell
 cd dev
 git clone  git@github.com:slaclab/aida-pva.git
-cd aida-pva/src/cpp/providers/slc
+cd aida-pva/src/cpp/providers/SLCDB
 ```
 2. Make sure your Channel Configuration file has the correct CMS header
 ```c
@@ -36,6 +36,50 @@ Please enter CMS CREATE ELEMENT remark. [Adding Channel Configuration Files to C
 %CMS-S-CREATED, element CMS_:[SLCTXT]AIDASLCBPM_CHANNELS.YML created
 MCCDEV>
 ```
+### Deploy other related files
+1. Check out original code from github (first time only - afterwards maintain code in CMS)
+```shell
+cd dev
+git clone  git@github.com:slaclab/aida-pva.git
+cd aida-pva/src/cpp/providers
+```
+2. Make sure STARTAIDASLC.COM and SLCDB/AIDA_SLCDB.SUBMIT files have the correct CMS header
+```text
+$!       **CMS**=COM_GEN
+$!
+```
+3. Make sure SLCDB/AIDASLCDB_GENERAL.OPT file has the correct CMS header
+```text
+!==============================================================================
+!       **CMS**=SLCSHR_CONTROL
+!
+! Name: AIDASLCDB_GENERAL.OPT
+!
+```
+4. Copy your files to MCCDEV
+```shell
+> sftp mccdev
+Connecting to mccdev...
+ 
+sftp> mput STARTAIDASLC.COM
+sftp> lcd SLCDB
+sftp> mput AIDA_SLCDB.SUBMIT
+sftp> mput AIDASLCDB_GENERAL.OPT
+```
+5. Add to CMS
+```shell
+MCCDEV> slccms
+SlcCMS> set libr CMS_COM_GEN
+%CMS-I-LIBIS, library is CMS_:[COM.GEN]
+%CMS-S-LIBSET, library set
+-CMS-I-SUPERSEDE, library list superseded
+SlcCMS> create element STARTAIDASLC.COM,AIDA_SLCDB.SUBMIT
+_Remark: Creating Submit files for AIDASLCDB
+%CMS-S-CREATED, element CMS_:[COM.GEN]STARTAIDASLC.COM created
+%CMS-S-CREATED, element CMS_:[COM.GEN]AIDA_SLCDB.SUBMIT created
+SlcCMS> exit
+```
+@note `STARTAIDASLC.COM` needs to be created only once and is reused for all channel providers.
 
 ### Verify Code has correct CARDS and transfer to VMS
 1. Make sure all C-files have correct CMS header and ATTRIBUTE for your Channel Provider
@@ -47,20 +91,13 @@ MCCDEV>
 ```c
   /*   **CMS**=C_INC   */
 ```
-3. Make sure all OPT files have correct CMS header
-```text
-!==============================================================================
-!       **CMS**=OPT
-!
-! Name: AIDASLCDB_GENERAL.OPT
-```
-4. Check out original code from github (first time only - afterwards maintain code in CMS)
+3. Check out original code from github (first time only - afterwards maintain code in CMS)
 ```shell
 cd dev
 git clone  git@github.com:slaclab/aida-pva.git
-cd aida-pva/src/cpp/providers/slc
+cd aida-pva/src/cpp/providers/SLCDB
 ```
-5. Copy your code (1 C file, 1 header file, and 1 OPT file usually) to a directory on MCCDEV
+4. Copy your code (1 C file, and 1 header file usually) to a directory on MCCDEV
 ```shell
 > sftp mccdev
 Connecting to mccdev...
@@ -69,9 +106,8 @@ sftp> mkdir AIDASLCDB
 sftp> cd AIDASLCDB
 sftp> mput *.c
 sftp> mput *.h
-sftp> mput *.OPT
 ```
-6. On VMS, Go into development directory
+5. On VMS, Go into development directory
 ```shell
 MCCDEV> set def [.AIDASLCDB] 
 ```
@@ -94,10 +130,21 @@ MCCDEV> set def [.AIDASLCDB]
  %STRIP_C_COMMENTS-I, producing file REF_C_INC:AIDASLCDB_SERVERNO_COMMENTS_H
  MCCDEV>
 ```
-2. Copy STANDALONELIB_XFR_ALPHA.OPT to your directory and rename
+2. Copy STANDALONELIB_XFR_ALPHA.OPT to your directory, rename and add to CMS
 ```shell
- MCCDEV> COPY [-.AIDA-PVA]STANDALONELIB_XFR_ALPHA.OPT AIDASLCDB_XFR_ALPHA.OPT
- MCCDEV>
+MCCDEV> COPY [-.AIDA-PVA]STANDALONELIB_XFR_ALPHA.OPT AIDASLCDB_XFR_ALPHA.OPT
+MCCDEV>
+MCCDEV> cmp AIDASLCDB_XFR_ALPHA.OPT
+Processing file DATA_DISK_SLC:[]AIDASLCDB_XFR_ALPHA.OPT;1
+
+SLY, Why are You doing this?
+Data:
+%CMS-I-LIBIS, library is CMS_:[SLCSHR_CONTROL]
+%CMS-S-LIBSET, library set
+-CMS-I-SUPERSEDE, library list superseded
+Please enter CMS REPLACE/IF_CHANGED remark.
+%CMS-S-GENCREATED, generation 2 of element CMS_:[SLCSHR_CONTROL]AIDASLCDB_XFR_ALPHA.OPT created
+MCCDEV> 
 ```
 3. Compile your source code into AIDASLCDB_DEVLIB.OLB
 ```shell
@@ -108,7 +155,7 @@ MCCDEV> CINC *.C
 Note:  using NOOPT by default for DECC
     %LIBRAR-S-INSERTED, module SLC_SERVER inserted in DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_DEVLIB.OLB;1
 ```
-4. Make sure your provided `AIDASLCDB_GENERAL.OPT` file contains the correct CMS Card, and references to all the Legacy AIDA Modules you require
+4. Copy to working directory and make sure your provided `AIDASLCDB_GENERAL.OPT` file contains the correct CMS Card, and references to all the Legacy AIDA Modules you require
 ```text
 !==============================================================================
 !       **CMS**=SLCSHR_CONTROL
@@ -134,9 +181,9 @@ case_sensitive=NO
   SYSUTIL/shareable
   UTILSHR/shareable
 ```
-When you are running `BUILDTEST` in the following step, temporarily comment out the line
-`SLCLIBS:AIDASLCDBLIB.OLB/INCLUDE=(AIDASLCDB_SERVER)` by preceding it with an exclamation mark.  Don't forget 
-to uncomment it before committing to CMS.
+@note When you are running `BUILDTEST` in the following step, temporarily comment out the line
+`SLCLIBS:AIDASLCDBLIB.OLB/INCLUDE=(AIDASLCDB_SERVER)` by preceding it with an exclamation mark.  Do not  
+commit the commented out version to CMS.
 5. Link your Channel Provider
 ```shell
 MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
