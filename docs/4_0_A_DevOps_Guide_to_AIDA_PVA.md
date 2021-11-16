@@ -195,19 +195,32 @@ When linking the Channel Provider to the AIDA-PVA Module you need to explicitly 
 because even though the Channel Provider code doesn't reference them, the AIDA-PVA Service will need to have them available
 when it loads the Channel Provider image.
 
-Use the following snippet to reference the JNI Entry points and force them to be included in the Channel Provider image during linking. (excerpt from GENERAL OPT file)
+This is done using the associated transfer vectors file. (excerpt from AIDASLCDB_XFR_ALPHA.OPT file)
 ```text
-SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
- NATIVECHANNELPROVIDERJNI, -
- AIDA_PVA_SERVER_HELPER, -
- AIDA_PVA_JNI_HELPER, -
- AIDA_PVA_TYPES_HELPER, -
- AIDA_PVA_JSON) / LIB
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_slac_aida_NativeCh1dgccee$=PROCEDURE,-
+     Java_slac_aida_NativeCh25dfjd6$=PROCEDURE,-
+     Java_slac_aida_NativeCh3nsgvff$=PROCEDURE,-
+     Java_slac_aida_NativeCh33ufh3u$=PROCEDURE,-
+     Java_slac_aida_NativeCh1d5rrm5$=PROCEDURE,-
+     Java_slac_aida_NativeCh14pujn9$=PROCEDURE,-
+     Java_slac_aida_NativeCh20mk2i9$=PROCEDURE,-
+     Java_slac_aida_NativeCh23sgj69$=PROCEDURE,-
+     Java_slac_aida_NativeCh31p234f$=PROCEDURE,-
+     Java_slac_aida_NativeCh2a0ae9n$=PROCEDURE,-
+     Java_slac_aida_NativeCh39m8dhq$=PROCEDURE,-
+     Java_slac_aida_NativeCh0oj95nt$=PROCEDURE,-
+     Java_slac_aida_NativeCh2aokrpj$=PROCEDURE,-
+     Java_slac_aida_NativeCh0nh9dsf$=PROCEDURE,-
+     Java_slac_aida_NativeCh3tmi2oe$=PROCEDURE,-
+     Java_slac_aida_NativeCh1s5d4nl$=PROCEDURE,-
+     Java_slac_aida_NativeCh31oju0v$=PROCEDURE,-
+     Java_slac_aida_NativeCh2vedmsq$=PROCEDURE,-
+     Java_slac_aida_NativeCh25vb1ur$=PROCEDURE,-
+     Java_slac_aida_NativeCh2sdrgol$=PROCEDURE)
+
+case_sensitive=NO
 ```
-
-This means, pull out the **NATIVECHANNELPROVIDERJNI** module (among others) even though it is not referenced.  That module contains
-the JNI entrypoints that the AIDA-PVA Service will call.
-
 
 ## Running AIDA-PVA
 

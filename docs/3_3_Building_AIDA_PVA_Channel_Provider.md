@@ -165,15 +165,10 @@ Note:  using NOOPT by default for DECC
 ! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
 
 case_sensitive=YES
-SLCLIBS:AIDASLCDBLIB.OLB/INCLUDE=(AIDASLCDB_SERVER)
-SLCLIBS:STANDALONELIB.OLB/INCLUDE=( -
- NATIVECHANNELPROVIDERJNI, -
- AIDA_PVA_SERVER_HELPER, -
- AIDA_PVA_JNI_HELPER, -
- AIDA_PVA_TYPES_HELPER, -
- AIDA_PVA_JSON) / LIB
-SLCLIBS:AIDASHRLIB.OLB/LIB
+SLCLIBS:STANDALONELIB.OLB/LIB
 SLCLIBS:AIDASLCDBLIB.OLB/LIB
+SLCLIBS:STANDALONELIB.OLB/LIB
+SLCLIBS:AIDASHRLIB.OLB/LIB
 case_sensitive=NO
 
   DBSSHR/shareable
@@ -181,9 +176,6 @@ case_sensitive=NO
   SYSUTIL/shareable
   UTILSHR/shareable
 ```
-@note When you are running `BUILDTEST` in the following step, temporarily comment out the line
-`SLCLIBS:AIDASLCDBLIB.OLB/INCLUDE=(AIDASLCDB_SERVER)` by preceding it with an exclamation mark.  Do not  
-commit the commented out version to CMS.
 5. Link your Channel Provider
 ```shell
 MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
