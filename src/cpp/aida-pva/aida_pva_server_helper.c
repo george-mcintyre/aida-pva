@@ -19,6 +19,39 @@ static json_value* processArrayReference(json_value* jsonValue, const char* arra
 static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, bool forArray);
 static bool isOnlyNumbers(char* string);
 
+/* Override prototypes of externals to uppercase names, since compile.com
+   adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
+   is in effect (as is for this module), then it's /names=AS_IS.
+*/
+unsigned long int STANDALONE_INIT(
+		const struct dsc$descriptor_s* name,
+		const long int* dbinit,
+		const struct msginit* msginit,
+		const long int* query,
+		const long int* set
+);
+
+/**
+ * Call standalone_init() and set development mode flag.
+ * @param processName the name of the process being initialised
+ * @param initMessageServices boolean to determine if the message service needs to be initialised
+ * @return vms status code
+ */
+vmsstat_t init(const char* processName, bool initMessageServices)
+{
+	const struct msginit msg_init_s = { 1,      /* init msg service */
+										1 };    /* init slcnet */
+
+	vmsstat_t status;
+	$DESCRIPTOR (PROCESS_NAME, processName);    // Ignored in standalone_init() call
+
+	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
+			initMessageServices ? &msg_init_s : NULL,
+			&((long)(FALSE)), &((long)(FALSE)));
+
+	return status;
+}
+
 /**
  * To log any non-OS exceptions and throw back to java.
  *

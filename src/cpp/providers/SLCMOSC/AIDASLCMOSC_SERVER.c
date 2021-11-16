@@ -35,7 +35,7 @@ void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
 
-	if (!SUCCESS(status = DPSLCMOSC_DB_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCMOSC", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Master Oscillator Service");
 		return;
 	}

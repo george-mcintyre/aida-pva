@@ -44,7 +44,7 @@ REQUEST_STUB_STRING_ARRAY
 void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
-	if (!SUCCESS(status = DPSLCMAGNET_DB_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCMAGNET", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Magnet Service");
 		return;
 	}

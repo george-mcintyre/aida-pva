@@ -34,7 +34,7 @@ REQUEST_STUB_TABLE
 void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
-	if (!SUCCESS(status = DPSLCUTIL_DB_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCUTIL", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Utility Service");
 		return;
 	}

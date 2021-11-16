@@ -33,8 +33,21 @@ extern "C" {
 #include "aida_pva_uri.h"
 
 /////////////////////////////////
+/// Initialisation
+/////////////////////////////////
+
+/**
+ * Call standalone_init() and set development mode flag.
+ * @param processName the name of the process being initialised
+ * @param initMessageServices boolean to determine if the message service needs to be initialised
+ * @return vms status code
+ */
+vmsstat_t init(const char* processName, bool initMessageServices);
+
+/////////////////////////////////
 /// Exception Handling
 /////////////////////////////////
+
 /**
  * To log any exceptions and throw back to java.
  *

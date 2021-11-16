@@ -6,18 +6,6 @@
 #include "aida_pva.h"
 #include "AIDASLCBPMBUFF_SERVER.h"
 
-/* Override prototypes of externals to uppercase names, since compile.com
-   adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
-   is in effect (as is for this module), then it's /names=AS_IS.
-*/
-unsigned long int STANDALONE_INIT(
-		const struct dsc$descriptor_s* name,
-		const long int* dbinit,
-		const struct msginit* msginit,
-		const long int* query,
-		const long int* set
-);
-
 static int
 acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceNames, char* dGroupName,
 		int bpmd,
@@ -50,26 +38,6 @@ SET_STUB_VOID
 SET_STUB_TABLE
 
 /**
- * Call Standalone init and set development mode flag
- * @return vms status code
- */
-static vmsstat_t INIT()
-{
-	const struct msginit msg_init_s = { 1,        /* init msg service */
-										1 };    /* init slcnet */
-
-	vmsstat_t status;
-	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCBUFF");    // Ignored in standalone_init() call
-
-	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
-			&msg_init_s, &((long)(FALSE)), &((long)(FALSE)));
-
-	DPSLCBUFF_SETMODE();
-
-	return status;
-}
-
-/**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
  * @throws ServerInitialisationException if the service fails to initialise
@@ -78,10 +46,12 @@ void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
 
-	if (!$VMS_STATUS_SUCCESS(status = INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCBPMBUFF", true))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "while initializing Buffered BPM service");
 		return;
 	}
+
+	DPSLCBUFF_SETMODE();
 
 	printf("Aida Buffered BPM Acquisition Service Initialised\n");
 }

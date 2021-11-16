@@ -42,7 +42,7 @@ void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
 
-	if (!SUCCESS(status = DPSLCKLYS_DB_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCKLYS", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Klystron Service");
 		return;
 	}

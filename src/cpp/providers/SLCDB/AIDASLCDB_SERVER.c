@@ -24,7 +24,7 @@ void aidaServiceInit(JNIEnv* env)
 {
 	vmsstat_t status;
 
-	if (!SUCCESS(status = DB_INIT())) {
+	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCDB", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Service");
 	} else {
 		printf("Aida SLC Database Service Initialised\n");
