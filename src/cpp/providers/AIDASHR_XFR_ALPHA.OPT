@@ -1,0 +1,206 @@
+!
+! **CMS**=SLCSHR_CONTROL
+!
+!
+! Name:  SLCSHR_CONTROL:AIDASHR_XFR_ALPHA.OPT
+!
+! Abs:   Transfer-vector option file for Alpha link of NAUTIL shareable image.
+!
+! ---------------------------------------------------------------------
+!
+! SlcModel
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_0lnbre5$=PROCEDURE,-
+     Java_edu_stanford_slac_2bfpjhi$=PROCEDURE, -
+     Java_edu_stanford_slac_2m841bm$=PROCEDURE, -
+     Java_edu_stanford_slac_07v23qn$=PROCEDURE)
+case_sensitive=NO
+!
+! SlcHist
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_25pufpl$=PROCEDURE,-
+     Java_edu_stanford_slac_1dobfrs$=PROCEDURE)
+case_sensitive=NO
+!
+! SlcDb
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_01c1b9q$=PROCEDURE,-
+     Java_edu_stanford_slac_3pl4pbq$=PROCEDURE,-
+     Java_edu_stanford_slac_13psedd$=PROCEDURE,-
+     Java_edu_stanford_slac_3hc4m80$=PROCEDURE,-
+     Java_edu_stanford_slac_00h7tsq$=PROCEDURE,-
+     Java_edu_stanford_slac_3h6pa4b$=PROCEDURE,-
+     Java_edu_stanford_slac_3ecntgs$=PROCEDURE,-
+     Java_edu_stanford_slac_2ovheq1$=PROCEDURE,-
+     Java_edu_stanford_slac_2kvmc3a$=PROCEDURE,-
+     Java_edu_stanford_slac_00jjcqv$=PROCEDURE,-
+     Java_edu_stanford_slac_08g065b$=PROCEDURE,-
+     Java_edu_stanford_slac_0639ki5$=PROCEDURE,-
+     Java_edu_stanford_slac_3su5i2b$=PROCEDURE,-
+     Java_edu_stanford_slac_0mqusd0$=PROCEDURE)
+case_sensitive=NO
+
+!
+! SlcBpm
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_3h0g91o$=PROCEDURE,-
+     Java_edu_stanford_slac_2kvbvpp$=PROCEDURE,-
+     Java_edu_stanford_slac_2uqul7e$=PROCEDURE,-
+     Java_edu_stanford_slac_3ek3dvl$=PROCEDURE,-
+     Java_edu_stanford_slac_3s5h76t$=PROCEDURE,-
+     Java_edu_stanford_slac_27lvb2b$=PROCEDURE,-
+     Java_edu_stanford_slac_0b5dvfh$=PROCEDURE,-
+     Java_edu_stanford_slac_1qaj5rl$=PROCEDURE,-
+     Java_edu_stanford_slac_3fol05q$=PROCEDURE,-
+     Java_edu_stanford_slac_1s3b68v$=PROCEDURE,-
+     Java_edu_stanford_slac_358tv60$=PROCEDURE)
+case_sensitive=NO
+
+!
+! SlcMagnet
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_1ac9ve9$=PROCEDURE,-
+     Java_edu_stanford_slac_2l481o3$=PROCEDURE,-
+     Java_edu_stanford_slac_3mfpeoc$=PROCEDURE,-
+     Java_edu_stanford_slac_3cdh62e$=PROCEDURE,-
+     Java_edu_stanford_slac_22etaug$=PROCEDURE,-
+     Java_edu_stanford_slac_0bfi06r$=PROCEDURE,-
+     Java_edu_stanford_slac_037ehi0$=PROCEDURE,-
+     Java_edu_stanford_slac_3bpttk7$=PROCEDURE,-
+     Java_edu_stanford_slac_1521atb$=PROCEDURE,-
+     Java_edu_stanford_slac_3ffliqf$=PROCEDURE,-
+     Java_edu_stanford_slac_31shra2$=PROCEDURE,-
+     Java_edu_stanford_slac_27fdo0k$=PROCEDURE,-
+     Java_edu_stanford_slac_2lan2i2$=PROCEDURE)
+case_sensitive=NO
+
+!
+! SlcUtil
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_3b87t9b$=PROCEDURE,-
+     Java_edu_stanford_slac_1ocrj78$=PROCEDURE,-
+     Java_edu_stanford_slac_15917go$=PROCEDURE,-
+     Java_edu_stanford_slac_3nnbabr$=PROCEDURE,-
+     Java_edu_stanford_slac_1g0rd51$=PROCEDURE,-
+     Java_edu_stanford_slac_0ljo7cv$=PROCEDURE,-
+     Java_edu_stanford_slac_07vhu0k$=PROCEDURE,-
+     Java_edu_stanford_slac_0kbj7r1$=PROCEDURE,-
+     Java_edu_stanford_slac_2igq38r$=PROCEDURE,-
+     Java_edu_stanford_slac_2862uu5$=PROCEDURE,-
+     Java_edu_stanford_slac_0kiq7ln$=PROCEDURE,-
+     Java_edu_stanford_slac_2eknvc1$=PROCEDURE,-
+     Java_edu_stanford_slac_1duoq0t$=PROCEDURE)
+case_sensitive=NO
+
+!
+! SlcMosc
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_0t4ttn7$=PROCEDURE,-
+     Java_edu_stanford_slac_3umacis$=PROCEDURE,-
+     Java_edu_stanford_slac_3hn6811$=PROCEDURE,-
+     Java_edu_stanford_slac_1ab4jbt$=PROCEDURE)
+case_sensitive=NO
+
+!
+! SlcKlys
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_1sialll$=PROCEDURE,-
+     Java_edu_stanford_slac_0kjp6kr$=PROCEDURE,-
+     Java_edu_stanford_slac_08m6rgd$=PROCEDURE,-
+     Java_edu_stanford_slac_2u16lh0$=PROCEDURE,-
+     Java_edu_stanford_slac_2e9pln2$=PROCEDURE,-
+     Java_edu_stanford_slac_12ail8a$=PROCEDURE,-
+     Java_edu_stanford_slac_1htq93f$=PROCEDURE,-
+     Java_edu_stanford_slac_17sadog$=PROCEDURE)
+case_sensitive=NO
+
+!
+! SlcBuff
+case_sensitive=YES
+SYMBOL_VECTOR=(Java_edu_stanford_slac_1qc8ar4$=PROCEDURE,-
+     Java_edu_stanford_slac_3chjehf$=PROCEDURE,-
+     Java_edu_stanford_slac_0l53spd$=PROCEDURE,-
+     Java_edu_stanford_slac_0kubrn1$=PROCEDURE,-
+     Java_edu_stanford_slac_2i4aq21$=PROCEDURE,-
+     Java_edu_stanford_slac_19tq1t3$=PROCEDURE,-
+     Java_edu_stanford_slac_15ccdn2$=PROCEDURE,-
+     Java_edu_stanford_slac_0er6ldm$=PROCEDURE,-
+     Java_edu_stanford_slac_1q5nis8$=PROCEDURE,-
+     Java_edu_stanford_slac_2693g0b$=PROCEDURE,-
+     Java_edu_stanford_slac_2t65eem$=PROCEDURE)
+case_sensitive=NO
+
+!
+! AIDASHR General
+case_sensitive=YES
+SYMBOL_VECTOR=(-
+    DPSLCBPM_ACQINIT=PROCEDURE,-
+    DPSLCBPM_ACQTERM=PROCEDURE,-
+    DPSLCBPM_BPMACQ=PROCEDURE,-
+    DPSLCBPM_GETHSTA=PROCEDURE,-
+    DPSLCBPM_GETNAMES=PROCEDURE,-
+    DPSLCBPM_GETSTAT=PROCEDURE,-
+    DPSLCBPM_GETTMIT=PROCEDURE,-
+    DPSLCBPM_GETX=PROCEDURE,-
+    DPSLCBPM_GETY=PROCEDURE,-
+    DPSLCBPM_GETZ=PROCEDURE,-
+    DPSLCBPM_SORTBYZ=PROCEDURE,-
+    DPSLCBUFF_ACQ=PROCEDURE,-
+    DPSLCBUFF_ACQINIT=PROCEDURE,-
+    DPSLCBUFF_ACQTERM=PROCEDURE,-
+    DPSLCBUFF_GETGOODMEASES=PROCEDURE,-
+    DPSLCBUFF_GETNAMES=PROCEDURE,-
+    DPSLCBUFF_GETPULSEIDS=PROCEDURE,-
+    DPSLCBUFF_GETSTATS=PROCEDURE,-
+    DPSLCBUFF_GETTABLEMROWS=PROCEDURE,-
+    DPSLCBUFF_GETTMITS=PROCEDURE,-
+    DPSLCBUFF_GETXS=PROCEDURE,-
+    DPSLCBUFF_GETYS=PROCEDURE,-
+    DPSLCBUFF_SETMODE=PROCEDURE,-
+    DPSLCKLYS_ACCESSENABLED=PROCEDURE,-
+    DPSLCKLYS_GETSTATUS=PROCEDURE,-
+    DPSLCKLYS_SETCONFIG=PROCEDURE,-
+    DPSLCKLYS_SETDEACTORREACT=PROCEDURE,-
+    DPSLCKLYS_SETTRIMPHASE=PROCEDURE,-
+    DPSLCMAGNET_ACCESSENABLED=PROCEDURE,-
+    DPSLCMAGNET_GET=PROCEDURE,-
+    DPSLCMAGNET_GETCLEANUP=PROCEDURE,-
+    DPSLCMAGNET_GETNAMES=PROCEDURE,-
+    DPSLCMAGNET_GETSECNVALUES=PROCEDURE,-
+    DPSLCMAGNET_RET_BACTVALUES=PROCEDURE,-
+    DPSLCMAGNET_RET_MAGLIMITS=PROCEDURE,-
+    DPSLCMAGNET_RET_SETNUMPVS=PROCEDURE,-
+    DPSLCMAGNET_RET_STATENAMES=PROCEDURE,-
+    DPSLCMAGNET_SET=PROCEDURE,-
+    DPSLCMAGNET_SETCLEANUP=PROCEDURE,-
+    DPSLCMAGNET_SETCONFIG=PROCEDURE,-
+    DPSLCMAGNET_SETNAMESVALIDATE=PROCEDURE,-
+    DPSLCMOSC_ACCESSENABLED=PROCEDURE,-
+    DPSLCMOSC_MEASMASTEROSC=PROCEDURE,-
+    DPSLCMOSC_SETMASTEROSC=PROCEDURE,-
+    DPSLCUTIL_BGRP_ACCESSENABLED=PROCEDURE,-
+    DPSLCUTIL_BGRP_SETVAR=PROCEDURE,-
+    DPSLCUTIL_DO_MKB=PROCEDURE,-
+    DPSLCUTIL_MKB_ACCESSENABLED=PROCEDURE,-
+    DPSLCUTIL_MKB_GETABSFLAG=PROCEDURE,-
+    DPSLCUTIL_MKB_GETCLEANUP=PROCEDURE,-
+    DPSLCUTIL_MKB_GETNAMES=PROCEDURE,-
+    DPSLCUTIL_MKB_GETSECNVALUES=PROCEDURE,-
+    DPSLCUTIL_TRIG_ACCESSENABLED=PROCEDURE,-
+    DPSLCUTIL_TRIG_GETSTATUS=PROCEDURE,-
+    DPSLCUTIL_TRIG_SETDEACTORREACT=PROCEDURE,-
+    ERRTRANSLATE=PROCEDURE,-
+    JNI_DBACCESSENABLED=PROCEDURE,-
+    JNI_DBGETBYTE=PROCEDURE,-
+    JNI_DBGETBYTEA=PROCEDURE,-
+    JNI_DBGETFLOAT=PROCEDURE,-
+    JNI_DBGETFLOATA=PROCEDURE,-
+    JNI_DBGETINT=PROCEDURE,-
+    JNI_DBGETINTA=PROCEDURE,-
+    JNI_DBGETSHORT=PROCEDURE,-
+    JNI_DBGETSHORTA=PROCEDURE,-
+    JNI_DBGETSTRING=PROCEDURE,-
+    JNI_DBSETFLOAT=PROCEDURE-
+)
+case_sensitive=NO
+

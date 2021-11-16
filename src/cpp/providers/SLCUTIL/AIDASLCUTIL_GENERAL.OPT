@@ -9,15 +9,8 @@ case_sensitive=YES
 SLCLIBS:STANDALONELIB.OLB/LIB
 SLCLIBS:AIDASLCUTILLIB.OLB/LIB
 SLCLIBS:STANDALONELIB.OLB/LIB
-SLCLIBS:AIDASHRLIB.OLB/LIB
 case_sensitive=NO
 
-  DBSSHR/shareable
-  DSPSHR/shareable
-  CRRUTIL/shareable
-  IOBSIC/shareable
-  MISCSHR/shareable
-  MSGSHR/shareable
+  AIDASHR/shareable
   SYSUTIL/shareable
-  TIMUTIL/shareable
   UTILSHR/shareable

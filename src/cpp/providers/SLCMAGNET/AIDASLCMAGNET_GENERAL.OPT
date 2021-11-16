@@ -9,13 +9,8 @@ case_sensitive=YES
 SLCLIBS:STANDALONELIB.OLB/LIB
 SLCLIBS:AIDASLCMAGNETLIB.OLB/LIB
 SLCLIBS:STANDALONELIB.OLB/LIB
-SLCLIBS:AIDASHRLIB.OLB/LIB
 case_sensitive=NO
 
-  MAGUTIL/shareable
-  MISCSHR/shareable
-  DBSSHR/shareable
-  IOBSIC/shareable
-  MSGSHR/shareable
+  AIDASHR/shareable
   SYSUTIL/shareable
   UTILSHR/shareable
