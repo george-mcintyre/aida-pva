@@ -37,7 +37,7 @@ add_executable(cpp
         providers/SLCBPM/AIDASLCBPM_SERVER.h
         providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.c
         providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.h
-        providers/SLCKKLYS/AIDASLCKLYS_SERVER.c
+        providers/SLCKLYS/AIDASLCKLYS_SERVER.c
         providers/SLCKLYS/AIDASLCKLYS_SERVER.h
         providers/SLCMAGNET/AIDASLCMAGNET_SERVER.c
         providers/SLCMAGNET/AIDASLCMAGNET_SERVER.h
