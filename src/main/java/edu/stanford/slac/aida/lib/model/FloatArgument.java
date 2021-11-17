@@ -1,9 +1,12 @@
+/*
+ * @file
+ * This class encapsulates an argument that is a floating point value.
+ */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.Data;
 
 /**
- * @file
  * This class encapsulates an argument that is a floating point value.
  * <p>
  * Whenever arguments are passed with a channel they are all converted to string, and converted back
@@ -15,7 +18,7 @@ import lombok.Data;
  * AIDA-PVA SERVICE and down to the AIDA-PVA Module.
  * <p>
  * For the last leg of that journey, from AIDA-PVA SERVICE to the AIDA-PVA Module, the double precision arguments are
- * encapsulated in a {@link FloatArgument} object.
+ * encapsulated in a FloatArgument object.
  * @note
  * It uses the `@Data` annotation to provide all the getters and setters,
  * a constructor with all required arguments,
@@ -24,11 +27,11 @@ import lombok.Data;
 @Data
 public class FloatArgument {
     /**
-     * The argument name
+     * Returns the name of this floating point argument
      */
     private final String name;
     /**
-     * The floating point argument value
+     * Returns the value of this floating point argument
      */
     private final float value;
 }

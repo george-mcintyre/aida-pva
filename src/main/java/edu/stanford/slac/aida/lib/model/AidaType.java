@@ -1,69 +1,92 @@
+/*
+ * @file
+ * This class encapsulates an AIDA-PVA type.
+ */
 package edu.stanford.slac.aida.lib.model;
 
 import java.util.List;
 
 /**
- * @file
  * This class encapsulates an AIDA-PVA type.
  * <p>
  * All the data types that can be used in AIDA-PVA are represented here.
  */
 public enum AidaType {
-    /*
+    /**
      * API Not valid
      */
-    NONE,               // Means that this getter or setter is not supported
+    NONE,               ///< API Not valid. Means that this getter or setter is not supported
 
-    /*
+    /**
      * No return value
      */
-    VOID,               // Means that this setter does not return a value (only valid for setters)
+    VOID,               ///< No return value. Means that this setter does not return a value (only valid for setters)
 
     /*
      * Scalar return values
      */
-    BOOLEAN,            // Getter returns a boolean
-    BYTE,               // Getter returns a byte
-    SHORT,              // Getter returns a short
-    INTEGER,            // Getter returns an integer
-    LONG,               // Getter returns a long
-    FLOAT,              // Getter returns a float
-    DOUBLE,             // Getter returns a double
-    STRING,             // Getter returns a string
+    BOOLEAN,            ///< Scalar return value. Getter returns a boolean
+    BYTE,               ///< Scalar return value. Getter returns a byte
+    SHORT,              ///< Scalar return value. Getter returns a short
+    INTEGER,            ///< Scalar return value. Getter returns an integer
+    LONG,               ///< Scalar return value. Getter returns a long
+    FLOAT,              ///< Scalar return value. Getter returns a float
+    DOUBLE,             ///< Scalar return value. Getter returns a double
+    STRING,             ///< Scalar return value. Getter returns a string
 
     /*
      * Scalar Array return values
      */
-    BOOLEAN_ARRAY,      // Getter returns a boolean array
-    BYTE_ARRAY,         // Getter returns a byte array
-    SHORT_ARRAY,        // Getter returns a short array
-    INTEGER_ARRAY,      // Getter returns an integer array
-    LONG_ARRAY,         // Getter returns a long array
-    FLOAT_ARRAY,        // Getter returns a float array
-    DOUBLE_ARRAY,       // Getter returns a double array
-    STRING_ARRAY,       // Getter returns a string array
+    BOOLEAN_ARRAY,      ///< Scalar Array return value. Getter returns a boolean array
+    BYTE_ARRAY,         ///< Scalar Array return value. Getter returns a byte array
+    SHORT_ARRAY,        ///< Scalar Array return value. Getter returns a short array
+    INTEGER_ARRAY,      ///< Scalar Array return value. Getter returns an integer array
+    LONG_ARRAY,         ///< Scalar Array return value. Getter returns a long array
+    FLOAT_ARRAY,        ///< Scalar Array return value. Getter returns a float array
+    DOUBLE_ARRAY,       ///< Scalar Array return value. Getter returns a double array
+    STRING_ARRAY,       ///< Scalar Array return value. Getter returns a string array
 
     /*
      * Table Array return values
      */
-    TABLE,              // Getter or setter returns a table
-
-    /*
-     * Return meta-types.
-     * These meta-types are used for channel configuration only.
-     * They cannot be used as the value of a TYPE parameter.
-     *
-     * When a channel is configured with any of these meta-types, all requests for that channel must be presented with TYPE parameter.
-     *
-     * All of these meta-types allow you to set TABLE as the value of the mandatory TYPE parameter so in the configuration,
-     * you must also provide field definitions if the Channel Provider will support TABLE requests.
-     */
-    ANY,                // Getter or setter returns any type defined by the mandatory accompanying TYPE argument, for setters this can only be VOID or TABLE
-    SCALAR,             // Constrains the TYPE parameter to be set to any scalar type or TABLE
-    SCALAR_ARRAY;       // Constrains the TYPE parameter to be set to any scalar array type or TABLE
+    TABLE,              ///< Table Array return values. Getter or setter returns a table
 
     /**
-     * Given a {@link Object} this method will return the corresponding AIDA-PVA type.
+     * Used for channel configuration only.
+     * Getter or setter returns any type defined by the mandatory accompanying TYPE argument, for setters this can only be VOID or TABLE
+     * Cannot be used as the value of a TYPE parameter.
+     *
+     * When a channel is this meta-type, all requests for that channel must be presented with TYPE parameter.
+     *
+     * You may set TABLE as the value of the mandatory TYPE parameter so in the configuration,
+     * you must also provide field definitions if the Channel Provider will support TABLE requests.
+     */
+    ANY,
+    /**
+     * Used for channel configuration only.
+     * Constrains the TYPE parameter to be set to any scalar type or TABLE
+     * Cannot be used as the value of a TYPE parameter.
+     *
+     * When a channel is this meta-type, all requests for that channel must be presented with TYPE parameter.
+     *
+     * You may set TABLE as the value of the mandatory TYPE parameter so in the configuration,
+     * you must also provide field definitions if the Channel Provider will support TABLE requests.
+     */
+    SCALAR,
+    /**
+     * Used for channel configuration only.
+     * Constrains the TYPE parameter to be set to any scalar array type or TABLE
+     * Cannot be used as the value of a TYPE parameter.
+     *
+     * When a channel is this meta-type, all requests for that channel must be presented with TYPE parameter.
+     *
+     * You may set TABLE as the value of the mandatory TYPE parameter so in the configuration,
+     * you must also provide field definitions if the Channel Provider will support TABLE requests.
+     */
+    SCALAR_ARRAY;
+
+    /**
+     * Given a Object this method will return the corresponding AIDA-PVA type.
      *
      * @param value java object to check
      * @return the corresponding AIDA-PVA type or null if the type is not supported by AIDA-PVA.
@@ -97,7 +120,7 @@ public enum AidaType {
     }
 
     /**
-     * Given a {@link List} of homogenous objects this method will return the corresponding AIDA-PVA type of the List.
+     * Given a List of homogenous objects this method will return the corresponding AIDA-PVA type of the List.
      *
      * @param values list of homogenous objects
      * @return the corresponding AIDA-PVA type of the List or null if the type is not supported

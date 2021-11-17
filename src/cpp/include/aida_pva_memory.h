@@ -10,6 +10,9 @@ extern "C" {
 
 #include "aida_pva.h"
 
+/**
+ * The maximum number of pointers that the Memory tracking and management functions can handle
+ */
 #define MAX_POINTERS 100
 
 /**
@@ -39,7 +42,7 @@ extern "C" {
 /**
  * Allocate memory.  Allocates memory of the given size
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _size    size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  */
@@ -48,7 +51,7 @@ extern "C" {
 /**
  * Allocate memory and set its contents to the given buffer of given size.
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _source buffer to copy contents from
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -58,7 +61,7 @@ extern "C" {
 /**
  * Allocate memory for a string and copy the given string into this allocated space.
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
  */
@@ -69,7 +72,7 @@ extern "C" {
  * the newly allocated space.  You need to specify size as one bigger than the
  * fixed length string so that it can be null terminated
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _string buffer to copy contents from
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -79,7 +82,7 @@ extern "C" {
 /**
  * Allocate memory and on error return the given value.
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -96,7 +99,7 @@ extern "C" {
 /**
  * Allocate memory for a string and copy the given string into this allocated space
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -113,7 +116,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * The specified variable is set to point to the allocated memory
  * The given purpose is a string that will be contained in the error message if the allocation fails
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -129,7 +132,7 @@ if (!( (_var) = ALLOCATE_STRING(_env, _string, _purpose))) { \
  * the newly allocated space.  You need to specify size as one bigger than the
  * fixed length string so that it can be null terminated
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _size size of memory to allocate
@@ -146,7 +149,7 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
  * the newly allocated space.  You need to specify size as one bigger than the
  * fixed length string so that it can be null terminated
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _size size of memory to allocate
@@ -168,7 +171,7 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
 /**
  * Allocate memory and add it to the tracked memory list so that it can be freed automatically later
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _size size of memory to allocate
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails
@@ -189,7 +192,7 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
 /**
  * Allocate memory and set its contents to the given buffer of given size
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _source buffer to copy contents from
  * @param _size size of memory to allocate
@@ -211,7 +214,7 @@ if (!( (_var) = ALLOCATE_FIXED_LENGTH_STRING(_env, _string, _size, _purpose))) {
 /**
  * Allocate and track a string
  *
- * @param env      The JNI environment.  Used in all functions involving JNI
+ * @param _env      The JNI environment.  Used in all functions involving JNI
  * @param _var the specified variable is set to point to the allocated memory
  * @param _string buffer to copy contents from
  * @param _purpose the given purpose is a string that will be contained in the error message if the allocation fails

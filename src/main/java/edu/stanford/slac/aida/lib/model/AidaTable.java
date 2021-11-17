@@ -1,3 +1,7 @@
+/*
+ * @file
+ * Java class that is returned by the Channel Provider for requests that return TABLE.
+ */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.ToString;
@@ -6,13 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @file
  * Java class that is returned by the Channel Provider for requests that return TABLE.
- * This class encapsulates an {@link AidaTable}.
+ * This class encapsulates an AidaTable.
  * <p>
  * It is the class that is returned from the Native Providers for requests that return a TABLE.
  * <p>
- * It contains a single property {@link AidaTable#data} that stores a List of column Lists.
+ * It contains a single property AidaTable::getData() that stores a List of column Lists.
  * @note
  * Note that it uses the `lombok.ToString` annotation to provide the toString() method.
  */
@@ -26,9 +29,9 @@ public class AidaTable {
     private final List<List<Object>> data = new ArrayList<List<Object>>();
 
     /**
-     * Add an element to the specified column in this {@link AidaTable#data}.
+     * Add an element to the specified column in this AidaTable::getData().
      * <p>
-     * Each new column is added by successive calls to {@link AidaTable#add}
+     * Each new column is added by successive calls to AidaTable::add(int, Object)
      * and so the columnId specified will either have to be inserted, or added at the end.
      * <p>
      * @warning
@@ -41,7 +44,7 @@ public class AidaTable {
     public boolean add(int columnId, Object object) {
         // Only allow this to be run by one thread at a time
         synchronized (this.data) {
-            // Get the current number of columns in  {@link AidaTable#data}
+            // Get the current number of columns in  AidaTable::getData()
             int currentColumnCount = this.data.size();
 
             // If we don't have enough columns then we need to add new ones from the end of the current list
@@ -73,7 +76,7 @@ public class AidaTable {
     }
 
     /**
-     * Get the list underpinning this {@link AidaTable} object
+     * Get the list underpinning this AidaTable object
      *
      * @return the list
      */

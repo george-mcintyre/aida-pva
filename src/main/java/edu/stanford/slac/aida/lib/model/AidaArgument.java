@@ -1,3 +1,7 @@
+/*
+ * @file
+ * This class encapsulates an AidaArgument.
+ */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.Data;
@@ -5,7 +9,6 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @file
  * This class encapsulates an {@link AidaArgument}.
  * <p>
  * It is used to represent a single argument passed in an AIDA-PVA request.
@@ -31,11 +34,19 @@ public class AidaArgument {
      */
     private final String value;
     /**
-     * A list floating point value of the argument
+     * A list of floating point values in this argument
      */
     private final List<FloatArgument> floats;
+
+    /**
+     * A list of double precision floating point values in this argument
+     */
     private final List<DoubleArgument> doubles;
 
+    /**
+     * String representation of this argument
+     * @return String representation of this argument
+     */
     @Override
     public String toString() {
         return name + "=" + value;

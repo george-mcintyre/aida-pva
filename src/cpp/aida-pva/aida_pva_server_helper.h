@@ -22,10 +22,10 @@ Argument getArgument(Arguments arguments, char* name);
  * Get the json value from the given value identified by the path
  *
  * @param value the given value
- * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection[0].name
+ * @param passedInPath is an absolute reference to the element within the json of the given value. e.g. root.collection[0].name
  * @return the json_value
  */
-json_value* getJsonValue(Value* value, char* path);
+json_value* getJsonValue(Value* value, char* passedInPath);
 
 /**
  * Get value from a named  argument in the provided arguments structure.

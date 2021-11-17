@@ -82,7 +82,7 @@ _Parameters_
 | | | |
 | ----------- | -----------| ----------- | 
 | Parameter Names | Parameter Values | Description | 
-| `VALUE`*  | <floating point number> | float to set secondary |
+| `VALUE`*  | `<floating point number>` | float to set secondary |
 
 _Return value_
 

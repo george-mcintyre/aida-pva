@@ -1012,7 +1012,24 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        =
+EXCLUDE_SYMBOLS        = \
+                        ArgumentClasses \
+                        ArgumentMethods \
+                        ClassAndMethod \
+                        JavaObject \
+                        Boolean \
+                        Byte \
+                        Double \
+                        Float \
+                        Integer \
+                        List \
+                        Long \
+                        PVStructure \
+                        Short \
+                        _json_object_entry \
+                        _json_value \
+                        json_settings \
+                        String
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include

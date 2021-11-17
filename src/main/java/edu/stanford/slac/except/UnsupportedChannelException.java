@@ -1,7 +1,10 @@
+/*
+ * @file
+ * Unsupported Channel Exception.
+ */
 package edu.stanford.slac.except;
 
 /**
- * @file
  * Unsupported Channel Exception.
  * Use this when the channel requested is registered with this service but the way it is accessed
  * is incorrect.

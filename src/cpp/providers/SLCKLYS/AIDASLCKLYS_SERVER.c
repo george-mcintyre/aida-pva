@@ -106,6 +106,9 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
 	}
 }
 
+/**
+ * Get a table of data
+ */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	short klystronStatus;

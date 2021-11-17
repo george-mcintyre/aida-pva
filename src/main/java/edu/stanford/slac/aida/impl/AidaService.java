@@ -1,3 +1,8 @@
+/**
+ * @file
+ * The AidaService class is the main class that gets run to start an
+ * AIDA-PVA Provider.
+ */
 package edu.stanford.slac.aida.impl;
 
 import edu.stanford.slac.aida.lib.AidaProviderRunner;
@@ -6,7 +11,6 @@ import org.joda.time.DateTime;
 import java.util.logging.Logger;
 
 /**
- * @file
  * The AidaService class is the main class that gets run to start an
  * AIDA-PVA Provider.  It automatically loads the Native Provider Library on startup.
  * <p>

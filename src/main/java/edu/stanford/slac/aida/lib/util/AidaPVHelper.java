@@ -1,3 +1,7 @@
+/*
+ * @file
+ * Helper functions for PVData types used to construct and decode messages conforming to the Normative Types scheme.
+ */
 package edu.stanford.slac.aida.lib.util;
 
 import edu.stanford.slac.aida.lib.model.*;
@@ -19,11 +23,10 @@ import static org.epics.pvdata.pv.ScalarType.pvString;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
- * @file
  * Helper functions for PVData types used to construct and decode messages conforming to the Normative Types scheme.
  * This class provides many functions that help with processing EPICS `Process Variables`.
- * APDA-PVA receives data from EPICS in {@link PVField} and
- * {@link PVStructure}, and we send data back to the EPICS network
+ * APDA-PVA receives data from EPICS in PVField and
+ * PVStructure, and we send data back to the EPICS network
  * using the these same data types.
  * <p>
  * This class provides functions that convert to and from AIDA-PVA java types, and enables creation of the
@@ -36,32 +39,32 @@ import static org.epics.pvdata.pv.Status.StatusType.ERROR;
  */
 public class AidaPVHelper {
     /**
-     * Each top level {@link PVStructure} in the Normative Type scheme
-     * has a {@link ScalarType#pvString} {@link PVField}
+     * Each top level PVStructure in the Normative Type scheme
+     * has a ScalarType::getPvString PVField
      * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
      * <p>
-     * This static constant is the string used to identify {@link PVStructure}s
+     * This static constant is the string used to identify PVStructures
      * containing {@link PVScalar} data representing and NTScalar type.
      */
     private static final String NTSCALAR_ID = "epics:nt/NTScalar:1.0";
 
     /**
-     * Each top level {@link PVStructure} in the Normative Type scheme
-     * has a {@link ScalarType#pvString} {@link PVField}
+     * Each top level PVStructure in the Normative Type scheme
+     * has a ScalarType::getPvString() PVField
      * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
      * <p>
-     * This static constant is the string used to identify {@link PVStructure}s
-     * containing {@link PVScalarArray} data representing and NTScalarArray type.
+     * This static constant is the string used to identify PVStructures
+     * containing PVScalarArray data representing and NTScalarArray type.
      */
     private static final String NTSCALARARRAY_ID = "epics:nt/NTScalarArray:1.0";
 
     /**
-     * Each top level {@link PVStructure} in the Normative Type scheme
-     * has a {@link ScalarType#pvString} {@link PVField}
+     * Each top level PVStructure in the Normative Type scheme
+     * has a ScalarType::getPvString() PVField
      * named "ID" that contains a special identifier that is used to determine the contents of the PVStructure
      * <p>
-     * This static constant is the string used to identify {@link PVStructure}s
-     * containing {@link PVStructure} data representing and NTTable type.
+     * This static constant is the string used to identify PVStructures
+     * containing PVStructure data representing and NTTable type.
      */
     private static final String NTTABLE_ID = "epics:nt/NTTable:1.0";
 
@@ -98,7 +101,7 @@ public class AidaPVHelper {
     public static final Field[] EMPTY_FIELD_DEFINITIONS = new Field[0];
 
     /**
-     * Shortcut for a complete empty {@link Field} for an empty NTScalar
+     * Shortcut for a complete empty Field for an empty NTScalar
      * We use string as it doesn't matter as it will be empty
      */
     private static final Field[] NT_SCALAR_EMPTY_FIELD = new Field[]{
@@ -106,7 +109,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for a complete empty {@link Field} for an empty NTScalarArray.
+     * Shortcut for a complete empty Field for an empty NTScalarArray.
      * We use string as it doesn't matter as it will be empty
      */
     private static final Field[] NT_SCALAR_ARRAY_EMPTY_FIELD = new Field[]{
@@ -114,7 +117,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for complete empty {@link Field}s for an empty NTTable structure
+     * Shortcut for complete empty Fields for an empty NTTable structure
      */
     private static final Field[] NT_TABLE_EMPTY_FIELDS = new Field[]{
             FieldFactory.getFieldCreate().createScalarArray(pvString),
@@ -122,7 +125,7 @@ public class AidaPVHelper {
     };
 
     /**
-     * Shortcut for a complete empty NTTable {@link PVStructure} for when no data is returned from the Channel Provider
+     * Shortcut for a complete empty NTTable PVStructure for when no data is returned from the Channel Provider
      * from a request
      */
     public static final PVStructure NT_SCALAR_EMPTY_STRUCTURE =
@@ -134,7 +137,7 @@ public class AidaPVHelper {
 
 
     /**
-     * Shortcut for a complete empty {@link PVStructure} containing an NTScalarArray when no data is returned
+     * Shortcut for a complete empty PVStructure containing an NTScalarArray when no data is returned
      */
     public static final PVStructure NT_SCALAR_ARRAY_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -145,7 +148,7 @@ public class AidaPVHelper {
 
 
     /**
-     * Shortcut for a complete empty {@link PVStructure} containing an NTTable when no data is returned
+     * Shortcut for a complete empty PVStructure containing an NTTable when no data is returned
      */
     public static final PVStructure NT_TABLE_EMPTY_STRUCTURE =
             PVFactory.getPVDataCreate()
@@ -155,11 +158,11 @@ public class AidaPVHelper {
                                     .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, NT_TABLE_EMPTY_FIELDS));
 
     /**
-     * Creating a {@link PVStructure} is a two stage process.  First you need to create its
+     * Creating a PVStructure is a two stage process.  First you need to create its
      * structure, then you fill that structure with data.  The name of the field in any
-     * {@link PVStructure} where the value is stored is always called "value".
+     * PVStructure where the value is stored is always called "value".
      * <p>
-     * This method allows you to set the value field in an already created {@link PVStructure} to the given value.
+     * This method allows you to set the value field in an already created PVStructure to the given value.
      *
      * @param structure the given structure.
      * @param value     the value to set in the value field.
@@ -199,11 +202,11 @@ public class AidaPVHelper {
     }
 
     /**
-     * Creating a {@link PVStructure} is a two stage process.  First you need to create its
+     * Creating a PVStructure is a two stage process.  First you need to create its
      * structure, then you fill that structure with data.
      * <p>
      * This method allows you to set the value of any array field in an already
-     * created {@link PVStructure} to the given list of values.
+     * created PVStructure to the given list of values.
      * <p>
      * The `fieldName` parameter can be a path from the root of the structure down to the array that the values will be stored in.
      * So it may be of the form "value.listName" which would store the values in the array called "listName"
@@ -231,7 +234,7 @@ public class AidaPVHelper {
         int valuesCount = values.size();
 
         // Locate the array that was defined in the first stage of
-        // this {@link PVStructure} creation
+        // this PVStructure creation
         // and set the capacity to the number of values we need to store
         PVScalarArray scalarArray = structure.getScalarArrayField(fieldName, scalarTypeOf(aidaType));
         scalarArray.setCapacity(valuesCount);
@@ -279,18 +282,18 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert an arbitrary value to a {@link PVStructure} containing an `NTScalar`
+     * Convert an arbitrary value to a PVStructure containing an `NTScalar`
      * <p>
      * The value must be the java equivalent of one of the supported AIDA-PVA scalar types
-     * - {@link Boolean}, {@link Byte}, {@link Short},
-     * - {@link Integer}, {@link Long}, {@link Float},
-     * - {@link Double} or {@link String}
+     * - Boolean, Byte, Short,
+     * - Integer, Long, Float,
+     * - Double or String
      *
      * @param value java equivalent of one of the supported AIDA-PVA scalar types
-     * @return {@link PVStructure} containing an NTScalar with the value
+     * @return PVStructure containing an NTScalar with the value
      */
     public static PVStructure asScalar(Object value) {
-        // Null values are returned as an empty {@link PVStructure}
+        // Null values are returned as an empty PVStructure
         if (value == null) {
             return NT_SCALAR_EMPTY_STRUCTURE;
         }
@@ -304,19 +307,19 @@ public class AidaPVHelper {
         // And find out the corresponding PVScalar type that it needs to converted into
         ScalarType scalarType = scalarTypeOf(aidaType);
 
-        // Create the field of that type to be added to the {@link PVStructure} we return
+        // Create the field of that type to be added to the PVStructure we return
         Field[] scalarField = new Field[]{
                 FieldFactory.getFieldCreate().createScalar(scalarType)
         };
 
-        // Create a new {@link PVStructure} to return containing the field we created
+        // Create a new PVStructure to return containing the field we created
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 // Structure with one element: label and empty scalar field definition
                                 .createStructure(NTSCALAR_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarField));
 
-        // In the second phase of {@link PVStructure} creation we now set the field value
+        // In the second phase of PVStructure creation we now set the field value
         // Note that the field name to set is always called "value" for NT types
         setValue(retVal, value, aidaType);
 
@@ -324,18 +327,18 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert an arbitrary list of values to a {@link PVStructure} containing an `NTScalarArray`
+     * Convert an arbitrary list of values to a PVStructure containing an `NTScalarArray`
      * <p>
-     * The value must be the java {@link List} of a type equivalent of one of the supported AIDA-PVA scalar types
-     * - {@link Boolean}, {@link Byte}, {@link Short},
-     * - {@link Integer}, {@link Long}, {@link Float},
-     * - {@link Double} or {@link String}
+     * The value must be the java List of a type equivalent of one of the supported AIDA-PVA scalar types
+     * - Boolean, Byte, Short,
+     * - Integer, Long, Float,
+     * - Double or String
      *
      * @param values the list of values to convert
-     * @return {@link PVStructure} containing an `NTScalarArray` with the values
+     * @return PVStructure containing an `NTScalarArray` with the values
      */
     public static PVStructure asScalarArray(List<?> values) {
-        // Null values are returned as an empty {@link PVStructure}
+        // Null values are returned as an empty PVStructure
         if (values == null) {
             return NT_SCALAR_ARRAY_EMPTY_STRUCTURE;
         }
@@ -349,12 +352,12 @@ public class AidaPVHelper {
         // And find out the corresponding PVScalar type that it needs to converted into
         ScalarType scalarType = scalarTypeOf(aidaType);
 
-        // Create the field of that type to be added to the {@link PVStructure} we return
+        // Create the field of that type to be added to the PVStructure we return
         Field[] scalarArrayField = new Field[]{
                 FieldFactory.getFieldCreate().createScalarArray(scalarType)
         };
 
-        // Create a new {@link PVStructure} to return containing the field we created
+        // Create a new PVStructure to return containing the field we created
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
@@ -362,7 +365,7 @@ public class AidaPVHelper {
                                 .createStructure(NTSCALARARRAY_ID, NT_SCALAR_TOP_STRUCTURE_NAME, scalarArrayField));
 
 
-        // In the second phase of {@link PVStructure} creation we now set the field value
+        // In the second phase of PVStructure creation we now set the field value
         // Note that the field name to set is always called "value" for NT types
         setValues(retVal, NT_FIELD_NAME, values, aidaType);
 
@@ -371,11 +374,11 @@ public class AidaPVHelper {
 
 
     /**
-     * Convert an arbitrary list of homogeneously sized columns of values to a {@link PVStructure} containing an `NTTable`
-     * The value of each of the columns must be a java {@link List} of a type equivalent of one of the supported AIDA-PVA scalar types
-     * - {@link Boolean}, {@link Byte}, {@link Short},
-     * - {@link Integer}, {@link Long}, {@link Float},
-     * - {@link Double} or {@link String}
+     * Convert an arbitrary list of homogeneously sized columns of values to a PVStructure containing an `NTTable`
+     * The value of each of the columns must be a java List of a type equivalent of one of the supported AIDA-PVA scalar types
+     * - Boolean, Byte, Short,
+     * - Integer, Long, Float,
+     * - Double or String
      *
      * @param values            the list of values
      * @param aidaChannelConfig the configuration
@@ -383,7 +386,7 @@ public class AidaPVHelper {
      */
     public static PVStructure asNtTable(List<List<Object>> values, AidaChannelOperationConfig aidaChannelConfig) {
         // If there is nothing to add or that the list is empty or if the columns are empty return an empty
-        //  {@link PVStructure}
+        //  PVStructure
         if (values == null || values.isEmpty() || values.get(0).isEmpty()) {
             return NT_TABLE_EMPTY_STRUCTURE;
         }
@@ -407,12 +410,12 @@ public class AidaPVHelper {
         List<Field> pvFields = new ArrayList<Field>();
         setFieldsWithNamesLabelsAndTypesFromConfig(pvFields, aidaChannelConfig, values, fieldNames, labels, aidaTypes);
 
-        /// FIRST STAGE {@link PVStructure} creation: Structure
+        /// FIRST STAGE PVStructure creation: Structure
 
         // List of strings that will contain the labels names
         Field labelsArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
 
-        // Create the second level {@link Field} that will conta
+        // Create the second level Field that will conta
         // top fields, this one holding the structure of the rest of the NTTable
         //  - fieldNames = PVScalarArray containing pvstring and
         //  - columns of values = A set of Fields that are each PVScalarArrays
@@ -421,14 +424,14 @@ public class AidaPVHelper {
         // Create the two top fields of the
         Field[] topFields = new Field[]{labelsArray, structure};
 
-        // Create the top {@link PVStructure} that will be returned (labels and values)
+        // Create the top PVStructure that will be returned (labels and values)
         PVStructure retVal = PVFactory.getPVDataCreate()
                 .createPVStructure(
                         FieldFactory.getFieldCreate()
                                 .createStructure(NTTABLE_ID, NT_TABLE_TOP_STRUCTURE_NAMES, topFields));
 
 
-        /// SECOND STAGE {@link PVStructure} creation: Set values
+        /// SECOND STAGE PVStructure creation: Set values
 
         // Set the field labels
         setValues(retVal, NT_LABELS_NAME, labels, STRING_ARRAY);
@@ -635,12 +638,12 @@ public class AidaPVHelper {
 
     /**
      * Convert the {@link PVArray} field to the json string representation of an array of that field,
-     * storing any ieee values found unchanged in the given {@link FloatArgument}and {@link DoubleArgument} lists
+     * storing any ieee values found unchanged in the given FloatArgumentand DoubleArgument lists
      *
      * @param field              the {@link PVArray} field
      * @param fieldPath          the absolute path to the field from the root
-     * @param floatArgumentList  the {@link FloatArgument} list to store any ieee values
-     * @param doubleArgumentList the {@link DoubleArgument} list to store any ieee values
+     * @param floatArgumentList  the FloatArgument list to store any ieee values
+     * @param doubleArgumentList the DoubleArgument list to store any ieee values
      * @return the json string representation of the {@link PVArray}
      * @throws RPCRequestException if anything bad happens
      */
@@ -673,14 +676,14 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the {@link PVStructure} field to the json string representation of a structure of that field,
-     * storing any ieee values found unchanged in the given {@link FloatArgument}and {@link DoubleArgument} lists
+     * Convert the PVStructure field to the json string representation of a structure of that field,
+     * storing any ieee values found unchanged in the given FloatArgumentand DoubleArgument lists
      *
-     * @param field              the {@link PVStructure} field
+     * @param field              the PVStructure field
      * @param fieldPath          the absolute path to the field from the root
-     * @param floatArgumentList  the {@link FloatArgument} list to store any ieee values
-     * @param doubleArgumentList the {@link DoubleArgument} list to store any ieee values
-     * @return the json string representation of the {@link PVStructure}
+     * @param floatArgumentList  the FloatArgument list to store any ieee values
+     * @param doubleArgumentList the DoubleArgument list to store any ieee values
+     * @return the json string representation of the PVStructure
      * @throws RPCRequestException if anything bad happens
      */
     public static String structureFieldToString(PVStructure field, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList) throws RPCRequestException {
@@ -819,10 +822,10 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVBooleanArray} to {@link String}s, adding them to the provided {@link String} list
+     * Convert the given {@link PVBooleanArray} to Strings, adding them to the provided String list
      *
      * @param array      the given {@link PVBooleanArray}
-     * @param stringList the provided {@link String} list
+     * @param stringList the provided String list
      */
     private static void booleanArrayToString(PVBooleanArray array, List<String> stringList) {
         BooleanArrayData data = new BooleanArrayData();
@@ -851,10 +854,10 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVByteArray} to {@link String}s, adding them to the provided {@link String} list
+     * Convert the given {@link PVByteArray} to Strings, adding them to the provided String list
      *
      * @param array      the given {@link PVByteArray}
-     * @param stringList the provided {@link String} list
+     * @param stringList the provided String list
      */
     private static void byteArrayToString(PVByteArray array, List<String> stringList) {
         IteratorByte it = array.get().iterator();
@@ -878,10 +881,10 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVShortArray} to {@link String}s, adding them to the provided {@link String} list
+     * Convert the given {@link PVShortArray} to Strings, adding them to the provided String list
      *
      * @param array      the given {@link PVShortArray}
-     * @param stringList the provided {@link String} list
+     * @param stringList the provided String list
      */
     private static void shortArrayToString(PVShortArray array, List<String> stringList) {
         IteratorShort it = array.get().iterator();
@@ -905,10 +908,10 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVIntArray} to {@link String}s, adding them to the provided {@link String} list
+     * Convert the given {@link PVIntArray} to Strings, adding them to the provided String list
      *
      * @param array      the given {@link PVIntArray}
-     * @param stringList the provided {@link String} list
+     * @param stringList the provided String list
      */
     private static void integerArrayToString(PVIntArray array, List<String> stringList) {
         IteratorInteger it = array.get().iterator();
@@ -932,10 +935,10 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVLongArray} to {@link String}s, adding them to the provided {@link String} list
+     * Convert the given {@link PVLongArray} to Strings, adding them to the provided String list
      *
      * @param array      the given {@link PVLongArray}
-     * @param stringList the provided {@link String} list
+     * @param stringList the provided String list
      */
     private static void longArrayToString(PVLongArray array, List<String> stringList) {
         IteratorLong it = array.get().iterator();
@@ -945,11 +948,11 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert a float field to a string but also store the ieee value unchanged in the given {@link FloatArgument} list
+     * Convert a float field to a string but also store the ieee value unchanged in the given FloatArgument list
      *
      * @param field             the float field
      * @param fieldPath         the absolute path to the field from the root
-     * @param floatArgumentList the {@link FloatArgument} list to store the ieee value
+     * @param floatArgumentList the FloatArgument list to store the ieee value
      * @return the string representation of the floating point number
      */
     private static String floatFieldToString(PVFloat field, String fieldPath, List<FloatArgument> floatArgumentList) {
@@ -975,13 +978,13 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVFloatArray} to {@link String}s, adding them to the provided {@link String} list
-     * Also add all floats found to the provided {@link FloatArgument} list
+     * Convert the given {@link PVFloatArray} to Strings, adding them to the provided String list
+     * Also add all floats found to the provided FloatArgument list
      *
      * @param array             the given {@link PVFloatArray}
      * @param fieldPath         the absolute path to the field from the root
-     * @param floatArgumentList the provided {@link FloatArgument} list
-     * @param stringList        the provided  {@link String} list
+     * @param floatArgumentList the provided FloatArgument list
+     * @param stringList        the provided  String list
      */
     private static void floatArrayToString(PVFloatArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<String> stringList) {
         IteratorFloat it = array.get().iterator();
@@ -994,11 +997,11 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert a double field to a string but also store the ieee value unchanged in the given {@link DoubleArgument} list
+     * Convert a double field to a string but also store the ieee value unchanged in the given DoubleArgument list
      *
      * @param field              the double field
      * @param fieldPath          the absolute path to the field from the root
-     * @param doubleArgumentList the {@link DoubleArgument} list to store the ieee value
+     * @param doubleArgumentList the DoubleArgument list to store the ieee value
      * @return the string representation of the floating point number
      */
     private static String doubleFieldToString(PVDouble field, String fieldPath, List<DoubleArgument> doubleArgumentList) {
@@ -1024,13 +1027,13 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVDoubleArray} to {@link String}s, adding them to the provided {@link String} list
-     * Also add all doubles found to the provided {@link DoubleArgument} list
+     * Convert the given {@link PVDoubleArray} to Strings, adding them to the provided String list
+     * Also add all doubles found to the provided DoubleArgument list
      *
      * @param array              the given {@link PVDoubleArray}
      * @param fieldPath          the absolute path to the field from the root
-     * @param doubleArgumentList the provided {@link DoubleArgument} list
-     * @param stringList         the provided  {@link String} list
+     * @param doubleArgumentList the provided DoubleArgument list
+     * @param stringList         the provided  String list
      */
     private static void doubleArrayToString(PVDoubleArray array, String fieldPath, List<DoubleArgument> doubleArgumentList, List<String> stringList) {
         IteratorDouble it = array.get().iterator();
@@ -1077,10 +1080,10 @@ public class AidaPVHelper {
     }
 
     /**
-     * Convert the given {@link PVArray} to {@link String}s, adding them to the provided {@link String} list
+     * Convert the given {@link PVArray} to Strings, adding them to the provided String list
      *
      * @param array      the given {@link PVArray}
-     * @param stringList the provided  {@link String} list
+     * @param stringList the provided  String list
      */
     private static void stringArrayToString(PVArray array, List<String> stringList) {
         StringArrayData data = new StringArrayData();
@@ -1096,15 +1099,15 @@ public class AidaPVHelper {
 
 
     /**
-     * Convert the given {@link PVArray} which represents a structure, to {@link String}s, adding them to the provided {@link String} list,
-     * Also add all floats found to the provided {@link FloatArgument} list,
-     * and add all doubles found to the provided {@link DoubleArgument} list
+     * Convert the given {@link PVArray} which represents a structure, to Strings, adding them to the provided String list,
+     * Also add all floats found to the provided FloatArgument list,
+     * and add all doubles found to the provided DoubleArgument list
      *
      * @param array              the given {@link PVDoubleArray}
      * @param fieldPath          the absolute path to the field from the root
-     * @param floatArgumentList  the provided {@link FloatArgument} list
-     * @param doubleArgumentList the provided {@link DoubleArgument} list
-     * @param stringList         the provided  {@link String} list
+     * @param floatArgumentList  the provided FloatArgument list
+     * @param doubleArgumentList the provided DoubleArgument list
+     * @param stringList         the provided  String list
      */
     private static void structureArrayToString(PVArray array, String fieldPath, List<FloatArgument> floatArgumentList, List<DoubleArgument> doubleArgumentList, List<String> stringList) throws RPCRequestException {
         StructureArrayData data = new StructureArrayData();

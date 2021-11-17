@@ -53,7 +53,7 @@ vmsstat_t init(const char* processName, bool initMessageServices);
  *
  * The #exception is formatted in a standard way using the VMS status code and its associated message
  * and the optionally supplied #message.
- * The #exception is always assumed to be from the {@link edu.stanford.slac.except} package
+ * The #exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env the JNI environment.  Used in all functions involving JNI
  * @param status the VMS status code to luck up and display text for.
@@ -66,7 +66,7 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
  * To log any non-OS exceptions and throw back to java.
  *
  * The #exception is formatted in a standard way with the optionally supplied #message.
- * The #exception is always assumed to be from the {@link edu.stanford.slac.except} package
+ * The #exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env the JNI environment.  Used in all functions involving JNI
  * @param exception the string representation of the exception class to throw.
@@ -122,13 +122,13 @@ void secnFromUri(const char* uri, int4u* secn);
  * Get secondary from URI.  Just points into the URI so don't go messing with it.
  *
  * @param uri the new format AIDA PV name
- * @param secn pointer to an int to store the secondary as a number
  */
 const char* secondaryFromUri(const char* uri);
 
 /**
  * Get primary, micro and unit from a device name.
  *
+ * @param env the JNI environment.  Used in all functions involving JNI
  * @param device pre-allocated space to store the device
  * @param primary pre-allocated space to store the primary
  * @param micro pre-allocated space to store the micro
@@ -207,7 +207,6 @@ void releaseTable(Table table);
 /**
  * Release all allocated memory in the given value.
  *
- * @param env environment.
  * @param value the given value'
  */
 void releaseValue(Value value);
@@ -790,6 +789,7 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
  *
  * @param env            The JNI environment.  Used in all functions involving JNI
  * @param arguments      Arguments that the function processes as its source to retrieve the data.
+ * @param value      	 For the avscanf() form this parameter holds the parsed Value given to the Channel Provider endpoint.
  * @param formatString   C string that contains a format string as described above
  * @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
  * 						 containing pairs of names and pointers to allocated storage (except as indicated above),

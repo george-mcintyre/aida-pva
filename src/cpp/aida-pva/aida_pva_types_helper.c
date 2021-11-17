@@ -236,6 +236,7 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...)
  *
  * @param env            The JNI environment.  Used in all functions involving JNI
  * @param arguments      Arguments that the function processes as its source to retrieve the data.
+ * @param value      	 For the avscanf() form this parameter holds the parsed Value given to the Channel Provider endpoint.
  * @param formatString   C string that contains a format string as described above
  * @param ...            Depending on the format string, the function may expect a sequence of additional arguments,
  * 						 containing pairs of names and pointers to allocated storage (except as indicated above),

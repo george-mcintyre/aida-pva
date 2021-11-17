@@ -1,7 +1,10 @@
+/*
+ * @file
+ * Missing Required Argument Exception.
+ */
 package edu.stanford.slac.except;
 
 /**
- * @file
  * Missing Required Argument Exception.
  * Use this when a required argument is missing from the submitted request.
  * Raising this exception will notify the client that it can retry the request

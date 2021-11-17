@@ -1,7 +1,10 @@
+/*
+ * @file
+ * Unsupported Channel Type Exception.
+ */
 package edu.stanford.slac.except;
 
 /**
- * @file
  * Unsupported Channel Type Exception.
  * Use this when the channel requested is registered with this service but a required `TYPE` parameter is missing
  * or incorrect.

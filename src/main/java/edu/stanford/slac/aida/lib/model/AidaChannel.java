@@ -1,3 +1,7 @@
+/*
+ * @file
+ * This class encapsulates an AidaChannel.
+ */
 package edu.stanford.slac.aida.lib.model;
 
 import lombok.AllArgsConstructor;
@@ -6,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
- * @file
  * This class encapsulates an {@link AidaChannel}.
  * <p>
  * It is used to represent a single channel that this Channel Provider will support.
@@ -28,10 +31,10 @@ import lombok.NonNull;
 public class AidaChannel {
     /**
      * The name of the channel.  This can be a direct verbatim match or
-     * a {@link org.epics.pvaccess.util.WildcardMatcher} string - see documentation in code
+     * a WildcardMatcher string - see documentation in code
      * for what is supported.
      * <p>
-     * Note that at the time of writing there is a bug in {@link org.epics.pvaccess.util.WildcardMatcher}
+     * Note that at the time of writing there is a bug in WildcardMatcher
      * such that if you use more than one '*' in the string undefined results occur.
      */
     private @NonNull String channel;

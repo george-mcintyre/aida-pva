@@ -12,13 +12,34 @@ extern "C" {
 #include "errtranslate.h"
 
 // Supported exceptions
+/**
+ * Use this string to signal Internal Exceptions in aidaThrow()
+ */
 #define AIDA_INTERNAL_EXCEPTION "AidaInternalException"
+/**
+ * Use this string to signal Server Initialisation Exceptions in aidaThrow()
+ */
 #define SERVER_INITIALISATION_EXCEPTION "ServerInitialisationException"
+/**
+ * Use this string to signal Exceptions when trying to Get Data in aidaThrow()
+ */
 #define UNABLE_TO_GET_DATA_EXCEPTION "UnableToGetDataException"
+/**
+ * Use this string to signal Exceptions when trying to Set Data in aidaThrow()
+ */
 #define UNABLE_TO_SET_DATA_EXCEPTION "UnableToSetDataException"
+/**
+ * Use this string to signal Unsupported Channel Exceptions in aidaThrow()
+ */
 #define UNSUPPORTED_CHANNEL_EXCEPTION "UnsupportedChannelException"
+/**
+ * Use this string to signal Missing Required Argument Exceptions in aidaThrow()
+ */
 #define MISSING_REQUIRED_ARGUMENT_EXCEPTION "MissingRequiredArgumentException"
 
+/**
+ * The maximum size of the error text message in an aidaThrow() call
+ */
 #define MAX_ERROR_TEXT_LEN 100
 
 /**
@@ -30,9 +51,9 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_RETURN_(r) \
+#define ON_EXCEPTION_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -45,10 +66,10 @@ extern "C" {
  * @param _r	the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         FREE_MEMORY \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -74,10 +95,10 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_ARGUMENTS_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_ARGUMENTS_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseArguments(arguments); \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -106,11 +127,11 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_STRING_AND_ARGS_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_STRING_AND_ARGS_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         if ( string ) free(string); \
         releaseArguments(arguments); \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -123,10 +144,10 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_STRING_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_STRING_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         if ( string ) free(string); \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -140,11 +161,11 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_ARRAY_AND_ARGS_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_ARRAY_AND_ARGS_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseArray(array); \
         releaseArguments(arguments); \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -175,11 +196,11 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_TABLE_AND_ARGS_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_TABLE_AND_ARGS_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseTable(table); \
         releaseArguments(arguments); \
-        return r; \
+        return _r; \
     }
 
 /**
@@ -210,11 +231,11 @@ extern "C" {
  * @param _r the specified return value.
  * @return This MACRO will return the specified return value from your function if there has been an exception.
  */
-#define ON_EXCEPTION_FREE_VALUE_AND_ARGS_AND_RETURN_(r) \
+#define ON_EXCEPTION_FREE_VALUE_AND_ARGS_AND_RETURN_(_r) \
     if ((*env)->ExceptionCheck(env)) { \
         releaseValue(value); \
         releaseArguments(arguments); \
-        return r; \
+        return _r; \
     }
 
 /**

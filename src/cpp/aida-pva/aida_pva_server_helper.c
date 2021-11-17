@@ -23,6 +23,15 @@ static bool isOnlyNumbers(char* string);
    adds cc/names=UPPERCASE on compiles by default, but if the ATTRIBUTE=JNI
    is in effect (as is for this module), then it's /names=AS_IS.
 */
+/**
+ * standalone init is used to initialise standalone processes
+ * @param name process name
+ * @param dbinit dbinit
+ * @param msginit msginit
+ * @param query query
+ * @param set set
+ * @return status
+ */
 unsigned long int STANDALONE_INIT(
 		const struct dsc$descriptor_s* name,
 		const long int* dbinit,
@@ -32,7 +41,7 @@ unsigned long int STANDALONE_INIT(
 );
 
 /**
- * Call standalone_init() and set development mode flag.
+ * Call standalone_init()
  * @param processName the name of the process being initialised
  * @param initMessageServices boolean to determine if the message service needs to be initialised
  * @return vms status code
@@ -56,7 +65,7 @@ vmsstat_t init(const char* processName, bool initMessageServices)
  * To log any non-OS exceptions and throw back to java.
  *
  * The #exception is formatted in a standard way with the optionally supplied #message.
- * The #exception is always assumed to be from the {@link edu.stanford.slac.except} package
+ * The #exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env the JNI environment.  Used in all functions involving JNI
  * @param exception the string representation of the exception class to throw.
@@ -72,7 +81,7 @@ void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
  *
  * The #exception is formatted in a standard way using the VMS status code and its associated message
  * and the optionally supplied #message.
- * The #exception is always assumed to be from the {@link edu.stanford.slac.except} package
+ * The #exception is always assumed to be from the edu.stanford.slac.except package
  *
  * @param env the JNI environment.  Used in all functions involving JNI
  * @param status the VMS status code to luck up and display text for.
@@ -194,7 +203,7 @@ Argument getArgument(Arguments arguments, char* name)
  * Note that if json is detected in the value it will be parsed into the Value's
  * json value element.
  *
- * @param env
+ * @param env the JNI environment.  Used in all functions involving JNI
  * @param arguments
  * @param name
  * @param forArray
@@ -302,7 +311,7 @@ static bool isOnlyNumbers(char* string)
 /**
  * Get value from a named  argument in the provided arguments structure.
  *
- * @param env env
+ * @param env the JNI environment.  Used in all functions involving JNI
  * @param arguments provided arguments structure
  * @param name provided name
  * @return the extracted Value
@@ -315,7 +324,7 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 /**
  * Get value from a named  argument in the provided arguments structure.
  *
- * @param env env
+ * @param env the JNI environment.  Used in all functions involving JNI
  * @param arguments provided arguments structure
  * @param name provided name
  * @return the extracted Value
@@ -329,7 +338,7 @@ Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
  * Get the json value from the given value identified by the path
  *
  * @param value the given value
- * @param path is an absolute reference to the element within the json of the given value. e.g. root.collection.[0].name
+ * @param passedInPath is an absolute reference to the element within the json of the given value. e.g. root.collection.[0].name
  * @return pointer to the json_value
  */
 json_value* getJsonValue(Value* value, char* passedInPath)
@@ -491,7 +500,6 @@ void secnFromUri(const char* uri, int4u* secn)
  * Get secondary from URI.  Just points into the URI so don't go messing with it
  *
  * @param uri the new format AIDA PV name
- * @param secn pointer to an int to store the secondary as a number
  */
 const char* secondaryFromUri(const char* uri)
 {
@@ -522,6 +530,7 @@ void pmuStringFromUri(char* pmuString, const char* uri)
 /**
  * Get primary, micro and unit from a device name
  *
+ * @param env the JNI environment.  Used in all functions involving JNI
  * @param device pre-allocated space to store the device
  * @param primary pre-allocated space to store the primary
  * @param micro pre-allocated space to store the micro

@@ -1,3 +1,8 @@
+/*
+ * @file
+ * Abstract implementation of a ChannelProvider which handles requests for scalar, scalarArrays, and tables and transfers them
+ * to the appropriate Channel Provider endpoints.
+ */
 package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.lib.model.*;
@@ -13,7 +18,6 @@ import java.util.logging.Logger;
 import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
 
 /**
- * @file
  * Abstract implementation of a ChannelProvider which handles requests for scalar, scalarArrays, and tables and transfers them
  * to the appropriate Channel Provider endpoints.
  * A ChannelProvider is responsible for communicating with the Channel Provider
@@ -31,11 +35,11 @@ import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
  * <p>
  * It also handles the five main classes of requests routing them to the correct underlying
  * - {@link slac.aida.NativeChannelProvider} entry point:
- * - {@link ChannelProvider#requestScalar(String, AidaArguments, AidaType)}
- * - {@link ChannelProvider#requestScalarArray(String, AidaArguments, AidaType)}
- * - {@link ChannelProvider#requestTable(String, AidaArguments)}
- * - {@link ChannelProvider#setValue(String, AidaArguments)}
- * - {@link ChannelProvider#setValueWithResponse(String, AidaArguments)}
+ * - ChannelProvider::requestScalar(String, AidaArguments, AidaType)
+ * - ChannelProvider::requestScalarArray(String, AidaArguments, AidaType)
+ * - ChannelProvider::requestTable(String, AidaArguments)
+ * - ChannelProvider::setValue(String, AidaArguments)
+ * - ChannelProvider::setValueWithResponse(String, AidaArguments)
  */
 public abstract class ChannelProvider extends NativeChannelProvider {
     /**
@@ -49,13 +53,13 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * Constructor for the channel provider that reads the configuration from environment variables and
      * configuration files.
      * <p>
-     * Uses {@link ChannelProviderFactory#create(ChannelProvider)} to check
+     * Uses ChannelProviderFactory::create(ChannelProvider) to check
      * the `aida.pva.channels.filename` property or the `AIDA_PVA_CHANNELS_FILENAME`
      * environment variable to load the yaml configuration file
      * <p>
      * Lists the abbreviated list of hosted channels to the console.
      * <p>
-     * Calls the {@link ChannelProvider#logHostedChannels()}
+     * Calls the ChannelProvider::logHostedChannels()
      */
     public ChannelProvider() {
         // Aida server Banner on standard output
@@ -104,7 +108,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
 
     /**
      * Handles scalar array requests by calling the appropriate Native Method.  This can return :-
-     * - collections of scalars e.g. List of {@link Boolean}, List of {@link Integer} , List of {@link Byte} , List of {@link Long} , List of {@link Float}, List of {@link Double},  ...
+     * - collections of scalars e.g. List of Boolean, List of Integer , List of Byte , List of Long , List of Float, List of Double,  ...
      *
      * @param channelName request channel name
      * @param arguments   request arguments

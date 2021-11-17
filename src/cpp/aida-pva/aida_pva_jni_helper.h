@@ -73,20 +73,20 @@ typedef struct
 JavaObject newObject(JNIEnv* env, char* clazz);
 
 /**
- * Convert given {@link jstring} to a C string.
+ * Convert given jstring to a C string.
  *
  * @param env environment.
- * @param string {@link jstring}.
+ * @param string jstring.
  * @return C string.
  */
 char* toCString(JNIEnv* env, jstring string);
 
 /**
- * Convert C string to {@link jstring}.
+ * Convert C string to jstring.
  *
  * @param env environment.
  * @param string C string.
- * @return {@link jstring}.
+ * @return jstring.
  */
 jstring toJString(JNIEnv* env, const char* string);
 
@@ -117,10 +117,10 @@ jmethodID getConstructorMethodId(JNIEnv* env, jclass clazz);
  * from the given java List<AidaArgument>
  *
  * @param env environment.
- * @param jArgs java arguments list - List<AidaArgument>
- * @return {@link Arguments} structure
+ * @param jArguments java arguments list - List<{@link AidaArgument}>
+ * @return {@link AidaArgument} structure
  */
-Arguments toArguments(JNIEnv* env, jobject jArgs);
+Arguments toArguments(JNIEnv* env, jobject jArguments);
 
 /**
  * Create a new instance of a java `boolean[]`,

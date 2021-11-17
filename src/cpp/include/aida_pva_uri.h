@@ -10,9 +10,21 @@ extern "C" {
 
 #include "aida_pva.h"
 
+/**
+ * The maximum length of the PMU part of a URI, includes primary, micro and unit strings with spaces between them
+ */
 #define MAX_PMU_LEN 18
+/**
+ * The maximum length of a URI
+ */
 #define MAX_URI_LEN 30
+/**
+ * The length of the primary part of a PMU string
+ */
 #define PRIM_LEN 4
+/**
+ * The length of the micro part of a PMU string
+ */
 #define MICRO_LEN 4
 
 /**

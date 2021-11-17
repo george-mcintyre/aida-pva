@@ -1,10 +1,13 @@
+/*
+ * @file
+ * Unable to get data exception.
+ */
 package edu.stanford.slac.except;
 
 /**
- * @file
  * Unable to get data exception.
  * This Exception is a general exception to be used in most cases when there's a problem satisfying a `get` request.
- * If this is a `set` request use the {@link UnableToSetDataException} exception instead.
+ * If this is a `set` request use the UnableToSetDataException exception instead.
  * <p>
  * This can be used when there are problems calling the lower level Channel Provider module.
  * It can also be used if the set of arguments given are not coherent or are out or bounds.

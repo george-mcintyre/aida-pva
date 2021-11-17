@@ -1,3 +1,6 @@
+/*
+ * @file The AIDA-PVA Service which provides connection to the AIDA-PVA Channel Providers and the SLAC Network.
+ */
 package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.lib.model.*;
@@ -21,7 +24,7 @@ import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
 
 /**
- * @file The AIDA-PVA Service which provides connection to the AIDA-PVA Channel Providers and the SLAC Network.
+ * The AIDA-PVA Service which provides connection to the AIDA-PVA Channel Providers and the SLAC Network.
  */
 public class AidaRPCService implements RPCService {
     /**
@@ -31,6 +34,10 @@ public class AidaRPCService implements RPCService {
 
     private final ChannelProvider aidaChannelProvider;
 
+    /**
+     * The constructor. will simply store the given AIDA-PVA Channel Provider for use later.
+     * @param aidaChannelProvider the given AIDA-PVA Channel Provider
+     */
     public AidaRPCService(ChannelProvider aidaChannelProvider) {
         this.aidaChannelProvider = aidaChannelProvider;
     }
@@ -259,7 +266,7 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Check that the configuration defines fields for table requests so that we will know how to create the {@link PVStructure} to return the result in
+     * Check that the configuration defines fields for table requests so that we will know how to create the PVStructure to return the result in
      *
      * @param aidaType the request type
      * @param config   the configuration
@@ -361,11 +368,11 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Get the arguments for the specified request.  Returns the list of {@link AidaArgument} for the
-     * given Normative Type query {@link PVStructure}
+     * Get the arguments for the specified request.  Returns the list of AidaArgument for the
+     * given Normative Type query PVStructure
      *
-     * @param pvUriQuery the given Normative Type query {@link PVStructure}
-     * @return the list of {@link AidaArgument}
+     * @param pvUriQuery the given Normative Type query PVStructure
+     * @return the list of AidaArgument
      * @throws RPCRequestException if there is a problem reading the arguments
      */
     private List<AidaArgument> getArguments(PVStructure pvUriQuery) throws RPCRequestException {
@@ -380,10 +387,10 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Convert a {@link PVField} into an {@link AidaArgument}
+     * Convert a PVField into an AidaArgument
      *
-     * @param field the {@link PVField} to convert into an {@link AidaArgument}
-     * @return the {@link AidaArgument}
+     * @param field the PVField to convert into an AidaArgument
+     * @return the AidaArgument
      * @throws RPCRequestException if something bad happens
      */
     private AidaArgument getArgument(PVField field) throws RPCRequestException {
