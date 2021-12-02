@@ -17,20 +17,20 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-| | | |
-| ----------- | ----------- | ----------- |
-| **get** | Syntax    | `MASTEROSC:VAL` |
-| | Examples | `MASTEROSC:VAL` |
-| **set** | Syntax    | `MASTEROSC:VAL` |
-| | Examples | `MASTEROSC:VAL` |
+|         |          |                 |
+|---------|----------|-----------------|
+| **get** | Syntax   | `MASTEROSC:VAL` |
+|         | Examples | `MASTEROSC:VAL` |
+| **set** | Syntax   | `MASTEROSC:VAL` |
+|         | Examples | `MASTEROSC:VAL` |
 
 ## Attribute operation summary
 
-| | | |
-| ----------- | -----------  | -----------  |
-| Attribute | operation |Description |
-| `VAL` | **get** |  Gets the Master Oscillator setting in units of absolute frequency (KHz). |
-| `VAL` | **set** |  Sets the Master Oscillator value to a specified setting in units of relative frequency or energy |
+|           |           |                                                                                                  |
+|-----------|-----------|--------------------------------------------------------------------------------------------------|
+| Attribute | operation | Description                                                                                      |
+| `VAL`     | **get**   | Gets the Master Oscillator setting in units of absolute frequency (KHz).                         |
+| `VAL`     | **set**   | Sets the Master Oscillator value to a specified setting in units of relative frequency or energy |
 
 ## Attribute operations
 
@@ -38,49 +38,50 @@ Supports **get** and **set** operations.
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
-| Parameter Names | Parameter Values |Description | 
-| `TYPE`*  |   `TABLE`  | return a table |
-| | `DOUBLE`  | returns a double value |
+|                 |                  |                        |
+|-----------------|------------------|------------------------|
+| Parameter Names | Parameter Values | Description            | 
+| `TYPE`*         | `TABLE`          | return a table         |
+|                 | `DOUBLE`         | returns a double value |
 
 _Return value_
 
-| | | | |
-|----------- | ----------- | -----------  |-----------  |
-| TYPE  | Return Column | Column Type |Description |
-| `TABLE` | `value` | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
+|         |               |                |                                                  |
+|---------|---------------|----------------|--------------------------------------------------|
+| TYPE    | Return Column | Column Type    | Description                                      |
+| `TABLE` | `value`       | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
-| | |
-|-----------  |-----------  |
-| TYPE  |  Description |
-| `DOUBLE` |  measured setting of the Master Oscillator in KHz  |
+|          |                                                  |
+|----------|--------------------------------------------------|
+| TYPE     | Description                                      |
+| `DOUBLE` | measured setting of the Master Oscillator in KHz |
 
 ### VAL : set
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
-| Parameter Names | Parameter Values |Description | 
-| `VALUE`*  | Float  | setting in units of relative frequency or energy |
-| `UNITS`  |   `FREQUENCY` or `ENERGY`  | Indicates whether the specified relative set value is in units of frequency or energy. The default is frequency |
-| `RING`  | `HER` or `LER`  | If the specified relative set value is in units of energy, this parameter is required and specifies the ring (HER or LER).  |
+|                 |                         |                                                                                                                            |
+|-----------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| Parameter Names | Parameter Values        | Description                                                                                                                | 
+| `VALUE`*        | Float                   | setting in units of relative frequency or energy                                                                           |
+| `UNITS`         | `FREQUENCY` or `ENERGY` | Indicates whether the specified relative set value is in units of frequency or energy. The default is frequency            |
+| `RING`          | `HER` or `LER`          | If the specified relative set value is in units of energy, this parameter is required and specifies the ring (HER or LER). |
 
 _Return value_
-| | | | | 
-|----------- | ----------- | ----------- |----------- | 
-| TYPE | Return Column | Column Type |Description |
-| `TABLE` | `value` | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
+
+|         |               |                |                                                  |
+|---------|---------------|----------------|--------------------------------------------------|
+| TYPE    | Return Column | Column Type    | Description                                      |
+| `TABLE` | `value`       | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
 ## Examples
 
-| | | |
-|  ----------- |----------- |----------- |
-| pvcall examples | `pvcall MASTEROSC:VAL` | Get measured Master Oscillator setting value |
-|  | `pvcall MASTEROSC:VAL VALUE=0.328f` |  Perform set operation |
-| Java Tests | SlcMoscTest.java | |
-| Matlab example |  | |
+|                 |                                     |                                              |
+|-----------------|-------------------------------------|----------------------------------------------|
+| pvcall examples | `pvcall MASTEROSC:VAL`              | Get measured Master Oscillator setting value |
+|                 | `pvcall MASTEROSC:VAL VALUE=0.328f` | Perform set operation                        |
+| Java Tests      | SlcMoscTest.java                    |                                              |
+| Matlab example  |                                     |                                              |
 
 ## Test Output
 

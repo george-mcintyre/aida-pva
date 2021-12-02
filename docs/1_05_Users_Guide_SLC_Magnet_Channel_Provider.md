@@ -21,23 +21,23 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-| | | |
-| ----------- | ----------- | ----------- |
-| **get** | Syntax    | `<dgrp-mnemonic>:<prim>:<secn>` |
-| | Examples | `DEV_DGRP:XCOR:BDES` |
-| **set** | Syntax    | `MAGNETSET:<secn>` |
-| | Examples | `MAGNETSET:BDES` |
-| | | `MAGNETSET:BCON` |
+|         |          |                                 |
+|---------|----------|---------------------------------|
+| **get** | Syntax   | `<dgrp-mnemonic>:<prim>:<secn>` |
+|         | Examples | `DEV_DGRP:XCOR:BDES`            |
+| **set** | Syntax   | `MAGNETSET:<secn>`              |
+|         | Examples | `MAGNETSET:BDES`                |
+|         |          | `MAGNETSET:BCON`                |
 
 ## Attribute operation summary
 
-| | | |
-| ----------- | -----------  | -----------  |
-| Attribute | operation |Description |
-|`<prim>:<secn>` | **get** | Returns a table containing the name of each  magnet<br /> for specified display group and primary, and secondary<br /> values |
-| `BDES` | **set** | Sets specified `BDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `BACT` value<br /> for each device |
-| `VDES` | **set** | Sets specified `VDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `VACT` value<br /> for each device |
-| `BCON` | **set** |  Sets specified `BCON` secondary values |
+|                 |           |                                                                                                                                                                                          |
+|-----------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Attribute       | operation | Description                                                                                                                                                                              |
+| `<prim>:<secn>` | **get**   | Returns a table containing the name of each  magnet<br /> for specified display group and primary, and secondary<br /> values                                                            |
+| `BDES`          | **set**   | Sets specified `BDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `BACT` value<br /> for each device |
+| `VDES`          | **set**   | Sets specified `VDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `VACT` value<br /> for each device |
+| `BCON`          | **set**   | Sets specified `BCON` secondary values                                                                                                                                                   |
 
 ## Attribute operations
 
@@ -45,19 +45,19 @@ Supports **get** and **set** operations.
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
-| Parameter Names | Parameter Values |Description | 
-| `MICROS`  |   `<start_micro>-<end_micro>`  | This specifies a range of micro names of <br />interest within the specified display group  |
-| `UNITS`  |   `<start_unit>-<end_unit>`  | This specified a range of unit numbers of <br />interest within the specified display group  |
+|                 |                             |                                                                                             |
+|-----------------|-----------------------------|---------------------------------------------------------------------------------------------|
+| Parameter Names | Parameter Values            | Description                                                                                 | 
+| `MICROS`        | `<start_micro>-<end_micro>` | This specifies a range of micro names of <br />interest within the specified display group  |
+| `UNITS`         | `<start_unit>-<end_unit>`   | This specified a range of unit numbers of <br />interest within the specified display group |
 
 _Return value_
 
-| | | | |
-|----------- | ----------- | -----------  |-----------  |
-| TYPE  | Return Column | Column Type |Description |
-| `TABLE` | `name` | `STRING_ARRAY` | name of each magnet for specified display group <br />and primary (optionally filtered by specified micro and unit ranges) |
-|  |  `value`| `FLOAT_ARRAY`|  secondary values (BDES or VDES) |
+|         |               |                |                                                                                                                            |
+|---------|---------------|----------------|----------------------------------------------------------------------------------------------------------------------------|
+| TYPE    | Return Column | Column Type    | Description                                                                                                                |
+| `TABLE` | `name`        | `STRING_ARRAY` | name of each magnet for specified display group <br />and primary (optionally filtered by specified micro and unit ranges) |
+|         | `value`       | `FLOAT_ARRAY`  | secondary values (BDES or VDES)                                                                                            |
 
 ### BDES : set, VDES : set
 
@@ -82,10 +82,10 @@ _Return value_
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
-| Parameter Names | Parameter Values |Description | 
-| `VALUE`*  | structure: {names[], values[]}  | an array of magnet names and an array of corresponding set values  |
+|                 |                                |                                                                   |
+|-----------------|--------------------------------|-------------------------------------------------------------------|
+| Parameter Names | Parameter Values               | Description                                                       | 
+| `VALUE`*        | structure: {names[], values[]} | an array of magnet names and an array of corresponding set values |
 
 _Return value_
 
@@ -93,13 +93,13 @@ None
 
 ## Examples
 
-| | | |
-|  ----------- |----------- |----------- |
-| pvcall examples | `pvcall DEV_DGRP:XCOR:BDES MICROS="LI31-LI31" UNITS="1-100"` | Get primary/micro/unit strings<br /> and BDES/VDES settings |
-|  | ```pvcall MAGNETSET:BDES VALUE='{"names": ["XCOR:LI31:41"], "values": [4.0f]}' MAGFUNC=TRIM``` |  Perform set operation for setting<br /> specified values and optionally<br /> performing a `TRIM`/`PTRB` operation<br /> |
-|  | ```pvcall MAGNETSET:BCON VALUE='{"names": ["XCOR:LI31:41"], "values": [5.0f]}'``` |  Perform set operation for setting<br /> specified `BCON` values (no value<br /> is returned) |
-| Java Tests | SlcMagnetTest.java | |
-| Matlab example |  | |
+|                 |                                                                                                |                                                                                                                          |
+|-----------------|------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| pvcall examples | `pvcall DEV_DGRP:XCOR:BDES MICROS="LI31-LI31" UNITS="1-100"`                                   | Get primary/micro/unit strings<br /> and BDES/VDES settings                                                              |
+|                 | ```pvcall MAGNETSET:BDES VALUE='{"names": ["XCOR:LI31:41"], "values": [4.0f]}' MAGFUNC=TRIM``` | Perform set operation for setting<br /> specified values and optionally<br /> performing a `TRIM`/`PTRB` operation<br /> |
+|                 | ```pvcall MAGNETSET:BCON VALUE='{"names": ["XCOR:LI31:41"], "values": [5.0f]}'```              | Perform set operation for setting<br /> specified `BCON` values (no value<br /> is returned)                             |
+| Java Tests      | SlcMagnetTest.java                                                                             |                                                                                                                          |
+| Matlab example  |                                                                                                |                                                                                                                          |
 
 ## Test Output
 

@@ -29,19 +29,19 @@ elements of the table of data you get back should be ignored.
 
 ## Instances and Attributes
 
-| | | |
-| ----------- | ----------- | ----------- |
-| **get** | Syntax    | `<dgrp-mnemonic-name>:BUFFACQ` |
-| | Examples | `NDRFACET:BUFFACQ` |
-| |  | `INJ_ELEC:BUFFACQ` |
-| |  | `INJ_POSI:BUFFACQ` |
-| |  | `TAXXALL:BUFFACQ` |
+|         |          |                                |
+|---------|----------|--------------------------------|
+| **get** | Syntax   | `<dgrp-mnemonic-name>:BUFFACQ` |
+|         | Examples | `NDRFACET:BUFFACQ`             |
+|         |          | `INJ_ELEC:BUFFACQ`             |
+|         |          | `INJ_POSI:BUFFACQ`             |
+|         |          | `TAXXALL:BUFFACQ`              |
 
 ## Attribute operation summary
 
-| | |
-| ----------- | -----------  |
-| Attribute | Description |
+|           |                                                                                                                                                                                                                                                                            |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Attribute | Description                                                                                                                                                                                                                                                                |
 | `BUFFACQ` | Makes a buffered acquisition reading of each given device, in the dgrp specified <br /> in the INSTANCE part of the query, under the BPM Measurement Definition specified <br /> by the `BPMD` parameter, at each beam crossing for the number of pulses given by `NRPOS`. |
 
 ## Attribute operations
@@ -62,23 +62,23 @@ _Return value_
 
 @note Return value for BPM device shown below. `TORO`, `GAPM`, `KLYS` or `SBST` will be different.
 
-| | | | |
-|----------- | ----------- | -----------  |-----------  |
-| TYPE  | Return Column | Column Type |Description |
-| `TABLE` | `name` | `STRING_ARRAY` | name of each BPM |
-|  |  `pulseId`| `INTEGER_ARRAY` |  pulse ID |
-|  |  `x`| `FLOAT_ARRAY`|  x offsets (mm) |
-|  |  `y`| `FLOAT_ARRAY` |  y offsets (mm) |
-|  |  `tmits`| `FLOAT_ARRAY`|  tmits (num particles) |
-|  |  `stat`| `INTEGER_ARRAY`|  (32 bit field) |
-|  |  `goodmeas`| `BOOLEAN_ARRAY`| true = good, false = bad |
+|         |               |                 |                          |
+|---------|---------------|-----------------|--------------------------|
+| TYPE    | Return Column | Column Type     | Description              |
+| `TABLE` | `name`        | `STRING_ARRAY`  | name of each BPM         |
+|         | `pulseId`     | `INTEGER_ARRAY` | pulse ID                 |
+|         | `x`           | `FLOAT_ARRAY`   | x offsets (mm)           |
+|         | `y`           | `FLOAT_ARRAY`   | y offsets (mm)           |
+|         | `tmits`       | `FLOAT_ARRAY`   | tmits (num particles)    |
+|         | `stat`        | `INTEGER_ARRAY` | (32 bit field)           |
+|         | `goodmeas`    | `BOOLEAN_ARRAY` | true = good, false = bad |
 
 ## Examples
 
-| | | 
-|  ----------- |----------- |
-| pvcall example | ```pvcall NDRFACET:BUFFACQ BPMD=57 NRPOS=5 DEVS='["KLYS:LI03:31","SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"]'```|
-| Java Tests | SlcBuffAcqTest.java | 
+|                |                                                                                                                                                 | 
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| pvcall example | ```pvcall NDRFACET:BUFFACQ BPMD=57 NRPOS=5 DEVS='["KLYS:LI03:31","SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"]'```                        |
+| Java Tests     | SlcBuffAcqTest.java                                                                                                                             | 
 | Matlab example | `>> devs= 'KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'<br /> >>lcaGet('NDRFACET:BUFFACQ' 'BPMD=57' 'NRPOS=57' 'DEVS='+devs)` |
 
 ## Test Output
