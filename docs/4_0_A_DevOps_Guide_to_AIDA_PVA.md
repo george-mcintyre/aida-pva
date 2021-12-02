@@ -271,28 +271,28 @@ LENS:????:*//DVIC, ...]
 
 ### 4 -  AIDA-PVA SERVICE loads the Channel Provider
 * _Selection of Channel Provider_
-  * Channel Provider shared library location selection:
+  * Channel Provider shared image location selection:
     1. A property set on the launch commandline with the `-D` option named `java.library.path`
         * fully qualified path name or
         * relative path
         * e.g. `-Djava.library.path=/SLCLIBS`
     2. * By default, the standard library locations and working directory are searched
-  * Channel Provider shared library name selection:
-    1. An Environment Variable `AIDA_PVA_LIB_NAME`
-        * fully qualified path name of library (without the .EXE) or
-        * library name (without the .EXE) to search in the working directory and standard library locations
-        * e.g. `AIDA_PVA_LIB_NAME :== AIDASLCDB` 
+  * Channel Provider shared image name selection:
+    1. An Environment Variable `AIDA_PVA_LIB_NAME` - (A symbol in VMS terminology)
+        * fully qualified path name of image (without the .EXE) or
+        * image name (without the .EXE) to search in the working directory and standard library locations
+        * e.g. `$ AIDA_PVA_LIB_NAME == AIDASLCDB` 
     2. A property set on the launch commandline with the `-D` option named `aida.pva.lib.name`
-        * fully qualified path name (without the .EXE) of library or
-        * library name (without the .EXE) which will search in the working directory and standard library locations
+        * fully qualified path name (without the .EXE) of the image or
+        * image name (without the .EXE) which will search in the working directory and standard library locations
         * e.g. `-Daida.pva.lib.name=AIDASLCDB`
     3. A file called `AIDA.EXE`
     4. Note that the file extension is assumed to be `.EXE` and is always omitted.
 * _Specifying the Supported Channels_.  [Channels YAML file](2_3_CHANNELS_YML_file.md) selection: 
-  1. An Environment Variable `AIDA_PVA_CHANNELS_FILENAME`
+  1. An Environment Variable `AIDA_PVA_CHANNELS_FILENAME` - (A symbol in VMS terminology)
       * fully qualified path name of channels file or
       * channels file name to search for in the working directory
-      * e.g. `AIDA_PVA_CHANNELS_FILENAME :== SLCTXT:AIDASLCDB_CHANNELS.YML`
+      * e.g. `$ AIDA_PVA_CHANNELS_FILENAME == SLCTXT:AIDASLCDB_CHANNELS.YML`
   2. A property set on the launch commandline with the `-D` option named `aida.pva.channels.filename`
       * fully qualified path name of channels file or
       * channels file name to search in the working directory
@@ -303,8 +303,8 @@ LENS:????:*//DVIC, ...]
 
 ### 6 - The Channel Provider will have also been linked with AIDA-PVA Modules in STANDALONELIB
 
-## Submitting jobs
-To enable AIDA-PVA to be fully integrated into control system startup, submit files have been provided to start the jobs.
+## Starting Processes
+To enable AIDA-PVA to be fully integrated into control system startup, submit files have been provided to start the processes.
 - General Startup script called by all other startup scripts
   - STARTAIDASLC.COM
 - Channel Provider Submit Files
@@ -317,12 +317,12 @@ To enable AIDA-PVA to be fully integrated into control system startup, submit fi
 - EPICS Forwarder Submit File
   - EPICS_FORWARDER.SUBMIT
 
-![Starting Batch Jobs](images/batch-jobs.png)
+![Starting Processes](images/batch-jobs.png)
 
 1. Start the forwarder first.  If it fails then you need to stop all other services then restart it before restarting them.
 2. Start the other services last.
-3. The Channel Provider and EPICS-FORWARDER submit files set logicals to indicate the process name to start
-4. The Channel Provider submit files also set logicals to indicate the configuration file to use
+3. The Channel Provider and EPICS-FORWARDER submit files set symbols to indicate the process name to start
+4. The Channel Provider submit files also set symbols to indicate the configuration file to use
 5. The `STARTAIDASLC.COM` script will set the correct Java 1.5 environment
-6. It will also construct a logical called `java_argstring` that is used as commandline parameters to the JVM.
+6. It will also construct a symbol called `java_argstring` that is used as commandline parameters to the JVM.
 
