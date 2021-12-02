@@ -278,7 +278,7 @@ LENS:????:*//DVIC, ...]
         * e.g. `-Djava.library.path=/SLCLIBS`
     2. * By default, the standard library locations and working directory are searched
   * Channel Provider shared image name selection:
-    1. An Environment Variable `AIDA_PVA_LIB_NAME` - (A symbol in VMS terminology)
+    1. An Environment Variable `AIDA_PVA_LIB_NAME` - (A global symbol in VMS terminology)
         * fully qualified path name of image (without the .EXE) or
         * image name (without the .EXE) to search in the working directory and standard library locations
         * e.g. `$ AIDA_PVA_LIB_NAME == AIDASLCDB` 
@@ -289,7 +289,7 @@ LENS:????:*//DVIC, ...]
     3. A file called `AIDA.EXE`
     4. Note that the file extension is assumed to be `.EXE` and is always omitted.
 * _Specifying the Supported Channels_.  [Channels YAML file](2_3_CHANNELS_YML_file.md) selection: 
-  1. An Environment Variable `AIDA_PVA_CHANNELS_FILENAME` - (A symbol in VMS terminology)
+  1. An Environment Variable `AIDA_PVA_CHANNELS_FILENAME` - (A global symbol in VMS terminology)
       * fully qualified path name of channels file or
       * channels file name to search for in the working directory
       * e.g. `$ AIDA_PVA_CHANNELS_FILENAME == SLCTXT:AIDASLCDB_CHANNELS.YML`
