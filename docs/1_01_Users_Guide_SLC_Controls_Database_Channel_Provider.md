@@ -90,14 +90,228 @@ None
 
 ## Examples
 
-|                |                                          |
-|----------------|------------------------------------------|
-| pvcall example | `pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT` |
-|                | `pvcall "XCOR:LI31:41:BCON" VALUE=5.0`   |
-| Java Tests     | SlcTest.java                             | 
-| Matlab example |                                          |
+### Command line examples
 
+|                 |                                          |
+|-----------------|------------------------------------------|
+| pvcall examples | `pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT` |
+|                 | `pvcall "XCOR:LI31:41:BCON" VALUE=5.0`   |
+| eget examples   |                                          |
+
+### Java examples
+
+#### aida-pva-client
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public Float getFloat() throws RPCException {
+        return request("XCOR:LI03:120:LEFF")
+                .returning(FLOAT)
+                .get();
+    }
+}
+```
+
+#### EasyPVA
+
+```java
+import org.epics.pvaccess.*;
+import org.epics.pvaccess.easyPVA.*;
+import org.epics.pvdata.*;
+import org.epics.pvdata.pv.PVStructure;
+
+import java.lang.String;
+
+public class EzExample {
+    public static final String NTURI_ID = "epics:nt/NTURI:1.0";
+    private final static FieldCreate fieldCreate = factory.FieldFactory.getFieldCreate();
+    private final static PVDataCreate dataCreate = factory.PVDataFactory.getPVDataCreate();
+
+    public Float getFloat() throws RuntimeException {
+        String pvName = "XCOR:LI03:120:LEFF";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
+        nturi.getStringField("scheme").put("pva");
+        nturi.getStringField("path").put(pvName);
+
+        PVStructure args = nturi.getStringField("query");
+        args.getStringField("type").put("FLOAT");
+
+        EasyChannel channel = easypva.createChannel(pvName);
+        if (!channel.connect(5.0)) {
+            throw new RuntimeException("Unable to connect");
+        }
+
+        EasyRPC easyrpc = channel.createRPC();
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to create RPC channel");
+        }
+
+        if (!easyrpc.connect()) {
+            throw new RuntimeException("Unable to connect to RPC channel");
+        }
+
+        PVStructure response = easyrpc.request(nturi_pvs);
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to get data");
+        }
+
+        PVFloat field = response.getSubField(PVFloat.class, "value");
+        return field.get();
+    }
+}
+
+```
+
+#### pvaClient
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public Float getFloat() throws RPCRequestException {
+        String pvName = "XCOR:LI03:120:LEFF";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
+        nturi.getStringField("scheme").put("pva");
+        nturi.getStringField("path").put(pvName);
+
+        PVStructure args = nturi.getStringField("query");
+        args.getStringField("type").put("FLOAT");
+
+        PvaClient client = PvaClient.get(provider);
+        PvaClientChannel channel = client.createChannel(pvName);
+        PVStructure response = channel.rpc(nturi);
+
+        PVFloat field = response.getSubField(PVFloat.class, "value");
+        return field.get();
+    }
+}
+```
+
+#### Plain old Java
+
+```java
+import org.epics.pvaccess.ClientFactory;
+import org.epics.pvaccess.client.rpc.RPCClientImpl;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class JavaExample {
+    public Float getFloat() throws RPCRequestException {
+        String pvName = "XCOR:LI03:120:LEFF";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
+        nturi.getStringField("scheme").put("pva");
+        nturi.getStringField("path").put(pvName);
+
+        PVStructure args = nturi.getStringField("query");
+        args.getStringField("type").put("FLOAT");
+
+        ClientFactory.start();
+        RPCClientImpl client = new RPCClientImpl(pvName);
+        PVStructure response = client.request(request, 3.0);
+        client.destroy();
+        ClientFactory.stop();
+
+        PVFloat field = response.getSubField(PVFloat.class, "value");
+        return field.get();
+    }
+}
+```
+
+### Matlab examples
+Matlab includes the following utility functions:
+- `void` **aidainit**() - to initialise access to the AIDA framework
+- `void` **aidaget**(`aidaName`, `aidaType`, `aidaParams`) - gets SCALAR or SCALAR_ARRAY from EPICS/AIDA-PVA data providers
+- `NTURI` **nturi**(`pvName`, `varargin`) - to create an `NTURI` Structure (see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers
+- `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures
+- `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPva
+- `PVStructure` **pvarpc**(`nturi`) - takes an `NTURI` and executes it using PvaClient
+- `matlab_dynamic_type` **request**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with builder pattern 
+  - **with**(`name`, `value`) - specifies a parameter for the request  
+  - **returning**(`aidaType`) - specified the aida type to return from the request
+  - **get**() - executes the get request
+  - **set**(`value`) - executes the set request with the given value
+
+These have all been updated/added to be able to interact with the new AIDA-PVA framework.
+
+#### aida-pva-client
+```matlab
+    aidainit
+    floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
+```
+#### using aidaget
+```matlab
+    aidainit
+    floatResponse = aidaget('XCOR:LI03:120:LEFF','FLOAT')
+```
+#### EasyPVA
+```matlab
+    aidainit
+    response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
+    floatResponse = response.getSubField(PVFloat.class, "value")
+```
+#### PvaClient
+```matlab
+    aidainit
+    response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
+    floatResponse = response.getSubField(PVFloat.class, "value")
+```
 ## Test Output
+
+Tests are implemented in: SlcTest.java
 
 ```shell
 java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcTest" -c

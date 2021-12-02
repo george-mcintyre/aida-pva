@@ -9,9 +9,15 @@ services. The intention is that where the endpoints in an EPICS V4+ network use 
 network should be able to understand all the data transmitted to it, at least syntactically, and be able to take
 processing steps appropriate to that data.
 
-AIDA-PVA uses `NTTable`, `NTScalarArray` and `NTScalar` Normative Types to represent its data.
+AIDA-PVA uses `NTTable`, `NTScalarArray` and `NTScalar` Normative Types to represent its data.  These are the 
+types that clients will receive as responses to requests.  It is the client's responsibility to unmarshal data 
+from these structures.  
 
-![Normative Type Usage in AIDA-PVA](images/nt_types.png)
+Behind the scenes AIDA-PVA expects requests to be specified using an `NTURI`.  Clients need to be able to create an `NTURI` 
+to interact with AIDA-PVA.
 
 See [EPICS Normative Types](http://epics-pvdata.sourceforge.net/alpha/normativeTypes/normativeTypes.html#:~:text=time_t_timeStamp_%3A_opt-,Description_of_Normative_Types,include_descriptor%2C_alarm_and_timestamp.)
 for more information
+
+![Normative Type Usage in AIDA-PVA](images/nt_types.png)
+
