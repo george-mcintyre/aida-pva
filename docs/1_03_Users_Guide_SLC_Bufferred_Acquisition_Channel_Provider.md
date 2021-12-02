@@ -9,8 +9,8 @@ information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md
 
 ## Summary
 
-The SLC Buffered Acquisition Channel Provider gets SLC control system pulse synchronized "Buffered Data", for the following
-device types:
+The SLC Buffered Acquisition Channel Provider gets SLC control system pulse synchronized "Buffered Data", for the
+following device types:
 
 - BPM
     - x (mm)
@@ -78,10 +78,447 @@ _Return value_
 |                |                                                                                                                                                 | 
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
 | pvcall example | ```pvcall NDRFACET:BUFFACQ BPMD=57 NRPOS=5 DEVS='["KLYS:LI03:31","SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"]'```                        |
-| Java Tests     | SlcBuffAcqTest.java                                                                                                                             | 
-| Matlab example | `>> devs= 'KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'<br /> >>lcaGet('NDRFACET:BUFFACQ' 'BPMD=57' 'NRPOS=57' 'DEVS='+devs)` |
+| eget examples   |                                          |
+
+### Java examples
+
+#### aida-pva-client
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public Map<String, List<Object>> getTable() throws RPCException {
+        AidaTable table = request("NDRFACET:BUFFACQ")
+                .with("BPMD", 57)
+                .with("NRPOS", 5)
+                .with("DEVS", List.of("KLYS:LI03:31", "SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"))
+                .get();
+        return table.getValues();
+    }
+}
+```
+
+#### EasyPVA
+
+```java
+import org.epics.pvaccess.*;
+import org.epics.pvaccess.easyPVA.*;
+import org.epics.pvdata.*;
+import org.epics.pvdata.pv.PVStructure;
+
+import java.lang.String;
+
+public class EzExample {
+    public static final String NTURI_ID = "epics:nt/NTURI:1.0";
+    private final static FieldCreate fieldCreate = factory.FieldFactory.getFieldCreate();
+    private final static PVDataCreate dataCreate = factory.PVDataFactory.getPVDataCreate();
+
+    public Map<String, List<Object>> getTable() throws RuntimeException {
+        String pvName = "NDRFACET:BUFFACQ";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"bpmd", "nrpos", "devs"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarArrayType.pvStringArray)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
+        nturi.getStringField("scheme").put("pva");
+        nturi.getStringField("path").put(pvName);
+
+        PVStructure args = nturi.getStringField("query");
+        args.getIntField("bpmd").put(57);
+        args.getIntField("nrpos").put(5);
+        args.getIntField("devs").put(0, 4, new String[]{"KLYS:LI03:31", "SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"}, 0);
+
+        EasyChannel channel = easypva.createChannel(pvName);
+        if (!channel.connect(5.0)) {
+            throw new RuntimeException("Unable to connect");
+        }
+
+        EasyRPC easyrpc = channel.createRPC();
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to create RPC channel");
+        }
+
+        if (!easyrpc.connect()) {
+            throw new RuntimeException("Unable to connect to RPC channel");
+        }
+
+        PVStructure response = easyrpc.request(nturi_pvs);
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to get data");
+        }
+
+        PVStructure result = response.getSubField(PVFloat.class, "value");
+
+        return Arrays.stream(result.getSubField(PVStructure.class, "value").getPVFields())
+                .map(column -> {
+                    List<Object> columnValues = new ArrayList<>();
+                    arrayIterator(column, columnValues::add);
+                    return Pair.of(column.getFieldName(), columnValues);
+                })
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    static <T extends PVField> void arrayIterator(T array, Consumer<Object> consumer) {
+        arrayLoop(array, (s, i) -> consumer.accept(s));
+    }
+
+    static <T extends PVField> void arrayLoop(T array, BiConsumer<Object, Integer> consumer) {
+        if (array instanceof PVBooleanArray) {
+            booleanArrayLoop((PVBooleanArray) array, consumer::accept);
+        } else if (array instanceof PVIntArray) {
+            integerArrayLoop((PVIntArray) array, consumer::accept);
+        } else if (array instanceof PVFloatArray) {
+            floatArrayLoop((PVFloatArray) array, consumer::accept);
+        } else if (array instanceof PVStringArray) {
+            stringArrayLoop((PVStringArray) array, consumer::accept);
+        }
+    }
+
+    static void booleanArrayLoop(PVBooleanArray array, BiConsumer<Boolean, Integer> consumer) {
+        int index = 0, offset = 0, len = array.getLength();
+        BooleanArrayData data = new BooleanArrayData();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                consumer.accept(data.data[offset + i], index++);
+            }
+            offset += num;
+        }
+    }
+
+    static void integerArrayLoop(PVIntArray array, BiConsumer<Integer, Integer> consumer) {
+        int index = 0;
+        IteratorInteger it = array.get().iterator();
+        while (it.hasNext()) {
+            consumer.accept(it.nextInt(), index++);
+        }
+    }
+
+    static void floatArrayLoop(PVFloatArray array, BiConsumer<Float, Integer> consumer) {
+        int index = 0;
+        IteratorFloat it = array.get().iterator();
+        while (it.hasNext()) {
+            consumer.accept(it.nextFloat(), index++);
+        }
+    }
+
+    static void stringArrayLoop(PVStringArray array, BiConsumer<String, Integer> consumer) {
+        int index = 0, offset = 0, len = array.getLength();
+        StringArrayData data = new StringArrayData();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                consumer.accept(data.data[offset + i], index++);
+            }
+            offset += num;
+        }
+    }
+
+}
+
+```
+
+#### pvaClient
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public Map<String, List<Object>> getTable() throws RuntimeException {
+        String pvName = "NDRFACET:BUFFACQ";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"bpmd", "nrpos", "devs"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarArrayType.pvStringArray)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
+        nturi.getStringField("scheme").put("pva");
+        nturi.getStringField("path").put(pvName);
+
+        PVStructure args = nturi.getStringField("query");
+        args.getIntField("bpmd").put(57);
+        args.getIntField("nrpos").put(5);
+        args.getIntField("devs").put(0, 4, new String[]{"KLYS:LI03:31", "SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"}, 0);
+
+        PvaClient client = PvaClient.get(provider);
+        PvaClientChannel channel = client.createChannel(pvName);
+        PVStructure result = channel.rpc(nturi);
+
+        return Arrays.stream(result.getSubField(PVStructure.class, "value").getPVFields())
+                .map(column -> {
+                    List<Object> columnValues = new ArrayList<>();
+                    arrayIterator(column, columnValues::add);
+                    return Pair.of(column.getFieldName(), columnValues);
+                })
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    static <T extends PVField> void arrayIterator(T array, Consumer<Object> consumer) {
+        arrayLoop(array, (s, i) -> consumer.accept(s));
+    }
+
+    static <T extends PVField> void arrayLoop(T array, BiConsumer<Object, Integer> consumer) {
+        if (array instanceof PVBooleanArray) {
+            booleanArrayLoop((PVBooleanArray) array, consumer::accept);
+        } else if (array instanceof PVIntArray) {
+            integerArrayLoop((PVIntArray) array, consumer::accept);
+        } else if (array instanceof PVFloatArray) {
+            floatArrayLoop((PVFloatArray) array, consumer::accept);
+        } else if (array instanceof PVStringArray) {
+            stringArrayLoop((PVStringArray) array, consumer::accept);
+        }
+    }
+
+    static void booleanArrayLoop(PVBooleanArray array, BiConsumer<Boolean, Integer> consumer) {
+        int index = 0, offset = 0, len = array.getLength();
+        BooleanArrayData data = new BooleanArrayData();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                consumer.accept(data.data[offset + i], index++);
+            }
+            offset += num;
+        }
+    }
+
+    static void integerArrayLoop(PVIntArray array, BiConsumer<Integer, Integer> consumer) {
+        int index = 0;
+        IteratorInteger it = array.get().iterator();
+        while (it.hasNext()) {
+            consumer.accept(it.nextInt(), index++);
+        }
+    }
+
+    static void floatArrayLoop(PVFloatArray array, BiConsumer<Float, Integer> consumer) {
+        int index = 0;
+        IteratorFloat it = array.get().iterator();
+        while (it.hasNext()) {
+            consumer.accept(it.nextFloat(), index++);
+        }
+    }
+
+    static void stringArrayLoop(PVStringArray array, BiConsumer<String, Integer> consumer) {
+        int index = 0, offset = 0, len = array.getLength();
+        StringArrayData data = new StringArrayData();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                consumer.accept(data.data[offset + i], index++);
+            }
+            offset += num;
+        }
+    }
+}
+```
+
+#### Plain old Java
+
+```java
+import org.epics.pvaccess.ClientFactory;
+import org.epics.pvaccess.client.rpc.RPCClientImpl;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class JavaExample {
+    public Map<String, List<Object>> getTable() throws RuntimeException {
+        String pvName = "NDRFACET:BUFFACQ";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"bpmd", "nrpos", "devs"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarArrayType.pvStringArray)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
+        nturi.getStringField("scheme").put("pva");
+        nturi.getStringField("path").put(pvName);
+
+        PVStructure args = nturi.getStringField("query");
+        args.getIntField("bpmd").put(57);
+        args.getIntField("nrpos").put(5);
+        args.getIntField("devs").put(0, 4, new String[]{"KLYS:LI03:31", "SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"}, 0);
+
+        ClientFactory.start();
+        RPCClientImpl client = new RPCClientImpl(pvName);
+        PVStructure result = client.request(request, 3.0);
+        client.destroy();
+        ClientFactory.stop();
+
+        return Arrays.stream(result.getSubField(PVStructure.class, "value").getPVFields())
+                .map(column -> {
+                    List<Object> columnValues = new ArrayList<>();
+                    arrayIterator(column, columnValues::add);
+                    return Pair.of(column.getFieldName(), columnValues);
+                })
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    static <T extends PVField> void arrayIterator(T array, Consumer<Object> consumer) {
+        arrayLoop(array, (s, i) -> consumer.accept(s));
+    }
+
+    static <T extends PVField> void arrayLoop(T array, BiConsumer<Object, Integer> consumer) {
+        if (array instanceof PVBooleanArray) {
+            booleanArrayLoop((PVBooleanArray) array, consumer::accept);
+        } else if (array instanceof PVIntArray) {
+            integerArrayLoop((PVIntArray) array, consumer::accept);
+        } else if (array instanceof PVFloatArray) {
+            floatArrayLoop((PVFloatArray) array, consumer::accept);
+        } else if (array instanceof PVStringArray) {
+            stringArrayLoop((PVStringArray) array, consumer::accept);
+        }
+    }
+
+    static void booleanArrayLoop(PVBooleanArray array, BiConsumer<Boolean, Integer> consumer) {
+        int index = 0, offset = 0, len = array.getLength();
+        BooleanArrayData data = new BooleanArrayData();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                consumer.accept(data.data[offset + i], index++);
+            }
+            offset += num;
+        }
+    }
+
+    static void integerArrayLoop(PVIntArray array, BiConsumer<Integer, Integer> consumer) {
+        int index = 0;
+        IteratorInteger it = array.get().iterator();
+        while (it.hasNext()) {
+            consumer.accept(it.nextInt(), index++);
+        }
+    }
+
+    static void floatArrayLoop(PVFloatArray array, BiConsumer<Float, Integer> consumer) {
+        int index = 0;
+        IteratorFloat it = array.get().iterator();
+        while (it.hasNext()) {
+            consumer.accept(it.nextFloat(), index++);
+        }
+    }
+
+    static void stringArrayLoop(PVStringArray array, BiConsumer<String, Integer> consumer) {
+        int index = 0, offset = 0, len = array.getLength();
+        StringArrayData data = new StringArrayData();
+        while (offset < len) {
+            int num = array.get(offset, (len - offset), data);
+            for (int i = 0; i < num; i++) {
+                consumer.accept(data.data[offset + i], index++);
+            }
+            offset += num;
+        }
+    }
+}
+```
+
+### Matlab examples
+
+Matlab includes the following utility functions:
+
+- `void` **aidainit**() - to initialise access to the AIDA framework
+- `void` **aidaget**(`aidaName`, `aidaType`, `aidaParams`) - gets SCALAR or SCALAR_ARRAY from EPICS/AIDA-PVA data
+  providers
+- `NTURI` **nturi**(`pvName`, `varargin`) - to create an `NTURI` Structure (
+  see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers
+- `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures
+- `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPva
+- `PVStructure` **pvarpc**(`nturi`) - takes an `NTURI` and executes it using PvaClient
+- `matlab_dynamic_type` **request**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with
+  builder pattern
+    - **with**(`name`, `value`) - specifies a parameter for the request
+    - **returning**(`aidaType`) - specified the aida type to return from the request
+    - **get**() - executes the get request
+    - **set**(`value`) - executes the set request with the given value
+
+These have all been updated/added to be able to interact with the new AIDA-PVA framework.
+
+#### aida-pva-client
+
+```matlab
+    aidainit;
+    devs = ['KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'];
+    table = request('NDRFACET:BUFFACQ')
+                .with('BPMD', 57)
+                .with('NRPOS', 5)
+                .with('DEVS', devs)
+                .get();
+```
+
+#### using aidaget
+
+```matlab
+    aidainit;
+    devs = ['KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'];
+    tableResponse = aidaget('NDRFACET:BUFFACQ','TABLE',{'BPMD=57' 'NRPOS=5' ['DEVS=' devs] });
+    table = nttable2struct(tableResponse);
+```
+
+#### EasyPVA
+
+```matlab
+    aidainit;
+    devs = ['KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'];
+    tableResponse = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', 57, 'NRPOS', 5, 'DEVS', devs)); 
+    table = nttable2struct(tableResponse);
+```
+
+#### PvaClient
+
+```matlab
+    aidainit;
+    devs = ['KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'];
+    tableResponse = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', 57, 'NRPOS', 5, 'DEVS', devs)); 
+    table = nttable2struct(tableResponse);
+```
 
 ## Test Output
+
+Tests are implemented in: SlcBuffAcqTest.java
 
 ```shell
 java -cp aida-pva-tests.jar  "edu.stanford.slac.aida.test.SlcBuffAcqTest" -c
