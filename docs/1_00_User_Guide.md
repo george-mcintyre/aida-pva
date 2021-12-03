@@ -4,10 +4,11 @@ This is the guide to using the AIDA-PVA system at Stanford National Laboratory. 
 Access framework developed by SLAC in the early 2000s. AIDA-PVA is the latest version developed in the early 20s.
 
 If you are already familiar AIDA you can jump
-to [Differences Between AIDA and AIDA-PVA](1_10_User_Guide_for_AIDA_Users.md) without reading all of the following
+to [Differences Between AIDA and AIDA-PVA](1_10_User_Guide_for_AIDA_Users.md) without reading all the following
 sections. If you are already familiar with EPICS and just want to know how you can use it to access AIDA-PVA data
-providers then check out [EPICS and AIDA-PVA](1_11_User_Guide_for_EPICS_Users.md).   
-If you're new to both AIDA and EPICS then grab a coffee, and strap in, this may take some time :)
+providers then check out [EPICS and AIDA-PVA](1_11_User_Guide_for_EPICS_Users.md). If you are already familiar
+with using AIDA from matlab please go directly to [AIDA-PVA in matlab](1_12_Matlab_Code.md).
+If you're new to AIDA, Matlab, and EPICS then grab a coffee, and strap in, this may take some time :)
 
 ## Overview
 
@@ -26,6 +27,9 @@ Legacy AIDA uses CORBA to transport requests to the Data Providers, while AIDA-P
 mechanism.  
 EPICS has become a staple for laboratories around the world, and leveraging its features allows scientists, and
 engineers who are already familiar with programming on EPICS, to access AIDA-PVA data providers with very little effort.
+
+For the client AIDA-PVA comes with a client library aida-pva-client which can aid client-side programmers.  For more
+information see [aida-pva-client documentation](1_01_Aida_Pva_Client.md).
 
 ## Components
 

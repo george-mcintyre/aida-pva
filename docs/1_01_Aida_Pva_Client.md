@@ -1,16 +1,18 @@
 # 1.1 - Aida-pva-client
 ## Connecting to AIDA-PVA Channel Providers
 AIDA-PVA clients can use various methods to connect to the supported EPICs Channel Providers.  These include: 
-- EasyPVA - see: [EasyPVA Documentation](http://epics-pvdata.sourceforge.net/docbuild/easyPVAJava/tip/documentation/easyPVA.html)
-- PvaClient - see: [PvaClient documentation](https://github.com/epics-base/pvaClientJava)
-- Plain old Java - see: [AIDA-PVA User Guide](1_00_User_Guide.md) for an example
-- aida-pva-client - a purpose built replacement for the legacy AIDA client
+- EasyPVA - see: [EasyPVA Documentation](http://epics-pvdata.sourceforge.net/docbuild/easyPVAJava/tip/documentation/easyPVA.html).  EasyPVA is end of life and is no longer supported.
+- PvaClient - see: [PvaClient documentation](https://github.com/epics-base/pvaClientJava).  PvaClient does not propagate server errors back to the client.
+- Plain old Java - see: [AIDA-PVA User Guide](1_00_User_Guide.md) for an example.  Is quite heavyweight.
+- aida-pva-client - a purpose built replacement for the legacy AIDA client.  Lightweight and full functionality.
 
 ## aida-pva-client
-aida-pva-client is delivered in the aida-pva-client jar.  This jar includes all dependencies so that
-you client application needs to reference only this one jar.
+aida-pva-client is delivered in the aida-pva-client jar.  This jar includes everything 
+your client application needs to access any AIDA-PVA and compatible EPICs Channel Provider.
 
 ### Imports
+These are the only imports you need.
+
 ```java
 import org.epics.pvaccess.server.rpc.RPCRequestException;
 import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
