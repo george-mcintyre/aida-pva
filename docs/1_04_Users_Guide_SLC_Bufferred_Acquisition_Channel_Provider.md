@@ -1,4 +1,4 @@
-# 1.3 - SLC Buffered Data Users Guide
+# 1.4 - SLC Buffered Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Buffered Data through AIDA-PVA. This
 data service gives access to the so called "Buffered BPM Data" acquisition facilities of the SLC Control System, in the
@@ -273,7 +273,7 @@ public class PvaClientExample {
         args.getIntField("nrpos").put(5);
         args.getIntField("devs").put(0, 4, new String[]{"KLYS:LI03:31", "SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"}, 0);
 
-        PvaClient client = PvaClient.get(provider);
+        PvaClient client = PvaClient.get("pva");
         PvaClientChannel channel = client.createChannel(pvName);
         PVStructure result = channel.rpc(nturi);
 

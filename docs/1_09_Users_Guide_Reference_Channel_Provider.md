@@ -1,4 +1,4 @@
-# 1.8 - Reference Channel Provider Users Guide
+# 1.9 - Reference Channel Provider Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the Reference Channel Provider through AIDA-PVA. This
 data provider:

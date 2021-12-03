@@ -1,4 +1,4 @@
-# 1.1 - SLC Database Users Guide
+# 1.2 - SLC Database Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Database data through AIDA-PVA. SLC
 Database provides data from the database values in the SLC Control System. It also allows the setting of float scalar
@@ -214,7 +214,7 @@ public class PvaClientExample {
         PVStructure args = nturi.getStringField("query");
         args.getStringField("type").put("FLOAT");
 
-        PvaClient client = PvaClient.get(provider);
+        PvaClient client = PvaClient.get("pva");
         PvaClientChannel channel = client.createChannel(pvName);
         PVStructure response = channel.rpc(nturi);
 

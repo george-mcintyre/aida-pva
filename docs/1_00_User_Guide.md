@@ -4,9 +4,9 @@ This is the guide to using the AIDA-PVA system at Stanford National Laboratory. 
 Access framework developed by SLAC in the early 2000s. AIDA-PVA is the latest version developed in the early 20s.
 
 If you are already familiar AIDA you can jump
-to [Differences Between AIDA and AIDA-PVA](1_09_User_Guide_for_AIDA_Users.md) without reading all of the following
+to [Differences Between AIDA and AIDA-PVA](1_10_User_Guide_for_AIDA_Users.md) without reading all of the following
 sections. If you are already familiar with EPICS and just want to know how you can use it to access AIDA-PVA data
-providers then check out [EPICS and AIDA-PVA](1_10_User_Guide_for_EPICS_Users.md).   
+providers then check out [EPICS and AIDA-PVA](1_11_User_Guide_for_EPICS_Users.md).   
 If you're new to both AIDA and EPICS then grab a coffee, and strap in, this may take some time :)
 
 ## Overview
@@ -29,7 +29,7 @@ engineers who are already familiar with programming on EPICS, to access AIDA-PVA
 
 ## Components
 
-As you can see below, clients using AIDA-PVA will look like any any other EPICS client. AIDA-PVA data providers are
+As you can see below, clients using AIDA-PVA will look like any other EPICS client. AIDA-PVA data providers are
 implemented inside the EPICS framework and so will appear to EPICs clients as just another EPICS service.  
 In order to access an AIDA-PVA Channel Provider you'll select a Channel Name that the Channel Provider has published. The EPICS
 framework will find the service that serves requests for that Channel and will direct your request to it.
@@ -166,7 +166,7 @@ parameters.
 eget -s NDRFACET:BUFFACQ -a BPMD 57 -a NRPOS 180 -a BPMS '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]'
 ```
 
-### From Java
+### From Java (Plain old Java example)
 
 From Java you can have more control over the data types sent and received.
 
@@ -233,13 +233,13 @@ Example: TBA
 
 Here is the documentation for all the implemented AIDA-PVA channel providers.
 
-- [SLC Database Channel Provider](1_01_Users_Guide_SLC_Controls_Database_Channel_Provider.md)
-- [SLC BPM Orbit Data Channel Provider](1_02_Users_Guide_SLC_BPM_Channel_Provider.md)
-- [SLC Buffered Acquisition Channel Provider](1_03_Users_Guide_SLC_Bufferred_Acquisition_Channel_Provider.md)
-- [SLC Klystron Channel Provider](1_04_Users_Guide_SLC_Klystron_Channel_Provider.md)
-- [SLC Magnet Channel Provider](1_05_Users_Guide_SLC_Magnet_Channel_Provider.md)
-- [SLC Master Oscillator Channel Provider](1_06_Users_Guide_SLC_Master_Oscillator_Channel_Provider.md)
-- [SLC Utilities Channel Provider](1_07_Users_Guide_SLC_Utility_Channel_Provider.md)
-- [Reference Data Provider for testing](1_08_Users_Guide_Reference_Channel_Provider.md)
+- [SLC Database Channel Provider](1_02_Users_Guide_SLC_Controls_Database_Channel_Provider.md)
+- [SLC BPM Orbit Data Channel Provider](1_03_Users_Guide_SLC_BPM_Channel_Provider.md)
+- [SLC Buffered Acquisition Channel Provider](1_04_Users_Guide_SLC_Bufferred_Acquisition_Channel_Provider.md)
+- [SLC Klystron Channel Provider](1_05_Users_Guide_SLC_Klystron_Channel_Provider.md)
+- [SLC Magnet Channel Provider](1_06_Users_Guide_SLC_Magnet_Channel_Provider.md)
+- [SLC Master Oscillator Channel Provider](1_07_Users_Guide_SLC_Master_Oscillator_Channel_Provider.md)
+- [SLC Utilities Channel Provider](1_08_Users_Guide_SLC_Utility_Channel_Provider.md)
+- [Reference Data Provider for testing](1_09_Users_Guide_Reference_Channel_Provider.md)
 
 

@@ -1,4 +1,4 @@
-# 1.6 - SLC Master Oscillator Data Users Guide
+# 1.7 - SLC Master Oscillator Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Magnet Data through AIDA-PVA. This data
 provider allows for the retrieval of the Master Oscillator setting in units of absolute frequency. It also allows the

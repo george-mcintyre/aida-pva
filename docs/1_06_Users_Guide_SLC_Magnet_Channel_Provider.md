@@ -1,4 +1,4 @@
-# 1.5 - SLC Magnet Data Users Guide
+# 1.6 - SLC Magnet Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Magnet Data through AIDA-PVA. This data
 provider allows the retrieval of magnet primary/micro/unit names and `BDES`/`VDES` secondary values for a specified

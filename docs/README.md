@@ -14,8 +14,7 @@ that already use EPICS to leverage existing code to allow AIDA-PVA to coexist wi
 This version of AIDA involves a complete rewrite of the AIDA framework from the ground up, and notably includes some
 changes to AIDA norms and operation.  For example, the typical `IN:STAN:CE//ATTRIBUTE` tuple that was used to address 
 devices in previous versions has been replaced with an addressing scheme that is fully aligned with EPICS. 
-Making requests has been greatly simplified, although there are no longer any client libraries to help the client developer - example
-code not withstanding. 
+Making requests has been greatly simplified, and there is a new client library . 
 
 ![System Diagram](images/aida-pva.png)
 
