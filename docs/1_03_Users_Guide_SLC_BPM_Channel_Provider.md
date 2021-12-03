@@ -463,11 +463,15 @@ These have all been updated/added to be able to interact with the new AIDA-PVA f
 
 ```matlab
     aidainit;
-    table = request('P2BPMHER:BPMS')
-                .with('BPMD', 38)
-                .with('CNFTYPE', "GOLD")
-                .with('N', 1024)
-                .get();
+    try
+      table = request('P2BPMHER:BPMS')
+                  .with('BPMD', 38)
+                  .with('CNFTYPE', "GOLD")
+                  .with('N', 1024)
+                  .get();
+    catch ME
+       % do something when errors occur or just show ME.identifier
+    end
 ```
 
 #### EasyPVA

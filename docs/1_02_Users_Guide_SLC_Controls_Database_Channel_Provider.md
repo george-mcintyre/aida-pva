@@ -290,7 +290,11 @@ These have all been updated/added to be able to interact with the new AIDA-PVA f
 #### aida-pva-client
 ```matlab
     aidainit
-    floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
+    try
+        floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
+    catch ME
+       % do something when errors occur or just show ME.identifier
+    end
 ```
 #### using aidaget
 ```matlab

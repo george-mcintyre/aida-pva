@@ -482,11 +482,15 @@ These have all been updated/added to be able to interact with the new AIDA-PVA f
 ```matlab
     aidainit;
     devs = ['KLYS:LI03:31' 'SBST:LI03:001' 'BPMS:LI02:501' 'TORO:LI20:2040'];
-    table = request('NDRFACET:BUFFACQ')
-                .with('BPMD', 57)
-                .with('NRPOS', 5)
-                .with('DEVS', devs)
-                .get();
+    try
+      table = request('NDRFACET:BUFFACQ')
+                  .with('BPMD', 57)
+                  .with('NRPOS', 5)
+                  .with('DEVS', devs)
+                  .get();
+    catch ME
+       % do something when errors occur or just show ME.identifier
+    end
 ```
 
 #### using aidaget
