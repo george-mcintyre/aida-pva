@@ -230,8 +230,36 @@ public class AidaPvaRunner {
 ```
 
 ### From Matlab
+The java libraries available to matlab have been updated and the `aidainit()` and other functions (`aidaget()`, `ezrpc()`, `pvarpc()`, and `nturi()`) 
+have been modified to allow interoperability with AIDA-PVA. Here are examples of 
+accessing AIDA-PVA Channel Providers from matlab.  To see what has changed in malab please see 
+the [AIDA-PVA matlab documentation](1_12_Matlab_Code.md).
 
-Example: TBA
+There are four ways to access AIDA-PVA Channel Providers from matlab.  The 
+preferred way is using PvaClient, but aida-pva-client is the simplest.
+
+#### aida-pva-client
+```matlab
+    aidainit
+    floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
+```
+#### using aidaget
+```matlab
+    aidainit
+    floatResponse = aidaget('XCOR:LI03:120:LEFF','FLOAT')
+```
+#### EasyPVA
+```matlab
+    aidainit
+    response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
+    floatResponse = response.getSubField(PVFloat.class, "value")
+```
+#### PvaClient
+```matlab
+    aidainit
+    response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
+    floatResponse = response.getSubField(PVFloat.class, "value")
+```
 
 ## AIDA-PVA Channel Providers
 

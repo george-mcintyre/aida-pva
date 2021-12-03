@@ -53,12 +53,12 @@ A builder pattern that you can use to execute requests:
 
     request(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) | .setReturningTable(value) ]
 
-- **request(channel)** - creates a request builder for the specified channel.
-- **with(name, value)** - Used to set argument called `name` to `value`, on a request
-- **returning(type)** - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
-- **setReturningTable(value)** - For channels that return a table after setting a `value` use this API.
-- **get()** - To execute the request and return the results
-- **set(value)** - To execute the request setting the `value` and returning nothing
+- **request**(`channel`) - creates a request builder for the specified channel.
+- **with**(`name`, `value`) - Used to set argument called `name` to `value`, on a request
+- **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
+- **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
+- **get**()** - To execute the request and return the results
+- **set**(`value`) - To execute the request setting the `value` and returning nothing
 
 ##### e.g. 1: Simple get
 ```java
@@ -111,7 +111,7 @@ A builder pattern that you can use to execute requests:
 ```
 
 #### getRequest()
-For very simple get requests that don't take any arguments, use getRequest().
+- **getRequest**(`channel`, `type`) - For very simple get requests that don't take any arguments, use getRequest().
 
 ##### e.g. 1: Get a simple value
 ```java
@@ -119,7 +119,7 @@ For very simple get requests that don't take any arguments, use getRequest().
 ```
 
 #### setRequest()
-For very simple set requests that take only a value argument and don't return anything, use setRequest()
+- **setRequest**(`channel`, `value`) - For very simple set requests that take only a value argument and don't return anything, use setRequest()
 
 ##### e.g. 1: Set a simple value
 ```java
