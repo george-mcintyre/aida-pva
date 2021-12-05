@@ -81,8 +81,8 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
 
 ## Topology
 
-As a Channel Provider programmer you will be primarily concerned with creating a shared library for SLCLIBS. Each
-Channel Provider is a distinct library in SLCLIBS. The procedure to create one will compile up your C source file(s) and
+As a Channel Provider programmer you will be primarily concerned with creating a shared image for SLCSHR. Each
+Channel Provider is a distinct image in SLCSHR. The procedure to create one will compile up your C source file(s) and
 link them with STANDALONELIB to resolve the calls you make to functions in the AIDA-PVA Module, and to AIDASHR for any
 AIDA Modules that you need to implement your service.
 

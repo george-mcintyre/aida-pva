@@ -17,9 +17,9 @@ that implements the AIDA-PVA framework.   It is therefore a self-contained execu
 
 The AIDA-PVA service uses a plug-and-play architecture for the implementation of the channel provider.  It is configured as follows:
 - It checks the value of a property (`java.library.path`) to determine which
-path to load the Channel Provider library from.  In our SLAC environment this is always `/SLCLIBS`.
+path to load the Channel Provider image from.  In our SLAC environment this is always `/SLCSHR`.
 - It checks the value of a property (`aida.pva.lib.name`) or environment variable (`AIDA_PVA_LIB_NAME`) to determine which
-Channel Provider library to load.  e.g. `AIDASLCDB` to load `AIDASLCDB.EXE` library.
+Channel Provider image to load.  e.g. `AIDASLCDB` to load the `AIDASLCDB.EXE` image.
 - It checks the value of a property (`aida.pva.channels.filename`) or environment variable (`AIDA_PVA_CHANNELS_FILENAME`) to determine which
   Channel Configuration File to load. This can be a full path name.  e.g. `/SLCTXT/AIDASLCDB_CHANNELS.YML`
 - It reads configuration from the selected channel configuration file.

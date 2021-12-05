@@ -179,21 +179,15 @@ configurations:
       - TAXXALL:BPMS
 ```
 ## A note on linking
-![](images/aida-pva-link.png)
-1. The AIDA-PVA Service loads the Channel Provider shared image but it does not call any functions in the image that it loads.
-2. The AIDA-PVA Service calls JNI Entry points implemented in the AIDA-PVA Module in `STANDALONELIB`
-3. It has access to them because the Channel Provider is linked with the AIDA-PVA Module to resolve those JNI references.
-4. AIDA-PVA Module calls the Channel Provider entrypoints when it is called by the AIDA-PVA Service.
-5. Whenever the Channel Provider needs help it calls the Helper functions in AIDA-PVA Module
- 
-Though it could look like it would be impossible to build the AIDA-PVA Module because it would have unresolved references 
-to an as-yet-undefined Channel Provider's entrypoints, it does work because unless the Module that makes those calls is referenced
-by an image being linked it, won't try to resolve the references.
+![AIDA-PVA Linking](images/aida-pva-link.png)
+1. The AIDA-PVA Service loads the Channel Provider shared image, but it does not call any functions declared in the library, `AIDASLCDB.OLB`, that creates that image.
+2. The AIDA-PVA Service instead calls JNI entry-points which are actually declared in the AIDA-PVA Module in `STANDALONELIB.OLB`.
+3. The AIDA-PVA Service has access to them because the Channel Provider is linked using the JNI entry-point transfer vectors file, `AIDASLCDB_XFR_ALPHA.OPT`, to resolve the references in the AIDA-PVA Module.
+4. Functions implementing JNI entry-points, declared in the AIDA-PVA Module in `STANDALONELIB.OLB`, subsequently call Channel Provider entry-points declared in `AIDASLCDB.OLB`.
+5. Whenever the Channel Provider needs help it calls back to Helper functions declared in the AIDA-PVA Module in `STANDALONELIB.OLB`.
 
 @note
-When linking the Channel Provider to the AIDA-PVA Module you need to explicitly request the Modules with the JNI Entry points
-because even though the Channel Provider code doesn't reference them, the AIDA-PVA Service will need to have them available
-when it loads the Channel Provider image.
+When linking the Channel Provider, `AIDASLCDB.OLB` with the AIDA-PVA Module in `STANDALONELIB.OLB`, to create the Channel Provider shared image, `AIDASLCDB.EXE`, you need to explicitly reference the JNI entry-points because even though the Channel Provider code in `AIDASLCDB.OLB` doesn't reference them, the AIDA-PVA Service, `AIDA-PVA.JAR`, will need to have them available when it loads the Channel Provider image.
 
 This is done using the associated transfer vectors file. (excerpt from AIDASLCDB_XFR_ALPHA.OPT file)
 ```text
@@ -242,7 +236,7 @@ It is imperative that the Forwarder is started before any Channel Provider servi
 ### 2 - Run the AIDA-PVA SERVICE for each Channel Provider
 * startup with a command similar to the following:
 ```shell
-java -jar "-Daida.pva.channels.filename=/SLCTXT/AIDASLCDB_CHANNELS.YAML" "-Djava.library.path=/SLCLIBS" "-Daida.pva.lib.name=AIDASLCDB" SLCLIBS:AIDA-PVA.JAR
+java -jar "-Daida.pva.channels.filename=/SLCTXT/AIDASLCDB_CHANNELS.YAML" "-Djava.library.path=/SLCSHR" "-Daida.pva.lib.name=AIDASLCDB" SLCLIBS:AIDA-PVA.JAR
 Oct 24, 2021 12:58:50 PM edu.stanford.slac.aida.impl.AidaService <clinit>
 INFO: Loading Channel Provider Shared Library: AIDASLCDB
 
@@ -275,7 +269,7 @@ LENS:????:*//DVIC, ...]
     1. A property set on the launch commandline with the `-D` option named `java.library.path`
         * fully qualified path name or
         * relative path
-        * e.g. `-Djava.library.path=/SLCLIBS`
+        * e.g. `-Djava.library.path=/SLCSHR`
     2. * By default, the standard library locations and working directory are searched
   * Channel Provider shared image name selection:
     1. An Environment Variable `AIDA_PVA_LIB_NAME` - (A global symbol in VMS terminology)

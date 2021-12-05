@@ -97,7 +97,7 @@ A builder pattern that you can use to execute requests:
      .with("BEAM", 8)
      .with("DGRP", "DEV_DGRP")
      .setReturningTable(0)
-     ).getValues().setReturningTable("status").get(0);
+     ).getValues().get("status").get(0);
 ```
 
 ##### e.g. 6: Selecting the return value type
