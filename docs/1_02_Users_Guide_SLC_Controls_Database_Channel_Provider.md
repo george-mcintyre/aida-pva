@@ -224,7 +224,7 @@ public class PvaClientExample {
 }
 ```
 
-#### Plain old Java
+#### Plain PvAccess
 
 ```java
 import org.epics.pvaccess.ClientFactory;

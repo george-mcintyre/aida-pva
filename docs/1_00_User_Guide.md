@@ -170,7 +170,7 @@ parameters.
 eget -s NDRFACET:BUFFACQ -a BPMD 57 -a NRPOS 180 -a BPMS '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]'
 ```
 
-### From Java (Plain old Java example)
+### From Java (PvAccess Java example)
 
 From Java you can have more control over the data types sent and received.
 

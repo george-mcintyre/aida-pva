@@ -3,23 +3,25 @@
 AIDA-PVA clients can use various methods to connect to the supported EPICs Channel Providers.  These include: 
 - EasyPVA - see: [EasyPVA Documentation](http://epics-pvdata.sourceforge.net/docbuild/easyPVAJava/tip/documentation/easyPVA.html).  EasyPVA is end of life and is no longer supported.
 - PvaClient - see: [PvaClient documentation](https://github.com/epics-base/pvaClientJava).  PvaClient does not propagate server errors back to the client.
-- Plain old Java - see: [AIDA-PVA User Guide](1_00_User_Guide.md) for an example.  Is quite heavyweight.
+- Plain PvAccess - see: [AIDA-PVA User Guide](1_00_User_Guide.md) for an example.  Is quite verbose.
 - aida-pva-client - a purpose built replacement for the legacy AIDA client.  Lightweight and full functionality.
 
 ## aida-pva-client
 aida-pva-client is delivered in the aida-pva-client jar.  This jar includes everything 
 your client application needs to access any AIDA-PVA and compatible EPICs Channel Provider.
 
-Behind the scenes it is implemented with Plain old Java, PvaClient, and EasyPVA.  The implementation is selected as follows:
-- default implementation is pojo - Plain old Java.
+Behind the scenes it is implemented with plain PvAccess, PvaClient, or EasyPVA.  The implementation may be selected as follows:
+- default implementation is plain PvAccess.
 - if a property `aida.pva.client.request.executor` is set it overrides the default as follows:
-  - **pojo** - Use Plain old Java
+  - **PvAccess** - Use plain PvAccess
   - **PvaClient** - Use PvaClient implementation
   - **EasyPVA** - Use EasyPVA implementation
 - if an environment variable `AIDA_PVA_CLIENT_REQUEST_EXECUTOR` is set it overrides the default or any property as follows:
-  - **pojo** - Use Plain old Java
+  - **PvAccess** - Use plain PvAccess
   - **PvaClient** - Use PvaClient implementation
   - **EasyPVA** - Use EasyPVA implementation
+
+@note EasyPVA maven repository is unsupported and so it does not compile.  The implementation has therefore been commented out.
 
 ### Imports
 These are the only imports you need.
