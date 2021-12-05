@@ -10,6 +10,17 @@ AIDA-PVA clients can use various methods to connect to the supported EPICs Chann
 aida-pva-client is delivered in the aida-pva-client jar.  This jar includes everything 
 your client application needs to access any AIDA-PVA and compatible EPICs Channel Provider.
 
+Behind the scenes it is implemented with Plain old Java, PvaClient, and EasyPVA.  The implementation is selected as follows:
+- default implementation is pojo - Plain old Java.
+- if a property `aida.pva.client.request.executor` is set it overrides the default as follows:
+  - **pojo** - Use Plain old Java
+  - **PvaClient** - Use PvaClient implementation
+  - **EasyPVA** - Use EasyPVA implementation
+- if an environment variable `AIDA_PVA_CLIENT_REQUEST_EXECUTOR` is set it overrides the default or any property as follows:
+  - **pojo** - Use Plain old Java
+  - **PvaClient** - Use PvaClient implementation
+  - **EasyPVA** - Use EasyPVA implementation
+
 ### Imports
 These are the only imports you need.
 
