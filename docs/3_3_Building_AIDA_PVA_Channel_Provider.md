@@ -349,12 +349,12 @@ SlcCMS>
 ```
 5. If you are updating the OPT file reserve it
 ```shell
-SlcCMS> SET LIBR CMS_OPT
-%CMS-I-LIBIS, library is CMS_:[OPT]
+SlcCMS> SET LIBR CMS_SLCSHR_CONTROL
+%CMS-I-LIBIS, library is CMS_:[SLCSHR_CONTROL]
 %CMS-S-LIBSET, library set
 SlcCMS> RESERVE AIDASLCDB_GENERAL.OPT
 _Remark: Update SLC DB Channel Configuration OPT File
-%CMS-S-RESERVED, generation 2 of element CMS_:[OPT]AIDASLCDB_GENERAL.OPT reserved
+%CMS-S-RESERVED, generation 2 of element CMS_:[SLCSHR_CONTROL]AIDASLCDB_GENERAL.OPT reserved
 SlcCMS> exit 
 MCCDEV>
 ```
