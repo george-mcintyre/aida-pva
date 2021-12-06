@@ -259,11 +259,9 @@ public class JavaExample {
         PVStructure args = nturi.getStringField("query");
         args.getStringField("type").put("FLOAT");
 
-        ClientFactory.start();
         RPCClientImpl client = new RPCClientImpl(pvName);
         PVStructure response = client.request(request, 3.0);
         client.destroy();
-        ClientFactory.stop();
 
         PVFloat field = response.getSubField(PVFloat.class, "value");
         return field.get();

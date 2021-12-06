@@ -383,11 +383,9 @@ public class JavaExample {
         args.getIntField("nrpos").put(5);
         args.getIntField("devs").put(0, 4, new String[]{"KLYS:LI03:31", "SBST:LI03:001", "BPMS:LI02:501", "TORO:LI20:2040"}, 0);
 
-        ClientFactory.start();
         RPCClientImpl client = new RPCClientImpl(pvName);
         PVStructure result = client.request(request, 3.0);
         client.destroy();
-        ClientFactory.stop();
 
         return Arrays.stream(result.getSubField(PVStructure.class, "value").getPVFields())
                 .map(column -> {

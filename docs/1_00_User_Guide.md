@@ -184,7 +184,6 @@ import org.epics.pvdata.pv.*;
 
 public class AidaPvaRunner {
     public static void main(String[] args) {
-        ClientFactory.start();
         RPCClientImpl client = new RPCClientImpl("NDRFACET:BUFFACQ");
 
         // Create the arguments structure that will host the fields
@@ -222,9 +221,9 @@ public class AidaPvaRunner {
             // Use result ...
         } catch (RPCRequestException e) {
             // Do something with error
+        } finally {
+          client.destroy();
         }
-        client.destroy();
-        ClientFactory.stop();
     }
 }
 ```

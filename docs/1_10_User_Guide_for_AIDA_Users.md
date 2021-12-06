@@ -83,7 +83,6 @@ import org.epics.pvdata.pv.*;
  
 public class AidaPvaRunner {
     public static void main(String[] args) {
-        ClientFactory.start();
         RPCClientImpl client = new RPCClientImpl("CHANNEL");
         
         // ...
@@ -99,9 +98,9 @@ public class AidaPvaRunner {
             // Use result ...
         } catch (RPCRequestException e) {
             // Do something with error
+        } finally {
+          client.destroy();
         }
-        client.destroy();
-        ClientFactory.stop();
     }
 }
 ```

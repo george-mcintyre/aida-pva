@@ -365,11 +365,9 @@ public class JavaExample {
         args.getIntField("cnftype").put("GOLD");
         args.getIntField("n").put(1024);
 
-        ClientFactory.start();
         RPCClientImpl client = new RPCClientImpl(pvName);
         PVStructure result = client.request(request, 3.0);
         client.destroy();
-        ClientFactory.stop();
 
         return Arrays.stream(result.getSubField(PVStructure.class, "value").getPVFields())
                 .map(column -> {
