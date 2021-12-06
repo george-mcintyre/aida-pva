@@ -5,17 +5,16 @@
 The following utility functions have been added to Matlab to support AIDA:
 
 - `void` **aidainit**() - to initialise access to the AIDA framework
-- `void` **aidaget**(`aidaName`, `aidaType`, `aidaParams`) - gets SCALAR or SCALAR_ARRAY from EPICS/AIDA-PVA data
-  providers
 - `NTURI` **nturi**(`pvName`, `varargin`) - to create an `NTURI` Structure (
   see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers
 - `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures
 - `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPva
 - `PVStructure` **pvarpc**(`nturi`) - takes an `NTURI` and executes it using PvaClient
-- `matlab_dynamic_type` **request**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with
+- `matlab_dynamic_type` **pvaChannel**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with
   builder pattern
     - **with**(`name`, `value`) - specifies a parameter for the request
     - **returning**(`aidaType`) - specified the aida type to return from the request
+    - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
     - **get**() - executes the get request
     - **set**(`value`) - executes the set request with the given value
 
@@ -23,126 +22,147 @@ These have all been updated/added to be able to interact with the new AIDA-PVA f
 
 ## AIDA-PVA Channel Provider data access patterns
 
-### aidaget for simple data
+<table>
+<tr><th>description</th><th>aida-pva-client</th><th>pvaClient</th><th>easyPva</th></tr>
+<tr>
+<td>
+Simple Get
+</td>
+<td>
 
 ```matlab
-    aidainit;
-    bval=aidaget('PHAS:LI09:12:VACT');
+aidainit;
+bval=pvaGet('PHAS:LI09:12:VACT', SHORT);
 ```
 
-### EasyPVA
-
-#### Get
+</td>
+<td>
 
 ```matlab
-    aidainit;
-    response = ezrpc(nturi('PHAS:LI09:12:VACT')) ;
-    bval= response.getSubField('value').get;
+aidainit;
+response = pvarpc(nturi('PHAS:LI09:12:VACT', 'TYPE', 'SHORT')) ;
+bval= response.getSubField('value').get;
 ```
 
-#### Get with arguments
+</td>
+<td>
 
 ```matlab
-    aidainit;
-    table = nttable2struct(ezrpc(nturi('NDRFACET:BUFFACQ', ...
-     'BPMD', 57, ...
-      'NRPOS', 180, ...
-        'BPMS', '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]')));
-    names = table.value.name;
+aidainit;
+response = ezrpc(nturi('PHAS:LI09:12:VACT', 'TYPE', 'SHORT')) ;
+bval= response.getSubField('value').get;
 ```
 
-#### Set 
+</td>
+</tr>
+
+<tr>
+<td>
+Get with arguments
+</td>
+<td>
 
 ```matlab
     aidainit;
-    ezrpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
-```
-
-#### Set returning a table
-
-```matlab
-    aidainit;
-    table = nttable2struct(ezrpc(nturi('KLYS:LI31:31:TACT', 'VALUE', 0)));
-    satus = table.value.status
-```
-
-### PvaClient
-
-#### Get
-
-```matlab
-    aidainit;
-    response = pvarpc(nturi('PHAS:LI09:12:VACT')) ;
-    bval= response.getSubField('value').get;
-```
-
-#### Get with arguments
-
-```matlab
-    aidainit;
-    table = nttable2struct(pvarpc(nturi('NDRFACET:BUFFACQ', ...
-     'BPMD', 57, ...
-      'NRPOS', 180, ...
-        'BPMS', '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]')));
-    names = table.value.name;
-```
-
-#### Set 
-
-```matlab
-    aidainit;
-    pvarpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
-```
-
-#### Set returning a table
-
-```matlab
-    aidainit;
-    table = nttable2struct(pvarpc(nturi('KLYS:LI31:31:TACT', 'VALUE', 0)));
-    satus = table.value.status
-```
-
-
-### aida-pva-client
-
-#### Simple Get
-
-```matlab
-    aidainit;
-    bval=getRequest('PHAS:LI09:12:VACT', SHORT); % LEM uses VACT
-```
-
-#### Simple Set
-
-```matlab
-    aidainit;
-    setRequest('XCOR:LI31:41:BCON', 5.0); % LEM uses VACT
-```
-
-#### Get
-
-```matlab
-    aidainit;
-    table=request('NDRFACET:BUFFACQ') ...
+    table=pvaChannel('NDRFACET:BUFFACQ') ...
         .with('BPMD', 57) ...
         .with('NRPOS', 180) ...
-        .with('BPMS', [ ...
-                'BPMS:LI11:501' ...
-                'BPMS:LI11:601' ...
-                'BPMS:LI11:701' ...
-                'BPMS:LI11:801' ]) ...
+        .with('BPMS', '["BPMS:LI11:501" , "BPMS:LI11:601" , "BPMS:LI11:701" , "BPMS:LI11:801" ]') ...
         .get();
     names = table.getValues().get('name');
 ```
 
-#### Set returning a table
+</td>
+<td>
 
 ```matlab
-    aidainit;
-    table=request('KLYS:LI31:31:TACT').setReturningTable(0);
-    status = table.getValues().get('status').get(0);
-    
+aidainit;
+table = nttable2struct(pvarpc(nturi('NDRFACET:BUFFACQ', ...
+ 'BPMD', 57, ...
+  'NRPOS', 180, ...
+    'BPMS', '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]')));
+names = table.value.name;
 ```
+
+</td>
+<td>
+
+```matlab
+aidainit;
+table = nttable2struct(ezrpc(nturi('NDRFACET:BUFFACQ', ...
+ 'BPMD', 57, ...
+  'NRPOS', 180, ...
+    'BPMS', '["BPMS:LI11:501","BPMS:LI11:601","BPMS:LI11:701","BPMS:LI11:801"]')));
+names = table.value.name;
+```
+
+</td>
+</tr>
+
+<tr>
+<td>
+Simple Set
+</td>
+<td>
+
+```matlab
+aidainit;
+pvaSet('XCOR:LI31:41:BCON', 5.0);
+```
+
+</td>
+<td>
+
+```matlab
+aidainit;
+pvarpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
+```
+
+</td>
+<td>
+
+```matlab
+aidainit;
+ezrpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
+```
+
+</td>
+</tr>
+
+<tr>
+<td>
+Set returning a table
+</td>
+<td>
+
+```matlab
+aidainit;
+table=pvaChannel('KLYS:LI31:31:TACT').setReturningTable(0);
+status = table.getValues().get('status');    
+```
+
+</td>
+<td>
+
+```matlab
+aidainit;
+table = nttable2struct(ezrpc(nturi('KLYS:LI31:31:TACT', 'VALUE', 0)));
+status = table.value.status
+```
+
+</td>
+<td>
+
+```matlab
+aidainit;
+table = nttable2struct(pvarpc(nturi('KLYS:LI31:31:TACT', 'VALUE', 0)));
+status = table.value.status
+```
+
+</td>
+</tr>
+
+</table>
 
 ## Migration patterns
 
@@ -153,226 +173,397 @@ from.
 - pvarpc
 - aida-pva-client
 
-### 1. import DaObject
-
-* for all three migration patterns, simply remove this line:
-
-e.g. remove these lines
-
-```matlab
-    import edu.stanford.slac.aida.lib.da.DaObject;
-```
-
-### 2. da = DaObject()
-
-* for all three migration patterns, simply replace as follows if aidainit has not already been called:
+<table>
+<tr><th>pattern</th><th>aida-pva-client</th><th>pvaClient</th><th>easyPva</th></tr>
+<tr>
+<td>
 
 ```matlab
-    da = DaObject();    
+import edu.stanford.slac.aida.lib.da.DaObject;
 ```
 
-⬇
+</td>
+<td colspan=3>
+Remove
+</td>
+</tr>
+
+<tr>
+<td>
 
 ```matlab
-    aidainit;
+da = DaObject();    
 ```
 
-### 3. da.setParam()
-
-- **ezrpc** and **pvarpc**
-    - You need to know the `channel` name first
+</td>
+<td colspan=3>
 
 ```matlab
-    da.setParam('BEAM', 1)
+aidainit;
 ```
 
-⬇
+</td>
+</tr>
+
+<tr>
+<td>
 
 ```matlab
-    NTURI = nturi(channel, 'BEAM', '1');
+da.setParam('BEAM', 1);
 ```
 
--
-    - You need to add all parameters in the same nturi() call.
-    - Then use the resulting NTURI in call to ezrpc() or pvarpc()
-- **aida-pva-client**
-    - You need to know the `channel` name first and create a request object `REQUEST = request(channel)`
+</td>
+<td>
 
 ```matlab
-    da.setParam('BEAM', 1)
+CHANNEL = pvaChannel(channel);
+CHANNEL = CHANNEL.with('BEAM', '1');
+
 ```
 
-⬇
+- You need to know the `channel` name first
+- And create a channel object and set parameters on it
+- Repeat this for as many parameters as you have
+
+</td>
+<td colspan=2>
 
 ```matlab
-    REQUEST = REQUEST.with('BEAM', '1')
+NTURI = nturi(channel, 'BEAM', '1');
 ```
 
--
-    - Repeat this for as many parameters as you have
+- You need to know the `channel` name first
+- You need to add all parameters in the same nturi() call.
+- Then use the resulting NTURI in call to pvarpc() or ezrpc()
 
-### 4. da.getValue()
+</td>
+</tr>
 
-- **ezrpc**
-    - You will need to have created an `NTURI` earlier `NTURI = nturi(channel);`
+<tr>
+<td>
 
 ```matlab
-    da.getValue(channel)
+da.getValue(channel);
 ```
 
-⬇
+</td>
+<td>
 
 ```matlab
-    RESULT = ezrpc(NTURI)
+RESULT = CHANNEL.get();
 ```
 
-- **pvarpc**
-    - You will need to have created an `NTURI` earlier `NTURI = nturi(channel);`
+or
 
 ```matlab
-    da.getValue(channel)
+RESULT = pvaChannel(channel).get();
 ```
 
-⬇
+or
 
 ```matlab
-    RESULT = pvarpc(NTURI)
+RESULT = pvaGet(channel, FLOAT);
 ```
 
-- **aida-pva-client**
+</td>
+<td>
 
 ```matlab
-    da.getValue(channel)
+NTURI = nturi(channel);
+RESULT = pvarpc(NTURI);
 ```
 
-⬇
+- You will need to have created an `NTURI` earlier
+
+</td>
+<td>
 
 ```matlab
-    RESULT = request(channel).get()
+NTURI = nturi(channel);
+RESULT = ezrpc(NTURI);
 ```
 
--
-    - If you've created a `REQUEST` object then simply:
+- You will need to have created an `NTURI` earlier
+
+</td>
+</tr>
+
+<tr>
+<td>
 
 ```matlab
-    RESULT = REQUEST.get()
+RESULT.getAsDouble
 ```
 
-### 5. getting scalar results value: RESULT.getAsDouble
+- various getAs...() methods on the DaObject for scalar
 
-- **ezrpc** and **pvarpc**
-    - The RESULTS returned are a PVStructure to convert to scalar use the following pattern
+</td>
+<td>
+
+- The RESULT will already be in the correct type for all scalar results. No conversion is required
+
+</td>
+<td colspan=2>
 
 ```matlab
-    RESULT.getAsDouble
+RESULT.getSubField('value').get
 ```
 
-⬇
+- The RESULTS returned are a PVStructure
+
+</td>
+</tr>
+
+<tr>
+<td>
 
 ```matlab
-    RESULT.getSubField('value').get
+RESULT.getAsDoubles
 ```
 
-- **aida-pva-client**
-    - The RESULT will already be in the correct type for scalar results
+- various getAs...s() methods on the DaObject for scalar arrays
 
-### 6. getting scalar array results value: RESULT.getAsDoubles
+</td>
+<td>
 
-- **ezrpc** and **pvarpc**
-    - The RESULTS returned are a PVStructure to convert to scalar array use the following pattern
+- The RESULT will already be in the correct type for all scalar array results. No conversion is required
+
+</td>
+<td colspan=2>
 
 ```matlab
-    RESULT.getAsDoubles
+RESULT.getSubField('value').get
 ```
 
-⬇
+- The RESULTS returned are a PVStructure
+
+</td>
+</tr>
+
+<tr>
+<td>
 
 ```matlab
-    RESULT.getSubField('value').get
+values = RESULT.get(4).getAsDoubles;
 ```
 
-- **aida-pva-client**
-    - The RESULT will already be in the correct type for scalar results
+- da.Any for tables.
+- For example a table with the 4th vector named "x", containing doubles.
 
-### 7. getting tables (da.Any) results value: RESULT.get(4).getAsDoubles
-
-- **ezrpc** and **pvarpc**
-    - The RESULTS returned are a PVStructure to convert to scalar array use the following pattern
-    - If the 4th vector's name is `x` then ...
+</td>
+<td>
 
 ```matlab
-    RESULT.get(4).getAsDoubles
+values = RESULT.getValues().get('x');
 ```
 
-⬇
+- The RESULT will already be in the correct table type for all table results. No conversion is required
+
+</td>
+<td colspan=2>
 
 ```matlab
-    nttable2struct(RESULT).value.x
+values = nttable2struct(RESULT).value.x;
 ```
 
-- **aida-pva-client**
-    - If the 4th vector's name is `x` then ...
+- The RESULTS returned are a PVStructure, use nttable2struct to convert
+
+</td>
+</tr>
+
+<tr>
+<td>
 
 ```matlab
-    RESULT.get(4).getAsDoubles
+value=DaValue(java.lang.Short(10));
+RESULT=da.setDaValue(channel, value);
 ```
 
-⬇
+- Setting values
+
+</td>
+<td>
 
 ```matlab
-    RESULT.getValues().get('x')
+    RESULT=pvaChannel(channel).set(10);
 ```
 
-### 8. da.setDaValue(channel, value)
-
-- **ezrpc**
-    - Set a `VALUE` parameter
+or
 
 ```matlab
-    value=DaValue(java.lang.Short(10));
-    RESULT=da.setDaValue(channel, value);
+    RESULT=pvaSet(channel, 10);
 ```
 
-⬇
+</td>
+<td>
 
 ```matlab
-    RESULT=ezrpc(nturi(channel, 'VALUE', 10));
+RESULT=pvarpc(nturi(channel, 'VALUE', 10));
 ```
 
-- **pvarpc**
-    - Set a `VALUE` parameter
+- Set a `VALUE` parameter
+
+</td>
+<td>
 
 ```matlab
-    value=DaValue(java.lang.Short(10));
-    RESULT=da.setDaValue(channel, value);
+RESULT=ezrpc(nturi(channel, 'VALUE', 10));
 ```
 
-⬇
+- Set a `VALUE` parameter
+
+</td>
+</tr>
+
+
+<tr>
+<td>
 
 ```matlab
-    RESULT=pvarpc(nturi(channel, 'VALUE', 10));
+IN:ST:ANCE//ATTRIBUTE
 ```
+- Channel Names - PVs - pvNames
 
-- **aida-pva-client**
+</td>
+<td colspan=3>
 
 ```matlab
-    value=DaValue(java.lang.Short(10));
-    RESULT=da.setDaValue(channel, value);
+IN:ST:ANCE:ATTRIBUTE
 ```
 
-⬇
+</td>
 
-```matlab
-    RESULT=request(channel).set(10);
-```
-
-### 9. For all Channel names
-
-- For all migration patterns
-    - replace all '//' in channel names (pv names) with ':'
+</tr>
+</table>
 
 ## aidainit
 
-This has been updated to add aida-pva-client jars
+This has been updated to add aida-pva-client jars and define function aliases.
 
+```matlab
+global aidainitdone
+if isempty(aidainitdone)
+    global pvaChannel
+    global pvaGet
+    global pvaSet
 
+    setupjavapath(strcat(getenv('PHYSICS_TOP'),'/release/aida-pva-client/R1.0.0/lib/aida-pva-client.jar'))
+
+    % aida-pva-client imports
+    import('edu.stanford.slac.aida.client.AidaPvaClientUtils.*');
+    import('edu.stanford.slac.aida.client.AidaType.*');
+
+    % Epics request exceptions
+    import('org.epics.pvaccess.server.rpc.RPCRequestException');
+
+    AIDA_BOOLEAN = [edu.stanford.slac.aida.client.AidaType.BOOLEAN];
+    AIDA_BYTE = [edu.stanford.slac.aida.client.AidaType.BYTE];
+    AIDA_CHAR = [edu.stanford.slac.aida.client.AidaType.CHAR];
+    AIDA_SHORT = [edu.stanford.slac.aida.client.AidaType.SHORT];
+    AIDA_INTEGER = [edu.stanford.slac.aida.client.AidaType.INTEGER];
+    AIDA_LONG = [edu.stanford.slac.aida.client.AidaType.LONG];
+    AIDA_FLOAT = [edu.stanford.slac.aida.client.AidaType.FLOAT];
+    AIDA_DOUBLE = [edu.stanford.slac.aida.client.AidaType.DOUBLE];
+    AIDA_STRING = [edu.stanford.slac.aida.client.AidaType.STRING];
+    AIDA_BOOLEAN_ARRAY = [edu.stanford.slac.aida.client.AidaType.BOOLEAN_ARRAY];
+    AIDA_BYTE_ARRAY = [edu.stanford.slac.aida.client.AidaType.BYTE_ARRAY];
+    AIDA_CHAR_ARRAY = [edu.stanford.slac.aida.client.AidaType.CHAR_ARRAY];
+    AIDA_SHORT_ARRAY = [edu.stanford.slac.aida.client.AidaType.SHORT_ARRAY];
+    AIDA_INTEGER_ARRAY = [edu.stanford.slac.aida.client.AidaType.INTEGER_ARRAY];
+    AIDA_LONG_ARRAY = [edu.stanford.slac.aida.client.AidaType.LONG_ARRAY];
+    AIDA_FLOAT_ARRAY = [edu.stanford.slac.aida.client.AidaType.FLOAT_ARRAY];
+    AIDA_DOUBLE_ARRAY = [edu.stanford.slac.aida.client.AidaType.DOUBLE_ARRAY];
+    AIDA_STRING_ARRAY = [edu.stanford.slac.aida.client.AidaType.STRING_ARRAY];
+    AIDA_TABLE = [edu.stanford.slac.aida.client.AidaType.TABLE];
+
+    pvaChannel = @(channel) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaChannel(channel);
+    pvaGet = @(channel, type) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(channel, type);
+    pvaSet = @(channel, value) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet(channel, value);
+
+    aidainitdone = 1;
+    disp 'Aida client initialization completed';
+end
+
+```
+
+## pvarpc 
+A script that can be called to make requests based on pvaClient has been created.  Extracted from erpc.m.
+
+```matlab
+function [ PVDATA ] = pvarpc( NTURI )
+    aidainit;
+
+    PVDATA = NaN;
+    nturi_pvs = NTURI;
+
+    % Get an PVA interface.
+    provider = 'pva';
+    client = PvaClient.get(provider);
+
+    % Create a channel to the optics pv.
+    pvname = nturi_pvs.getStringField('path').get();
+    channel = client.createChannel(pvname);
+
+    pvs = channel.rpc(nturi_pvs);
+
+    % Reset output var if all went well.
+    PVDATA = pvs;
+
+```
+
+## ezrpc
+A script that can be called to make requests based on ezPVA has been created.  Extracted from erpc.m.
+
+```matlab
+function [ PVDATA ] = ezrpc( NTURI )
+    aidainit;
+
+    PVDATA = NaN;
+    nturi_pvs = NTURI;
+
+    % Get an easyPVA interface.
+    easypva = EasyPVAFactory.get();
+
+    % Create a channel to the given pv, and attempt connection.
+    pvname = nturi_pvs.getStringField('path').get();
+    easychan = easypva.createChannel(pvname);
+    iss=easychan.connect(5.0); % 5 second timeout
+
+    % If channel connection to the given PV was successful, proceed.
+    if (iss==true)
+        easyrpc = easychan.createRPC();
+
+        % iss = easypva.getStatus();
+        % if ~isempty(easyrpc)
+        iss = easyrpc.getStatus();
+        % If successful, get data from the channel
+        if ( iss.isOK() )
+            % Connect the RPC to service PV and if successful
+            % request data given arguments.
+            if (easyrpc.connect())
+                pvs = easyrpc.request(nturi_pvs);
+                iss=easyrpc.getStatus();
+                if (~iss.isOK())
+                    % Issue result of statment that got twiss data. Server
+                    % side generated errors will be issued by this.
+                    error(servererr,char(iss.getMessage()));
+                end
+            else
+                % Issue diagnostic msg of connect if unsuccessful.
+                error(connecterr,char(easypva.getStatus().getMessage()));
+            end
+        else
+            % For infrastrcuture errors, issue whole status object toString.
+            error(pvasystemerr, char(iss) );
+        end
+    else
+        % Could not create channel connection, probably a mistake in pv name.
+        error(createchannelerror,createchannelerrormsg,char(pvname));
+    end
+
+    % Reset output var if all went well.
+    if ( iss.isOK() )
+        PVDATA = pvs;
+    end
+
+```

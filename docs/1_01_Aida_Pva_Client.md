@@ -66,7 +66,7 @@ A builder pattern that you can use to execute requests:
 
     request(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) | .setReturningTable(value) ]
 
-- **request**(`channel`) - creates a request builder for the specified channel.
+- **pvaChannel**(`channel`) - creates a request builder for the specified channel.
 - **with**(`name`, `value`) - Used to set argument called `name` to `value`, on a request
 - **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
 - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
