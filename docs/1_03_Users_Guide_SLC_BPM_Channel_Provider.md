@@ -323,7 +323,7 @@ end
 
 ```matlab
 aidainit
-table = pvarpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'))
+table = pvarpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;
 names = tableStruct.value.name;
@@ -339,7 +339,7 @@ names = tableStruct.value.name;
 
 ```matlab
 aidainit
-table = ezrpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'))
+table = ezrpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;
 names = tableStruct.value.name;

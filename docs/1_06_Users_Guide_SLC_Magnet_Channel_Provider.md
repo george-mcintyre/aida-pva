@@ -119,9 +119,6 @@ pvcall "DEV_DGRP:XCOR:BDES" MICROS="LI31-LI31" UNITS="1-100"
 
 ```shell
 pvcall "MAGNETSET:BDES" MAGFUNC=TRIM VALUE='{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }'
-```
-
-```shell
 pvcall "MAGNETSET:BCON" VALUE='{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'
 ```
 
@@ -145,9 +142,6 @@ eget -s DEV_DGRP:XCOR:BDES -a MICROS 'LI31-LI31' -a UNITS '1-100'
 
 ```shell
 eget -s MAGNETSET:BDES -a MAGFUNC TRIM -a VALUE '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }'
-```
-
-```shell
 eget -s MAGNETSET:BCON -a VALUE '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'
 ```
 

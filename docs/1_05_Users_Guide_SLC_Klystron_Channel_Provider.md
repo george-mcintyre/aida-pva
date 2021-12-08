@@ -151,9 +151,6 @@ None
 
 ```shell
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=SHORT
-```
-
-```shell
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
 ```
 
@@ -165,17 +162,8 @@ pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
 
 ```shell
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP VALUE=0
-```
-
-```shell
 pvcall "KLYS:LI31:31:PDES" VALUE=90.0
-```
-
-```shell
 pvcall "KLYS:LI31:31:KPHR" VALUE=60.0
-```
-
-```shell
 pvcall "KLYS:LI31:31:PCON" VALUE=5.0
 ```
 
@@ -189,9 +177,6 @@ pvcall "KLYS:LI31:31:PCON" VALUE=5.0
 
 ```shell
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'SHORT'
-```
-
-```shell
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'STRING'
 ```
 
@@ -203,17 +188,8 @@ eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'STRING'
 
 ```shell
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a VALUE 0
-```
-
-```shell
 eget -s KLYS:LI31:31:PDES -a VALUE 90.0
-```
-
-```shell
 eget -s KLYS:LI31:31:KPHR -a VALUE 60.0
-```
-
-```shell
 eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 ```
 

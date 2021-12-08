@@ -561,7 +561,7 @@ public class JavaExample {
 ```matlab
 aidainit
 try
-    floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', FLOAT);
+    floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT);
 catch ME
     % do something when errors occur or just show ME.identifier
 end
@@ -570,7 +570,7 @@ end
 ```matlab
 aidainit
 try
-    floatResponse = pvaRequest('XCOR:LI03:120:LEFF').returning(FLOAT).get();
+    floatResponse = pvaRequest('XCOR:LI03:120:LEFF').returning(AIDA_FLOAT).get();
 catch ME
     % do something when errors occur or just show ME.identifier
 end
@@ -611,8 +611,8 @@ end
 
 ```matlab
 aidainit
-response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))
-floatResponse = response.getSubField(PVFloat.class, "value")
+response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'));
+floatResponse = response.getSubField(PVFloat.class, "value");
 ```
 
 </td>
@@ -623,7 +623,7 @@ floatResponse = response.getSubField(PVFloat.class, "value")
 
 ```matlab
 aidainit
-pvarpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'))
+pvarpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'));
 ```
 
 </td>
@@ -636,8 +636,8 @@ pvarpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'))
 
 ```matlab
 aidainit
-response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
-floatResponse = response.getSubField(PVFloat.class, "value")
+response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'));
+floatResponse = response.getSubField(PVFloat.class, "value");
 ```
 
 </td>
@@ -648,16 +648,7 @@ floatResponse = response.getSubField(PVFloat.class, "value")
 
 ```matlab
 aidainit
-ezrpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'))
-```
-
-```matlab
-aidainit
-try
-    pvaSet('XCOR:LI31:41:BCON', 5.0);
-catch ME
-    % do something when errors occur or just show ME.identifier
-end
+ezrpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'));
 ```
 
 </td>

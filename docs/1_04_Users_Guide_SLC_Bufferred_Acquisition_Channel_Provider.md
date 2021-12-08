@@ -341,7 +341,7 @@ end
 
 ```matlab
 aidainit
-table = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'))
+table = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;
 xoffsets = tableStruct.value.x;
@@ -357,7 +357,7 @@ xoffsets = tableStruct.value.x;
 
 ```matlab
 aidainit
-table = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'))
+table = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;
 xoffsets = tableStruct.value.x;
