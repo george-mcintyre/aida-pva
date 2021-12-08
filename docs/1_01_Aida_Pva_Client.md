@@ -61,26 +61,29 @@ Providers.
     * `TABLE`              to return a table : AidaTable
 
 ### API
-#### request()
-A builder pattern that you can use to execute requests:
+#### Synopsis
 
-    request(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) | .setReturningTable(value) ]
+    pvaRequest(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) | .setReturningTable(value) ]
+    pvaGet(channel [, type])
+    pvaSet(channel , value)
 
-- **pvaChannel**(`channel`) - creates a request builder for the specified channel.
-- **with**(`name`, `value`) - Used to set argument called `name` to `value`, on a request
-- **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
-- **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
-- **get**()** - To execute the request and return the results
-- **set**(`value`) - To execute the request setting the `value` and returning nothing
+- **pvaRequest**(`channel`) - creates a request builder for the specified channel.
+  - **with**(`name`, `value`) - Used to set argument called `name` to `value`, on a request
+  - **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
+  - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
+  - **get**()** - To execute the request and return the results
+  - **set**(`value`) - To execute the request setting the `value` and returning nothing
+- **pvaGet**(`channel` [, `type`]) - Executes a simple get on a channel specifying an optional type for the return.
+- **pvaSet**(`channel`, `value`) - Executes a simple set of a channel to the given value.
 
 ##### e.g. 1: Simple get
 ```java
-   Float bact = request("XCOR:LI03:120:LEFF").returning(FLOAT).get();
+   Float bact = pvaRequest("XCOR:LI03:120:LEFF").returning(FLOAT).get();
 ```
 
 ##### e.g. 2: Multiple arguments
 ```java
-   AidaTable table = request("NDRFACET:BUFFACQ")
+   AidaTable table = pvaRequest("NDRFACET:BUFFACQ")
      .with("BPMD", 57)
      .with("NRPOS", 180)
      .with("BPMS", List.of(
@@ -95,13 +98,13 @@ A builder pattern that you can use to execute requests:
 ##### e.g. 3: Simple set
 
 ```java
-   setRequest("XCOR:LI31:41:BCON", 5.0f);
+   pvaSet("XCOR:LI31:41:BCON", 5.0f);
 ```
 
 ##### e.g. 4: Alternative simple set
 
 ```java
-   request("XCOR:LI31:41:BCON").set(5.0f);
+   pvaRequest("XCOR:LI31:41:BCON").set(5.0f);
 ```
 
 ##### e.g. 5: Advanced set

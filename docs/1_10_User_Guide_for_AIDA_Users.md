@@ -26,7 +26,7 @@ AIDA-PVA differs from AIDA as shown below.
 
 In AIDA there was a client library that helped programmers write code to access the AIDA framework. In AIDA-PVA there is
 no need for such a library because EPICS provides the access to the network. There are many client libraries in a
-variety of different languages available for EPICS. e.g., EasyPVA, pvaClientJava, etc. You can also use the code from
+variety of different languages available for EPICS. e.g., EasyPVA, PvaClient, etc. You can also use the code from
 our test suite framework as a library to help you write your frontend code.
 - edu.stanford.slac.aida.test.utils.AidaPvaTestUtils - Utility class to facilitate running all the AIDA-PVA tests 
 - edu.stanford.slac.aida.test.utils.AidaPvaRequest  - Class to create and execute AIDA-PVA requests

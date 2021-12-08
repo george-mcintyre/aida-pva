@@ -7,28 +7,35 @@ The following utility functions have been added to Matlab to support AIDA:
 - `void` **aidainit**() - to initialise access to the AIDA framework
 - `NTURI` **nturi**(`pvName`, `varargin`) - to create an `NTURI` Structure (
   see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers
-- `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures
-- `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPva
+- `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures, (see [Normative Types](2_2_Normative_Types.md))
+- `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPVA
 - `PVStructure` **pvarpc**(`nturi`) - takes an `NTURI` and executes it using PvaClient
-- `matlab_dynamic_type` **pvaChannel**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with
+- `matlab_dynamic_type` **pvaRequest**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with
   builder pattern
     - **with**(`name`, `value`) - specifies a parameter for the request
     - **returning**(`aidaType`) - specified the aida type to return from the request
     - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
     - **get**() - executes the get request
     - **set**(`value`) - executes the set request with the given value
+- `matlab_dynamic_type` **pvaGet**(`pvName`[, `type`]) - takes a `pvName` and an optional type and executes a **get()**
+- `empty` **pvaSet**(`pvName`, `value`) -  **set()** the `pvName` to the given value
 
 These have all been updated/added to be able to interact with the new AIDA-PVA framework.
 
 ## AIDA-PVA Channel Provider data access patterns
 
-<table>
-<tr><th>description</th><th>aida-pva-client</th><th>pvaClient</th><th>easyPva</th></tr>
-<tr>
-<td>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">**description**</td><td class="markdownTableBodyNone">**aida-pva-client**</td><td class="markdownTableBodyNone">**PvaClient**</td><td class="markdownTableBodyNone">**EasyPVA**</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 Simple Get
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -36,7 +43,7 @@ bval=pvaGet('PHAS:LI09:12:VACT', SHORT);
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -45,7 +52,7 @@ bval= response.getSubField('value').get;
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -56,15 +63,15 @@ bval= response.getSubField('value').get;
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 Get with arguments
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
     aidainit;
-    table=pvaChannel('NDRFACET:BUFFACQ') ...
+    table=pvaRequest('NDRFACET:BUFFACQ') ...
         .with('BPMD', 57) ...
         .with('NRPOS', 180) ...
         .with('BPMS', '["BPMS:LI11:501" , "BPMS:LI11:601" , "BPMS:LI11:701" , "BPMS:LI11:801" ]') ...
@@ -73,7 +80,7 @@ Get with arguments
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -85,7 +92,7 @@ names = table.value.name;
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -99,11 +106,11 @@ names = table.value.name;
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 Simple Set
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -111,7 +118,7 @@ pvaSet('XCOR:LI31:41:BCON', 5.0);
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -119,7 +126,7 @@ pvarpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -129,20 +136,20 @@ ezrpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 Set returning a table
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
-table=pvaChannel('KLYS:LI31:31:TACT').setReturningTable(0);
+table=pvaRequest('KLYS:LI31:31:TACT').setReturningTable(0);
 status = table.getValues().get('status');    
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -151,7 +158,7 @@ status = table.value.status
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 aidainit;
@@ -161,22 +168,26 @@ status = table.value.status
 
 </td>
 </tr>
-
 </table>
 
 ## Migration patterns
 
-Depending on the library you want to use behind the scenes there are three different migration patters you can choose
+Depending on the library you want to use behind the scenes there are three different migration patterns you can choose
 from.
 
 - ezrpc
 - pvarpc
 - aida-pva-client
 
-<table>
-<tr><th>pattern</th><th>aida-pva-client</th><th>pvaClient</th><th>easyPva</th></tr>
-<tr>
-<td>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">**pattern**</td><td class="markdownTableBodyNone">**aida-pva-client**</td><td class="markdownTableBodyNone">**PvaClient**</td><td class="markdownTableBodyNone">**EasyPVA**</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 
 ```matlab
 import edu.stanford.slac.aida.lib.da.DaObject;
@@ -188,8 +199,8 @@ Remove
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 
 ```matlab
 da = DaObject();    
@@ -205,18 +216,18 @@ aidainit;
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 
 ```matlab
 da.setParam('BEAM', 1);
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
-CHANNEL = pvaChannel(channel);
+CHANNEL = pvaRequest(channel);
 CHANNEL = CHANNEL.with('BEAM', '1');
 
 ```
@@ -239,15 +250,15 @@ NTURI = nturi(channel, 'BEAM', '1');
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 
 ```matlab
 da.getValue(channel);
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 RESULT = CHANNEL.get();
@@ -256,7 +267,7 @@ RESULT = CHANNEL.get();
 or
 
 ```matlab
-RESULT = pvaChannel(channel).get();
+RESULT = pvaRequest(channel).get();
 ```
 
 or
@@ -266,7 +277,7 @@ RESULT = pvaGet(channel, FLOAT);
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 NTURI = nturi(channel);
@@ -276,7 +287,7 @@ RESULT = pvarpc(NTURI);
 - You will need to have created an `NTURI` earlier
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 NTURI = nturi(channel);
@@ -288,8 +299,8 @@ RESULT = ezrpc(NTURI);
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 
 ```matlab
 RESULT.getAsDouble
@@ -298,7 +309,7 @@ RESULT.getAsDouble
 - various getAs...() methods on the DaObject for scalar
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 - The RESULT will already be in the correct type for all scalar results. No conversion is required
 
@@ -314,8 +325,8 @@ RESULT.getSubField('value').get
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 
 ```matlab
 RESULT.getAsDoubles
@@ -324,7 +335,7 @@ RESULT.getAsDoubles
 - various getAs...s() methods on the DaObject for scalar arrays
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 - The RESULT will already be in the correct type for all scalar array results. No conversion is required
 
@@ -340,8 +351,8 @@ RESULT.getSubField('value').get
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 
 ```matlab
 values = RESULT.get(4).getAsDoubles;
@@ -351,7 +362,7 @@ values = RESULT.get(4).getAsDoubles;
 - For example a table with the 4th vector named "x", containing doubles.
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 values = RESULT.getValues().get('x');
@@ -371,8 +382,8 @@ values = nttable2struct(RESULT).value.x;
 </td>
 </tr>
 
-<tr>
-<td>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 
 ```matlab
 value=DaValue(java.lang.Short(10));
@@ -382,10 +393,10 @@ RESULT=da.setDaValue(channel, value);
 - Setting values
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
-    RESULT=pvaChannel(channel).set(10);
+    RESULT=pvaRequest(channel).set(10);
 ```
 
 or
@@ -395,7 +406,7 @@ or
 ```
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 RESULT=pvarpc(nturi(channel, 'VALUE', 10));
@@ -404,7 +415,7 @@ RESULT=pvarpc(nturi(channel, 'VALUE', 10));
 - Set a `VALUE` parameter
 
 </td>
-<td>
+<td class="markdownTableBodyNone">
 
 ```matlab
 RESULT=ezrpc(nturi(channel, 'VALUE', 10));
@@ -416,12 +427,13 @@ RESULT=ezrpc(nturi(channel, 'VALUE', 10));
 </tr>
 
 
-<tr>
-<td>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
 
 ```matlab
 IN:ST:ANCE//ATTRIBUTE
 ```
+
 - Channel Names - PVs - pvNames
 
 </td>
@@ -443,7 +455,7 @@ This has been updated to add aida-pva-client jars and define function aliases.
 ```matlab
 global aidainitdone
 if isempty(aidainitdone)
-    global pvaChannel
+    global pvaRequest
     global pvaGet
     global pvaSet
 
@@ -476,7 +488,7 @@ if isempty(aidainitdone)
     AIDA_STRING_ARRAY = [edu.stanford.slac.aida.client.AidaType.STRING_ARRAY];
     AIDA_TABLE = [edu.stanford.slac.aida.client.AidaType.TABLE];
 
-    pvaChannel = @(channel) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaChannel(channel);
+    pvaRequest = @(channel) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaRequest(channel);
     pvaGet = @(channel, type) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(channel, type);
     pvaSet = @(channel, value) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet(channel, value);
 
@@ -486,8 +498,9 @@ end
 
 ```
 
-## pvarpc 
-A script that can be called to make requests based on pvaClient has been created.  Extracted from erpc.m.
+## pvarpc
+
+A script that can be called to make requests based on PvaClient has been created. Extracted from erpc.m.
 
 ```matlab
 function [ PVDATA ] = pvarpc( NTURI )
@@ -512,7 +525,8 @@ function [ PVDATA ] = pvarpc( NTURI )
 ```
 
 ## ezrpc
-A script that can be called to make requests based on ezPVA has been created.  Extracted from erpc.m.
+
+A script that can be called to make requests based on ezPVA has been created. Extracted from erpc.m.
 
 ```matlab
 function [ PVDATA ] = ezrpc( NTURI )
