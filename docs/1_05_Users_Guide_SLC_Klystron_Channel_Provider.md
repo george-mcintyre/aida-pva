@@ -139,16 +139,699 @@ None
 
 ## Examples
 
-|                 |                                                             |                                                                   |
-|-----------------|-------------------------------------------------------------|-------------------------------------------------------------------|
-| pvcall examples | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=SHORT`  | Get the status code <br />for the klystron on <br />the beam code |
-|                 | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP TYPE=STRING` | Get the status string                                             |
-|                 | `pvcall KLYS:LI31:31:TACT BEAM=8 DGRP=DEV_DGRP VALUE=0`     | Deactivate klystron on <br />beam code                            |
-|                 | `pvcall KLYS:LI31:31:PDES VALUE=90.0f`                      | Perform set PDES and <br />trim phase operation                   |
-|                 | `pvcall KLYS:LI31:31:KPHR VALUE=60.0f`                      | Perform set KPHR value operation                                  |
-|                 | `pvcall KLYS:LI31:31:PCON VALUE=5.0f`                       | Perform set PCON value operation <br />(no value is returned)     |
-| Java Tests      | SlcKlysTest.java                                            |                                                                   |
-| Matlab example  |                                                             |                                                                   |
+@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">commandline: **pvcall**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```shell
+pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=SHORT
+```
+
+```shell
+pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP VALUE=0
+```
+
+```shell
+pvcall "KLYS:LI31:31:PDES" VALUE=90.0
+```
+
+```shell
+pvcall "KLYS:LI31:31:KPHR" VALUE=60.0
+```
+
+```shell
+pvcall "KLYS:LI31:31:PCON" VALUE=5.0
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">commandline: **eget**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'SHORT'
+```
+
+```shell
+eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'STRING'
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a VALUE 0
+```
+
+```shell
+eget -s KLYS:LI31:31:PDES -a VALUE 90.0
+```
+
+```shell
+eget -s KLYS:LI31:31:KPHR -a VALUE 60.0
+```
+
+```shell
+eget -s KLYS:LI31:31:PCON -a VALUE 5.0
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public Short getShort() throws RPCException {
+        return pvaRequest("KLYS:LI31:31:TACT")
+                .with("BEAM", 8)
+                .with("DGRP", "DEV_DGRP")
+                .returning(SHORT)
+                .get();
+    }
+}
+```
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public String getString() throws RPCException {
+        return pvaRequest("KLYS:LI31:31:TACT")
+                .with("BEAM", 8)
+                .with("DGRP", "DEV_DGRP")
+                .returning(STRING)
+                .get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public AidaTable setShort(Short value) throws RPCException {
+        return pvaRequest("KLYS:LI31:31:TACT")
+                .with("BEAM", 8)
+                .with("DGRP", "DEV_DGRP")
+                .set(value);
+    }
+}
+```
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public AidaTable setFloat(FLoat value) throws RPCException {
+        return pvaRequest("KLYS:LI31:31:PDES")
+                .setReturningTable(value);
+    }
+}
+```
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public void setFloat(Float value) throws RPCException {
+        pvaSet("KLYS:LI31:31:KPHR", value);
+    }
+}
+```
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public void setFloat(Float value) throws RPCException {
+        pvaSet("KLYS:LI31:31:PCON", value);
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public Short getShort() throws RPCRequestException {
+        String pvName = "KLYS:LI31:31:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "dgrp", "type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(8);
+        args.getStringField("dgrp").put("DEV_DGRP");
+        args.getStringField("type").put("SHORT");
+
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+        PVStructure response = channel.rpc(request);
+
+        PVShort field = response.getSubField(PVShort.class, "value");
+        return field.get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public void setFloat(Float value) throws RPCRequestException {
+        String pvName = "KLYS:LI31:31:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "dgrp", "value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvShort)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(8);
+        args.getStringField("dgrp").put("DEV_DGRP");
+        args.getShortField("value").put(value);
+
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+        channel.rpc(request);
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.*;
+import org.epics.pvaccess.easyPVA.*;
+import org.epics.pvdata.*;
+import org.epics.pvdata.pv.PVStructure;
+
+import java.lang.String;
+
+public class EzExample {
+    public static final String NTURI_ID = "epics:nt/NTURI:1.0";
+    private final static FieldCreate fieldCreate = factory.FieldFactory.getFieldCreate();
+    private final static PVDataCreate dataCreate = factory.PVDataFactory.getPVDataCreate();
+
+    public Short getShort() throws RuntimeException {
+        String pvName = "KLYS:LI31:31:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "dgrp", "type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(8);
+        args.getStringField("dgrp").put("DEV_DGRP");
+        args.getStringField("type").put("SHORT");
+        
+        EasyChannel channel = easypva.createChannel(pvName);
+        if (!channel.connect(5.0)) {
+            throw new RuntimeException("Unable to connect");
+        }
+
+        EasyRPC easyrpc = channel.createRPC();
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to create RPC channel");
+        }
+
+        if (!easyrpc.connect()) {
+            throw new RuntimeException("Unable to connect to RPC channel");
+        }
+
+        PVStructure response = easyrpc.request(request);
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to get data");
+        }
+
+        PVShort field = response.getSubField(PVShort.class, "value");
+        return field.get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.*;
+import org.epics.pvaccess.easyPVA.*;
+import org.epics.pvdata.*;
+import org.epics.pvdata.pv.PVStructure;
+
+import java.lang.String;
+
+public class EzExample {
+    public static final String NTURI_ID = "epics:nt/NTURI:1.0";
+    private final static FieldCreate fieldCreate = factory.FieldFactory.getFieldCreate();
+    private final static PVDataCreate dataCreate = factory.PVDataFactory.getPVDataCreate();
+
+    public void setFloat(Float value) throws RPCRequestException {
+        String pvName = "KLYS:LI31:31:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "dgrp", "value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvShort)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(8);
+        args.getStringField("dgrp").put("DEV_DGRP");
+        args.getShortField("value").put(value);
+        
+        EasyChannel channel = easypva.createChannel(pvName);
+        if (!channel.connect(5.0)) {
+            throw new RuntimeException("Unable to connect");
+        }
+
+        EasyRPC easyrpc = channel.createRPC();
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to create RPC channel");
+        }
+
+        if (!easyrpc.connect()) {
+            throw new RuntimeException("Unable to connect to RPC channel");
+        }
+
+        easyrpc.request(request);
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to get data");
+        }
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **PvAccess**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.ClientFactory;
+import org.epics.pvaccess.client.rpc.RPCClientImpl;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class JavaExample {
+    public Short getShort() throws RuntimeException {
+        String pvName = "KLYS:LI31:31:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "dgrp", "type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(8);
+        args.getStringField("dgrp").put("DEV_DGRP");
+        args.getStringField("type").put("SHORT");
+        
+        RPCClientImpl client = new RPCClientImpl(pvName);
+        PVStructure response = client.request(request, 3.0);
+        client.destroy();
+
+        PVFloat field = response.getSubField(PVFloat.class, "value");
+        return field.get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.ClientFactory;
+import org.epics.pvaccess.client.rpc.RPCClientImpl;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class JavaExample {
+    public void setFloat(Float value) throws RPCRequestException {
+        String pvName = "KLYS:LI31:31:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "dgrp", "value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvShort)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(8);
+        args.getStringField("dgrp").put("DEV_DGRP");
+        args.getShortField("value").put(value);
+
+        RPCClientImpl client = new RPCClientImpl(pvName);
+        client.request(request, 3.0);
+        client.destroy();
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+
+```matlab
+aidainit
+try
+    shortResponse = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').returning(AIDA_SHORT).get();
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+```matlab
+aidainit
+try
+    stringResponse = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').returning(AIDA_STRING).get();
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+try
+    table = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').setReturningTable(0);
+    labels = table.getLabels();
+    values = table.getValues();
+    status = values.get('status').get(0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+```matlab
+aidainit
+try
+    table = pvaRequest('KLYS:LI31:31:PDES').setReturningTable(90.0);
+    labels = table.getLabels();
+    values = table.getValues();
+    phas = values.get('phas').get(0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+```matlab
+aidainit
+try
+    pvaSet('KLYS:LI31:31:KPHR', 60.0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+```matlab
+aidainit
+try
+    pvaSet('KLYS:LI31:31:PCON', 5.0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+response = pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'SHORT'));
+shortResponse = response.getSubField(PVShort.class, "value")
+```
+
+```matlab
+aidainit
+response = pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'STRING'));
+stringResponse = response.getSubField(PVString.class, "value")
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+tableStruct = nttable2struct(pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'value', '0')));
+shortResponse = tableStruct.value.status[0]
+```
+
+
+```matlab
+aidainit
+pvarpc(nturi('KLYS:LI31:31:KPHR', 'value', '60.0'));
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+response = ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'SHORT'));
+shortResponse = response.getSubField(PVShort.class, "value")
+```
+
+```matlab
+aidainit
+response = ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'STRING'));
+stringResponse = response.getSubField(PVString.class, "value")
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+tableStruct = nttable2struct(ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'value', '0')));
+shortResponse = tableStruct.value.status[0]
+```
+
+
+```matlab
+aidainit
+ezrpc(nturi('KLYS:LI31:31:PCON', 'value', '60.0'));
+```
+
+</td>
+</tr>
+
+</table>
 
 ## Test Output
 

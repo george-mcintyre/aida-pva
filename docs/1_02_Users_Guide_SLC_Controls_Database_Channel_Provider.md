@@ -75,6 +75,10 @@ _Return value_
 | any scalar array type |               |                                                         | the scalar array                               |
 | `TABLE`               | `value`       | depends on the accompanying <br />`TABLE_TYPE` argument | the scalar_array with <br />one or more values |
 
+@warning For the following Attributes `ACON`, `KPHR`, `PCON` and `PDES` you need to prefix the channel name with `SLC::`
+to disambiguate it from the channels provided by other Channel Providers. e.g. `SLC::KLYS:LI31:31:PDES`
+as this same channel name is supported by the Klystron Provider for setting values.
+
 ### <secn>  : set
 
 _Parameters_
@@ -90,33 +94,234 @@ None
 
 ## Examples
 
-### Command line examples
+@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
 
-|                 |                                          |
-|-----------------|------------------------------------------|
-| pvcall examples | `pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT` |
-|                 | `pvcall "XCOR:LI31:41:BCON" VALUE=5.0`   |
-| eget examples   |                                          |
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">commandline: **pvcall**</td>
+<td class="markdownTableBodyNone">Get</td>
 
-### Java examples
+<td class="markdownTableBodyNone">
 
-#### aida-pva-client
+```shell
+pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT
+```
+
+```shell
+pvcall "SLC::KLYS:LI31:31:PDES" TYPE=FLOAT
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+pvcall "XCOR:LI31:41:BCON" VALUE=5.0
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">commandline: **eget**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s XCOR:LI03:120:LEFF -a TYPE 'FLOAT'
+```
+
+```shell
+eget -s SLC::KLYS:LI31:31:PDES -a TYPE 'SHORT'
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s XCOR:LI31:41:BCON -a VALUE 5.0
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
 
 ```java
 import org.epics.pvaccess.server.rpc.RPCRequestException;
+
 import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
 import static edu.stanford.slac.aida.client.AidaType.*;
 
 public class AidaPvaClientExample {
     public Float getFloat() throws RPCException {
-        return request("XCOR:LI03:120:LEFF")
+        return pvaGet("XCOR:LI03:120:LEFF", FLOAT);
+    }
+}
+```
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public Float getFloat() throws RPCException {
+        return pvaRequest("XCOR:LI03:120:LEFF")
                 .returning(FLOAT)
                 .get();
     }
 }
 ```
 
-#### EasyPVA
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public void setFloat(Float value) throws RPCException {
+        pvaSet("XCOR:LI31:41:BCON", value);
+    }
+}
+```
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public void setFloat(Float value) throws RPCException {
+        pvaRequest("XCOR:LI31:41:BCON")
+                .set(value);
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public Float getFloat() throws RPCRequestException {
+        String pvName = "XCOR:LI03:120:LEFF";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getStringField("type").put("FLOAT");
+
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+        PVStructure response = channel.rpc(request);
+
+        PVFloat field = response.getSubField(PVFloat.class, "value");
+        return field.get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public void setFloat(Float value) throws RPCRequestException {
+        String pvName = "XCOR:LI31:41:BCON";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvFloat)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getFloatField("value").put(value);
+
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+        channel.rpc(request);
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
 
 ```java
 import org.epics.pvaccess.*;
@@ -148,11 +353,11 @@ public class EzExample {
                         arguments
                 });
 
-        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
-        nturi.getStringField("scheme").put("pva");
-        nturi.getStringField("path").put(pvName);
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
 
-        PVStructure args = nturi.getStringField("query");
+        PVStructure args = request.getStringField("query");
         args.getStringField("type").put("FLOAT");
 
         EasyChannel channel = easypva.createChannel(pvName);
@@ -178,25 +383,34 @@ public class EzExample {
         return field.get();
     }
 }
-
 ```
 
-#### PvaClient
-```java
-import org.epics.pvaClient.*;
-import org.epics.pvaccess.server.rpc.RPCRequestException;
-import org.epics.pvdata.factory.FieldFactory;
-import org.epics.pvdata.factory.PVDataFactory;
-import org.epics.pvdata.pv.*;
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
 
-public class PvaClientExample {
-    public Float getFloat() throws RPCRequestException {
-        String pvName = "XCOR:LI03:120:LEFF";
+```java
+import org.epics.pvaccess.*;
+import org.epics.pvaccess.easyPVA.*;
+import org.epics.pvdata.*;
+import org.epics.pvdata.pv.PVStructure;
+
+import java.lang.String;
+
+public class EzExample {
+    public static final String NTURI_ID = "epics:nt/NTURI:1.0";
+    private final static FieldCreate fieldCreate = factory.FieldFactory.getFieldCreate();
+    private final static PVDataCreate dataCreate = factory.PVDataFactory.getPVDataCreate();
+
+    public void setFloat(Float value) throws RuntimeException {
+        String pvName = "XCOR:LI31:41:BCON";
 
         Structure arguments = fieldCreate.createStructure(
-                new String[]{"type"},
+                new String[]{"value"},
                 new Field[]{
-                        fieldCreate.createScalar(ScalarType.pvString)
+                        fieldCreate.createScalar(ScalarType.pvFloat)
                 });
 
         Structure uriStructure = fieldCreate.createStructure(
@@ -207,24 +421,43 @@ public class PvaClientExample {
                         arguments
                 });
 
-        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
-        nturi.getStringField("scheme").put("pva");
-        nturi.getStringField("path").put(pvName);
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
 
-        PVStructure args = nturi.getStringField("query");
-        args.getStringField("type").put("FLOAT");
+        PVStructure args = request.getStringField("query");
+        args.getFloatField("value").put(value);
 
-        PvaClient client = PvaClient.get("pva");
-        PvaClientChannel channel = client.createChannel(pvName);
-        PVStructure response = channel.rpc(nturi);
+        EasyChannel channel = easypva.createChannel(pvName);
+        if (!channel.connect(5.0)) {
+            throw new RuntimeException("Unable to connect");
+        }
 
-        PVFloat field = response.getSubField(PVFloat.class, "value");
-        return field.get();
+        EasyRPC easyrpc = channel.createRPC();
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to create RPC channel");
+        }
+
+        if (!easyrpc.connect()) {
+            throw new RuntimeException("Unable to connect to RPC channel");
+        }
+
+        easyrpc.request(request);
+        if (!easypva.getStatus().isOK()) {
+            throw new RuntimeException("Unable to get data");
+        }
     }
 }
 ```
 
-#### Plain PvAccess
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **PvAccess**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
 
 ```java
 import org.epics.pvaccess.ClientFactory;
@@ -252,11 +485,11 @@ public class JavaExample {
                         arguments
                 });
 
-        PVStructure nturi = dataCreate.createPVStructure(uriStructure);
-        nturi.getStringField("scheme").put("pva");
-        nturi.getStringField("path").put(pvName);
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
 
-        PVStructure args = nturi.getStringField("query");
+        PVStructure args = request.getStringField("query");
         args.getStringField("type").put("FLOAT");
 
         RPCClientImpl client = new RPCClientImpl(pvName);
@@ -269,50 +502,169 @@ public class JavaExample {
 }
 ```
 
-### Matlab examples
-Matlab includes the following utility functions:
-- `void` **aidainit**() - to initialise access to the AIDA framework
-- `NTURI` **nturi**(`pvName`, `varargin`) - to create an `NTURI` Structure (see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers
-- `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures, (see [Normative Types](2_2_Normative_Types.md))
-- `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPVA
-- `PVStructure` **pvarpc**(`nturi`) - takes an `NTURI` and executes it using PvaClient
-- `matlab_dynamic_type` **pvaRequest**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with builder pattern 
-  - **with**(`name`, `value`) - specifies a parameter for the request  
-  - **returning**(`aidaType`) - specified the aida type to return from the request
-  - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
-  - **get**() - executes the get request
-  - **set**(`value`) - executes the set request with the given value
-- `matlab_dynamic_type` **pvaGet**(`pvName`[, `type`]) - takes a `pvName` and an optional type and executes a **get()**
-- `empty` **pvaSet**(`pvName`, `value`) -  **set()** the `pvName` to the given value
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
 
-These have all been updated/added to be able to interact with the new AIDA-PVA framework.
+```java
+import org.epics.pvaccess.ClientFactory;
+import org.epics.pvaccess.client.rpc.RPCClientImpl;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
 
-#### aida-pva-client
-```matlab
-    aidainit
-    try
-        floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
-    catch ME
-       % do something when errors occur or just show ME.identifier
-    end
+public class JavaExample {
+    public void setFloat(Float value) throws RPCRequestException {
+        String pvName = "XCOR:LI31:41:BCON";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvFloat)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getFloatField("value").put(value);
+
+        RPCClientImpl client = new RPCClientImpl(pvName);
+        client.request(request, 3.0);
+        client.destroy();
+    }
+}
 ```
-#### using aidaget
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+
 ```matlab
-    aidainit
-    floatResponse = aidaget('XCOR:LI03:120:LEFF','FLOAT')
+aidainit
+try
+    floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', FLOAT);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
 ```
-#### EasyPVA
+
 ```matlab
-    aidainit
-    response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
-    floatResponse = response.getSubField(PVFloat.class, "value")
+aidainit
+try
+    floatResponse = pvaRequest('XCOR:LI03:120:LEFF').returning(FLOAT).get();
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
 ```
-#### PvaClient
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
 ```matlab
-    aidainit
-    response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
-    floatResponse = response.getSubField(PVFloat.class, "value")
+aidainit
+try
+    pvaSet('XCOR:LI31:41:BCON', 5.0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
 ```
+
+```matlab
+aidainit
+try
+    pvaRequest('XCOR:LI31:41:BCON').set(5.0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))
+floatResponse = response.getSubField(PVFloat.class, "value")
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+pvarpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'))
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
+floatResponse = response.getSubField(PVFloat.class, "value")
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+ezrpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'))
+```
+
+```matlab
+aidainit
+try
+    pvaSet('XCOR:LI31:41:BCON', 5.0);
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+</td>
+</tr>
+
+</table>
+
 ## Test Output
 
 Tests are implemented in: SlcTest.java

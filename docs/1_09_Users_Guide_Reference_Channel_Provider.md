@@ -336,16 +336,6 @@ _Return value_
 | TYPE  |  Description |
 | `STRING_ARRAY` |  If `X` present every element in array<br /> `X` be subjected to the same operation<br /> as the scalar channel would undergo. <br />e.g., the integer value would be <br />increased by 4.  |
 
-## Examples
-
-| | | |
-|  ----------- |----------- |----------- |
-| pvcall examples | `pvcall AIDA:SAMPLE:TEST:attribute01` | Get value 1  |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute02` |  get value 2 |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute03 x=3` |  while passing in 3 as a parameter, <br />return 3 + 3 = 6 |
-|  | `pvcall AIDA:SAMPLE:TEST:attribute30 VALUE=100` |  Simulate setting value with <br />no return value |
-| Java Tests | ReferenceTest.java | |
-
 ## Test Output
 
 ```shell

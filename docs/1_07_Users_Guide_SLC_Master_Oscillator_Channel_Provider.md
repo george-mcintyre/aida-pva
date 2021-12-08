@@ -76,12 +76,7 @@ _Return value_
 
 ## Examples
 
-|                 |                                     |                                              |
-|-----------------|-------------------------------------|----------------------------------------------|
-| pvcall examples | `pvcall MASTEROSC:VAL`              | Get measured Master Oscillator setting value |
-|                 | `pvcall MASTEROSC:VAL VALUE=0.328f` | Perform set operation                        |
-| Java Tests      | SlcMoscTest.java                    |                                              |
-| Matlab example  |                                     |                                              |
+@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
 
 ## Test Output
 

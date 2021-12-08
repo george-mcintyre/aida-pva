@@ -58,7 +58,7 @@ Providers.
     * `DOUBLE_ARRAY`       to return a java List<Double>
     * `STRING_ARRAY`       to return a java List<String>
 * Tables
-    * `TABLE`              to return a table : AidaTable
+    * `TABLE`              to return a table : PvaTable
 
 ### API
 #### Synopsis
@@ -83,7 +83,7 @@ Providers.
 
 ##### e.g. 2: Multiple arguments
 ```java
-   AidaTable table = pvaRequest("NDRFACET:BUFFACQ")
+   PvaTable table = pvaRequest("NDRFACET:BUFFACQ")
      .with("BPMD", 57)
      .with("NRPOS", 180)
      .with("BPMS", List.of(
@@ -109,7 +109,7 @@ Providers.
 
 ##### e.g. 5: Advanced set
 ```java
-   Short status = ((AidaTable)request("KLYS:LI31:31:TACT")
+   Short status = ((PvaTable)request("KLYS:LI31:31:TACT")
      .with("BEAM", 8)
      .with("DGRP", "DEV_DGRP")
      .setReturningTable(0)

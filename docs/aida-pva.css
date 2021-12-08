@@ -1,4 +1,10 @@
 /* aida-pva.css */
+table.markdownTable td, table.markdownTable th, table.fieldtable dt {
+    border: 1px solid var(--separator-color);
+    padding: var(--spacing-small) var(--spacing-medium);
+    vertical-align: top;
+}
+
 html {
     /* define light-mode variable overrides here */
     --primary-color: #74431f;

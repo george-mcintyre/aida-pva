@@ -118,15 +118,466 @@ None
 
 ## Examples
 
-|                 |                                                      |                                                             |
-|-----------------|------------------------------------------------------|-------------------------------------------------------------|
-| pvcall examples | `pvcall TRIG:LI31:109:TACT BEAM=1 TYPE=SHORT`        | Get the status code for the trigger device on the beam code |
-|                 | `pvcall TRIG:LI31:109:TACT BEAM=1 TYPE=STRING`       | Get the status string                                       |
-|                 | `pvcall TRIG:LI31:109:TACT BEAM=1 VALUE=1.0f`        | Perform specified operation to trigger device on beam code  |
-|                 | `pvcall MKB//VAL MKB="mkb:li02b_xb.mkb" VALUE=0`     | Perform set operation for multiknob file knob rotation      |
-|                 | `pvcall BGRP//VAL BGRP="LCLS" VARNAME=T_CAV VALUE=Y` | Perform BGRP variable set value operation                   |
-| Java Tests      | SlcUtilTest.java                                     |                                                             |
-| Matlab example  |                                                      |                                                             |
+@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">commandline: **pvcall**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```shell
+pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=SHORT
+pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=LONG
+pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=STRING
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+pvcall "TRIG:LI31:109:TACT" BEAM=1 VALUE=0
+pvcall "MKB:VAL" MKB=1 VALUE='mkb:li02b_xb.mkb'
+pvcall "BGRP:VAL" BGRP=LCLS VARNAME=T_CAV VALUE='Yes'
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">commandline: **eget**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE SHORT 
+eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE LONG 
+eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE STRING 
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s TRIG:LI31:109:TACT -a BEAM 1 VALUE 0
+eget -s MKB:VAL -a MKB 1 -a VALUE 'mkb:li02b_xb.mkb'
+eget -s BGRP:VAL -a BGRP LCLS -a VARNAME T_CAV -a VALUE=Y
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public void getValues() throws RPCException {
+        Short shortValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).returning(SHORT).get();
+        Long longValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).returning(LONG).get();
+        String stringValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).returning(STRING).get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+
+import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
+import static edu.stanford.slac.aida.client.AidaType.*;
+
+public class AidaPvaClientExample {
+    public void setValues() throws RPCException {
+        AidaTable tableValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).setReturningTable(0);
+        Map<String, List<Object>> values = tableValue.getValues();
+        Short status = values.get("status").get(0);
+
+        tableValue = pvaRequest("MKB:VAL").with("MKB", 1).setReturningTable('mkb:li02b_xb.mkb');
+        values = tableValue.getValues();
+        List<String> names = values.get("name");
+        List<Float> values = values.get("value");
+
+        pvaRequest("BGRP:VAL").with("BGRP", "LCLS").with("VARNAME", "T_CAV").set(TRUE);
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public void getValues() throws RPCRequestException {
+        String pvName = "TRIG:LI31:109:TACT";
+
+        Structure arguments = fieldCreate.createStructure(
+                new String[]{"beam", "type"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        arguments
+                });
+
+        PVStructure request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(pvName);
+
+        PVStructure args = request.getStringField("query");
+        args.getIntField("beam").put(1);
+        args.getStringField("type").put("SHORT");
+
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+
+        args.getStringField("type").put("SHORT");
+        PVStructure response = channel.rpc(request);
+        PVShort shortField = response.getSubField(PVInt.class, "value");
+        Short shortValue = shortField.get();
+
+        args.getStringField("type").put("LONG");
+        response = channel.rpc(request);
+        PVLong longField = response.getSubField(PVLong.class, "value");
+        Long longValue = longField.get();
+
+        args.getStringField("type").put("STRING");
+        response = channel.rpc(request);
+        PVString stringField = response.getSubField(PVString.class, "value");
+        String stringValue = stringField.get();
+    }
+}
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```java
+import org.epics.pvaClient.*;
+import org.epics.pvaccess.server.rpc.RPCRequestException;
+import org.epics.pvdata.factory.FieldFactory;
+import org.epics.pvdata.factory.PVDataFactory;
+import org.epics.pvdata.pv.*;
+
+public class PvaClientExample {
+    public void setValues() throws RPCRequestException {
+        String trigPvName = "TRIG:LI31:109:TACT";
+        String mkbPvName = "MKB:VAL";
+        String bgrpPvName = "BGRP:VAL";
+
+        Structure trigArguments = fieldCreate.createStructure(
+                new String[]{"beam", "value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvShort)
+                });
+
+        Structure mkbArguments = fieldCreate.createStructure(
+                new String[]{"mkb", "value"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvInt),
+                        fieldCreate.createScalar(ScalarType.pvString)
+                });
+
+        Structure bgrpArguments = fieldCreate.createStructure(
+                new String[]{"bgrp", "varname", "value",},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvBoolean)
+                });
+
+        PvaClient client;
+        PvaClientChannel channel;
+        PVStructure args, request, response, values;
+        Structure uriStructure;
+
+        // TRIG 
+        uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        trigArguments
+                });
+
+        request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(trigPvName);
+
+        args = request.getStringField("query");
+        args.getIntField("beam").put(1);
+        args.getShortField("value").put(0);
+
+        client = PvaClient.get("pva");
+        channel = client.createChannel(trigPvName);
+        response = channel.rpc(request);
+        Short shortStatus = response
+                .getSubField(PVStructure.class, "value")    // The values
+                .getSubField(PVShortArray.class, "status")  // The status vector
+                .get()                                      // As a PvArray
+                .getShort(0);                               // First entry
+
+        // MKB
+        uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        mkbArguments
+                });
+
+        request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(mkbPvName);
+
+        args = request.getStringField("query");
+        args.getIntField("mkb").put(1);
+        args.getStringField("value").put("mkb:li02b_xb.mkb");
+
+        client = PvaClient.get("pva");
+        channel = client.createChannel(mkbPvName);
+        response = channel.rpc(request);
+        values = response.getSubField(PVStructure.class, "value");    // The values
+        PVStringArray stringNames = values.getSubField(PVStringArray.class, "name");
+        PVFloatArray floatValues = values.getSubField(PVStringArray.class, "value");
+
+        // BGRP
+        uriStructure = fieldCreate.createStructure(
+                new String[]{"path", "scheme", "query"},
+                new Field[]{
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        fieldCreate.createScalar(ScalarType.pvString),
+                        bgrpArguments
+                });
+
+        request = dataCreate.createPVStructure(uriStructure);
+        request.getStringField("scheme").put("pva");
+        request.getStringField("path").put(bgrpPvName);
+
+        args = request.getStringField("query");
+        args.getStringField("bgrp").put("LCLS");
+        args.getStringField("varname").put("T_CAV");
+        args.getBooleanField("value").put(true);
+
+        client = PvaClient.get("pva");
+        channel = client.createChannel(bgrpPvName);
+        channel.rpc(request);
+
+    }
+}
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get/Set</td>
+
+<td class="markdownTableBodyNone">
+
+- Same as PvaClient example but change this code block: 
+
+```java
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+        PVStructure response = channel.rpc(request);
+```
+
+- For this code block:
+
+```java
+        EasyChannel channel = easypva.createChannel(pvName);
+        if (!channel.connect(5.0)){
+            throw new RuntimeException("Unable to connect");
+        }
+
+        EasyRPC easyrpc=channel.createRPC();
+        if(!easypva.getStatus().isOK()){
+            throw new RuntimeException("Unable to create RPC channel");
+        }
+
+        if(!easyrpc.connect()){
+            throw new RuntimeException("Unable to connect to RPC channel");
+        }
+
+        PVStructure response=easyrpc.request(request);
+        if(!easypva.getStatus().isOK()){
+            throw new RuntimeException("Unable to get data");
+        }
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Get/Set</td>
+<td class="markdownTableBodyNone">
+
+- Same as PvaClient example but change this code block: 
+
+```java
+        PvaClient client = PvaClient.get("pva");
+        PvaClientChannel channel = client.createChannel(pvName);
+        PVStructure response = channel.rpc(request);
+```
+
+- For this code block:
+
+```java
+        RPCClientImpl client = new RPCClientImpl(pvName);
+        PVStructure response = client.request(request, 3.0);
+        client.destroy();
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+try
+    shortResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_SHORT).get();
+    longResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_LONG).get();
+    stringResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_STRING).get();
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+try
+    trigResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).setReturningTable(0);
+    mkbResponse = pvaRequest('MKB:VAL').with('MKB', 1).setReturningTable('mkb:li02b_xb.mkb');
+    pvaRequest('BGRP:VAL').with('BGRP', 'LCLS').with('VARNAME', 'T_CAV').set('Y');
+catch ME
+    % do something when errors occur or just show ME.identifier
+end
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'SHORT'));
+shortResponse = response.getSubField(PVShort.class, "value");
+response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'LONG'));
+longResponse = response.getSubField(PVLong.class, "value");
+response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'STRING'));
+stringResponse = response.getSubField(PVString.class, "value");
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+trigResponse = nttable2struct(pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'value', '0')));
+mkbResponse = nttable2struct(pvarpc(nturi('MKB:VAL', 'mkb', '1', 'value', 'mkb:li02b_xb.mkb')));
+pvarpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', 'Yes'));
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'SHORT'));
+shortResponse = response.getSubField(PVShort.class, "value");
+response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'LONG'));
+longResponse = response.getSubField(PVLong.class, "value");
+response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'STRING'));
+stringResponse = response.getSubField(PVString.class, "value");
+```
+
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+aidainit
+trigResponse = nttable2struct(ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'value', '0')));
+mkbResponse = nttable2struct(ezrpc(nturi('MKB:VAL', 'mkb', '1', 'value', 'mkb:li02b_xb.mkb')));
+ezrpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', 'Yes'));
+```
+
+</td>
+</tr>
+
+</table>
 
 ## Test Output
 
