@@ -63,16 +63,15 @@ Providers.
 ### API
 #### Synopsis
 
-    pvaRequest(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) | .setReturningTable(value) ]
+    pvaRequest(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) ]
     pvaGet(channel [, type])
     pvaSet(channel , value)
 
 - **pvaRequest**(`channel`) - creates a request builder for the specified channel.
   - **with**(`name`, `value`) - Used to set argument called `name` to `value`, on a request
   - **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
-  - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
   - **get**()** - To execute the request and return the results
-  - **set**(`value`) - To execute the request setting the `value` and returning nothing
+  - **set**(`value`) - To execute the request setting the `value` and returning nothing or a table
 - **pvaGet**(`channel` [, `type`]) - Executes a simple get on a channel specifying an optional type for the return.
 - **pvaSet**(`channel`, `value`) - Executes a simple set of a channel to the given value.
 
@@ -112,7 +111,7 @@ Providers.
    Short status = ((PvaTable)request("KLYS:LI31:31:TACT")
      .with("BEAM", 8)
      .with("DGRP", "DEV_DGRP")
-     .setReturningTable(0)
+     .set(0)
      ).getValues().get("status").get(0);
 ```
 

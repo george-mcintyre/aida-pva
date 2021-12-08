@@ -210,11 +210,11 @@ import static edu.stanford.slac.aida.client.AidaType.*;
 
 public class AidaPvaClientExample {
     public void setValues() throws RPCException {
-        AidaTable tableValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).setReturningTable(0);
+        AidaTable tableValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).set(0);
         Map<String, List<Object>> values = tableValue.getValues();
         Short status = values.get("status").get(0);
 
-        tableValue = pvaRequest("MKB:VAL").with("MKB", 1).setReturningTable('mkb:li02b_xb.mkb');
+        tableValue = pvaRequest("MKB:VAL").with("MKB", 1).set('mkb:li02b_xb.mkb');
         values = tableValue.getValues();
         List<String> names = values.get("name");
         List<Float> values = values.get("value");
@@ -502,8 +502,8 @@ end
 ```matlab
 aidainit
 try
-    trigResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).setReturningTable(0);
-    mkbResponse = pvaRequest('MKB:VAL').with('MKB', 1).setReturningTable('mkb:li02b_xb.mkb');
+    trigResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).set(0);
+    mkbResponse = pvaRequest('MKB:VAL').with('MKB', 1).set('mkb:li02b_xb.mkb');
     pvaRequest('BGRP:VAL').with('BGRP', 'LCLS').with('VARNAME', 'T_CAV').set('Y');
 catch ME
     % do something when errors occur or just show ME.identifier

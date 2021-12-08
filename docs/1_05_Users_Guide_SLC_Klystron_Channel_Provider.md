@@ -267,7 +267,7 @@ import static edu.stanford.slac.aida.client.AidaType.*;
 public class AidaPvaClientExample {
     public AidaTable setFloat(FLoat value) throws RPCException {
         return pvaRequest("KLYS:LI31:31:PDES")
-                .setReturningTable(value);
+                .set(value);
     }
 }
 ```
@@ -689,7 +689,7 @@ end
 ```matlab
 aidainit
 try
-    table = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').setReturningTable(0);
+    table = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').set(0);
     labels = table.getLabels();
     values = table.getValues();
     status = values.get('status').get(0);
@@ -701,7 +701,7 @@ end
 ```matlab
 aidainit
 try
-    table = pvaRequest('KLYS:LI31:31:PDES').setReturningTable(90.0);
+    table = pvaRequest('KLYS:LI31:31:PDES').set(90.0);
     labels = table.getLabels();
     values = table.getValues();
     phas = values.get('phas').get(0);

@@ -14,7 +14,6 @@ The following utility functions have been added to Matlab to support AIDA:
   builder pattern
     - **with**(`name`, `value`) - specifies a parameter for the request
     - **returning**(`aidaType`) - specified the aida type to return from the request
-    - **setReturningTable**(`value`) - For channels that return a table after setting a `value` use this API.
     - **get**() - executes the get request
     - **set**(`value`) - executes the set request with the given value
 - `matlab_dynamic_type` **pvaGet**(`pvName`[, `type`]) - takes a `pvName` and an optional type and executes a **get()**
@@ -144,7 +143,7 @@ Set returning a table
 
 ```matlab
 aidainit;
-table=pvaRequest('KLYS:LI31:31:TACT').setReturningTable(0);
+table=pvaRequest('KLYS:LI31:31:TACT').set(0);
 status = table.getValues().get('status');    
 ```
 

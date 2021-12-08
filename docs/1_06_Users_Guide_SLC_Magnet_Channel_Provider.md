@@ -582,7 +582,7 @@ end
 ```matlab
 aidainit
 try
-    table = pvaRequest('MAGNETSET:BDES').with('MAGFUNC', 'TRIM').setReturningTable('{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }');
+    table = pvaRequest('MAGNETSET:BDES').with('MAGFUNC', 'TRIM').set('{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }');
     labels = table.getLabels();
     values = table.getValues();
     states = values.get('state'); 
