@@ -54,7 +54,7 @@ _Return value_
 | TYPE    | Return Column | Column Type    | Description                                                                                                                |
 |---------|---------------|----------------|----------------------------------------------------------------------------------------------------------------------------|
 | `TABLE` | `name`        | `STRING_ARRAY` | name of each magnet for specified display group <br />and primary (optionally filtered by specified micro and unit ranges) |
-|         | `value`       | `FLOAT_ARRAY`  | secondary values (BDES or VDES)                                                                                            |
+|         | `secondary`       | `FLOAT_ARRAY`  | secondary values (BDES or VDES)                                                                                            |
 
 ### BDES : set, VDES : set
 
