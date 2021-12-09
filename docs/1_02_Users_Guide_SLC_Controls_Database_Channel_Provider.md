@@ -11,7 +11,7 @@ Acquires data for the named SLC device from the SLC database. Also allows settin
 
 ## Instances and Attributes
 
-|         |          |                                       |
+| operation       | info     | instance & attribute                  |
 |---------|----------|---------------------------------------|
 | **get** | Syntax   | `<prim>:<micr>:<unit>:<secn>`         |
 |         |          | `ASTS:<micr>:<channel>:<pseudo-secn>` |
@@ -22,9 +22,8 @@ Acquires data for the named SLC device from the SLC database. Also allows settin
 
 ## Attribute operation summary
 
-|           |                                                                                                                               |
-|-----------|-------------------------------------------------------------------------------------------------------------------------------|
 | Attribute | Description                                                                                                                   |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------|
 | `<secn>`  | Gets SLC db device data for a named device - the channel name                                                                 |
 | `<secn>`  | Sets the value of a float scalar secondary in the SLC database. <br />The `VALUE` argument is a float with the desired value. |
 
@@ -34,10 +33,8 @@ Acquires data for the named SLC device from the SLC database. Also allows settin
 
 _Parameters_
 
-|                 |                  |                                                                                        |
-|-----------------|------------------|----------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values | Description                                                                            |
-|                 |                  |                                                                                        |
+|-----------------|------------------|----------------------------------------------------------------------------------------|
 | `TYPE`*         |                  | Determines the return type of the request                                              |
 |                 | `BOOLEAN`        | return a boolean value                                                                 |
 |                 | `BYTE`           | return a byte value                                                                    |
@@ -68,9 +65,8 @@ _Parameters_
 
 _Return value_
 
-|                       |               |                                                         |                                                |
-|-----------------------|---------------|---------------------------------------------------------|------------------------------------------------|
 | TYPE                  | Return Column | Column Type                                             | Description                                    |
+|-----------------------|---------------|---------------------------------------------------------|------------------------------------------------|
 | any scalar type       |               |                                                         | the scalar value                               |
 | any scalar array type |               |                                                         | the scalar array                               |
 | `TABLE`               | `value`       | depends on the accompanying <br />`TABLE_TYPE` argument | the scalar_array with <br />one or more values |
@@ -83,9 +79,8 @@ as this same channel name is supported by the Klystron Provider for setting valu
 
 _Parameters_
 
-|                 |                           |                        |
-|-----------------|---------------------------|------------------------|
 | Parameter Names | Parameter Values          | Description            | 
+|-----------------|---------------------------|------------------------|
 | `VALUE`*        | `<floating point number>` | float to set secondary |
 
 _Return value_
@@ -97,18 +92,15 @@ None
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline: **pvcall**</td>
+<td rowspan=2 class="markdownTableBodyNone">commandline **pvcall**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
 
 ```shell
 pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT
-```
-
-```shell
 pvcall "SLC::KLYS:LI31:31:PDES" TYPE=FLOAT
 ```
 
@@ -125,16 +117,13 @@ pvcall "XCOR:LI31:41:BCON" VALUE=5.0
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline: **eget**</td>
+<td rowspan=2 class="markdownTableBodyNone">commandline **eget**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
 
 ```shell
 eget -s XCOR:LI03:120:LEFF -a TYPE 'FLOAT'
-```
-
-```shell
 eget -s SLC::KLYS:LI31:31:PDES -a TYPE 'SHORT'
 ```
 
@@ -152,7 +141,7 @@ eget -s XCOR:LI31:41:BCON -a VALUE 5.0
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -167,17 +156,8 @@ public class AidaPvaClientExample {
     public Float getFloat() throws RPCException {
         return pvaGet("XCOR:LI03:120:LEFF", FLOAT);
     }
-}
-```
 
-```java
-import org.epics.pvaccess.server.rpc.RPCRequestException;
-
-import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
-import static edu.stanford.slac.aida.client.AidaType.*;
-
-public class AidaPvaClientExample {
-    public Float getFloat() throws RPCException {
+    public Float getAnotherFloat() throws RPCException {
         return pvaRequest("XCOR:LI03:120:LEFF")
                 .returning(FLOAT)
                 .get();
@@ -201,17 +181,8 @@ public class AidaPvaClientExample {
     public void setFloat(Float value) throws RPCException {
         pvaSet("XCOR:LI31:41:BCON", value);
     }
-}
-```
 
-```java
-import org.epics.pvaccess.server.rpc.RPCRequestException;
-
-import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
-import static edu.stanford.slac.aida.client.AidaType.*;
-
-public class AidaPvaClientExample {
-    public void setFloat(Float value) throws RPCException {
+    public void setAnotherFloat(Float value) throws RPCException {
         pvaRequest("XCOR:LI31:41:BCON")
                 .set(value);
     }
@@ -222,7 +193,7 @@ public class AidaPvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **PvaClient**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -318,7 +289,7 @@ public class PvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -454,7 +425,7 @@ public class EzExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **PvAccess**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **PvAccess**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -552,7 +523,7 @@ public class JavaExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -562,15 +533,7 @@ public class JavaExample {
 aidainit
 try
     floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT);
-catch ME
-    % do something when errors occur or just show ME.identifier
-end
-```
-
-```matlab
-aidainit
-try
-    floatResponse = pvaRequest('XCOR:LI03:120:LEFF').returning(AIDA_FLOAT).get();
+    anotherFloatResponse = pvaRequest('XCOR:LI03:120:LEFF').returning(AIDA_FLOAT).get();
 catch ME
     % do something when errors occur or just show ME.identifier
 end
@@ -586,14 +549,6 @@ end
 aidainit
 try
     pvaSet('XCOR:LI31:41:BCON', 5.0);
-catch ME
-    % do something when errors occur or just show ME.identifier
-end
-```
-
-```matlab
-aidainit
-try
     pvaRequest('XCOR:LI31:41:BCON').set(5.0);
 catch ME
     % do something when errors occur or just show ME.identifier
@@ -604,7 +559,7 @@ end
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -629,7 +584,7 @@ pvarpc(nturi('XCOR:LI31:41:BCON', 'value', '5.0'));
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">

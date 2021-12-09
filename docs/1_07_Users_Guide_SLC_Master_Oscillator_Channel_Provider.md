@@ -17,7 +17,7 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-|         |          |                 |
+| operation       | info        | instance & attribute        |
 |---------|----------|-----------------|
 | **get** | Syntax   | `MASTEROSC:VAL` |
 |         | Examples | `MASTEROSC:VAL` |
@@ -26,9 +26,8 @@ Supports **get** and **set** operations.
 
 ## Attribute operation summary
 
-|           |           |                                                                                                  |
-|-----------|-----------|--------------------------------------------------------------------------------------------------|
 | Attribute | operation | Description                                                                                      |
+|-----------|-----------|--------------------------------------------------------------------------------------------------|
 | `VAL`     | **get**   | Gets the Master Oscillator setting in units of absolute frequency (KHz).                         |
 | `VAL`     | **set**   | Sets the Master Oscillator value to a specified setting in units of relative frequency or energy |
 
@@ -38,40 +37,35 @@ Supports **get** and **set** operations.
 
 _Parameters_
 
-|                 |                  |                        |
-|-----------------|------------------|------------------------|
 | Parameter Names | Parameter Values | Description            | 
+|-----------------|------------------|------------------------|
 | `TYPE`*         | `TABLE`          | return a table         |
 |                 | `DOUBLE`         | returns a double value |
 
 _Return value_
 
-|         |               |                |                                                  |
-|---------|---------------|----------------|--------------------------------------------------|
 | TYPE    | Return Column | Column Type    | Description                                      |
+|---------|---------------|----------------|--------------------------------------------------|
 | `TABLE` | `value`       | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
-|          |                                                  |
-|----------|--------------------------------------------------|
 | TYPE     | Description                                      |
+|----------|--------------------------------------------------|
 | `DOUBLE` | measured setting of the Master Oscillator in KHz |
 
 ### VAL : set
 
 _Parameters_
 
-|                 |                         |                                                                                                                            |
-|-----------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values        | Description                                                                                                                | 
+|-----------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | `VALUE`*        | Float                   | setting in units of relative frequency or energy                                                                           |
 | `UNITS`         | `FREQUENCY` or `ENERGY` | Indicates whether the specified relative set value is in units of frequency or energy. The default is frequency            |
 | `RING`          | `HER` or `LER`          | If the specified relative set value is in units of energy, this parameter is required and specifies the ring (HER or LER). |
 
 _Return value_
 
-|         |               |                |                                                  |
-|---------|---------------|----------------|--------------------------------------------------|
 | TYPE    | Return Column | Column Type    | Description                                      |
+|---------|---------------|----------------|--------------------------------------------------|
 | `TABLE` | `value`       | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
 ## Examples

@@ -22,7 +22,7 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-|         |          |                             |
+| operation       | info        | instance & attribute        |
 |---------|----------|-----------------------------|
 | **get** | Syntax   | `<prim>:<micr>:<unit>:TACT` |
 |         | Examples | `TRIG:LI31:109:TACT`        |
@@ -35,9 +35,8 @@ Supports **get** and **set** operations.
 
 ## Attribute operation summary
 
-|           |           |                                                                                       |
-|-----------|-----------|---------------------------------------------------------------------------------------|
 | Attribute | operation | Description                                                                           |
+|-----------|-----------|---------------------------------------------------------------------------------------|
 | `TACT`    | **get**   | Gets a status code or a status string for the specified trigger device on a beam code |
 | `TACT`    | **set**   | Deactivates or reactivates a specified trigger device on a beam code                  |
 | `VAL`     | **set**   | Sets devices referenced in a specified multiknob file, which is a required parameter  |
@@ -49,9 +48,8 @@ Supports **get** and **set** operations.
 
 _Parameters_
 
-|                 |                  |                                                                                                                      |
-|-----------------|------------------|----------------------------------------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values | Description                                                                                                          | 
+|-----------------|------------------|----------------------------------------------------------------------------------------------------------------------|
 | `TYPE`*         | `SHORT`          | A short value containing the status code for the trigger device on a beam code: `0` => deactivated, `1` => activated |
 |                 | `LONG`           | A long value containing the status code for the trigger device on a beam code: `0` => deactivated, `1` => activated  |
 |                 | `STRING`         | string value containing a status string having one of two values: "deactivated" or "activated"                       |
@@ -59,9 +57,8 @@ _Parameters_
 
 _Return value_
 
-|          |                                                                                                                            |
-|----------|----------------------------------------------------------------------------------------------------------------------------|
 | TYPE     | Description                                                                                                                |
+|----------|----------------------------------------------------------------------------------------------------------------------------|
 | `SHORT`  | A short value containing the status code for the trigger device on a beam code: <br />`0` => deactivated, `1` => activated |
 | `LONG`   | A long value containing the status code for the trigger device on a beam code: <br />`0` => deactivated, `1` => activated  |
 | `STRING` | A string value containing a status string having one of two values: "deactivated" or "activated"                           |
@@ -70,34 +67,30 @@ _Return value_
 
 _Parameters_
 
-|                 |                  |                                                                                         |
-|-----------------|------------------|-----------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values | Description                                                                             | 
+|-----------------|------------------|-----------------------------------------------------------------------------------------|
 | `VALUE`*        | Short            | flag code indicating the desired operation: <br />`0` => deactivate, `1` => reactivate. |
 | `BEAM`*         | Integer          | Beam code number                                                                        |
 
 _Return value_
 
-|         |               |               |                                                                                                     |
-|---------|---------------|---------------|-----------------------------------------------------------------------------------------------------|
 | TYPE    | Return Column | Column Type   | Description                                                                                         |
+|---------|---------------|---------------|-----------------------------------------------------------------------------------------------------|
 | `TABLE` | `value`       | `SHORT_ARRAY` | status code for the specified trigger device on a beam code:<br /> 0 => deactivated, 1 => activated |
 
 ### MKB:VAL : set
 
 _Parameters_
 
-|                 |                  |                                                                                                                                                                        |
-|-----------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values | Description                                                                                                                                                            | 
+|-----------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `VALUE`*        | Float            | relative delta knob rotation value.                                                                                                                                    |
 | `MKB`           | String           | multiknob filename. The filename path specification <br />(including the prefix "mkb:", if file is in the standard <br />multiknob file directory) of a multiknob file |
 
 _Return value_
 
-|         |               |                |                                                                |
-|---------|---------------|----------------|----------------------------------------------------------------|
 | TYPE    | Return Column | Column Type    | Description                                                    |
+|---------|---------------|----------------|----------------------------------------------------------------|
 | `TABLE` | `name`        | `STRING_ARRAY` | name of each device referenced in the specified multiknob file | 
 |         | `value`       | `DOUBLE_ARRAY` | value of each device after the knob rotation set operation     |
 
@@ -105,9 +98,8 @@ _Return value_
 
 _Parameters_
 
-|                 |                  |                                                   |
-|-----------------|------------------|---------------------------------------------------|
 | Parameter Names | Parameter Values | Description                                       | 
+|-----------------|------------------|---------------------------------------------------|
 | `VALUE`*        | Boolean          | specifying the new variable value "`N`" or "`Y`". |
 | `BGRP`*         | String           | The BGRP name                                     |
 | `VARNAME`*      | String           | A BGRP variable name for the specified BGRP..     |
@@ -121,9 +113,8 @@ None
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline: **pvcall**</td>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<td rowspan=2 class="markdownTableBodyNone">commandline **pvcall**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -149,7 +140,7 @@ pvcall "BGRP:VAL" BGRP=LCLS VARNAME=T_CAV VALUE='Yes'
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline: **eget**</td>
+<td rowspan=2 class="markdownTableBodyNone">commandline **eget**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -176,7 +167,7 @@ eget -s BGRP:VAL -a BGRP LCLS -a VARNAME T_CAV -a VALUE=Y
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -228,7 +219,7 @@ public class AidaPvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **PvaClient**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -414,7 +405,7 @@ public class PvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get/Set</td>
 
 <td class="markdownTableBodyNone">
@@ -477,7 +468,7 @@ public class PvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -514,7 +505,7 @@ end
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -545,7 +536,7 @@ pvarpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', '
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">

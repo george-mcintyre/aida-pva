@@ -21,7 +21,7 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-|         |          |                                 |
+| operation       | info        | instance & attribute        |
 |---------|----------|---------------------------------|
 | **get** | Syntax   | `<dgrp-mnemonic>:<prim>:<secn>` |
 |         | Examples | `DEV_DGRP:XCOR:BDES`            |
@@ -31,17 +31,12 @@ Supports **get** and **set** operations.
 
 ## Attribute operation summary
 
-|                 |           |                                                                                                                                                                                          |
-|-----------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Attribute       | operation | Description                                                                                                                                                                              |
-| `<prim>:<secn>` | **
-get**   | Returns a table containing the name of each  magnet<br /> for specified display group and primary, and secondary<br /> values                                                            |
-| `BDES`          | **
-set**   | Sets specified `BDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `BACT` value<br /> for each device |
-| `VDES`          | **
-set**   | Sets specified `VDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `VACT` value<br /> for each device |
-| `BCON`          | **
-set**   | Sets specified `BCON` secondary values                                                                                                                                                   |
+|-----------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `<prim>:<secn>` | **get**   | Returns a table containing the name of each  magnet<br /> for specified display group and primary, and secondary<br /> values                                                            |
+| `BDES`          | **set**   | Sets specified `BDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `BACT` value<br /> for each device |
+| `VDES`          | **set**   | Sets specified `VDES` secondary values and returns<br /> a table  containing a string indicating the state<br /> of each specified magnet device, and `VACT` value<br /> for each device |
+| `BCON`          | **set**   | Sets specified `BCON` secondary values                                                                                                                                                   |
 
 ## Attribute operations
 
@@ -49,17 +44,15 @@ set**   | Sets specified `BCON` secondary values                                
 
 _Parameters_
 
-|                 |                             |                                                                                             |
-|-----------------|-----------------------------|---------------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values            | Description                                                                                 | 
+|-----------------|-----------------------------|---------------------------------------------------------------------------------------------|
 | `MICROS`        | `<start_micro>-<end_micro>` | This specifies a range of micro names of <br />interest within the specified display group  |
 | `UNITS`         | `<start_unit>-<end_unit>`   | This specified a range of unit numbers of <br />interest within the specified display group |
 
 _Return value_
 
-|         |               |                |                                                                                                                            |
-|---------|---------------|----------------|----------------------------------------------------------------------------------------------------------------------------|
 | TYPE    | Return Column | Column Type    | Description                                                                                                                |
+|---------|---------------|----------------|----------------------------------------------------------------------------------------------------------------------------|
 | `TABLE` | `name`        | `STRING_ARRAY` | name of each magnet for specified display group <br />and primary (optionally filtered by specified micro and unit ranges) |
 |         | `value`       | `FLOAT_ARRAY`  | secondary values (BDES or VDES)                                                                                            |
 
@@ -67,18 +60,16 @@ _Return value_
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `VALUE`*  | structure: {names[], values[]}  | an array of magnet names and an array of corresponding<br /> set values  |
 | `MAGFUNC`*  |   `TRIM`, `PTRB`, or `NOFUNC`  | Specifies whether a trim or perturb operation will<br /> be performed. If `NOFUNC`, neither a trim nor a perturb<br /> operation will be performed  |
 | `LIMITCHECK`  |  `ALL` or `SOME`  | Used to determine behavior when the set value  for<br /> one or more devices is outside of its low/high  limits.<br /> If this parameter is set to `ALL`, the  entire request<br /> will fail resulting in an  exception being thrown<br /> and no `BDES`/`VDES` values  being set for any of<br /> the request devices. If this parameter is set to<br /> `SOME`, the set  value action will succeed for those<br /> set values  that are within limits and will not be<br /> performed  for those set values outside their limits<br />  (the state string return values for these devices<br />  will be set to the string "Outside Limits"). The<br /> default setting of this parameter is `ALL`.  |
 
 _Return value_
 
-| | | | |
-|----------- | ----------- | -----------  |-----------  |
 | TYPE  | Return Column | Column Type |Description |
+|----------- | ----------- | -----------  |-----------  |
 | `TABLE` | `state` | `STRING_ARRAY` | string indicating the state of each specified magnet<br /> device. Set to blanks (checking that the first character<br /> is blank  is all that is necessary) if the state is<br /> good. Set to the string "Outside Limits" if a set<br /> value is outside of its  limits and the optional parameter<br /> LIMITCHECK is set to SOME |
 |  |  `value`| `FLOAT_ARRAY`|  `BACT`/`VACT` value for each device |
 
@@ -86,9 +77,8 @@ _Return value_
 
 _Parameters_
 
-|                 |                                |                                                                   |
-|-----------------|--------------------------------|-------------------------------------------------------------------|
 | Parameter Names | Parameter Values               | Description                                                       | 
+|-----------------|--------------------------------|-------------------------------------------------------------------|
 | `VALUE`*        | structure: {names[], values[]} | an array of magnet names and an array of corresponding set values |
 
 _Return value_
@@ -100,9 +90,8 @@ None
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline: **pvcall**</td>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<td rowspan=2 class="markdownTableBodyNone">commandline **pvcall**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -125,7 +114,7 @@ pvcall "MAGNETSET:BCON" VALUE='{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline: **eget**</td>
+<td rowspan=2 class="markdownTableBodyNone">commandline **eget**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -149,7 +138,7 @@ eget -s MAGNETSET:BCON -a VALUE '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] 
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -215,7 +204,7 @@ public class AidaPvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **PvaClient**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -313,7 +302,7 @@ public class PvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -454,7 +443,7 @@ public class EzExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">java: **PvAccess**</td>
+<td rowspan=2 class="markdownTableBodyNone">java **PvAccess**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -555,7 +544,7 @@ public class JavaExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -605,7 +594,7 @@ end
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -642,7 +631,7 @@ pvarpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": 
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">

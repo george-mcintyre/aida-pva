@@ -18,22 +18,21 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-| | | |
-| ----------- | ----------- | ----------- |
-| **get** | Syntax    | `AIDA:SAMPLE:<anything>:attribute<1-20>` |
-| | Examples | `AIDA:SAMPLE:TEST:attribute01` |
-| **get** | Syntax    | `AIDA:SAMPLE:<anything>:attribute32` |
-| | Examples | `AIDA:SAMPLE:TEST:attribute32` |
-| **set** | Syntax    | `AIDA:SAMPLE:<anything>:attribute<30-31>` |
-| | Examples | `AIDA:SAMPLE:TEST:attribute30` |
-| not supported exception test| Syntax    | `AIDA:SAMPLE:<anything>:attribute00` |
-| | Examples | `AIDA:SAMPLE:<anything>:attribute00` |
+| operation                      | info     | instance & attribute                      |
+|------------------------------|----------|-------------------------------------------|
+| **get**                      | Syntax   | `AIDA:SAMPLE:<anything>:attribute<1-20>`  |
+|                              | Examples | `AIDA:SAMPLE:TEST:attribute01`            |
+| **get**                      | Syntax   | `AIDA:SAMPLE:<anything>:attribute32`      |
+|                              | Examples | `AIDA:SAMPLE:TEST:attribute32`            |
+| **set**                      | Syntax   | `AIDA:SAMPLE:<anything>:attribute<30-31>` |
+|                              | Examples | `AIDA:SAMPLE:TEST:attribute30`            |
+| not supported exception test | Syntax   | `AIDA:SAMPLE:<anything>:attribute00`      |
+|                              | Examples | `AIDA:SAMPLE:<anything>:attribute00`      |
 
 ## Attribute operation summary
 
-| | | |
-| ----------- | -----------  | -----------  |
 | Attribute | operation |Description |
+| ----------- | -----------  | -----------  |
 | `attribute01` | **get** |  Gets a boolean true value |
 | `attribute02` | **get** |  Gets a byte 2 value |
 | `attribute03` | **get** |  Gets a short 3 value |
@@ -60,80 +59,70 @@ Supports **get** and **set** operations.
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | boolean value. | If present it will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `BOOLEAN` |  `true` unless parameter `X` is present in which case the value of `X` will be returned |
 
 ### attribute02 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | byte value. | If present `X` bitwise OR with `2` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `BYTE` |  `2` unless parameter `X` is present in which case `X` bitwise OR with `2` will be returned from the call |
 
 ### attribute03 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
-| Parameter Names | Parameter Values |Description | 
-| `X`  | short value. | If present `X` + `3` will be returned from the call |
+| Parameter Names | Parameter Values | Description                                         | 
+|-----------------|------------------|-----------------------------------------------------|
+| `X`             | short value.     | If present `X` + `3` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `SHORT` |  `3` unless parameter `X` is present in which case `X` + `3` will be returned from the call |
 
 ### attribute04 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | integer value. | If present `X` + `4` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `INTEGER` |  `4` unless parameter `X` is present in which case `X` + `4` will be returned from the call |
 
 ### attribute05 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | long value. | If present `X` + `5L` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `LONG` |  `5L` unless parameter `X` is present in which case `X` + `5L` will be returned from the call |
 
 ### attribute06 : get
@@ -147,178 +136,156 @@ _Parameters_
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `FLOAT` |  `6.6f` unless parameter `X` is present in which case `X` * `6.6f` will be returned from the call |
 
 ### attribute07 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | double value. | If present `X` * `7.7` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `DOUBLE` |  `7.7` unless parameter `X` is present in which case `X` * `7.7` will be returned from the call |
 
 ### attribute08 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | string value. | If present `"eight: " + X` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `STRING` |  `"eight"` unless parameter `X` is present in which case `"eight: " + X` will be returned from the call |
 
 ### attribute11 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | boolean array value. | If present it will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `BOOLEAN_ARRAY` |  `true` unless parameter `X` is present in which case the value of `X` will be returned |
 
 ### attribute12 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | byte array value. |  If present every element in array `X` bitwise OR with `12` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `BYTE_ARRAY` |  `12` unless parameter `X` is present in which case every element in <br />array `X` bitwise OR with `12` will be returned from the call |
 
 ### attribute13 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X`  | short array value. | If present every element in array `X` + `13` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `SHORT_ARRAY` |  `13` unless parameter `X` is present in which case every element in <br />array `X` + `13` will be returned from the call |
 
 ### attribute14 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X` | integer array value. |  If present every element in array `X` + `14` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `INTEGER_ARRAY` |  `14` unless parameter `X` is present in which case every element in <br />array `X` + `14` will be returned from the call |
 
 ### attribute15 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X` |  long array value |  If present every element in array `X` + `15L` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `LONG_ARRAY` |  `15L` unless parameter `X` is present in which case every element in <br />array `X` + `15L` will be returned from the call |
 
 ### attribute16 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X` | float array value. |  If present every element in array `X` * `16.6f` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `FLOAT_ARRAY` |  `6.6f` unless parameter `X` is present in which case every element <br />in array `X` * `16.6f` will be returned from the call |
 
 ### attribute17 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X` |  double array value. |  If present every element in array `X` * `17.7` will be returned from the call |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `DOUBLE_ARRAY` |  `7.7` unless parameter `X` is present in which case every element <br />in array `X` * `17.7` will be returned from the call |
 
 ### attribute18 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `X` | string array value. |  If present every element in array `X` will be returned as `"eighteen: " + X` |
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `STRING_ARRAY` |  `"eighteen"` unless parameter `X` is present in which case every <br />element in array `X` will be returned as `"eighteen: " + X`|
 
 ### attribute20 : get
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values | Description | 
+| ----------- | -----------| ----------- |
 | `X` | structure with each of the supported scalar types in field names as follows: | If present every element in array `X` be subjected to the same operation as the scalar channel would undergo. e.g., the integer value would be increased by 4.   |
 | | `"boolean"`| a boolean value  |
 | | `"byte"` |  a byte value  |
@@ -331,9 +298,8 @@ _Parameters_
 
 _Return value_
 
-| | |
-|-----------  |-----------  |
 | TYPE  |  Description |
+|-----------  |-----------  |
 | `STRING_ARRAY` |  If `X` present every element in array<br /> `X` be subjected to the same operation<br /> as the scalar channel would undergo. <br />e.g., the integer value would be <br />increased by 4.  |
 
 ## Test Output

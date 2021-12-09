@@ -10,16 +10,15 @@ and `STAT` of each bpm in a given DGRP, under a given measurement definition.
 
 ## Instances and Attributes
 
-|         |          |                        |
+| operation  | info        | instance & attribute        |
 |---------|----------|------------------------|
 | **get** | Syntax   | `<dgrp-mnemonic>:BPMS` |
 |         | Examples | `P2BPMHER:BPMS`        |
 
 ## Attribute operation summary
 
-|           |                                                                                                                                                                     |
-|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Attribute | Description                                                                                                                                                         |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `BPMS`    | Makes a BPM reading of every BPM in the `dgrp` specified in the INSTANCE part of the query, under the BPM Measurement Definition specified by the `BPMD` parameter. |
 
 ## Attribute operations
@@ -28,9 +27,8 @@ and `STAT` of each bpm in a given DGRP, under a given measurement definition.
 
 _Parameters_
 
-|                 |                                           |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|-----------------|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Parameter Names | Parameter Values                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 
+|-----------------|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `BPMD`*         | Integer Bpm Measurement Definition number | This specifies the timing profile of the acquisition.<br /> Each BPMD corresponds to exactly one DGRP. To find<br /> likely BPMDs, go to the BPM Device panel of a SCP<br /> and hit the 'HELP' button, then select the button<br /> corresponding to the bpm orbit you would have wanted<br /> to see. The button name for that acquisition, as displayed<br /> in the help, is the BPMD for the selected orbit. Use<br /> that number for this parameter. Eg, for 'HER Bunch<br /> train' BPMD=38. |
 | `CNFTYPE`       | `NONE`                                    | Absolute orbit. This is the default                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 |                 | `GOLD`                                    | Diff to the golden config                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -44,9 +42,8 @@ _Parameters_
 
 _Return value_
 
-|         |               |                 |                                                                                    |
-|---------|---------------|-----------------|------------------------------------------------------------------------------------|
 | TYPE    | Return Column | Column Type     | Description                                                                        |
+|---------|---------------|-----------------|------------------------------------------------------------------------------------|
 | `TABLE` | `name`        | `STRING_ARRAY`  | name of each BPM                                                                   |
 |         | `x`           | `FLOAT_ARRAY`   | x offsets (mm)                                                                     |
 |         | `y`           | `FLOAT_ARRAY`   | y offsets (mm)                                                                     |
@@ -60,9 +57,8 @@ _Return value_
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">commandline: **pvcall**</td>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<td class="markdownTableBodyNone">commandline **pvcall**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -72,7 +68,7 @@ pvcall "P2BPMHER:BPMS" BPMD=38 CNFTYPE=GOLD N=1024
 ```
 </td>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">commandline: **eget**</td>
+<td class="markdownTableBodyNone">commandline **eget**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -85,7 +81,7 @@ eget -s P2BPMHER:BPMS -a BPMD 38 -a CNFTYPE GOLD -a N 1024
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -111,7 +107,7 @@ public class AidaPvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **PvaClient**</td>
+<td class="markdownTableBodyNone">java **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -165,7 +161,7 @@ public class PvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td class="markdownTableBodyNone">java **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -239,7 +235,7 @@ public class EzExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **PvAccess**</td>
+<td class="markdownTableBodyNone">java **PvAccess**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -294,7 +290,7 @@ public class JavaExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -316,7 +312,7 @@ end
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td class="markdownTableBodyNone">matlab **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -332,7 +328,7 @@ names = tableStruct.value.name;
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">

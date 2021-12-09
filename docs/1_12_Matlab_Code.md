@@ -2,35 +2,31 @@
 
 ## Overview
 
-The following utility functions have been added to Matlab to support AIDA:
+The following utility functions have been added/updated in Matlab to support AIDA-PVA:
 
-- `void` **aidainit**() - to initialise access to the AIDA framework
-- `NTURI` **nturi**(`pvName`, `varargin`) - to create an `NTURI` Structure (
-  see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers
-- `matlab_structure` **nttable2struct** - to convert from NTTables to matlab structures, (see [Normative Types](2_2_Normative_Types.md))
-- `PVStructure` **ezrpc**(`nturi`) - takes an `NTURI` and executes it using EasyPVA
-- `PVStructure` **pvarpc**(`nturi`) - takes an `NTURI` and executes it using PvaClient
-- `matlab_dynamic_type` **pvaRequest**(`pvName`) - takes a `pvName` and executes a **get()** or **set()** request with
-  builder pattern
-    - **with**(`name`, `value`) - specifies a parameter for the request
-    - **returning**(`aidaType`) - specified the aida type to return from the request
-    - **get**() - executes the get request
-    - **set**(`value`) - executes the set request with the given value
-- `matlab_dynamic_type` **pvaGet**(`pvName`[, `type`]) - takes a `pvName` and an optional type and executes a **get()**
-- `empty` **pvaSet**(`pvName`, `value`) -  **set()** the `pvName` to the given value
+| category      | return                | function           | parameters                           | description                                                                                                               |
+|---------------|-----------------------|--------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| general       | `void`                | **aidainit**       | ()                                   | to initialise access to the AIDA framework                                                                                |
+|               | `structure`           | **nttable2struct** | (`pvName` [, `name`, `value` ]`...`) | to convert from NTTables to matlab structures, (see [Normative Types](2_2_Normative_Types.md))                            |
+|               | `NTURI`               | **nturi**          | (`pvName`, `varargin`)               | to create an `NTURI` Structure (see [Normative Types](2_2_Normative_Types.md)) for use with EPICS/AIDA-PVA data providers | 
+| AidaPvaClient | `dynamic`             | **pvaGet**         | (`pvName`[, `type`])                 | takes a `pvName` and an optional type and executes a **get()**                                                            | 
+|               | `empty` or `PvaTable` | **pvaSet**         | (`pvName`, `value`)                  | **set()** the `pvName` to the given value                                                                                 | 
+|               | `builder`             | **pvaRequest**     | (`pvName`)                           | takes a `pvName` and executes a **get()** or **set()** request with builder pattern                                       | 
+|               | `builder`             | `.with`            | (`name`, `value`)                    | specifies a parameter for the request                                                                                     | 
+|               | `builder`             | `.returning`       | (`aidaType`)                         | specified the aida type to return from the request                                                                        | 
+|               | `dynamic`             | `.get`             | ()                                   | executes the get request                                                                                                  | 
+|               | `empty` or `PvaTable` | `.set`             | (`value`)                            | executes the get request with the given value                                                                             | 
+| PvaClient     | `PVStructure`         | **pvarpc**         | (`nturi`)                            | takes an `NTURI` and executes it using PvaClient                                                                          | 
+| EasyPVA       | `PVStructure`         | **ezrpc**          | (`nturi`)                            | takes an `NTURI` and executes it using EasyPVA                                                                            | 
 
-These have all been updated/added to be able to interact with the new AIDA-PVA framework.
 
 ## AIDA-PVA Channel Provider data access patterns
 
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th>
+<th class="markdownTableHeadNone">description</th><th class="markdownTableHeadNone">AidaPvaClient</th><th class="markdownTableHeadNone">PvaClient</th><th class="markdownTableHeadNone">EasyPVA</th>
 </tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">**description**</td><td class="markdownTableBodyNone">**aida-pva-client**</td><td class="markdownTableBodyNone">**PvaClient**</td><td class="markdownTableBodyNone">**EasyPVA**</td>
-</tr>
-<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 Simple Get
 </td>
@@ -62,7 +58,7 @@ bval= response.getSubField('value').get;
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 Get with arguments
 </td>
@@ -105,7 +101,7 @@ names = table.value.name;
 </td>
 </tr>
 
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 Simple Set
 </td>
@@ -135,7 +131,7 @@ ezrpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 Set returning a table
 </td>
@@ -180,12 +176,9 @@ from.
 
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th>
+<th class="markdownTableHeadNone">pattern</th><th class="markdownTableHeadNone">AidaPvaClient</th><th class="markdownTableHeadNone">PvaClient</th><th class="markdownTableHeadNone">EasyPVA</th>
 </tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">**pattern**</td><td class="markdownTableBodyNone">**aida-pva-client**</td><td class="markdownTableBodyNone">**PvaClient**</td><td class="markdownTableBodyNone">**EasyPVA**</td>
-</tr>
-<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -198,7 +191,7 @@ Remove
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -215,7 +208,7 @@ aidainit;
 </td>
 </tr>
 
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -249,7 +242,7 @@ NTURI = nturi(channel, 'BEAM', '1');
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -298,7 +291,7 @@ RESULT = ezrpc(NTURI);
 </td>
 </tr>
 
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -324,7 +317,7 @@ RESULT.getSubField('value').get
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -350,7 +343,7 @@ RESULT.getSubField('value').get
 </td>
 </tr>
 
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -381,7 +374,7 @@ values = nttable2struct(RESULT).value.x;
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 
 ```matlab
@@ -426,7 +419,7 @@ RESULT=ezrpc(nturi(channel, 'VALUE', 10));
 </tr>
 
 
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
 ```matlab

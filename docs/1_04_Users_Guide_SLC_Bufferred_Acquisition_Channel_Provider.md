@@ -29,7 +29,7 @@ elements of the table of data you get back should be ignored.
 
 ## Instances and Attributes
 
-|         |          |                                |
+| operation  | info        | instance & attribute        |
 |---------|----------|--------------------------------|
 | **get** | Syntax   | `<dgrp-mnemonic-name>:BUFFACQ` |
 |         | Examples | `NDRFACET:BUFFACQ`             |
@@ -39,9 +39,8 @@ elements of the table of data you get back should be ignored.
 
 ## Attribute operation summary
 
-|           |                                                                                                                                                                                                                                                                            |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Attribute | Description                                                                                                                                                                                                                                                                |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `BUFFACQ` | Makes a buffered acquisition reading of each given device, in the dgrp specified <br /> in the INSTANCE part of the query, under the BPM Measurement Definition specified <br /> by the `BPMD` parameter, at each beam crossing for the number of pulses given by `NRPOS`. |
 
 ## Attribute operations
@@ -50,9 +49,8 @@ elements of the table of data you get back should be ignored.
 
 _Parameters_
 
-| | | |
-| ----------- | -----------| ----------- |
 | Parameter Names | Parameter Values |Description | 
+| ----------- | -----------| ----------- |
 | `BPMD`*  | Integer Bpm Measurement Definition number | This specifies the timing profile of the acquisition.<br /> Each `BPMD` corresponds to exactly one DGRP. To find<br /> likely BPMDs, go to the BPM Device panel of a SCP<br /> and hit the 'HELP' button, then select the button<br /> corresponding to the bpm orbit you would have wanted<br /> to see. The button name for that acquisition, as displayed<br /> in the help, is the BPMD for the selected orbit. Use<br /> that number for this parameter. Eg `BPMD=57` is the<br /> primary BPMD for the DGRP `NDRFACET`, and so will<br /> be the main one used for FACET. |
 | `NRPOS` | `1 =< n >= 2800` | Default is 1. In theory, this parameter can range up<br />  to `2800`, but some things must be borne in mind.<br />  Firstly, roughly speaking the minimum time it could<br />  take a buffered acquisition to complete, is `NRPOS`/machine-rate-in-Hz.<br />  But, the SCP in fact adds time to this theoretical<br />  minimum heuristically, to give the micros time to<br />  prep the acquisition. Secondly, AIDA-PVA's network<br />  timeout ranges between60 and 90 seconds depending<br />  on platform, so if your acquisition takes too long,<br />  the client will timeout. So, in practice, limit your<br />  NRPOS to numbers that will result in relatively short<br />  acquisitions, <br />plan for about 30 seconds max.<br />  |
 | `BPMS` | array of device names | The names of the devices from which a user would like<br /> the Buffered service to acquire data. Device names<br /> for the following devices:  `BPM`, `TORO`, `GAPM`,<br /> `KLYS` or `SBST`. |
@@ -62,9 +60,8 @@ _Return value_
 
 @note Return value for BPM device shown below. `TORO`, `GAPM`, `KLYS` or `SBST` will be different.
 
-|         |               |                 |                          |
-|---------|---------------|-----------------|--------------------------|
 | TYPE    | Return Column | Column Type     | Description              |
+|---------|---------------|-----------------|--------------------------|
 | `TABLE` | `name`        | `STRING_ARRAY`  | name of each BPM         |
 |         | `pulseId`     | `INTEGER_ARRAY` | pulse ID                 |
 |         | `x`           | `FLOAT_ARRAY`   | x offsets (mm)           |
@@ -78,9 +75,8 @@ _Return value_
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">commandline: **pvcall**</td>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<td class="markdownTableBodyNone">commandline **pvcall**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -91,7 +87,7 @@ pvcall "NDRFACET:BUFFACQ" BPMD=57 NRPOS=10 BMPS='["BPMS:LI02:501", "BPMS:DR12:33
 
 </td>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">commandline: **eget**</td>
+<td class="markdownTableBodyNone">commandline **eget**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -104,7 +100,7 @@ eget -s NDRFACET:BUFFACQ -a BPMD 57 -a NRPOS 10 -a BMPS '["BPMS:LI02:501", "BPMS
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -130,7 +126,7 @@ public class AidaPvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **PvaClient**</td>
+<td class="markdownTableBodyNone">java **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -184,7 +180,7 @@ public class PvaClientExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **EasyPVA**</td>
+<td class="markdownTableBodyNone">java **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -258,7 +254,7 @@ public class EzExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">java: **PvAccess**</td>
+<td class="markdownTableBodyNone">java **PvAccess**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -313,7 +309,7 @@ public class JavaExample {
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab: **aida-pva-client**</td>
+<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -334,7 +330,7 @@ end
 </tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab: **PvaClient**</td>
+<td class="markdownTableBodyNone">matlab **PvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -350,7 +346,7 @@ xoffsets = tableStruct.value.x;
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab: **EasyPVA**</td>
+<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
