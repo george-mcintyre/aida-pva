@@ -16,9 +16,16 @@ $!
 $! Make intermediate logicals to pass system properties
 $! and avoid the VMS DCL 255 char limit.
 $!
-$  IF procname .EQS. "EPICS_FORWARDER" THEN GOTO STARTFORWARDER
+$ portconf == ""
+$
+$ if f$trnlnm ("AIDA_MODE") .eqs. "PROD"
+$ then
+$   portconf == " -DEPICS_PVA_BROADCAST_PORT=5077 "
+$ endif
+$
+$ IF procname .EQS. "EPICS_FORWARDER" THEN GOTO STARTFORWARDER
 $ libpath == "-Djava.library.path=/SLCSHR"
-$ conf == "-Daida.pva.channels.filename=/SLCTXT/''config'"
+$ conf == portconf + " -Daida.pva.channels.filename=/SLCTXT/''config'"
 $ libname = procname - "_"
 $ lib == "-Daida.pva.lib.name=''libname'"
 $!
@@ -30,6 +37,6 @@ $       exit
 $!
 $STARTFORWARDER:
 $ write sys$output "Starting FORWARDER Server"
-$       java_argstring = "-jar SLCLIBS:EPICS_FORWARDER.JAR"
+$       java_argstring = "-jar $portconf SLCLIBS:EPICS_FORWARDER.JAR"
 $       @slccom:RUNJAVA_BUT_RESTART_ON_ABORT
 $       exit
