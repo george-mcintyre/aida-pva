@@ -116,7 +116,6 @@ pvcall "SLC::KLYS:LI31:31:PDES" TYPE=FLOAT
 
 ```shell
 pvcall "XCOR:LI31:41:BCON" VALUE=5.0
-
 ```
 
 </td>
@@ -129,7 +128,6 @@ pvcall "XCOR:LI31:41:BCON" VALUE=5.0
 
 ```shell
 eget -s XCOR:LI03:120:LEFF -a TYPE 'FLOAT'
-
 0.262
 eget -s SLC::KLYS:LI31:31:PDES -a TYPE 'FLOAT'
 90
@@ -143,7 +141,6 @@ eget -s SLC::KLYS:LI31:31:PDES -a TYPE 'FLOAT'
 
 ```shell
 eget -s XCOR:LI31:41:BCON -a VALUE 5.0
-
 ```
 
 </td>
