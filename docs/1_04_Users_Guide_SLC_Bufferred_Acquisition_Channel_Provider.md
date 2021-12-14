@@ -74,6 +74,8 @@ _Return value_
 
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
 
+### Commandline Examples
+
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
@@ -100,6 +102,69 @@ eget -s NDRFACET:BUFFACQ -a BPMD 57 -a NRPOS 10 -a BMPS '["BPMS:LI02:501", "BPMS
 </td>
 </tr>
 
+</table>
+
+### Matlab Examples
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+try
+    table = pvaRequest('NDRFACET:BUFFACQ').with("BPMD", 57).with("nrpos", 10).with("BPMS", Arrays.asList( ["BPMS:LI02:501", "BPMS:DR12:334"])).get();
+    labels = table.getLabels();
+    values = table.getValues();
+    xoffsets = values.get('x');
+catch e
+    handleExceptions(e);
+end
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">matlab **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+table = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
+tableStruct = nttable2struct(table);
+labels = tableStruct.labels;
+xoffsets = tableStruct.value.x;
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+table = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
+tableStruct = nttable2struct(table);
+labels = tableStruct.labels;
+xoffsets = tableStruct.value.x;
+```
+
+</td>
+</tr>
+
+</table>
+
+### Java Examples
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
@@ -304,57 +369,6 @@ public class JavaExample {
         return response;
       }
 }
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-try
-    table = pvaRequest('NDRFACET:BUFFACQ').with("BPMD", 57).with("nrpos", 10).with("BPMS", Arrays.asList( ["BPMS:LI02:501", "BPMS:DR12:334"])).get();
-    labels = table.getLabels();
-    values = table.getValues();
-    xoffsets = values.get('x');
-catch e
-    handleExceptions(e);
-end
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-xoffsets = tableStruct.value.x;
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-xoffsets = tableStruct.value.x;
 ```
 
 </td>

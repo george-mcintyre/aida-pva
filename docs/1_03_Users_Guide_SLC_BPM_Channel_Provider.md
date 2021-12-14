@@ -56,6 +56,8 @@ _Return value_
 
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
 
+### Commandline Examples
+
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
@@ -80,6 +82,71 @@ eget -s P2BPMHER:BPMS -a BPMD 38 -a CNFTYPE GOLD -a N 1024
 
 </td>
 </tr>
+</table>
+
+### Matlab Examples
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+
+```matlab
+try
+    table = pvaRequest('P2BPMHER:BPMS').with("BPMD", 38).with("cnftype", "gold").with("n", 1024).get();
+    labels = table.getLabels();
+    values = table.getValues();
+    names = values.get('name');
+catch e
+    handleExceptions(e);
+end
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">matlab **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+table = pvarpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
+tableStruct = nttable2struct(table);
+labels = tableStruct.labels;
+names = tableStruct.value.name;
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+table = ezrpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
+tableStruct = nttable2struct(table);
+labels = tableStruct.labels;
+names = tableStruct.value.name;
+```
+
+</td>
+</tr>
+
+</table>
+
+### Java Examples
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">java **AidaPvaClient**</td>
@@ -289,59 +356,6 @@ public class JavaExample {
 
 </td>
 </tr>
-
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-
-```matlab
-try
-    table = pvaRequest('P2BPMHER:BPMS').with("BPMD", 38).with("cnftype", "gold").with("n", 1024).get();
-    labels = table.getLabels();
-    values = table.getValues();
-    names = values.get('name');
-catch e
-    handleExceptions(e);
-end
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = pvarpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-names = tableStruct.value.name;
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = ezrpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-names = tableStruct.value.name;
-```
-
-</td>
-</tr>
-
 </table>
 
 ## Test Output

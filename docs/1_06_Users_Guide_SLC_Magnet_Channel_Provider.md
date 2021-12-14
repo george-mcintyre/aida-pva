@@ -89,6 +89,8 @@ None
 
 @note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
 
+### Commandline Examples
+
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
@@ -138,6 +140,134 @@ eget -s MAGNETSET:BCON -a VALUE '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] 
 </td>
 </tr>
 
+</table>
+
+### Matlab Examples
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+try
+    table = pvaRequest('DEV_DGRP:XCOR:BDES').with('MICROS', 'LI31-LI31').with('UNITS', '1-100').get();
+    labels = table.getLabels();
+    values = table.getValues();
+    names = values.get('name'); 
+    values = values.get('value'); 
+catch e
+    handleExceptions(e);
+end
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+try
+    table = pvaRequest('MAGNETSET:BDES').with('MAGFUNC', 'TRIM').set('{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }');
+    labels = table.getLabels();
+    values = table.getValues();
+    states = values.get('state'); 
+    values = values.get('value'); 
+catch e
+    handleExceptions(e);
+end
+```
+
+```matlab
+try
+    pvaSet('MAGNETSET:BCON').set('{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }');
+catch e
+    handleExceptions(e);
+end
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+tableStruct = nttable2struct(pvarpc(nturi('DEV_DGRP:XCOR:BDES', 'micros', 'LI31-LI31', 'units', '1-100')));
+labels = tableStruct.labels;
+values = table.values;
+names = values.name; 
+values = values.value; 
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+tableStruct = nttable2struct(pvarpc(nturi('MAGNETSET:BDES', 'magfunc', 'trim', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }')));
+labels = tableStruct.labels;
+values = table.values;
+states = values.state; 
+values = values.value; 
+```
+
+```matlab
+pvarpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'));
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
+<td class="markdownTableBodyNone">Get</td>
+
+<td class="markdownTableBodyNone">
+
+```matlab
+tableStruct = nttable2struct(ezrpc(nturi('DEV_DGRP:XCOR:BDES', 'micros', 'LI31-LI31', 'units', '1-100')));
+labels = tableStruct.labels;
+values = table.values;
+names = values.name; 
+values = values.value; 
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+tableStruct = nttable2struct(ezrpc(nturi('MAGNETSET:BDES', 'magfunc', 'trim', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }')));
+labels = tableStruct.labels;
+values = table.values;
+states = values.state; 
+values = values.value; 
+```
+
+```matlab
+ezrpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'));
+```
+
+</td>
+</tr>
+
+</table>
+
+### Java Examples
+
+<table class="markdownTable">
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
 <td rowspan=2 class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
@@ -539,122 +669,6 @@ public class JavaExample {
         return response;
     }
 }
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-try
-    table = pvaRequest('DEV_DGRP:XCOR:BDES').with('MICROS', 'LI31-LI31').with('UNITS', '1-100').get();
-    labels = table.getLabels();
-    values = table.getValues();
-    names = values.get('name'); 
-    values = values.get('value'); 
-catch e
-    handleExceptions(e);
-end
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-try
-    table = pvaRequest('MAGNETSET:BDES').with('MAGFUNC', 'TRIM').set('{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }');
-    labels = table.getLabels();
-    values = table.getValues();
-    states = values.get('state'); 
-    values = values.get('value'); 
-catch e
-    handleExceptions(e);
-end
-```
-
-```matlab
-try
-    pvaSet('MAGNETSET:BCON').set('{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }');
-catch e
-    handleExceptions(e);
-end
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-tableStruct = nttable2struct(pvarpc(nturi('DEV_DGRP:XCOR:BDES', 'micros', 'LI31-LI31', 'units', '1-100')));
-labels = tableStruct.labels;
-values = table.values;
-names = values.name; 
-values = values.value; 
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-tableStruct = nttable2struct(pvarpc(nturi('MAGNETSET:BDES', 'magfunc', 'trim', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }')));
-labels = tableStruct.labels;
-values = table.values;
-states = values.state; 
-values = values.value; 
-```
-
-```matlab
-pvarpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'));
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-tableStruct = nttable2struct(ezrpc(nturi('DEV_DGRP:XCOR:BDES', 'micros', 'LI31-LI31', 'units', '1-100')));
-labels = tableStruct.labels;
-values = table.values;
-names = values.name; 
-values = values.value; 
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-tableStruct = nttable2struct(ezrpc(nturi('MAGNETSET:BDES', 'magfunc', 'trim', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }')));
-labels = tableStruct.labels;
-values = table.values;
-states = values.state; 
-values = values.value; 
-```
-
-```matlab
-ezrpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'));
 ```
 
 </td>
