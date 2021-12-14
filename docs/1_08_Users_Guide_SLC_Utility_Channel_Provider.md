@@ -475,13 +475,12 @@ public class PvaClientExample {
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 try
     shortResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_SHORT).get();
     longResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_LONG).get();
     stringResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_STRING).get();
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -492,13 +491,12 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 try
     trigResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).set(0);
     mkbResponse = pvaRequest('MKB:VAL').with('MKB', 1).set('mkb:li02b_xb.mkb');
     pvaRequest('BGRP:VAL').with('BGRP', 'LCLS').with('VARNAME', 'T_CAV').set('Y');
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -512,7 +510,6 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'SHORT'));
 shortResponse = response.getSubField(PVShort.class, "value");
 response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'LONG'));
@@ -528,7 +525,6 @@ stringResponse = response.getSubField(PVString.class, "value");
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 trigResponse = nttable2struct(pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'value', '0')));
 mkbResponse = nttable2struct(pvarpc(nturi('MKB:VAL', 'mkb', '1', 'value', 'mkb:li02b_xb.mkb')));
 pvarpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', 'Yes'));
@@ -543,7 +539,6 @@ pvarpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', '
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'SHORT'));
 shortResponse = response.getSubField(PVShort.class, "value");
 response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'LONG'));
@@ -560,7 +555,6 @@ stringResponse = response.getSubField(PVString.class, "value");
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 trigResponse = nttable2struct(ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'value', '0')));
 mkbResponse = nttable2struct(ezrpc(nturi('MKB:VAL', 'mkb', '1', 'value', 'mkb:li02b_xb.mkb')));
 ezrpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', 'Yes'));

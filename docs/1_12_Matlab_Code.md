@@ -33,7 +33,6 @@ Simple Get
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 bval=pvaGet('PHAS:LI09:12:VACT', SHORT);
 ```
 
@@ -41,7 +40,6 @@ bval=pvaGet('PHAS:LI09:12:VACT', SHORT);
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 response = pvarpc(nturi('PHAS:LI09:12:VACT', 'TYPE', 'SHORT')) ;
 bval= response.getSubField('value').get;
 ```
@@ -50,7 +48,6 @@ bval= response.getSubField('value').get;
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 response = ezrpc(nturi('PHAS:LI09:12:VACT', 'TYPE', 'SHORT')) ;
 bval= response.getSubField('value').get;
 ```
@@ -65,7 +62,6 @@ Get with arguments
 <td class="markdownTableBodyNone">
 
 ```matlab
-    aidainit;
     table=pvaRequest('NDRFACET:BUFFACQ') ...
         .with('BPMD', 57) ...
         .with('NRPOS', 180) ...
@@ -78,7 +74,6 @@ Get with arguments
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 table = nttable2struct(pvarpc(nturi('NDRFACET:BUFFACQ', ...
  'BPMD', 57, ...
   'NRPOS', 180, ...
@@ -90,7 +85,6 @@ names = table.value.name;
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 table = nttable2struct(ezrpc(nturi('NDRFACET:BUFFACQ', ...
  'BPMD', 57, ...
   'NRPOS', 180, ...
@@ -108,7 +102,6 @@ Simple Set
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 pvaSet('XCOR:LI31:41:BCON', 5.0);
 ```
 
@@ -116,7 +109,6 @@ pvaSet('XCOR:LI31:41:BCON', 5.0);
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 pvarpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
 ```
 
@@ -124,7 +116,6 @@ pvarpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 ezrpc(nturi('XCOR:LI31:41:BCON', 'VALUE', 5.0));
 ```
 
@@ -138,7 +129,6 @@ Set returning a table
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 table=pvaRequest('KLYS:LI31:31:TACT').set(0);
 status = table.getValues().get('status');    
 ```
@@ -147,7 +137,6 @@ status = table.getValues().get('status');
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 table = nttable2struct(ezrpc(nturi('KLYS:LI31:31:TACT', 'VALUE', 0)));
 status = table.value.status
 ```
@@ -156,7 +145,6 @@ status = table.value.status
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit;
 table = nttable2struct(pvarpc(nturi('KLYS:LI31:31:TACT', 'VALUE', 0)));
 status = table.value.status
 ```
@@ -200,11 +188,7 @@ da = DaObject();
 
 </td>
 <td colspan=3>
-
-```matlab
-aidainit;
-```
-
+Remove
 </td>
 </tr>
 
@@ -219,8 +203,8 @@ da.setParam('BEAM', 1);
 <td class="markdownTableBodyNone">
 
 ```matlab
-CHANNEL = pvaRequest(channel);
-CHANNEL = CHANNEL.with('BEAM', '1');
+requestBuilder = pvaRequest('KLYS:LI31:31:TACT');
+requestBuilder = requestBuilder.with('BEAM', '1');
 
 ```
 
@@ -232,7 +216,9 @@ CHANNEL = CHANNEL.with('BEAM', '1');
 <td colspan=2>
 
 ```matlab
-NTURI = nturi(channel, 'BEAM', '1');
+requestBuilder = pvaRequest('KLYS:LI31:31:TACT');
+requestBuilder = requestBuilder.with('BEAM', '1');
+NTURI = requestBuilder.uri();
 ```
 
 - You need to know the `channel` name first

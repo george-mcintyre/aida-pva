@@ -653,20 +653,18 @@ public class JavaExample {
 
 
 ```matlab
-aidainit
 try
     shortResponse = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').returning(AIDA_SHORT).get();
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
 ```matlab
-aidainit
 try
     stringResponse = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').returning(AIDA_STRING).get();
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -677,43 +675,39 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 try
     table = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').set(0);
     labels = table.getLabels();
     values = table.getValues();
     status = values.get('status').get(0);
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
 ```matlab
-aidainit
 try
     table = pvaRequest('KLYS:LI31:31:PDES').set(90.0);
     labels = table.getLabels();
     values = table.getValues();
     phas = values.get('phas').get(0);
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
 ```matlab
-aidainit
 try
     pvaSet('KLYS:LI31:31:KPHR', 60.0);
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 ```matlab
-aidainit
 try
     pvaSet('KLYS:LI31:31:PCON', 5.0);
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -727,13 +721,11 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 response = pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'SHORT'));
 shortResponse = response.getSubField(PVShort.class, "value")
 ```
 
 ```matlab
-aidainit
 response = pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'STRING'));
 stringResponse = response.getSubField(PVString.class, "value")
 ```
@@ -745,14 +737,12 @@ stringResponse = response.getSubField(PVString.class, "value")
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 tableStruct = nttable2struct(pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'value', '0')));
 shortResponse = tableStruct.value.status[0]
 ```
 
 
 ```matlab
-aidainit
 pvarpc(nturi('KLYS:LI31:31:KPHR', 'value', '60.0'));
 ```
 
@@ -765,13 +755,11 @@ pvarpc(nturi('KLYS:LI31:31:KPHR', 'value', '60.0'));
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 response = ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'SHORT'));
 shortResponse = response.getSubField(PVShort.class, "value")
 ```
 
 ```matlab
-aidainit
 response = ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'STRING'));
 stringResponse = response.getSubField(PVString.class, "value")
 ```
@@ -783,14 +771,12 @@ stringResponse = response.getSubField(PVString.class, "value")
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 tableStruct = nttable2struct(ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'value', '0')));
 shortResponse = tableStruct.value.status[0]
 ```
 
 
 ```matlab
-aidainit
 ezrpc(nturi('KLYS:LI31:31:PCON', 'value', '60.0'));
 ```
 

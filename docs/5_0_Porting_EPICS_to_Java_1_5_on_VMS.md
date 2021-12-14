@@ -707,7 +707,7 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.aether.internal.impl.Utils
 [WARNING]   - org.eclipse.aether.impl.ArtifactDescriptorReader
 [WARNING]   - org.eclipse.aether.internal.impl.NodeStack
-[WARNING]   - org.eclipse.aether.internal.impl.ArtifactRequestBuilder
+[WARNING]   - org.eclipse.aether.internal.impl.ArtifactrequestBuilder
 [WARNING]   - org.eclipse.aether.internal.impl.DefaultSyncContextFactory
 [WARNING]   - org.eclipse.aether.impl.MetadataGenerator
 [WARNING]   - org.eclipse.aether.internal.impl.DefaultArtifactResolver$ResolutionItem

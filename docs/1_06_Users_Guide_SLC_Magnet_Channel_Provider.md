@@ -551,15 +551,14 @@ public class JavaExample {
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 try
     table = pvaRequest('DEV_DGRP:XCOR:BDES').with('MICROS', 'LI31-LI31').with('UNITS', '1-100').get();
     labels = table.getLabels();
     values = table.getValues();
     names = values.get('name'); 
     values = values.get('value'); 
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -570,24 +569,22 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 try
     table = pvaRequest('MAGNETSET:BDES').with('MAGFUNC', 'TRIM').set('{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }');
     labels = table.getLabels();
     values = table.getValues();
     states = values.get('state'); 
     values = values.get('value'); 
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
 ```matlab
-aidainit
 try
     pvaSet('MAGNETSET:BCON').set('{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }');
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -601,7 +598,6 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 tableStruct = nttable2struct(pvarpc(nturi('DEV_DGRP:XCOR:BDES', 'micros', 'LI31-LI31', 'units', '1-100')));
 labels = tableStruct.labels;
 values = table.values;
@@ -616,7 +612,6 @@ values = values.value;
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 tableStruct = nttable2struct(pvarpc(nturi('MAGNETSET:BDES', 'magfunc', 'trim', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }')));
 labels = tableStruct.labels;
 values = table.values;
@@ -625,7 +620,6 @@ values = values.value;
 ```
 
 ```matlab
-aidainit
 pvarpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'));
 ```
 
@@ -638,7 +632,6 @@ pvarpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": 
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 tableStruct = nttable2struct(ezrpc(nturi('DEV_DGRP:XCOR:BDES', 'micros', 'LI31-LI31', 'units', '1-100')));
 labels = tableStruct.labels;
 values = table.values;
@@ -653,7 +646,6 @@ values = values.value;
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 tableStruct = nttable2struct(ezrpc(nturi('MAGNETSET:BDES', 'magfunc', 'trim', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 4.0 ] }')));
 labels = tableStruct.labels;
 values = table.values;
@@ -662,7 +654,6 @@ values = values.value;
 ```
 
 ```matlab
-aidainit
 ezrpc(nturi('MAGNETSET:BCON', 'value', '{"names": [ "XCOR:LI31:41"], "values": [ 5.0 ] }'));
 ```
 

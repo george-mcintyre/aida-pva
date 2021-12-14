@@ -298,14 +298,13 @@ public class JavaExample {
 
 
 ```matlab
-aidainit
 try
     table = pvaRequest('P2BPMHER:BPMS').with("BPMD", 38).with("cnftype", "gold").with("n", 1024).get();
     labels = table.getLabels();
     values = table.getValues();
     names = values.get('name');
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -319,7 +318,6 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 table = pvarpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;
@@ -335,7 +333,6 @@ names = tableStruct.value.name;
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 table = ezrpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;

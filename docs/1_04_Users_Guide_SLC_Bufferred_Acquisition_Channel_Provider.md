@@ -5,7 +5,7 @@ data service gives access to the so called "Buffered BPM Data" acquisition facil
 SLAC accelerator complex. Buffered BPM data, is the name given to the pulse-by-pulse data acquisition system, in which a
 user names the devices whose values they want to be acquired, for how many beam pulses, and the service then returns a
 table of results - the x and y position values and the Tmit, given in one row per device, per pulse. For general
-information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
+information on xusing AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
 ## Summary
 
@@ -316,14 +316,13 @@ public class JavaExample {
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 try
     table = pvaRequest('NDRFACET:BUFFACQ').with("BPMD", 57).with("nrpos", 10).with("BPMS", Arrays.asList( ["BPMS:LI02:501", "BPMS:DR12:334"])).get();
     labels = table.getLabels();
     values = table.getValues();
     xoffsets = values.get('x');
-catch ME
-    % do something when errors occur or just show ME.identifier
+catch e
+    handleExceptions(e);
 end
 ```
 
@@ -337,7 +336,6 @@ end
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 table = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;
@@ -353,7 +351,6 @@ xoffsets = tableStruct.value.x;
 <td class="markdownTableBodyNone">
 
 ```matlab
-aidainit
 table = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
 tableStruct = nttable2struct(table);
 labels = tableStruct.labels;

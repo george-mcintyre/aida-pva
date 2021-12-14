@@ -242,8 +242,8 @@ preferred way is using PvaClient, but aida-pva-client is the simplest.
     aidainit
     try
         floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
-    catch ME
-       % do something when errors occur or just show ME.identifier
+    catch e
+       handleExceptions(e);
     end
 ```
 #### using aidaget
