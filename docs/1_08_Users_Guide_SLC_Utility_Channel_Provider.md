@@ -134,7 +134,7 @@ pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=STRING
 
 ```shell
 pvcall "TRIG:LI31:109:TACT" BEAM=1 VALUE=0
-pvcall "MKB:VAL" MKB=1 VALUE='mkb:li02b_xb.mkb'
+pvcall "MKB:VAL" MKB='mkb:li02b_xb.mkb' VALUE=1.0 
 pvcall "BGRP:VAL" BGRP=LCLS VARNAME=T_CAV VALUE='Yes'
 ```
 
@@ -160,7 +160,7 @@ eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE STRING
 
 ```shell
 eget -s TRIG:LI31:109:TACT -a BEAM 1 VALUE 0
-eget -s MKB:VAL -a MKB 1 -a VALUE 'mkb:li02b_xb.mkb'
+eget -s MKB:VAL -a MKB 'mkb:li02b_xb.mkb' -a VALUE 1.0 
 eget -s BGRP:VAL -a BGRP LCLS -a VARNAME T_CAV -a VALUE=Y
 ```
 
@@ -174,21 +174,49 @@ eget -s BGRP:VAL -a BGRP LCLS -a VARNAME T_CAV -a VALUE=Y
 @note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
 
 ```matlab
 try
-    shortResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_SHORT).get();
-    longResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_LONG).get();
-    stringResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).returning(AIDA_STRING).get();
+    builder = pvaRequest('TRIG:LI31:109:TACT');
+    builder.with('BEAM', 1);
+    builder.returning(AIDA_SHORT)
+    shortResponse = builder.get()
 catch e
     handleExceptions(e);
 end
+shortResponse =
+     0
+```
+```matlab
+try
+    builder = pvaRequest('TRIG:LI31:109:TACT');
+    builder.with('BEAM', 1);
+    builder.returning(AIDA_LONG)
+    longResponse = builder.get()
+catch e
+    handleExceptions(e);
+end
+longResponse =
+     0
+```
+
+```matlab
+try
+    builder = pvaRequest('TRIG:LI31:109:TACT');
+    builder.with('BEAM', 1);
+    builder.returning(AIDA_STRING)
+    stringResponse = builder.get()
+catch e
+    handleExceptions(e);
+end
+stringResponse =
+
+deactivated
 ```
 
 </td>
@@ -199,72 +227,33 @@ end
 
 ```matlab
 try
-    trigResponse = pvaRequest('TRIG:LI31:109:TACT').with('BEAM', 1).set(0);
-    mkbResponse = pvaRequest('MKB:VAL').with('MKB', 1).set('mkb:li02b_xb.mkb');
-    pvaRequest('BGRP:VAL').with('BGRP', 'LCLS').with('VARNAME', 'T_CAV').set('Y');
+    builder = pvaRequest('TRIG:LI31:109:TACT');
+    builder.with('BEAM', 1);
+    trigResponse = builder.set(0)
 catch e
     handleExceptions(e);
 end
 ```
 
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
 ```matlab
-response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'SHORT'));
-shortResponse = response.getSubField(PVShort.class, "value");
-response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'LONG'));
-longResponse = response.getSubField(PVLong.class, "value");
-response = pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'STRING'));
-stringResponse = response.getSubField(PVString.class, "value");
+try
+    builder = pvaRequest('MKB:VAL');
+    builder.with('MKB', 'mkb:li02b_xb.mkb');
+    mkbResponse = builder.set(1.0)
+catch e
+    handleExceptions(e);
+end
 ```
 
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
 ```matlab
-trigResponse = nttable2struct(pvarpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'value', '0')));
-mkbResponse = nttable2struct(pvarpc(nturi('MKB:VAL', 'mkb', '1', 'value', 'mkb:li02b_xb.mkb')));
-pvarpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', 'Yes'));
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'SHORT'));
-shortResponse = response.getSubField(PVShort.class, "value");
-response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'LONG'));
-longResponse = response.getSubField(PVLong.class, "value");
-response = ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'type', 'STRING'));
-stringResponse = response.getSubField(PVString.class, "value");
-```
-
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-trigResponse = nttable2struct(ezrpc(nturi('TRIG:LI31:109:TACT', 'beam', '1', 'value', '0')));
-mkbResponse = nttable2struct(ezrpc(nturi('MKB:VAL', 'mkb', '1', 'value', 'mkb:li02b_xb.mkb')));
-ezrpc(nturi('XCOR:LI31:41:BCON', 'bgrp', 'LCLS', 'varname', 'T_CAV', 'value', 'Yes'));
+try
+    builder = pvaRequest('BGRP:VAL');
+    builder.with('BGRP', 'LCLS');
+    builder.with('VARNAME', 'T_CAV');
+    builder.set('Y')
+catch e
+    handleExceptions(e);
+end
 ```
 
 </td>
