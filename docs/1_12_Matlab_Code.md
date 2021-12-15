@@ -74,7 +74,7 @@ mstruct =
 ```
 
 @note All examples below are written for Matlab 2012 so they are much more verbose than they need to be.  You can 
-chain the function calls together when you use them.
+chain the function calls together when you use them in matlab 2020.
 
 #### Exception handling
 Matlab 2012 creates an exception message that includes much of the stack trace instead of just the short 
