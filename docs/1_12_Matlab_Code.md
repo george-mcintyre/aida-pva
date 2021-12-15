@@ -512,40 +512,40 @@ builder = builder.with('BEAM', '1');
 - in legacy AIDA types were coded using constant numbers from this table
 - Replace codes or types with the corresponding AIDA-PVA type
 
-| AIDA Type   | AIDA Type Code | AIDA-PVA Type                     |  
-|-------------|----------------|-----------------------------------|
-| ANYA        | 	99            | unsupported                       |
-| BOOLEAN     | 	1             | AIDA_BOOLEAN                      |
-| BOOLEANA    | 	51            | AIDA_BOOLEAN_ARRAY                |
-| BYTE        | 	2             | AIDA_BYTE                         |
-| BYTEA       | 	52            | AIDA_BYTE_ARRAY                   |
-| CHAR        | 	3             | unsupported use AIDA_BYTE         |
-| CHARA       | 	53            | unsupported use AUDA_BYTE_ARRAY   |
-| DOUBLE      | 	4             | AIDA_DOUBLE                       |
-| DOUBLEA     | 	54            | AIDA_DOUBLE_ARRAY                 |
-| FLOAT       | 	5             | AIDA_FLOAT                        |
-| FLOATA      | 	55            | AIDA_FLOAT_ARRAY                  |
-| LONG        | 	6             | AIDA_LONG                         |
-| LONGA       | 	56            | AIDA_LONG_ARRAY                   |
-| LONGDOUBLE  | 	7             | unsupported use AIDA_DOUBLE       |
-| LONGDOUBLEA | 	57            | unsupported use AIDA_DOUBLE_ARRAY |
-| LONGLONG    | 	8             | unsupported use AIDA_LONG         |
-| LONGLONGA   | 	58            | unsupported use AIDA_LONG_ARRAY   |
-| SHORT       | 	9             | AIDA_SHORT                        |
-| SHORTA      | 	59            | AIDA_SHORT_ARRAY                  |
-| STRING      | 	10            | AIDA_STRING                       |
-| STRINGA     | 	60            | AIDA_STRING_ARRAY                 |
-| STRUCT      | 	0             | AidaPvaStruct                     |
-| ULONG       | 	11            | unsupported use AIDA_LONG         |
-| ULONGA      | 	61            | unsupported use AIDA_LONG_ARRAY   |
-| ULONGLONG   | 	12            | unsupported use AIDA_LONG         |
-| ULONGLONGA  | 	62            | unsupported use AIDA_LONG_ARRAY   |
-| USHORT      | 	13            | unsupported use AIDA_SHORT        |
-| USHORTA     | 	63            | unsupported use AIDA_SHORT_ARRAY  |
-| WCHAR       | 	14            | unsupported use AIDA_BYTE         |
-| WCHARA      | 	64            | unsupported use AIDA_BYTE_ARRAY   |
-| WSTRING     | 	15            | unsupported use AIDA_STRING       |
-| WSTRINGA    | 	65            | unsupported use AIDA_STRING_ARRAY |
+| Code | Legacy AIDA Type | AIDA-PVA Type                       |  
+|------|------------------|-------------------------------------|
+| 	0   | `STRUCT`         | AidaPvaStruct                       |
+| 	1   | `BOOLEAN`        | `AIDA_BOOLEAN`                      |
+| 	2   | `BYTE`           | `AIDA_BYTE`                         |
+| 	3   | `CHAR`           | unsupported use `AIDA_BYTE`         |
+| 	4   | `DOUBLE`         | `AIDA_DOUBLE`                       |
+| 	5   | `FLOAT`          | `AIDA_FLOAT`                        |
+| 	6   | `LONG`           | `AIDA_LONG`                         |
+| 	7   | `LONGDOUBLE`     | unsupported use `AIDA_DOUBLE`       |
+| 	8   | `LONGLONG`       | unsupported use `AIDA_LONG`         |
+| 	9   | `SHORT`          | `AIDA_SHORT`                        |
+| 	10  | `STRING`         | `AIDA_STRING`                       |
+| 	11  | `ULONG`          | unsupported use `AIDA_LONG`         |
+| 	12  | `ULONGLONG`      | unsupported use `AIDA_LONG`         |
+| 	13  | `USHORT`         | unsupported use `AIDA_SHORT`        |
+| 	14  | `WCHAR`          | unsupported use `AIDA_BYTE`         |
+| 	15  | `WSTRING`        | unsupported use `AIDA_STRING`       |
+| 	51  | `BOOLEANA`       | `AIDA_BOOLEAN_ARRAY`                |
+| 	52  | `BYTEA`          | `AIDA_BYTE_ARRAY`                   |
+| 	53  | `CHARA`          | unsupported use `AIDA_BYTE_ARRAY`   |
+| 	54  | `DOUBLEA`        | `AIDA_DOUBLE_ARRAY`                 |
+| 	55  | `FLOATA`         | `AIDA_FLOAT_ARRAY`                  |
+| 	56  | `LONGA`          | `AIDA_LONG_ARRAY`                   |
+| 	57  | `LONGDOUBLEA`    | unsupported use `AIDA_DOUBLE_ARRAY` |
+| 	58  | `LONGLONGA`      | unsupported use `AIDA_LONG_ARRAY`   |
+| 	59  | `SHORTA`         | `AIDA_SHORT_ARRAY`                  |
+| 	60  | `STRINGA`        | `AIDA_STRING_ARRAY`                 |
+| 	61  | `ULONGA`         | unsupported use `AIDA_LONG_ARRAY`   |
+| 	62  | `ULONGLONGA`     | unsupported use `AIDA_LONG_ARRAY`   |
+| 	63  | `USHORTA`        | unsupported use `AIDA_SHORT_ARRAY`  |
+| 	64  | `WCHARA`         | unsupported use `AIDA_BYTE_ARRAY`   |
+| 	65  | `WSTRINGA`       | unsupported use `AIDA_STRING_ARRAY` |
+| 	99  | `ANYA`           | unsupported                         |
 
 </td>
 </tr>
@@ -567,6 +567,8 @@ or
 ```matlab
 result = pvaGetM(pvName, AIDA_DOUBLE);
 ```
+
+- Note that you need to look up the type code `4` in the conversion table above.
 
 </td>
 </tr>
