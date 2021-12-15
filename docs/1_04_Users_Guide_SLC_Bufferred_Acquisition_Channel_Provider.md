@@ -107,58 +107,37 @@ eget -s NDRFACET:BUFFACQ -a BPMD 57 -a NRPOS 10 -a BMPS '["BPMS:LI02:501", "BPMS
 @note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
 
 ```matlab
 try
-    table = pvaRequest('NDRFACET:BUFFACQ').with("BPMD", 57).with("nrpos", 10).with("BPMS", Arrays.asList( ["BPMS:LI02:501", "BPMS:DR12:334"])).get();
-    labels = table.getLabels();
-    values = table.getValues();
-    xoffsets = values.get('x');
+    builder = pvaRequest('NDRFACET:BUFFACQ');
+    builder.with('BPMD', 57);
+    builder.with('NRPOS', 10);
+    builder.with('BPMS', { 'BPMS:LI11:501' 'BPMS:DR12:334'});
+    mstruct = ML(builder.get())
+    table.values.x(1:10)
 catch e
     handleExceptions(e);
 end
+mstruct =
+            size: 20
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+           units: []
+    descriptions: []
+      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+          values: [1x1 struct]
+
+ans =
+    0.0538    1.0714    0.0186   -0.9866    0.0593    1.0268    0.0364   -0.9589    0.0899    1.0163
 ```
 
 </td>
 </tr>
-
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = pvarpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-xoffsets = tableStruct.value.x;
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = ezrpc(nturi('NDRFACET:BUFFACQ', 'BPMD', '57', 'NRPOS', '10', 'BPMS', '["BPMS:LI02:501", "BPMS:DR12:334"]'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-xoffsets = tableStruct.value.x;
-```
-
-</td>
-</tr>
-
 </table>
 
 ### Java Examples
