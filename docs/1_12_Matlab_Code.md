@@ -110,6 +110,17 @@ org.epics.pvaccess.server.rpc.RPCRequestException: NDRFACET:BUFFACQ(BPMSWRONG=[B
 	at edu.stanford.slac.aida.client.AidaPvaClientUtils.executeRequest(AidaPvaClientUtils.java:219)
 	at edu.stanford.slac.aida.client.AidaPvaRequest.get(AidaPvaRequest.java:109)
 ```
+#### Strings
+In matlab 2020 you can represent a string as as follows:
+
+```matlab
+    string = "matlab 2020 string";
+```
+
+In matlab 2012 you can only use single quotes
+```matlab
+    string = 'matlab 2020 string';
+```
 
 ### Initialisation 
 

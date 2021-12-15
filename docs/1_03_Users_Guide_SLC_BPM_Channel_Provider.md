@@ -87,10 +87,9 @@ eget -s P2BPMHER:BPMS -a BPMD 38 -a CNFTYPE GOLD -a N 1024
 @note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -98,44 +97,24 @@ eget -s P2BPMHER:BPMS -a BPMD 38 -a CNFTYPE GOLD -a N 1024
 
 ```matlab
 try
-    table = pvaRequest('P2BPMHER:BPMS').with("BPMD", 38).with("cnftype", "gold").with("n", 1024).get();
-    labels = table.getLabels();
-    values = table.getValues();
-    names = values.get('name');
+    builder = pvaRequest('P2BPMHER:BPMS');
+    builder.with('BPMD', 38);
+    builder.with('cnftype', 'gold');
+    builder.with('n', 1024);
+    table = ML(builder.get());
+    labels = table.labels;
+    names =  table.values.name
 catch e
     handleExceptions(e);
 end
-```
+names =
+  Columns 1 through 7
+    'BPMS:PR10:8022'    'BPMS:PR10:8032'    'BPMS:PR10:8042'    'BPMS:PR10:9012'    'BPMS:PR10:9022'    'BPMS:PR10:9032'    'BPMS:PR10:9042'
 
-</td>
-</tr>
+...
 
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = pvarpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-names = tableStruct.value.name;
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-table = ezrpc(nturi('P2BPMHER:BPMS', 'BPMD', '38', 'CNFTYPE', 'GOLD', 'N', '1024'));
-tableStruct = nttable2struct(table);
-labels = tableStruct.labels;
-names = tableStruct.value.name;
+Columns 288 through 293
+    'BPMS:PR10:6162'    'BPMS:PR10:7012'    'BPMS:PR10:7022'    'BPMS:PR10:7032'    'BPMS:PR10:7042'    'BPMS:PR10:8012'
 ```
 
 </td>

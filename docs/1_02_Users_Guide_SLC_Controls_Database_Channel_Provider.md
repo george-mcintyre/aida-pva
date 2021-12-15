@@ -205,7 +205,7 @@ end
 ```matlab
 try
     requestBuilder = pvaRequest('XCOR:LI31:41:BCON');
-    requestBuilder.set(5.0);
+    requestBuilder.set(5.0)
 catch e
     handleExceptions(e);
 end
