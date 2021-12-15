@@ -150,62 +150,41 @@ eget -s XCOR:LI31:41:BCON -a VALUE 5.0
 @note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">**matlab 2020**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
 
 ```matlab
 try
-    floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT);
-    disp (floatResponse);
-    floatResponse = pvaRequest('XCOR:LI03:120:LEFF').returning(AIDA_FLOAT).get();
-    disp (floatResponse);
+    floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT)
 catch e
     handleExceptions(e);
 end
+floatResponse =
     90
-    0.2620
 ```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
 
 ```matlab
 try
-    pvaSet('XCOR:LI31:41:BCON', 5.0);
-    pvaRequest('XCOR:LI31:41:BCON').set(5.0);
+    floatArrayResponse = pvaGetM('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT_ARRAY)
 catch e
     handleExceptions(e);
 end
+floatArrayResponse =
+    90
 ```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">**matlab 2012**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
 
 ```matlab
 try
-    floatResponse = pvaGet('SLC::KLYS:LI31:3100:PDES', AIDA_FLOAT);
-    disp (floatResponse);
     requestBuilder = pvaRequest('XCOR:LI03:120:LEFF');
     requestBuilder = requestBuilder.returning(AIDA_FLOAT);
-    floatResponse = requestBuilder.get();
-    disp (floatResponse);
+    floatResponse = requestBuilder.get()
 catch e
     handleExceptions(e);
 end
-    90
-
+floatResponse =
     0.2620
 ```
 
@@ -217,7 +196,14 @@ end
 
 ```matlab
 try
-    pvaSet('XCOR:LI31:41:BCON', 5.0);
+    pvaSet('XCOR:LI31:41:BCON', 5.0)    
+catch e
+    handleExceptions(e);
+end
+```
+
+```matlab
+try
     requestBuilder = pvaRequest('XCOR:LI31:41:BCON');
     requestBuilder.set(5.0);
 catch e
@@ -227,69 +213,6 @@ end
 
 </td>
 </tr>
-
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">**PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-floatResponse = pvaUnpack(pvarpc(pvaRequest('XCOR:LI03:120:LEFF').returning(AIDA_FLOAT).uri()));
-disp (floatResponse);
-    0.2620
-
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-pvarpc(pvaRequest('XCOR:LI31:41:BCON').with('value', 5.0).uri());
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">**EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-try
-    requestBuilder = pvaRequest('XCOR:LI03:120:LEFF');
-    requestBuilder.returning(AIDA_FLOAT);
-    floatResponse = pvaUnpack(ezrpc(requestBuilder.uri()));
-    disp (floatResponse);
-catch e
-    handleExceptions(e);
-end
-    0.2620
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-try
-    requestBuilder = pvaRequest('XCOR:LI31:41:BCON');
-    requestBuilder.with('value', 5.0);
-    ezrpc(requestBuilder.uri());
-catch e
-    handleExceptions(e);
-end
-```
-
-</td>
-</tr>
-
 </table>
 
 ### Java Examples
