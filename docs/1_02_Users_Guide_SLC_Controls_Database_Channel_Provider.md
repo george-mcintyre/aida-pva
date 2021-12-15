@@ -89,8 +89,6 @@ None
 
 ## Examples
 
-@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
-
 ### Commandline Examples
 
 <table class="markdownTable">
@@ -149,6 +147,8 @@ eget -s XCOR:LI31:41:BCON -a VALUE 5.0
 
 ### Matlab Examples
 
+@note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
+
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
@@ -167,7 +167,6 @@ catch e
     handleExceptions(e);
 end
     90
-
     0.2620
 ```
 

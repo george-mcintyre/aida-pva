@@ -110,8 +110,6 @@ None
 
 ## Examples
 
-@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md)
-
 ### Commandline Examples
 
 <table class="markdownTable">
@@ -172,6 +170,8 @@ eget -s BGRP:VAL -a BGRP LCLS -a VARNAME T_CAV -a VALUE=Y
 </table>
 
 ### Matlab Examples
+
+@note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>

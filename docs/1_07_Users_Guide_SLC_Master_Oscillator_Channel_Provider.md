@@ -68,10 +68,6 @@ _Return value_
 |---------|---------------|----------------|--------------------------------------------------|
 | `TABLE` | `value`       | `DOUBLE_ARRAY` | measured setting of the Master Oscillator in KHz |
 
-## Examples
-
-@note For general details about accessing AIDA-PVA from matlab see [Matlab Coding](1_12_Matlab_Code.md) 
-
 ## Test Output
 
 ```shell

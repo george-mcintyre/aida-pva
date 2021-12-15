@@ -10,9 +10,11 @@
 | _builder_     |                      | A Java class that allows you to  build of requests before <br/> execution                                                                                                        | 
 | _dynamic_     |                      | Any dynamically instantiated matlab  type                                                                                                                                        |
 | _fieldName_   |                      | Within an AidaPvaStruct this is  a field's name                                                                                                                                  |  
+| _exception_   |                      | exception caught by a matlab try catch block                                                                                                                                     |  
 | _fieldValue_  |                      | Within an AidaPvaStruct this is  a field's value                                                                                                                                 |  
 | _jstruct_     |                      | A Java structure that can be used as an argument or value                                                                                                                        |
 | _nturi_       |                      | A special type of `PVStructure`  that corresponds to <br/> the `NTURI`  Normative Type                                                                                           |
+| _message_     |                      | Custom message for handleExceptions                                                                                                                                              |
 | _name_        |                      | The name of a parameter / argument  to the request. <br/>                                                                                                                        |  
 | _nturi_       |                      | A special type of `PVStructure`  that corresponds to <br/> the `NTURI`  Normative Type.                                                                                          |  
 | _Object_      |                      | A Java Object                                                                                                                                                                    |
@@ -39,6 +41,75 @@
 |               | _AIDA_TABLE_         |                                                                                                                                                                                  |  
 | _value_       |                      | Any matlab scalar value or array you want to set the given <br/> Process Variable / channel, or  request argument to.                                                            |  
 | _void_        |                      | No value is returned                                                                                                                                                             |
+
+### Matlab 2012 vs 2020
+#### Function chaining
+In matlab 2012 you can't chain functions together so instead of writing this:
+
+```matlab
+mstruct = ML(pvaRequest('NDRFACET:BUFFACQ').with('BPMD', 57).with('BPMS', { 'BPMS:LI11:501' }).get())
+mstruct =
+            size: 1
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+           units: []
+    descriptions: []
+      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+          values: [1x1 struct]
+```
+
+you have to write it on separate lines thus:
+
+```matlab
+builder = pvaRequest('NDRFACET:BUFFACQ');
+builder.with('BPMD', 57);
+builder.with('BPMS', { 'BPMS:LI11:501' });
+mstruct = ML(builder.get())
+mstruct =
+            size: 1
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+           units: []
+    descriptions: []
+      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+          values: [1x1 struct]
+```
+
+@note All examples below are written for Matlab 2012 so they are much more verbose than they need to be.  You can 
+chain the function calls together when you use them.
+
+#### Exception handling
+Matlab 2012 creates an exception message that includes much of the stack trace instead of just the short 
+reason message that the original exception contains.  Matlab 2020 contains the correct message.  So instead of 
+seeing this for errors:
+
+```matlab
+try
+    response = pvaRequest('NDRFACET:BUFFACQ').with('BPMD', 57).with('NRPOS', 10).with('BPMSWRONG', {'BPMS:LI02:501' 'BPMS:DR12:334' } ).get();
+catch e
+    handleExceptions(e);
+end
+NDRFACET:BUFFACQ(NRPOS=10.0, BPMD=57.0, BPMSWRONG=[BPMS:LI02:501, BPMS:DR12:334]) :NDRFACET:BUFFACQ:  BPMSWRONG is not a valid argument for get requests to this channel
+```
+
+You will see this in Matlab 2012
+
+```matlab
+try
+    builder = pvaRequest('NDRFACET:BUFFACQ');
+    builder.with('BPMD', 57);
+    builder.with('NRPOS', 10);
+    builder.with('BPMSWRONG', {'BPMS:LI02:501' 'BPMS:DR12:334' } );
+    response = builder.get();
+catch e
+    handleExceptions(e);
+end
+Java exception occurred:
+org.epics.pvaccess.server.rpc.RPCRequestException: NDRFACET:BUFFACQ(BPMSWRONG=[BPMS:LI02:501, BPMS:DR12:334], BPMD=57.0, NRPOS=10.0) :NDRFACET:BUFFACQ:  BPMSWRONG is not a valid argument for get requests to this channel
+	at edu.stanford.slac.aida.client.AidaPvaRequest.execute(AidaPvaRequest.java:182)
+	at edu.stanford.slac.aida.client.AidaPvaRequest.getter(AidaPvaRequest.java:152)
+	at edu.stanford.slac.aida.client.AidaPvaRequest$2.execute(AidaPvaRequest.java:112)
+	at edu.stanford.slac.aida.client.AidaPvaClientUtils.executeRequest(AidaPvaClientUtils.java:219)
+	at edu.stanford.slac.aida.client.AidaPvaRequest.get(AidaPvaRequest.java:109)
+```
 
 ### Initialisation 
 
@@ -337,6 +408,24 @@ response = ezrpc(nturi) ;
 bval= ML(response)
 bval =
      0
+```
+
+### Error handling
+| return | function             | parameters                 | description                                                                                                 |
+|--------|----------------------|----------------------------|-------------------------------------------------------------------------------------------------------------|
+| _void_ | **handleExceptions** | (_exception_, [_message_]) | takes a matlab exception object, and an optional error message text and handles the error in a standard way | 
+
+EasyPVA and aida-pva-client propagate errors back from the Channel Provider to the matlab client however PvaClient does not.  
+You can write code to intercept error that occur and display a short message.  We've provided a small 
+function that does this for you.
+
+```matlab
+pvName=strcat(dbname,':EDES:VAL');
+try
+    pvaSet(pvName, MAGNET(n).energy0)
+catch e
+    handleExceptions(e);
+end
 ```
 
 ### PvaTables as Matlab Structures 
@@ -747,7 +836,7 @@ if isempty(aidapvainitdone)
 end
 ```
 
-## ezrpc
+## ezrpc.m
 
 A script that can be called to make requests based on ezPVA has been created. Extracted from erpc.m.
 
@@ -813,7 +902,26 @@ function [ PVDATA ] = ezrpc( NTURI )
     end
 ```
 
-## ML
+## handleExceptions.m
+```matlab
+function handleExceptions(e, varargin)
+    reason = '';
+    if (isa(e,'matlab.exception.JavaException'))
+        ex = e.ExceptionObject;
+        assert(isjava(ex));
+        reason = ex.getMessage;
+    else
+        reason = e.message;
+    end
+    if ( size(varargin) > 0 )
+        reason = sprintf('%s: %s', sprintf(varargin{1}, varargin{2:end}), reason);
+    end
+    disp (reason);
+%    error(reason);
+end
+```
+
+## ML.m
 ```matlab
 function [ matlabResult ] = ML( pvaResult )
     % Unpack using java first if this is still a PVStructure
