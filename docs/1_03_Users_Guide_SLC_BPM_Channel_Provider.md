@@ -88,7 +88,6 @@ eget -s P2BPMHER:BPMS -a BPMD 38 -a CNFTYPE GOLD -a N 1024
 
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
-
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Get</td>
 
@@ -126,7 +125,6 @@ Columns 288 through 293
 
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
-
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">java **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
