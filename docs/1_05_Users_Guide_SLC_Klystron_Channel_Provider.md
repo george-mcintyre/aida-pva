@@ -193,9 +193,8 @@ eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 @note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **AidaPvaClient**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -203,18 +202,30 @@ eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 
 ```matlab
 try
-    shortResponse = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').returning(AIDA_SHORT).get();
+    builder = pvaRequest('KLYS:LI31:31:TACT');
+    builder.with('BEAM', 8).with('DGRP', 'DEV_DGRP');
+    builder.returning(AIDA_SHORT);
+    shortResponse = builder.get()
 catch e
     handleExceptions(e);
 end
+
+shortResponse =
+    18
 ```
 
 ```matlab
 try
-    stringResponse = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').returning(AIDA_STRING).get();
+    builder = pvaRequest('KLYS:LI31:31:TACT');
+    builder.with('BEAM', 8).with('DGRP', 'DEV_DGRP');
+    builder.returning(AIDA_STRING);
+    stringResponse = builder.get()
 catch e
     handleExceptions(e);
 end
+
+stringResponse =
+activated
 ```
 
 </td>
@@ -225,10 +236,30 @@ end
 
 ```matlab
 try
-    table = pvaRequest('KLYS:LI31:31:TACT').with('BEAM', 8).with('DGRP', 'DEV_DGRP').set(0);
-    labels = table.getLabels();
-    values = table.getValues();
-    status = values.get('status').get(0);
+    builder = pvaRequest('KLYS:LI31:31:TACT');
+    builder.with('BEAM', 8);
+    builder.with('DGRP', 'DEV_DGRP');
+    table = ML(builder.set(0));
+    labels = table.labels
+    status = table.values.STATS(1:8)
+catch e
+    handleExceptions(e);
+end
+
+labels =
+    'BPM Name'    'x offset (mm)'    'y offset (mm)'    [1x23 char]    'z position (meters)'    'HSTA'    'STATS'
+
+status =
+     0     0     0     0     0     0     0     0
+```
+
+```matlab
+try
+    builder = pvaRequest('KLYS:LI31:31:TACT');
+    builder.with('BEAM', 8);
+    builder.with('DGRP', 'DEV_DGRP');
+    table = ML(builder.set(90.0));
+    phas = table.values.status
 catch e
     handleExceptions(e);
 end
@@ -236,18 +267,7 @@ end
 
 ```matlab
 try
-    table = pvaRequest('KLYS:LI31:31:PDES').set(90.0);
-    labels = table.getLabels();
-    values = table.getValues();
-    phas = values.get('phas').get(0);
-catch e
-    handleExceptions(e);
-end
-```
-
-```matlab
-try
-    pvaSet('KLYS:LI31:31:KPHR', 60.0);
+    pvaSetM('KLYS:LI31:31:KPHR', 60.0)
 catch e
     handleExceptions(e);
 end
@@ -262,76 +282,6 @@ end
 
 </td>
 </tr>
-
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **PvaClient**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-response = pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'SHORT'));
-shortResponse = response.getSubField(PVShort.class, "value")
-```
-
-```matlab
-response = pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'STRING'));
-stringResponse = response.getSubField(PVString.class, "value")
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-tableStruct = nttable2struct(pvarpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'value', '0')));
-shortResponse = tableStruct.value.status[0]
-```
-
-
-```matlab
-pvarpc(nturi('KLYS:LI31:31:KPHR', 'value', '60.0'));
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">matlab **EasyPVA**</td>
-<td class="markdownTableBodyNone">Get</td>
-
-<td class="markdownTableBodyNone">
-
-```matlab
-response = ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'SHORT'));
-shortResponse = response.getSubField(PVShort.class, "value")
-```
-
-```matlab
-response = ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'type', 'STRING'));
-stringResponse = response.getSubField(PVString.class, "value")
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Set</td>
-<td class="markdownTableBodyNone">
-
-```matlab
-tableStruct = nttable2struct(ezrpc(nturi('KLYS:LI31:31:TACT', 'beam', '8', 'dgrp', 'DEV_DGRP', 'value', '0')));
-shortResponse = tableStruct.value.status[0]
-```
-
-
-```matlab
-ezrpc(nturi('KLYS:LI31:31:PCON', 'value', '60.0'));
-```
-
-</td>
-</tr>
-
 </table>
 
 ### Java Examples
