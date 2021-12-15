@@ -63,7 +63,7 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the integer
  */
-int aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
+long aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
 	return (long)getTrigStatus(env, uri, arguments);
 }
