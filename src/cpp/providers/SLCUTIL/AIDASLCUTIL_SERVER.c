@@ -13,7 +13,7 @@ static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments);
 // API Stubs
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
-REQUEST_STUB_LONG
+REQUEST_STUB_INTEGER
 REQUEST_STUB_FLOAT
 REQUEST_STUB_DOUBLE
 REQUEST_STUB_BOOLEAN_ARRAY
@@ -63,9 +63,9 @@ short aidaRequestShort(JNIEnv* env, const char* uri, Arguments arguments)
  * @param arguments the arguments
  * @return the integer
  */
-int aidaRequestInteger(JNIEnv* env, const char* uri, Arguments arguments)
+int aidaRequestLong(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	return (int)getTrigStatus(env, uri, arguments);
+	return (long)getTrigStatus(env, uri, arguments);
 }
 
 /**
