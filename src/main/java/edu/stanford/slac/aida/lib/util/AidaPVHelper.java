@@ -415,9 +415,9 @@ public class AidaPVHelper {
         // List of strings that will contain the labels names
         Field labelsArray = FieldFactory.getFieldCreate().createScalarArray(pvString);
 
-        // Create the second level Field that will conta
+        // Create the second level Field that will contain
         // top fields, this one holding the structure of the rest of the NTTable
-        //  - fieldNames = PVScalarArray containing pvstring and
+        //  - fieldNames = PVScalarArray containing pvString and
         //  - columns of values = A set of Fields that are each PVScalarArrays
         Field structure = FieldFactory.getFieldCreate().createStructure(toStringArray(fieldNames), toFieldArray(pvFields));
 

@@ -120,20 +120,20 @@ try
     builder.with('NRPOS', 10);
     builder.with('BPMS', { 'BPMS:LI11:501' 'BPMS:DR12:334'});
     mstruct = ML(builder.get())
-    table.values.x(1:10)
+    mstruct.values.x(1:10)
 catch e
     handleExceptions(e);
 end
 mstruct =
             size: 20
-          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'stat'  'good measurement'}
            units: []
     descriptions: []
-      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+      fieldnames: {'name'  'pulseId'  'x'  'y'  'tmits'  'stat'  'goodmeas'}
           values: [1x1 struct]
 
 ans =
-    0.0538    1.0714    0.0186   -0.9866    0.0593    1.0268    0.0364   -0.9589    0.0899    1.0163
+   -0.0466    0.4037   -0.5933    0.9624   -0.8016    0.9845   -0.0871    0.9946    0.3572    0.9041
 ```
 
 </td>
@@ -370,8 +370,8 @@ _________________________________________________
 
 get: NDRFACET:BUFFACQ (BPMD=57, BPMS=[BPMS:LI11:501])
     BPM Values:  1 rows retrieved: ✔
-      BPM Name pulse id x offset (mm) y offset (mm) num particles (coulomb) STAT good measurement
-          name       id             x             y                   tmits STAT         goodmeas
+      BPM Name pulse id x offset (mm) y offset (mm) num particles (coulomb) stat good measurement
+          name  pulseId             x             y                   tmits stat         goodmeas
  BPMS:LI11:501    39714   -0.98880225     0.9987344                 1.0E-10    1               15
 
 ████ Test 2: Get values of 4 BPMs
@@ -379,8 +379,8 @@ _________________________________________________
 
 get: NDRFACET:BUFFACQ (NRPOS=180, BPMD=57, BPMS=[BPMS:LI11:501, BPMS:LI11:601, BPMS:LI11:701, BPMS:LI11:801])
     BPM Values:  720 rows retrieved: ✔
-      BPM Name pulse id x offset (mm) y offset (mm) num particles (coulomb) STAT good measurement
-          name       id             x             y                   tmits STAT         goodmeas
+      BPM Name pulse id x offset (mm) y offset (mm) num particles (coulomb) stat good measurement
+          name  pulseId             x             y                   tmits stat         goodmeas
  BPMS:LI11:501    71311    0.45966175    0.81614506                 1.0E-10    1               15
  BPMS:LI11:501    71312    -0.9996438    -0.9657358                 1.0E-10    1               15
  BPMS:LI11:501    71313   -0.28856283    0.69943863                 1.0E-10    1               15

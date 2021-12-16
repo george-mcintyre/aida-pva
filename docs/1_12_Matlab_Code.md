@@ -49,11 +49,12 @@ In matlab 2012 you can't chain functions together so instead of writing this:
 ```matlab
 mstruct = ML(pvaRequest('NDRFACET:BUFFACQ').with('BPMD', 57).with('BPMS', { 'BPMS:LI11:501' }).get())
 mstruct =
+  struct with fields:
             size: 1
-          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'stat'  'good measurement'}
            units: []
     descriptions: []
-      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+      fieldnames: {'name'  'pulseId'  'x'  'y'  'tmits'  'stat'  'goodmeas'}
           values: [1x1 struct]
 ```
 
@@ -66,10 +67,10 @@ builder.with('BPMS', { 'BPMS:LI11:501' });
 mstruct = ML(builder.get())
 mstruct =
             size: 1
-          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'stat'  'good measurement'}
            units: []
     descriptions: []
-      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+      fieldnames: {'name'  'pulseId'  'x'  'y'  'tmits'  'STAT'  'goodmeas'}
           values: [1x1 struct]
 ```
 
@@ -254,17 +255,17 @@ builder.with('BPMS', { 'BPMS:LI11:501' });
 mstruct = ML(builder.get())
 mstruct =
             size: 1
-          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'STAT'  'good measurement'}
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'stat'  'good measurement'}
            units: []
     descriptions: []
-      fieldnames: {'id'  'STAT'  'tmits'  'goodmeas'  'name'  'y'  'x'}
+      fieldnames: {'name'  'pulseId'  'x'  'y'  'tmits'  'stat'  'goodmeas'}
           values: [1x1 struct]
 
-mstruct.values.id
+mstruct.values.pulseId
 ans =
        75785
 
-mstruct.values.STAT
+mstruct.values.stat
 ans =
      1
 
@@ -316,7 +317,7 @@ mstruct =
           labels: {'status'  'bact/vact'}
            units: []
     descriptions: []
-      fieldnames: {'bact_vact'  'status'}
+      fieldnames: {'status'  'bact_vact'}
           values: [1x1 struct]
 
 mstruct.values.status(1)

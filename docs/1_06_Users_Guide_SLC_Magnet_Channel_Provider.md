@@ -199,7 +199,7 @@ mstruct =
           labels: {'status'  'bact/vact'}
            units: []
     descriptions: []
-      fieldnames: {'bact_vact'  'status'}
+      fieldnames: {'status'  'bact_vact'}
           values: [1x1 struct]
 
 ans =
