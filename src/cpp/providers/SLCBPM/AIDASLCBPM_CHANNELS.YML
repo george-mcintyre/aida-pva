@@ -47,11 +47,11 @@ configurations:
           name: z
           units: meters
           description: BPM z position
-        - label: HSTA
-          name: HSTA
+        - label: hsta
+          name: hsta
           description: 32 bit field
-        - label: STATS
-          name: STATS
+        - label: stat
+          name: stat
           description: 32 bit field
     channels:
       - E163BMLN:BPMS

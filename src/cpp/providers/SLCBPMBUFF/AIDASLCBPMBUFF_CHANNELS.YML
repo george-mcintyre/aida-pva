@@ -29,7 +29,7 @@ configurations:
           name: name
           description: Name of BPM
         - label: pulse id
-          name: id
+          name: pulseId
           description: pulse id
         - label: x offset
           name: x
@@ -43,8 +43,8 @@ configurations:
           name: tmits
           units: coulomb
           description: Number of particles
-        - label: STAT
-          name: STAT
+        - label: stat
+          name: stat
           description: 32 bit field
         - label: good measurement
           name: goodmeas
