@@ -239,18 +239,14 @@ try
     builder = pvaRequest('KLYS:LI31:31:TACT');
     builder.with('BEAM', 8);
     builder.with('DGRP', 'DEV_DGRP');
-    table = ML(builder.set(0));
-    labels = table.labels
-    status = table.values.STATS(1:8)
+    statuses = ML(builder.set(0));
+    status = statuses(1)
 catch e
     handleExceptions(e);
 end
 
-labels =
-    'BPM Name'    'x offset (mm)'    'y offset (mm)'    [1x23 char]    'z position (meters)'    'HSTA'    'STATS'
-
 status =
-     0     0     0     0     0     0     0     0
+     0
 ```
 
 ```matlab
@@ -258,8 +254,8 @@ try
     builder = pvaRequest('KLYS:LI31:31:TACT');
     builder.with('BEAM', 8);
     builder.with('DGRP', 'DEV_DGRP');
-    table = ML(builder.set(90.0));
-    phas = table.values.status
+    statuses = ML(builder.set(90.0));
+    phas = statuses(1)
 catch e
     handleExceptions(e);
 end

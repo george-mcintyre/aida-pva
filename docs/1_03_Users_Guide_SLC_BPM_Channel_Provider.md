@@ -5,8 +5,8 @@ information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md
 
 ## Summary
 
-Aquires SLC BPM orbit data, including the `name`, `x` (mm), `y` (mm), `tmit` (num particles), `z` position (m), `HSTA`
-and `STAT` of each bpm in a given DGRP, under a given measurement definition.
+Aquires SLC BPM orbit data, including the `name`, `x` (mm), `y` (mm), `tmit` (num particles), `z` position (m), `hsta`
+and `stat` of each bpm in a given DGRP, under a given measurement definition.
 
 ## Instances and Attributes
 
@@ -350,8 +350,8 @@ _________________________________________________
 
 get: LCLS_SL2:BPMS (BPMD=55)
     BPM Values:  123 rows retrieved: ✔
-       BPM Name x offset (mm) y offset (mm) num particles (coulomb) z position (meters) HSTA STATS
-           name             x             y                   tmits                   z HSTA STATS
+       BPM Name x offset (mm) y offset (mm) num particles (coulomb) z position (meters) hsta stat
+           name             x             y                   tmits                   z hsta stat
   BPMS:IA20:221   0.061334226  -0.061334226                     0.0           2015.5988    4     0
   BPMS:IA20:235     1.0534176    -1.0534176                     0.0           2015.9229    4     0
   BPMS:IA20:371   0.029374985  -0.029374985                     0.0           2019.8888    4     0
@@ -481,8 +481,8 @@ _________________________________________________
 
 get: P2BPMHER:BPMS (BPMD=38)
     BPM Values:  293 rows retrieved: ✔
-       BPM Name x offset (mm) y offset (mm) num particles (coulomb) z position (meters)   HSTA STATS
-           name             x             y                   tmits                   z   HSTA STATS
+       BPM Name x offset (mm) y offset (mm) num particles (coulomb) z position (meters)   hsta stat
+           name             x             y                   tmits                   z   hsta stat
  BPMS:PR10:8022   0.066477716  -0.066477716                     0.0           3333.5989     17     0
  BPMS:PR10:8032     1.0967255    -1.0967255                     0.0           3356.7275     17     0
  BPMS:PR10:8042   0.058775872  -0.058775872                     0.0            3364.437     17     0
@@ -782,8 +782,8 @@ _________________________________________________
 
 get: P2BPMHER:BPMS (SORTORDER=1, BPMD=38, N=1024)
     BPM Values:  293 rows retrieved: ✔
-       BPM Name x offset (mm) y offset (mm) num particles (coulomb) z position (meters)   HSTA STATS
-           name             x             y                   tmits                   z   HSTA STATS
+       BPM Name x offset (mm) y offset (mm) num particles (coulomb) z position (meters)   hsta stat
+           name             x             y                   tmits                   z   hsta stat
  BPMS:PR10:6012    0.06399027   -0.06399027                     0.0           3128.0562     17     0
  BPMS:PR10:6022     1.0627301    -1.0627301                     0.0           3135.6562     20     0
  BPMS:PR10:6032    0.08438437   -0.08438437                     0.0            3143.256     17     0
