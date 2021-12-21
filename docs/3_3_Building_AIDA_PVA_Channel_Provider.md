@@ -305,16 +305,41 @@ INFO: Server Ready: 27.064s
 ```
 3. Run some tests.  See [Testing](2_5_4_Testing_Framework.md) for information on how to test.
 
-### When you are happy push the Channel Provider to Production
-1. Log into `SLCSHR` account on `MCCDEV`
-2. `BUILDSHR AIDASLCDB` - creates a test sharable
-3. Logout of `SLCSHR` account and back in as yourself 
-4. `TESTSHRX AIDASLCDB /dev`  - sets a logical name so that local executables use that shareable in `SLCSHR` and not any other. 
-5. Test to verify all is working 
-6. Log into `SLCSHR` account on `MCCDEV` 
-7. `DEVSHR AIDASLCDB` - creates a test shareable in a place where all `MCCDEV` users are using it by default
-8. Leave for a few days to make sure no problems surface 
-9. `NEWSHR AIDASLCDB` - create production shareable and releases it into production - so all servers and clients are using it
+### Push the Channel Provider to Production
+Follow the steps below to push the channel provider to production.
+#### Create a TEST sharable
+  1. Log into `SLCSHR` account on `MCCDEV`
+  2. Create `TEST` sharable
+```shell
+MCCDEV> BUILDSHR AIDASLCDB SAME
+```
+
+@note You have to specify one of `SAME`, `MINOR`, or `MAJOR`.  Since no one links against these shareables, `SAME` should always
+be appropriate.
+
+#### Set a logical name so that in your session, executables use the TEST shareable in SLCSHR
+  1. Logout of `SLCSHR` account and back in as yourself
+  2. Set logical name
+```shell
+MCCDEV> TESTSHR AIDASLCDB
+```
+  3. Make sure that the forwarder is running on MCCDEV using WARMSLC then start AIDASLCDB with WARMSLC
+  4. Run some client tests (pvcall etc) to verify all is working 
+
+#### Create a TEST shareable in a place where all MCCDEV users will use it by default
+  1. Log into `SLCSHR` account on `MCCDEV` 
+  2. Create shared `TEST` sharable
+```shell
+MCCDEV> DEVSHR AIDASLCDB
+```  
+  3. Leave for a few days to make sure no problems surface
+
+#### Create a production shareable and release it into production
+  1. Create production shareable
+```shell
+MCCDEV> NEWSHR AIDASLCDB
+```
+  3. All servers and clients will now use this version
 
 ## Making Changes to a Channel Provider
 ### Reserve the code for changes
