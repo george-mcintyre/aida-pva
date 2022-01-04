@@ -1,7 +1,7 @@
 /** @file
  *  @brief Utility Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDASLCUTILLIB
- *     **ATTRIBUTES**=JNI
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
 #include "aida_pva.h"
 #include "AIDASLCUTIL_SERVER.h"

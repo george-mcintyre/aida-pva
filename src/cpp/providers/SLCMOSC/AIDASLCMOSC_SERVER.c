@@ -1,7 +1,7 @@
 /** @file
  *  @brief Master Oscillator Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDASLCMOSCLIB
- *     **ATTRIBUTES**=JNI
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
 #include "aida_pva.h"
 #include "AIDASLCMOSC_SERVER.h"

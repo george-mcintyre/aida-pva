@@ -1,7 +1,7 @@
 /** @file
  *  @brief Model Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDASLCMODELLIB
- *     **ATTRIBUTES**=JNI
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
 #include "aida_pva.h"
 #include "AIDASLCMODEL_SERVER.h"

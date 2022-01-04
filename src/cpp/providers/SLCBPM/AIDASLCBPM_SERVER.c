@@ -1,7 +1,7 @@
 /** @file
  *  @brief BPM Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDASLCBPMLIB
- *     **ATTRIBUTES**=JNI
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
 #include "aida_pva.h"
 #include "AIDASLCBPM_SERVER.h"

@@ -1,7 +1,7 @@
 /** @file
  *  @brief Klystron Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDASLCKLYSLIB
- *     **ATTRIBUTES**=JNI
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
 #include "aida_pva.h"
 #include "AIDASLCKLYS_SERVER.h"

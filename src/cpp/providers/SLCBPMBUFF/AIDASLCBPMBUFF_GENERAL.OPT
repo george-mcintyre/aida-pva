@@ -5,11 +5,8 @@
 !
 ! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
 
-case_sensitive=YES
+SLCLIBS:AIDA_PVALIB.OLB/INCLUDE=AIDASLCBPMBUFF_SERVER  ! copy to DEV direct and remove this line for BUILDTEST /DEF
 SLCLIBS:STANDALONELIB.OLB/LIB
-SLCLIBS:AIDASLCBPMBUFFLIB.OLB/LIB
-SLCLIBS:STANDALONELIB.OLB/LIB
-case_sensitive=NO
 
   AIDASHR/shareable
   SYSUTIL/shareable

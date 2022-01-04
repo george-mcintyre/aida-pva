@@ -1,5 +1,7 @@
 /** @file
  *  @brief Reference Server implementation.
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
 #include "aida_pva.h"
 #include "AIDASLCREF_SERVER.h"

@@ -1,7 +1,7 @@
 /** @file
  *  @brief SLC Magnet Native Provider implementation.
- *     **MEMBER**=SLCLIBS:AIDASLCMAGNETLIB
- *     **ATTRIBUTES**=JNI
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
+ *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  *
  * Magnet Server implementation
  */
