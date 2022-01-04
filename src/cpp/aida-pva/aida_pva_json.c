@@ -216,7 +216,7 @@ case '\n': ++ state.cur_line;  state.cur_col = 0; /* FALLTHRU */ \
 case ' ': /* FALLTHRU */ case '\t': /* FALLTHRU */ case '\r'
 
 #define string_add(b)  \
-do { if (!state.first_pass) string [string_length] = b;  ++ string_length; } while (0);
+{ if (!state.first_pass) string [string_length] = b;  ++ string_length; }
 
 #define line_and_col \
 state.cur_line, state.cur_col
