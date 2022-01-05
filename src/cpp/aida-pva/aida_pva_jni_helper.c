@@ -4,7 +4,7 @@
  *  by the Native Channel Provider because they are further abstracted away by the
  *  aida_server_helper.
  *
- *     **MEMBER**=SLCLIBS:STANDALONELIB
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
  *     **ATTRIBUTES**=JNI
  *
  */

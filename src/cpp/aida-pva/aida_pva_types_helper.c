@@ -4,7 +4,7 @@
  *  These functions provide all of the features related to processing of Arguments and Table
  *  that allow the Channel Provider to implement its service.
  *
- *     **MEMBER**=SLCLIBS:STANDALONELIB
+ *     **MEMBER**=SLCLIBS:AIDA_PVALIB
  *     **ATTRIBUTES**=JNI
  *
  *  - ascanf() and avscanf() to scan arguments into provided variables.
@@ -549,6 +549,10 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 		json_value* arrayRoot = NULL;
 		unsigned int arrayCount;
 		if (isArray) {
+			if (jsonType != json_array) {
+				SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(UNABLE_TO_GET_DATA_EXCEPTION,
+						"Array expected but found scalar or string: %s", argumentName, EXIT_FAILURE)
+			}
 			arrayRoot = jsonRoot;
 			arrayCount = arrayRoot->u.array.length;
 		}
