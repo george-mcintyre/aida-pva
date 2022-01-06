@@ -245,7 +245,7 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 		RETURN_NULL_TABLE
 	}
 
-	if (limitCheck && strcasecmp(limitCheck, "ALL") != 0 && strcasecmp(magnetFunction, "SOME") != 0) {
+	if (limitCheck && strcasecmp(limitCheck, "ALL") != 0 && strcasecmp(limitCheck, "SOME") != 0) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "LIMITCHECK parameter must be ALL or SOME");
 		FREE_MEMORY
 		RETURN_NULL_TABLE
