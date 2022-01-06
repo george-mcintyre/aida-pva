@@ -358,7 +358,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					*((double*)target) = doubleTarget;
 				};
-				return EXIT_SUCCESS;
+				continue;
 			}
 			// Try float
 			if (getFloatArgument(arguments, argumentName, (float*)&floatTarget) == EXIT_SUCCESS) {
@@ -367,7 +367,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					*((float*)target) = floatTarget;
 				};
-				return EXIT_SUCCESS;
+				continue;
 			}
 		}
 
@@ -392,7 +392,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					*((double**)target) = doubleArrayTarget;
 				};
-				return EXIT_SUCCESS;
+				continue;
 			}
 
 			// Then try float array
@@ -415,7 +415,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 				} else {
 					*((float**)target) = floatArrayTarget;
 				};
-				return EXIT_SUCCESS;
+				continue;
 			}
 		}
 
