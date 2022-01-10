@@ -130,9 +130,9 @@ MCCDEV> set def [.AIDASLCDB]
  %STRIP_C_COMMENTS-I, producing file REF_C_INC:AIDASLCDB_SERVERNO_COMMENTS_H
  MCCDEV>
 ```
-2. Copy STANDALONELIB_XFR_ALPHA.OPT to your directory, rename and add to CMS
+2. Copy AIDA_PVALIB_XFR_ALPHA.OPT to your directory, rename and add to CMS
 ```shell
-MCCDEV> COPY [-.AIDA-PVA]STANDALONELIB_XFR_ALPHA.OPT AIDASLCDB_XFR_ALPHA.OPT
+MCCDEV> COPY [-.AIDA-PVA]AIDA_PVALIB_XFR_ALPHA.OPT AIDASLCDB_XFR_ALPHA.OPT
 MCCDEV>
 MCCDEV> cmp AIDASLCDB_XFR_ALPHA.OPT
 Processing file DATA_DISK_SLC:[]AIDASLCDB_XFR_ALPHA.OPT;1
@@ -162,12 +162,12 @@ Note:  using NOOPT by default for DECC
 !
 ! Name: AIDASLCDB_GENERAL.OPT
 !
-! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
+! Rem: Option file to link Channel Provider with AIDA-PVA Modules in AIDA_PVALIB
 
 case_sensitive=YES
-SLCLIBS:STANDALONELIB.OLB/LIB
-SLCLIBS:AIDASLCDBLIB.OLB/LIB
-SLCLIBS:STANDALONELIB.OLB/LIB
+SLCLIBS:AIDA_PVALIB.OLB/LIB
+SLCLIBS:AIDA_PVAIB.OLB/LIB
+SLCLIBS:AIDA_PVALIB.OLB/LIB
 case_sensitive=NO
 
   AIDASHR/shareable
@@ -383,8 +383,22 @@ _Remark: Update SLC DB Channel Configuration OPT File
 SlcCMS> exit 
 MCCDEV>
 ```
-6. After you've made changes, push Header and OPT back to CMS
-@note The C file will be pushed back to CMS during build process later
+6. Build and test
+```shell
+MCCDEV> LIBRARY /CREATE AIDASLCDB_DEVLIB
+MCCDEV> CINC *.C
+ Processing file DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_SERVERC;13
+**MEMBER**=SLCLIBS:AIDASLCDBLIB overridden to AIDASLCDB_DEVLIB
+Note:  using NOOPT by default for DECC
+    %LIBRAR-S-INSERTED, module SLC_SERVER inserted in DATA_DISK_SLC:[.AIDASLCDB]AIDASLCDB_DEVLIB.OLB;1
+MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
+Processing AIDASLCDB
+ Building Shareable image TST_AIDASLCDB.EXE
+%BUILDTEST-I, using AIDASLCDB_DEVLIB/INCL=(all-modules)
+MCCDEV> 
+```
+
+7. After you've verified the changes, push Header and OPT back to CMS
 
 ```shell
 MCCDEV> CMP AIDASLCDB_SERVER.H,AIDASLCDB_GENERAL.OPT

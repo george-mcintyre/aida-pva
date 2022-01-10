@@ -1,6 +1,6 @@
 # 2.5.2 - AIDA-PVA Module Macros
 
-The AIDA-PVA Module is a module contained in the `STANDALONELIB` library that provides all the boilerplate functionality
+The AIDA-PVA Module is a module contained in the `AIDA_PVALIB` library that provides all the boilerplate functionality
 needed to respond to **get** and **set** requests, marshal and unmarshal objects, and simple types across the JNI
 boundary and between your Channel Provider, VMS, and any AIDA Module in `AIDASHR` that you need.
 

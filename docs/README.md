@@ -6,7 +6,7 @@ _PVAccess_ (**PVA**) communications layer to transport the requests to AIDA-PVA 
 
 AIDA-PVA offers unprecedented ease of use as it leverages the EPICS connection protocol, PVAccess, to standardize its namespace
 and streamline operations.  It is easy to implement new Channel Providers in this framework due to the new _AIDA-PVA Module_ in 
-`STANDALONELIB` which removes the need for boilerplate code so developers can concentrate on the job of communicating with the back end
+`AIDA_PVALIB` which removes the need for boilerplate code so developers can concentrate on the job of communicating with the back end
 systems.  The capabilities and configurability of the framework have been extended, with greater flexibility in the types and complexity of 
 arguments that can be passed, as well as dynamic channel configuration with pattern matching.  The integration with EPICS will allow clients
 that already use EPICS to leverage existing code to allow AIDA-PVA to coexist with other EPICS data sources.

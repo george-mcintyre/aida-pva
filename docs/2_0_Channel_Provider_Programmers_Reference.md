@@ -18,7 +18,7 @@ _The framework has five main features._
   Provider endpoints.
 * Bi-directionally **Marshalling, Transporting, and Converting** arguments and data.
 * Raising, and **Propagating Exceptions** throughout the framework, back to clients, and on to logging services
-* Providing access to the **AIDA-PVA Module** in **STANDALONELIB** that implements the boilerplate functions required to
+* Providing access to the **AIDA-PVA Module** in **AIDA_PVALIB** that implements the boilerplate functions required to
   service channel requests
 * Providing access to **AIDASHR**, to allow Channel Provider code to leverage legacy **AIDA Modules** for accessing
   devices, databases and other services from Channel Data Sources on the SLAC Network.
@@ -28,17 +28,21 @@ _The framework has five main features._
 1. When your Channel Provider starts up, the AIDA-PVA Service that started it will read the [Channel Configuration File](2_3_CHANNELS_YML_file.md) that
    you've provided to determine which EPICS search requests it should respond to.
 2. Subsequently, when clients send requests containing references to one of those **Channels**,
-3. and EPICS search request is propagated across the EPICS network
-4. The **EPICS Forwarder**, that is constantly listening for requests, will forward it to all the AIDA-PVA Services
-   running in VMS.
+3. and the EPICS search request is propagated across the EPICS network to all hosts referenced in the `AIDA_PVA_ADDR_LIST` 
+4. The **EPICS Forwarder**, that is constantly listening for requests to its host, will forward it to all the AIDA-PVA Services
+   running on that localhost. 
 5. When your AIDA-PVA Service recognizes the channel and the request, it will respond positively to the search request on your
    behalf,
 6. opening a direct communications channel to the client once the client accepts the response.
 7. Now the AIDA-PVA Service will ask your Channel Provider to service the request and will return the results you give it.
-8. By leveraging services in the AIDA-PVA Module in `STANDALONELIB` and legacy AIDA Modules in `AIDASHR` to access the
+8. By leveraging services in the AIDA-PVA Module in `AIDA_PVALIB` and legacy AIDA Modules in `AIDASHR` to access the
    Channel Data source, you can service those requests.
 
 ![Usine a gaz with annotations](images/usine-a-gaz-wa.png)
+
+@note If the client's `AIDA_PVA_ADDR_LIST` contains more than one host or network then the requests may be intercepted by more than one EPICS_FORWARDER (on each host specified).  The client will 
+then receive an EPICS response that will indicate that more than one Channel Provider can service the request but it will automatically select the first one to reply, and lock that choice
+from then on.
 
 As an AIDA-PVA Channel Provider writer you will be responsible for:
 
@@ -48,7 +52,7 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
 
 ### Components
 
-* Your **Channel Provider Code** => produces `AIDASLC<provider_name>.EXE` shared image.  e.g.:
+* Your **Channel Provider Code** contained in `AIDA_PVALIB` => produces `AIDASLC<provider_name>.EXE` shared image.  e.g.:
   * `AIDASLCDB.EXE`
   * `AIDASLCBPM.EXE`
   * `AIDASLCBPMBUFF.EXE`
@@ -57,7 +61,7 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
   * `AIDASLCMODEL.EXE`
   * `AIDASLCMOSC.EXE`
   * `AIDASLCUTIL.EXE`
-* The **STANDALONELIB** - with the following modules collectively known as **AIDA-PVA Module**:
+* The remainder of **AIDA_PVALIB** - with the following modules collectively known as **AIDA-PVA Module**:
   * AIDA_PVA_SERVER_HELPER.c - **Helper functions for the AIDA-PVA Providers**
   * AIDA_PVA_JNI_HELPER.c - Used by the AIDA-PVA Module to interoperate in a JNI environment
   * AIDA_PVA_TYPES_HELPER.c - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
@@ -83,7 +87,7 @@ As an AIDA-PVA Channel Provider writer you will be responsible for:
 
 As a Channel Provider programmer you will be primarily concerned with creating a shared image for SLCSHR. Each
 Channel Provider is a distinct image in SLCSHR. The procedure to create one will compile up your C source file(s) and
-link them with STANDALONELIB to resolve the calls you make to functions in the AIDA-PVA Module, and to AIDASHR for any
+link them with AIDA_PVALIB to resolve the calls you make to functions in the AIDA-PVA Module, and to AIDASHR for any
 AIDA Modules that you need to implement your service.
 
 AIDA-PVA SERVICE is the process that will launch your shared library, calling the entry-points you implement, as required.
@@ -218,4 +222,14 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	return table;
 }
 ```
+## Comparison to legacy AIDA implementation
+- You should use the same Legacy AIDA Modules in AIDASHR to connect to the AIDA data sources so the data returned will be the same as before
+- Instead of CORBA you will use EPICs to transit your request from client to service - but the framework takes care of all of that so you don't need to code anything.  In fact if you're modifying Legacy AIDA data sources you'll need to remove code that handles JNI and CORBA.
+- You have a new AIDA-PVA Module in AIDA_PVALIB to do all of the boilerplate functionality that had to be coded in the Legacy AIDA data sources including JNI, Argument processing, exception handling, memory management, etc.
+- There is a new CHANNELS.YML file that is used to specify the supported channels, arguments, and return types - these are no longer hard coded inside the datasource code.
+- Clients will use aida-pva-client instead of the legacy AIDA-Client library to facilitate access.  But now this is optional as they can code directly in EPICS PvAccess if they want. 
+
+![Aida Old And New](images/aida-old-and-new.png)
+
+## More information
 For step by step details of how to implement your Channel Provider see [Channel Provider Implementation Reference](2_1_Channel_Provider_Implementation_Reference.md).

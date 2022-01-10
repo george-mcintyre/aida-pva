@@ -43,16 +43,16 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
 
 @see [Building an AIDA-PVA Channel Provider](3_3_Building_AIDA_PVA_Channel_Provider.md) for instructions on how to build one.
 
-### AIDA-PVA Module in STANDALONELIB.OLB
+### AIDA-PVA Module in AIDA_PVALIB.OLB
 * Modules:
     * `AIDA_PVA_SERVER_HELPER` - **Helper functions for the AIDA-PVA Providers**
     * `AIDA_PVA_JNI_HELPER` - Used by the AIDA-PVA Module to interoperate in a JNI environment
     * `AIDA_PVA_TYPES_HELPER` - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
     * `NATIVECHANNELPROVIDERJNI` - JNI Entry points from AIDA-PVA.JAR
     * `AIDA_PVA_JSON` - Used by AIDA-PVA Module to parse JSON
-* Build from CMS_STANDALONE but original code from [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/aida-pva)
+* Build from CMS_AIDA_PVA but original code from [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/aida-pva)
 
-@see [Building AIDA-PVA Service](3_2_Building_AIDA_PVA_into_STANDALONELIB.md) for instructions on how to build it.
+@see [Building AIDA-PVA Service](3_2_Building_AIDA_PVA_into_AIDA_PVALIB.md) for instructions on how to build it.
 
 ### AIDA-PVA Header Files
 * Channel Provider header files in CMS_C_INC
@@ -181,13 +181,13 @@ configurations:
 ## A note on linking
 ![AIDA-PVA Linking](images/aida-pva-link.png)
 1. The AIDA-PVA Service loads the Channel Provider shared image, but it does not call any functions declared in the library, `AIDASLCDB.OLB`, that creates that image.
-2. The AIDA-PVA Service instead calls JNI entry-points which are actually declared in the AIDA-PVA Module in `STANDALONELIB.OLB`.
+2. The AIDA-PVA Service instead calls JNI entry-points which are actually declared in the AIDA-PVA Module in `AIDA_PVALIB.OLB`.
 3. The AIDA-PVA Service has access to them because the Channel Provider is linked using the JNI entry-point transfer vectors file, `AIDASLCDB_XFR_ALPHA.OPT`, to resolve the references in the AIDA-PVA Module.
-4. Functions implementing JNI entry-points, declared in the AIDA-PVA Module in `STANDALONELIB.OLB`, subsequently call Channel Provider entry-points declared in `AIDASLCDB.OLB`.
-5. Whenever the Channel Provider needs help it calls back to Helper functions declared in the AIDA-PVA Module in `STANDALONELIB.OLB`.
+4. Functions implementing JNI entry-points, declared in the AIDA-PVA Module in `AIDA_PVALIB.OLB`, subsequently call Channel Provider entry-points declared in `AIDASLCDB.OLB`.
+5. Whenever the Channel Provider needs help it calls back to Helper functions declared in the AIDA-PVA Module in `AIDA_PVALIB.OLB`.
 
 @note
-When linking the Channel Provider, `AIDASLCDB.OLB` with the AIDA-PVA Module in `STANDALONELIB.OLB`, to create the Channel Provider shared image, `AIDASLCDB.EXE`, you need to explicitly reference the JNI entry-points because even though the Channel Provider code in `AIDASLCDB.OLB` doesn't reference them, the AIDA-PVA Service, `AIDA-PVA.JAR`, will need to have them available when it loads the Channel Provider image.
+When linking the Channel Provider, `AIDASLCDB.OLB` with the AIDA-PVA Module in `AIDA_PVALIB.OLB`, to create the Channel Provider shared image, `AIDASLCDB.EXE`, you need to explicitly reference the JNI entry-points because even though the Channel Provider code in `AIDASLCDB.OLB` doesn't reference them, the AIDA-PVA Service, `AIDA-PVA.JAR`, will need to have them available when it loads the Channel Provider image.
 
 This is done using the associated transfer vectors file. (excerpt from AIDASLCDB_XFR_ALPHA.OPT file)
 ```text
@@ -295,7 +295,7 @@ LENS:????:*//DVIC, ...]
 
 ### 5 - The Channel Provider will load Legacy AIDA Modules in AIDASHR
 
-### 6 - The Channel Provider will have also been linked with AIDA-PVA Modules in STANDALONELIB
+### 6 - The Channel Provider will have also been linked with AIDA-PVA Modules in AIDA_PVALIB
 
 ## Starting Processes
 To enable AIDA-PVA to be fully integrated into control system startup, submit files have been provided to start the processes.

@@ -78,12 +78,12 @@ The source code is found in the github repository [slaclab/aida-pva](https://git
     - **except** - _exception classes_: @ref edu.stanford.slac.except.AidaInternalException "AidaInternalException", @ref edu.stanford.slac.except.MissingRequiredArgumentException "MissingRequiredArgumentException", @ref edu.stanford.slac.except.ServerInitialisationException "ServerInitialisationException", @ref edu.stanford.slac.except.UnableToGetDataException "UnableToGetDataException", @ref edu.stanford.slac.except.UnableToSetDataException "UnableToSetDataException", @ref edu.stanford.slac.except.UnsupportedChannelException "UnsupportedChannelException", @ref edu.stanford.slac.except.UnsupportedChannelTypeException "UnsupportedChannelTypeException"
 - **slac.aida**
   - @ref slac.aida.NativeChannelProvider "NativeChannelProvider"
-    - _The native endpoints that link to the JNI entry-points in the Channel Provider C code, implemented in AIDA-PVA Module in `STANDALONELIB`_.
+    - _The native endpoints that link to the JNI entry-points in the Channel Provider C code, implemented in AIDA-PVA Module in `AIDA_PVALIB`_.
 
 ### AIDA-PVA is Strangely Linked :)
 ![](images/aida-pva-link.png)
 1. The AIDA-PVA Service loads the Channel Provider shared image but it does not call any functions in the image that it loads.
-2. The AIDA-PVA Service calls JNI Entry points implemented in the AIDA-PVA Module in `STANDALONELIB`
+2. The AIDA-PVA Service calls JNI Entry points implemented in the AIDA-PVA Module in `AIDA_PVALIB`
 3. It has access to them because the Channel Provider is linked with the AIDA-PVA Module to resolve those JNI references.
 4. AIDA-PVA Module calls the Channel Provider entrypoints when it is called by the AIDA-PVA Service.
 5. Whenever the Channel Provider needs help it calls the Helper functions in AIDA-PVA Module
@@ -139,7 +139,7 @@ case_sensitive=NO
 5. AIDA-PVA Module endpoints are called and will return results from the Channel Providers
 
 ## AIDA-PVA Module
-The AIDA-PVA module is a set of C files compiled into Modules and inserted into `STANDALONELIB`, as well as a set of 
+The AIDA-PVA module is a set of C files compiled into Modules and inserted into `AIDA_PVALIB`, as well as a set of 
 header files that are used to reference the functions declared in the Modules and to define types that they use.  
 Module header files are used internally by the AIDA-PVA Module.
 
@@ -163,7 +163,7 @@ Module header files are used internally by the AIDA-PVA Module.
   - aida_pva_types.h
   - aida_pva_uri.h
 
-The files are all committed to CMS and in STANDALONELIB.  The headers are all committed into C_INC.
+The files are all committed to CMS and in AIDA_PVALIB.  The headers are all committed into C_INC.
 
 For an explanation of the functions provided by AIDA-PVA Module see [AIDA-PVA Module Documentation](2_5_1_AIDA-PVA_Module_Functions.md)
 
@@ -230,7 +230,7 @@ For a full description of how to deploy AIDA-PVA in SLAC see [A DevOps Guide to 
 ## Building AIDA-PVA SERVICE
 see [Building AIDA-PVA SERVICE](3_1_Building_AIDA_PVA_Service.md)
 ## Building AIDA-PVA Module
-see [Building AIDA-PVA Module](3_2_Building_AIDA_PVA_into_STANDALONELIB.md)
+see [Building AIDA-PVA Module](3_2_Building_AIDA_PVA_into_AIDA_PVALIB.md)
 ## Building AIDA-PVA a Channel Provider
 see [Building AIDA-PVA a Channel Provider](3_3_Building_AIDA_PVA_Channel_Provider.md)
 

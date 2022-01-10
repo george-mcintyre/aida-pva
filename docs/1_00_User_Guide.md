@@ -229,42 +229,102 @@ public class AidaPvaRunner {
 ```
 
 ### From Matlab
-The java libraries available to matlab have been updated and the `aidainit()` and other functions (`aidaget()`, `ezrpc()`, `pvarpc()`, and `nturi()`) 
-have been modified to allow interoperability with AIDA-PVA. Here are examples of 
-accessing AIDA-PVA Channel Providers from matlab.  To see what has changed in malab please see 
-the [AIDA-PVA matlab documentation](1_12_Matlab_Code.md).
+The java libraries available to matlab have been updated and new functions have been added:
+- @ref aidapvainit.m "aidapvainit" - initialise matlab for EPICS and AIDA-PVA
+- @ref ezrpc.m "ezrpc(nturi)" - use EasyPVA to call AIDA-PVA data source over EPICS rpc
+- @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(String) "pvGet(channel)", @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(String, AidaType) "pvGet(channel, type)", @ref pvaGetM.m "pvaGetM(channel [, type])" - use aida-pva-client to get a value using AIDA-PVA over EPICS rpc
+- @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaRequest() "pvaRequest(channel)" - get a builder to create a request to AIDA-PVA.  Can build requests for execution with aida-pva-client, EasyPVA, or PvaClient. 
+  - @ref edu.stanford.slac.aida.client.AidaPvaRequest.get() ".get()" - build and execute the request to get a value using aida-pva-client over EPICS rpc
+  - @ref edu.stanford.slac.aida.client.AidaPvaRequest.returning() ".returning(type)" - specify the desired return type on the request builder
+  - @ref edu.stanford.slac.aida.client.AidaPvaRequest.set() ".set(value)" - build and execute the request to set a value using aida-pva-client over EPICS rpc
+  - @ref edu.stanford.slac.aida.client.AidaPvaRequest.uri() ".uri()" - get the NTURI generated so far by this builder
+  - @ref edu.stanford.slac.aida.client.AidaPvaRequest.with() ".with(name, value)" - add a parameter to the request builder
+- @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet() "pvSet(value)", pvaSetM(value) - use aida-pva-client to set a value using AIDA-PVA over EPICS rpc
+- @ref pvarpc.m "pvarpc(nturi)" - use PvaClient to call AIDA-PVA data source over EPICS rpc
+- @ref ML.m "ML" - coerce returned values into **M**at**L**ab type.
+- etc. 
 
-There are four ways to access AIDA-PVA Channel Providers from matlab.  The 
-preferred way is using PvaClient, but aida-pva-client is the simplest.
+See [AIDA-PVA matlab documentation](1_12_Matlab_Code.md) for full details.
 
-#### aida-pva-client
+#### TL;DR.
+Here are some simple examples.
+
+##### Simple Get
 ```matlab
-    aidainit
-    try
-        floatResponse = request('XCOR:LI03:120:LEFF').returning(FLOAT).get();
-    catch e
-       handleExceptions(e);
-    end
-```
-#### using aidaget
-```matlab
-    aidainit
-    floatResponse = aidaget('XCOR:LI03:120:LEFF','FLOAT')
-```
-#### EasyPVA
-```matlab
-    aidainit
-    response = ezrpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
-    floatResponse = response.getSubField(PVFloat.class, "value")
-```
-#### PvaClient
-```matlab
-    aidainit
-    response = pvarpc(nturi('XCOR:LI03:120:LEFF', 'type', 'FLOAT'))    
-    floatResponse = response.getSubField(PVFloat.class, "value")
+response = pvaGet('XCOR:LI31:41:BCON', AIDA_FLOAT)
+response =
+     5
+ 
+response = pvaGetM('XCOR:LI31:41:BCON', AIDA_FLOAT_ARRAY)
+response =
+     5
+ 
+response = pvaGetM('DEV_DGRP:XCOR:BDES')
+response =
+            size: 4
+          labels: {'name of magnet'  'secondary values'}
+           units: []
+    descriptions: []
+          values: [1x1 struct]
+ 
+response.size
+ans =
+     4
+ 
+response.labels
+ans =
+    'name of magnet'    'secondary values'
+ 
+response.values.name
+ans =
+    'XCOR:LI31:41'    'XCOR:LI31:201'    'XCOR:LI31:301'    'XCOR:LI31:401'
 ```
 
-## AIDA-PVA Channel Providers
+##### Simple Set
+```matlab
+pvaSet('XCOR:LI31:41:BCON', 5.0);
+```
+
+##### Complex Example
+```matlab
+builder = pvaRequest('NDRFACET:BUFFACQ');
+builder.with('BPMD', 57);
+builder.with('BPMS', { 'BPMS:LI11:501' });
+mstruct = ML(builder.get())
+mstruct =
+            size: 1
+          labels: {'BPM Name'  'pulse id'  'x offset (mm)'  'y offset (mm)'  'num particles (coulomb)'  'stat'  'good measurement'}
+           units: []
+    descriptions: []
+      fieldnames: {'name'  'pulseId'  'x'  'y'  'tmits'  'stat'  'goodmeas'}
+          values: [1x1 struct]
+ 
+mstruct.values.pulseId
+ans =
+       75785
+ 
+mstruct.values.stat
+ans =
+     1
+ 
+mstruct.values.tmits
+ans =
+   1.0000e-10
+ 
+mstruct.values.name
+ans =
+    'BPMS:LI11:501'
+ 
+mstruct.values.x
+ans =
+    0.4598
+ 
+mstruct.values.y
+ans =
+    0.1861
+```
+
+## AIDA-PVA Channel Provider Documentation
 
 Here is the documentation for all the implemented AIDA-PVA channel providers.
 
