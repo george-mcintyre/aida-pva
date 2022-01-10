@@ -1250,7 +1250,7 @@ static int getDoubleArrayArgument(Arguments* arguments, char* path, double** tar
  */
 static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* path)
 {
-	for (int i = 0; i < arguments->floatingPointValuesCountCount; i++) {
+	for (int i = 0; i < arguments->floatingPointValuesCount; i++) {
 		if (strcasecmp(path, arguments->floatingPointValues[i].path) == 0) {
 			return &arguments->floatingPointValues[i];
 		}

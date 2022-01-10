@@ -181,29 +181,29 @@ Arguments toArguments(JNIEnv* env, jobject jArguments)
 	}
 
 	// If any floats or doubles add them to the allocated space
-	cArgs.floatingPointValuesCountCount = 0;
+	cArgs.floatingPointValuesCount = 0;
 	if (totalFloatingPoints > 0) {
 		// Loop through the FloatArgument list
-		for (int i = 0; i < floatCount; i++, cArgs.floatingPointValuesCountCount++) {
+		for (int i = 0; i < floatCount; i++, cArgs.floatingPointValuesCount++) {
 			jobject floatArgument = (*env)->CallObjectMethod(env, jFloatsList, argumentMethods.listGetMethod, i);
 			jobject name = (*env)->CallObjectMethod(env, floatArgument, argumentMethods.getFloatNameMethod);
 			jfloat value = (*env)->CallFloatMethod(env, floatArgument, argumentMethods.getFloatValueMethod);
 
 			// Add key and value to Arguments.
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].isFloat = true;
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].value.floatValue = value;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCount].path = toCString(env, name);
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCount].isFloat = true;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCount].value.floatValue = value;
 		}
 
-		for (int i = 0; i < doubleCount; i++, cArgs.floatingPointValuesCountCount++) {
+		for (int i = 0; i < doubleCount; i++, cArgs.floatingPointValuesCount++) {
 			jobject doubleArgument = (*env)->CallObjectMethod(env, jDoublesList, argumentMethods.listGetMethod, i);
 			jobject name = (*env)->CallObjectMethod(env, doubleArgument, argumentMethods.getDoubleNameMethod);
 			jdouble value = (*env)->CallDoubleMethod(env, doubleArgument, argumentMethods.getDoubleValueMethod);
 
 			// Add key and value to Arguments.
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].path = toCString(env, name);
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].isFloat = false;
-			cArgs.floatingPointValues[cArgs.floatingPointValuesCountCount].value.doubleValue = value;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCount].path = toCString(env, name);
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCount].isFloat = false;
+			cArgs.floatingPointValues[cArgs.floatingPointValuesCount].value.doubleValue = value;
 		}
 	}
 
@@ -844,9 +844,9 @@ jobject toTable(JNIEnv* env, Table table)
  */
 void releaseArguments(Arguments arguments)
 {
-	if (arguments.floatingPointValues && arguments.floatingPointValuesCountCount) {
+	if (arguments.floatingPointValues && arguments.floatingPointValuesCount) {
 		free(arguments.floatingPointValues);
-		arguments.floatingPointValuesCountCount = 0;
+		arguments.floatingPointValuesCount = 0;
 		arguments.floatingPointValues = NULL;
 	}
 	if (arguments.argumentCount && arguments.arguments) {

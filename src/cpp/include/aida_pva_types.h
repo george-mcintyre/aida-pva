@@ -126,7 +126,7 @@ typedef struct
 typedef struct
 {
 	int argumentCount;                                ///< The number of arguments sent with this request
-	int floatingPointValuesCountCount;                ///< The number of floating point numbers in the arguments of this request
+	int floatingPointValuesCount;                ///< The number of floating point numbers in the arguments of this request
 	Argument* arguments;                            ///< The array of Arguments
 	FloatingPointValue* floatingPointValues;        ///< The array of FloatingPointValue
 } Arguments;
