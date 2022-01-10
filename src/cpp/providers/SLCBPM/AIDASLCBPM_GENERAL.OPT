@@ -3,10 +3,10 @@
 !
 ! Name: AIDASLCBPM_GENERAL.OPT
 !
-! Rem: Option file to link Channel Provider with AIDA-PVA Modules in STANDALONELIB
+! Rem: Option file to link Channel Provider with AIDA-PVA Modules in AIDA_PVALIB
 
 SLCLIBS:AIDA_PVALIB.OLB/INCLUDE=AIDASLCBPM_SERVER  ! copy to DEV direct and remove this line for BUILDTEST /DEF
-SLCLIBS:STANDALONELIB.OLB/LIB
+SLCLIBS:AIDA_PVALIB.OLB/LIB
 
   AIDASHR/shareable
   SYSUTIL/shareable
