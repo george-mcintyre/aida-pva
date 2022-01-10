@@ -677,7 +677,7 @@ public class AidaPVHelper {
 
     /**
      * Convert the PVStructure field to the json string representation of a structure of that field,
-     * storing any ieee values found unchanged in the given FloatArgumentand DoubleArgument lists
+     * storing any ieee values found unchanged in the given FloatArgument and DoubleArgument lists
      *
      * @param field              the PVStructure field
      * @param fieldPath          the absolute path to the field from the root
