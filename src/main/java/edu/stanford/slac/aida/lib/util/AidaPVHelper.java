@@ -659,11 +659,12 @@ public class AidaPVHelper {
         List<String> arrayList = arrayFieldToStringList(field, fieldPath, floatArgumentList, doubleArgumentList);
 
         for (String subValue : arrayList) {  // For each string value in the retrieved list
-            // Comma separate entries
-            if (!firstTime) {
+            if (firstTime) {
+                firstTime = false;
+            } else {
+                // Comma separate entries
                 arrayBuilder.append(", ");
             }
-            firstTime = false;
 
             // Add to list
             arrayBuilder.append(subValue);
