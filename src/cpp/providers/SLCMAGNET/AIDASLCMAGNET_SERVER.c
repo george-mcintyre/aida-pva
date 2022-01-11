@@ -298,10 +298,10 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
 	limitedPrimList[(numPairsWithinLimits * PRIM_LEN)] = 0x0;
 	limitedMicrList[(numPairsWithinLimits * PRIM_LEN)] = 0x0;
 
-	// Get convert values to VMS floats
+	// Convert values to VMS floats
 	CONVERT_TO_VMS_FLOAT(limitedValuesList, numPairsWithinLimits);
 
-	// set the PVs specified by the lists of primary, micros, and units
+	// Set the PVs specified by the lists of primary, micros, and units
 	vmsstat_t status;
 	status = DPSLCMAGNET_SET(numPairsWithinLimits, limitedPrimList, limitedMicrList, limitedUnitList, secn,
 			limitedValuesList, magnetFunction);

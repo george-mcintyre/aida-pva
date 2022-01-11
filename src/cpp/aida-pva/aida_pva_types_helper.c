@@ -375,7 +375,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Try double array first
 			if (getDoubleArrayArgument(arguments, argumentName, (double**)&doubleArrayTarget, elementCount)
 					== EXIT_SUCCESS) {
-				if (aidaType == AIDA_FLOAT_TYPE) {  // use for float if that's what you need
+				if (aidaType == AIDA_FLOAT_ARRAY_TYPE) {  // use for float if that's what you need
 					// Allocate a new array and copy values
 					floatArrayTarget = calloc(*elementCount, sizeof(float));
 					if (!floatArrayTarget) {
@@ -398,7 +398,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Then try float array
 			if (getFloatArrayArgument(arguments, argumentName, (float**)&floatArrayTarget, elementCount)
 					== EXIT_SUCCESS) {
-				if (aidaType == AIDA_DOUBLE_TYPE) {  // use for double if that's what you need
+				if (aidaType == AIDA_DOUBLE_ARRAY_TYPE) {  // use for double if that's what you need
 					// Allocate a new array and copy values
 					doubleArrayTarget = calloc(*elementCount, sizeof(double));
 					if (!doubleArrayTarget) {

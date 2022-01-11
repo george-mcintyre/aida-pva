@@ -121,7 +121,7 @@ typedef struct
  * {@link Argument}s from the client are stored as strings, and converted to whatever type is required whenever
  * they are used.  But floating points are different because they require more precision and significance
  * than string representations can give.  For this reason floating points are additionally passed in the
- * FloatingPointValue array - #floatingPointValues - where #floatingPointValuesCountCount is the count of how many of them there are.
+ * FloatingPointValue array - #floatingPointValues - where #floatingPointValuesCount is the count of how many of them there are.
  */
 typedef struct
 {
