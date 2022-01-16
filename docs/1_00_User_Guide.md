@@ -230,7 +230,8 @@ public class AidaPvaRunner {
 
 ### From Matlab
 The java libraries available to matlab have been updated and new functions have been added:
-- @ref aidapvainit.m "aidapvainit" - initialise matlab for EPICS and AIDA-PVA
+- @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.AidaPvaStruct() "AidaPvaStruct()" - A structure to pass as the value argument to @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet() "pvaSet(value)", or to a request builder returned from @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaRequest() "pvaRequest(channel)" in a @ref edu.stanford.slac.aida.client.AidaPvaRequest.with() ".with(name, value)" or @ref edu.stanford.slac.aida.client.AidaPvaRequest.set() ".set(value)" call. 
+- @ref aidapvainit.m "aidapvainit" , @ref aidapvafninit.m "aidapvafninit" - initialise matlab for EPICS and AIDA-PVA
 - @ref ezrpc.m "ezrpc(nturi)" - use EasyPVA to call AIDA-PVA data source over EPICS rpc
 - @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(String) "pvGet(channel)", @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(String, AidaType) "pvGet(channel, type)", @ref pvaGetM.m "pvaGetM(channel [, type])" - use aida-pva-client to get a value using AIDA-PVA over EPICS rpc
 - @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaRequest() "pvaRequest(channel)" - get a builder to create a request to AIDA-PVA.  Can build requests for execution with aida-pva-client, EasyPVA, or PvaClient. 
@@ -239,7 +240,7 @@ The java libraries available to matlab have been updated and new functions have 
   - @ref edu.stanford.slac.aida.client.AidaPvaRequest.set() ".set(value)" - build and execute the request to set a value using aida-pva-client over EPICS rpc
   - @ref edu.stanford.slac.aida.client.AidaPvaRequest.uri() ".uri()" - get the NTURI generated so far by this builder
   - @ref edu.stanford.slac.aida.client.AidaPvaRequest.with() ".with(name, value)" - add a parameter to the request builder
-- @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet() "pvSet(value)", pvaSetM(value) - use aida-pva-client to set a value using AIDA-PVA over EPICS rpc
+- @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet() "pvaSet(value)", **pvaSetM(value)** - use aida-pva-client to set a value using AIDA-PVA over EPICS rpc
 - @ref pvarpc.m "pvarpc(nturi)" - use PvaClient to call AIDA-PVA data source over EPICS rpc
 - @ref ML.m "ML" - coerce returned values into **M**at**L**ab type.
 - etc. 
@@ -248,6 +249,20 @@ See [AIDA-PVA matlab documentation](1_12_Matlab_Code.md) for full details.
 
 #### TL;DR.
 Here are some simple examples.
+
+##### Use in functions
+In functions, you need to use the `global` keyword to bring the aida-pva-client api into the function scope.  From 
+the commandline or in scripts this is not necessary.
+
+```matlab
+function example()
+  global pvaRequest AIDA_FLOAT_ARRAY;
+  
+  builder = pvaRequest('XCOR:LI31:41:BCON');
+  builder.returning(AIDA_FLOAT);
+  response = builder.get();
+end;
+```
 
 ##### Simple Get
 ```matlab

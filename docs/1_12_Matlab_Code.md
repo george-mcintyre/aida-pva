@@ -43,6 +43,35 @@
 | _void_        |                      | No value is returned                                                                                                                                                             |
 
 ### Matlab 2012 vs 2020
+#### Accessing aida-pva-client api in function scopes
+In functions, you need to use the `global` keyword to bring the aida-pva-client api into the function scope.  From 
+the commandline or in scripts this is not necessary.
+
+You need to specify any apis from the following list that you use in your function.
+- AidaPvaStruct
+- pvaRequest 
+- pvaSet, pvaSetM 
+- AIDA_BOOLEAN, AIDA_BOOLEAN_ARRAY 
+- AIDA_BYTE, AIDA_BYTE_ARRAY
+- AIDA_CHAR, AIDA_CHAR_ARRAY
+- AIDA_SHORT, AIDA_SHORT_ARRAY
+- AIDA_INTEGER, AIDA_INTEGER_ARRAY 
+- AIDA_LONG, AIDA_LONG_ARRAY
+- AIDA_FLOAT, AIDA_FLOAT_ARRAY 
+- AIDA_DOUBLE, AIDA_DOUBLE_ARRAY 
+- AIDA_STRING, AIDA_STRING_ARRAY
+- AIDA_TABLE
+
+```matlab
+function example()
+  global pvaRequest AIDA_FLOAT_ARRAY;
+  
+  builder = pvaRequest('XCOR:LI31:41:BCON');
+  builder.returning(AIDA_FLOAT);
+  response = builder.get();
+end
+```
+
 #### Function chaining
 In matlab 2012 you can't chain functions together so instead of writing this:
 
