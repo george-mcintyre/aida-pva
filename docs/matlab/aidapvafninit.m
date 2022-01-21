@@ -1,14 +1,12 @@
 % There are two types of Globals in matlab.  Global-globals only work when not inside a function
 % so we need to do the same thing inside a function to create function-globals.
-% These globals are for use in any function.  After this you simply need to use `global <symbolName>` to
-% import the symbol into your scope
-% e.g. `global pvaSet AIDA_STRING AIDA_DOUBLE` to allow use of pvaSet and the two enums.
+% These globals are for use in any function.  After this you simply call `aidapva` to
+% import the symbols into your scope
 % Note that here we need to define ALL API artifacts because functions won't benefit from the imports at the
 % global-global level, for example, we define `AidaPvaStruct` in this function so it can be accessed from within
 % functions, whereas it can otherwise be accessed directly in the global-global context.
 function aidapvafninit()
-    global pvaRequest pvaSet pvaSetM AidaPvaStruct;
-    global AIDA_BOOLEAN AIDA_BYTE AIDA_CHAR AIDA_SHORT AIDA_INTEGER AIDA_LONG AIDA_FLOAT AIDA_DOUBLE AIDA_STRING AIDA_BOOLEAN_ARRAY AIDA_BYTE_ARRAY AIDA_CHAR_ARRAY AIDA_SHORT_ARRAY AIDA_INTEGER_ARRAY AIDA_LONG_ARRAY AIDA_FLOAT_ARRAY AIDA_DOUBLE_ARRAY AIDA_STRING_ARRAY AIDA_TABLE;
+    aidapva;
 
     AIDA_BOOLEAN = [edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN];
     AIDA_BYTE = [edu.stanford.slac.aida.client.AidaType.AIDA_BYTE];

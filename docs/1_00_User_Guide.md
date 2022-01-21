@@ -251,12 +251,12 @@ See [AIDA-PVA matlab documentation](1_12_Matlab_Code.md) for full details.
 Here are some simple examples.
 
 ##### Use in functions
-In functions, you need to use the `global` keyword to bring the aida-pva-client api into the function scope.  From 
+In functions, you need to use the `aidapva` script to bring the aida-pva-client api into the function scope.  From 
 the commandline or in scripts this is not necessary.
 
 ```matlab
 function example()
-  global pvaRequest AIDA_FLOAT_ARRAY;
+  aidapva;
   
   builder = pvaRequest('XCOR:LI31:41:BCON');
   builder.returning(AIDA_FLOAT);
