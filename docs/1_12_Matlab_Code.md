@@ -139,11 +139,13 @@ In matlab 2012 you can only use single quotes
 
 ### Initialisation 
 
-| return | function        | parameters | description                                      |
-|--------|-----------------|------------|--------------------------------------------------|
-| _void_ | **aidapvainit** | ()         | to initialise access to the AIDA-PVA  framework. |
+| return | function          | parameters | description                                                                                                                                             |
+|--------|-------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| _void_ | **aidapvainit**   | ()         | to initialise access to the AIDA-PVA  framework.                                                                                                        |
+| _void_ | **aidapvafninit** | ()         | to initialise access to the AIDA-PVA  framework for functions.  Do not call this function directly, it is called automatically from aidapvainit.m       |
+| _void_ | **aidapva**       | ()         | to bring aida-pva-client functions into a function's scope.  Only used at the top of function definitions before calling any aida-pva-client functions. |
 
-@note This will be called automatically when matlab starts up so there is no need to call it manually.
+@note aidapvainit.m will be called automatically when matlab starts up so there is no need to call it manually.
 
 ### Simple Get: get the value of a process variable
 | return                           | function    | parameters           | description                                                                                               |
@@ -558,7 +560,48 @@ ans =
     5.0000         0         0    0.0300
 ```
 
+## Legacy AIDA Type migration
+
+In legacy AIDA types were coded using constant numbers from this table.  Replace codes or types with the corresponding AIDA-PVA type.
+
+| Code | Legacy AIDA Type | AIDA-PVA Type                                                                                     |  
+|------|------------------|---------------------------------------------------------------------------------------------------|
+| 	0   | `STRUCT`         | @ref edu.stanford.slac.aida.client.AidaPvaClientUtils.AidaPvaStruct() "AidaPvaStruct"             |
+| 	1   | `BOOLEAN`        | @ref edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN "AIDA_BOOLEAN"                           |
+| 	2   | `BYTE`           | @ref edu.stanford.slac.aida.client.AidaType.AIDA_BYTE "AIDA_BYTE"                                 |
+| 	3   | `CHAR`           | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_BYTE "AIDA_BYTE"                 |
+| 	4   | `DOUBLE`         | @ref edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE "AIDA_DOUBLE"                             |
+| 	5   | `FLOAT`          | @ref edu.stanford.slac.aida.client.AidaType.AIDA_FLOAT "AIDA_FLOAT"                               |
+| 	6   | `LONG`           | @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG "AIDA_LONG"                                 |
+| 	7   | `LONGDOUBLE`     | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE "AIDA_DOUBLE"             |
+| 	8   | `LONGLONG`       | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG "AIDA_LONG"                 |
+| 	9   | `SHORT`          | @ref edu.stanford.slac.aida.client.AidaType.AIDA_SHORT "AIDA_SHORT"                               |
+| 	10  | `STRING`         | @ref edu.stanford.slac.aida.client.AidaType.AIDA_STRING "AIDA_STRING"                             |
+| 	11  | `ULONG`          | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG "AIDA_LONG"                 |
+| 	12  | `ULONGLONG`      | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG "AIDA_LONG"                 |
+| 	13  | `USHORT`         | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_SHORT "AIDA_SHORT"               |
+| 	14  | `WCHAR`          | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_BYTE "AIDA_BYTE"                 |
+| 	15  | `WSTRING`        | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_STRING "AIDA_STRING"             |
+| 	51  | `BOOLEANA`       | @ref edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN_ARRAY "AIDA_BOOLEAN_ARRAY"               |
+| 	52  | `BYTEA`          | @ref edu.stanford.slac.aida.client.AidaType.AIDA_BYTE_ARRAY "AIDA_BYTE_ARRAY"                     |
+| 	53  | `CHARA`          | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_BYTE_ARRAY "AIDA_BYTE_ARRAY"     |
+| 	54  | `DOUBLEA`        | @ref edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE_ARRAY "AIDA_DOUBLE_ARRAY"                 |
+| 	55  | `FLOATA`         | @ref edu.stanford.slac.aida.client.AidaType.AIDA_FLOAT_ARRAY "AIDA_FLOAT_ARRAY"                   |
+| 	56  | `LONGA`          | @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG_ARRAY "AIDA_LONG_ARRAY"                     |
+| 	57  | `LONGDOUBLEA`    | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE_ARRAY "AIDA_DOUBLE_ARRAY" |
+| 	58  | `LONGLONGA`      | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG_ARRAY "AIDA_LONG_ARRAY"     |
+| 	59  | `SHORTA`         | @ref edu.stanford.slac.aida.client.AidaType.AIDA_SHORT_ARRAY "AIDA_SHORT_ARRAY"                   |
+| 	60  | `STRINGA`        | @ref edu.stanford.slac.aida.client.AidaType.AIDA_STRING_ARRAY "AIDA_STRING_ARRAY"                 |
+| 	61  | `ULONGA`         | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG_ARRAY "AIDA_LONG_ARRAY"     |
+| 	62  | `ULONGLONGA`     | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_LONG_ARRAY "AIDA_LONG_ARRAY"     |
+| 	63  | `USHORTA`        | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_SHORT_ARRAY "AIDA_SHORT_ARRAY"   |
+| 	64  | `WCHARA`         | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_BYTE_ARRAY "AIDA_BYTE_ARRAY"     |
+| 	65  | `WSTRINGA`       | unsupported use @ref edu.stanford.slac.aida.client.AidaType.AIDA_STRING_ARRAY "AIDA_STRING_ARRAY" |
+| 	99  | `ANYA`           | unsupported                                                                                       |
+
 ## Migration patterns
+
+General substitutions to apply in legacy AIDA code.
 
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -581,7 +624,10 @@ import edu.stanford.slac.aida.lib.util.common.*;
 
 </td>
 <td>
-Remove
+
+```matlab
+aidapva;
+```
 </td>
 </tr>
 
@@ -621,49 +667,6 @@ builder = builder.with('BEAM', '1');
 </td>
 </tr>
 
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone" colspan=2>
-
-- in legacy AIDA types were coded using constant numbers from this table
-- Replace codes or types with the corresponding AIDA-PVA type
-
-| Code | Legacy AIDA Type | AIDA-PVA Type                       |  
-|------|------------------|-------------------------------------|
-| 	0   | `STRUCT`         | AidaPvaStruct                       |
-| 	1   | `BOOLEAN`        | `AIDA_BOOLEAN`                      |
-| 	2   | `BYTE`           | `AIDA_BYTE`                         |
-| 	3   | `CHAR`           | unsupported use `AIDA_BYTE`         |
-| 	4   | `DOUBLE`         | `AIDA_DOUBLE`                       |
-| 	5   | `FLOAT`          | `AIDA_FLOAT`                        |
-| 	6   | `LONG`           | `AIDA_LONG`                         |
-| 	7   | `LONGDOUBLE`     | unsupported use `AIDA_DOUBLE`       |
-| 	8   | `LONGLONG`       | unsupported use `AIDA_LONG`         |
-| 	9   | `SHORT`          | `AIDA_SHORT`                        |
-| 	10  | `STRING`         | `AIDA_STRING`                       |
-| 	11  | `ULONG`          | unsupported use `AIDA_LONG`         |
-| 	12  | `ULONGLONG`      | unsupported use `AIDA_LONG`         |
-| 	13  | `USHORT`         | unsupported use `AIDA_SHORT`        |
-| 	14  | `WCHAR`          | unsupported use `AIDA_BYTE`         |
-| 	15  | `WSTRING`        | unsupported use `AIDA_STRING`       |
-| 	51  | `BOOLEANA`       | `AIDA_BOOLEAN_ARRAY`                |
-| 	52  | `BYTEA`          | `AIDA_BYTE_ARRAY`                   |
-| 	53  | `CHARA`          | unsupported use `AIDA_BYTE_ARRAY`   |
-| 	54  | `DOUBLEA`        | `AIDA_DOUBLE_ARRAY`                 |
-| 	55  | `FLOATA`         | `AIDA_FLOAT_ARRAY`                  |
-| 	56  | `LONGA`          | `AIDA_LONG_ARRAY`                   |
-| 	57  | `LONGDOUBLEA`    | unsupported use `AIDA_DOUBLE_ARRAY` |
-| 	58  | `LONGLONGA`      | unsupported use `AIDA_LONG_ARRAY`   |
-| 	59  | `SHORTA`         | `AIDA_SHORT_ARRAY`                  |
-| 	60  | `STRINGA`        | `AIDA_STRING_ARRAY`                 |
-| 	61  | `ULONGA`         | unsupported use `AIDA_LONG_ARRAY`   |
-| 	62  | `ULONGLONGA`     | unsupported use `AIDA_LONG_ARRAY`   |
-| 	63  | `USHORTA`        | unsupported use `AIDA_SHORT_ARRAY`  |
-| 	64  | `WCHARA`         | unsupported use `AIDA_BYTE_ARRAY`   |
-| 	65  | `WSTRINGA`       | unsupported use `AIDA_STRING_ARRAY` |
-| 	99  | `ANYA`           | unsupported                         |
-
-</td>
-</tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">
 
@@ -805,290 +808,13 @@ IN:ST:ANCE:ATTRIBUTE
 ## Function Source code in matlab
 The following source code is delivered in matlab under the `./src` directory
 
-## src/aidapva.m
-```matlab
-global pvaRequest pvaSet pvaSetM AidaPvaStruct;
-global AIDA_BOOLEAN AIDA_BYTE AIDA_CHAR AIDA_SHORT AIDA_INTEGER AIDA_LONG AIDA_FLOAT AIDA_DOUBLE AIDA_STRING AIDA_BOOLEAN_ARRAY AIDA_BYTE_ARRAY AIDA_CHAR_ARRAY AIDA_SHORT_ARRAY AIDA_INTEGER_ARRAY AIDA_LONG_ARRAY AIDA_FLOAT_ARRAY AIDA_DOUBLE_ARRAY AIDA_STRING_ARRAY AIDA_TABLE;
-```
-
-## src/aidapvainit.m
-
-```matlab
-global aidapvainitdone;
-aidapva;
-
-if isempty(aidapvainitdone)
-    %    setupjavapath(strcat(getenv('PHYSICS_TOP'),'/release/aida-pva-client/R1.0.0/lib/aida-pva-client.jar'))
-    %    setupjavapath(strcat(getenv('PHYSICS_TOP'),'/release/epics-pvaccess/R1.0.0/lib/epics-pvaccess.jar'))
-    setupjavapath(strcat(getenv('PWD'),'/aida-pva-client.jar'))
-    setupjavapath(strcat(getenv('PWD'),'/epics-pvaccess.jar'))
-
-    % aida-pva-client imports - imports all methods but not enums, so we need to add enums indivudually later
-    import('edu.stanford.slac.aida.client.AidaPvaClientUtils.*');
-    import('edu.stanford.slac.aida.client.AidaType.*');
-
-    AIDA_BOOLEAN = [edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN];
-    AIDA_BYTE = [edu.stanford.slac.aida.client.AidaType.AIDA_BYTE];
-    AIDA_CHAR = [edu.stanford.slac.aida.client.AidaType.AIDA_CHAR];
-    AIDA_SHORT = [edu.stanford.slac.aida.client.AidaType.AIDA_SHORT];
-    AIDA_INTEGER = [edu.stanford.slac.aida.client.AidaType.AIDA_INTEGER];
-    AIDA_LONG = [edu.stanford.slac.aida.client.AidaType.AIDA_LONG];
-    AIDA_FLOAT = [edu.stanford.slac.aida.client.AidaType.AIDA_FLOAT];
-    AIDA_DOUBLE = [edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE];
-    AIDA_STRING = [edu.stanford.slac.aida.client.AidaType.AIDA_STRING];
-    AIDA_BOOLEAN_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN_ARRAY];
-    AIDA_BYTE_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_BYTE_ARRAY];
-    AIDA_CHAR_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_CHAR_ARRAY];
-    AIDA_SHORT_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_SHORT_ARRAY];
-    AIDA_INTEGER_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_INTEGER_ARRAY];
-    AIDA_LONG_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_LONG_ARRAY];
-    AIDA_FLOAT_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_FLOAT_ARRAY];
-    AIDA_DOUBLE_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE_ARRAY];
-    AIDA_STRING_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_STRING_ARRAY];
-    AIDA_TABLE = [edu.stanford.slac.aida.client.AidaType.AIDA_TABLE];
-
-    pvaSetM = @(channel, value) ML(edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet(channel, value));
-
-    % Globals above only work when not inside a function so we need to do the same thing inside a function
-    % to define these globals for use in any function.  After this you simply need to run `aidapva` to use aida-pva
-    aidapvafninit
-
-    aidapvainitdone = 1;
-    disp 'Aida PVA client initialization completed';
-end
-```
-
-## src/aidapvafninit.m
-
-```matlab
-function aidapvafninit()
-    aidapva;
-
-    AIDA_BOOLEAN = [edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN];
-    AIDA_BYTE = [edu.stanford.slac.aida.client.AidaType.AIDA_BYTE];
-    AIDA_CHAR = [edu.stanford.slac.aida.client.AidaType.AIDA_CHAR];
-    AIDA_SHORT = [edu.stanford.slac.aida.client.AidaType.AIDA_SHORT];
-    AIDA_INTEGER = [edu.stanford.slac.aida.client.AidaType.AIDA_INTEGER];
-    AIDA_LONG = [edu.stanford.slac.aida.client.AidaType.AIDA_LONG];
-    AIDA_FLOAT = [edu.stanford.slac.aida.client.AidaType.AIDA_FLOAT];
-    AIDA_DOUBLE = [edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE];
-    AIDA_STRING = [edu.stanford.slac.aida.client.AidaType.AIDA_STRING];
-    AIDA_BOOLEAN_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_BOOLEAN_ARRAY];
-    AIDA_BYTE_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_BYTE_ARRAY];
-    AIDA_CHAR_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_CHAR_ARRAY];
-    AIDA_SHORT_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_SHORT_ARRAY];
-    AIDA_INTEGER_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_INTEGER_ARRAY];
-    AIDA_LONG_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_LONG_ARRAY];
-    AIDA_FLOAT_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_FLOAT_ARRAY];
-    AIDA_DOUBLE_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_DOUBLE_ARRAY];
-    AIDA_STRING_ARRAY = [edu.stanford.slac.aida.client.AidaType.AIDA_STRING_ARRAY];
-    AIDA_TABLE = [edu.stanford.slac.aida.client.AidaType.AIDA_TABLE];
-
-    pvaRequest = @(channel) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaRequest(channel);
-    pvaSet = @(channel, value) edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet(channel, value);
-    pvaSetM = @(channel, value) ML(edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaSet(channel, value));
-    AidaPvaStruct = @() edu.stanford.slac.aida.client.AidaPvaClientUtils.AidaPvaStruct();
-end
-```
-
-## src/ezrpc.m
-
-A script that can be called to make requests based on ezPVA has been created. Extracted from erpc.m.
-
-```matlab
-function [ PVDATA ] = ezrpc( NTURI )
-    import('org.epics.pvaccess.*')
-    import('org.epics.pvaccess.easyPVA.*')
-    import('org.epics.pvdata.*')
-
-    servererr='MEME:ematrpc:servererror';       % server side issued an error
-    connecterr='MEME:ematrpc:connectionerror';  % pvAccess connection error
-    pvasystemerr='MEME:ematrpc:pvaccesserror';  % pvAccess internal error
-    createchannelerror='MEME:eget:createchannelerror'; % Could not create channel link to given pv name
-    createchannelerrormsg=['Could not create channel to %s, check validity and spelling of channel,'...
-        ' then status of PVA server; '];
-
-    PVDATA = NaN;
-    nturi_pvs = NTURI;
-
-    % Get an easyPVA interface.
-    easypva = EasyPVAFactory.get();
-
-    % Create a channel to the given pv, and attempt connection.
-    pvname = nturi_pvs.getStringField('path').get();
-    easychan = easypva.createChannel(pvname);
-    iss=easychan.connect(5.0); % 5 second timeout
-
-    % If channel connection to the given PV was successful, proceed.
-    if (iss==true)
-        easyrpc = easychan.createRPC();
-
-        % iss = easypva.getStatus();
-        % if ~isempty(easyrpc)
-        iss = easyrpc.getStatus();
-        % If successful, get data from the channel
-        if ( iss.isOK() )
-            % Connect the RPC to service PV and if successful
-            % request data given arguments.
-            if (easyrpc.connect())
-                pvs = easyrpc.request(nturi_pvs);
-                iss=easyrpc.getStatus();
-                if (~iss.isOK())
-                    % Issue result of statment that got twiss data. Server
-                    % side generated errors will be issued by this.
-                    error(servererr,char(iss.getMessage()));
-                end
-            else
-                % Issue diagnostic msg of connect if unsuccessful.
-                error(connecterr,char(easypva.getStatus().getMessage()));
-            end
-        else
-            % For infrastrcuture errors, issue whole status object toString.
-            error(pvasystemerr, char(iss) );
-        end
-    else
-        % Could not create channel connection, probably a mistake in pv name.
-        error(createchannelerror,createchannelerrormsg,char(pvname));
-    end
-
-    % Reset output var if all went well.
-    if ( iss.isOK() )
-        PVDATA = pvs;
-    end
-```
-
-## src/handleExceptions.m
-```matlab
-function handleExceptions(e, varargin)
-    reason = '';
-    if (isa(e,'matlab.exception.JavaException'))
-        ex = e.ExceptionObject;
-        assert(isjava(ex));
-        reason = ex.getMessage;
-    else
-        reason = e.message;
-    end
-    if ( size(varargin) > 0 )
-        reason = sprintf('%s: %s', sprintf(varargin{1}, varargin{2:end}), reason);
-    end
-    disp (reason);
-%    error(reason);
-end
-```
-
-## src/ML.m
-```matlab
-function [ matlabResult ] = ML( pvaResult )
-    % Unpack using java first if this is still a PVStructure
-    if ( isa(pvaResult, 'org.epics.pvdata.factory.BasePVStructure'))
-        pvaResult = edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaUnpack(pvaResult);
-    end
-
-    % If this is a Java array then convert to a matlab array and return
-    if (isa(pvaResult, 'java.lang.Object[]'))
-        matlabResult = toArray(pvaResult);
-
-    % If this is a PvaTable then convert to a matlab structure
-    elseif ( isa(pvaResult, 'edu.stanford.slac.aida.client.PvaTable'))
-        matlabResult = struct;
-        matlabResult.size = pvaResult.size.intValue;
-        matlabResult.labels = toArray(pvaResult.labels);
-        if ( pvaResult.units.length )
-            matlabResult.units = toArray(pvaResult.units);
-        else
-            matlabResult.units = [];
-        end
-        if ( pvaResult.descriptions.length )
-            matlabResult.descriptions = toArray(pvaResult.descriptions);
-        else
-            matlabResult.descriptions = [];
-        end
-        matlabResult.fieldnames = toArray(pvaResult.fieldNames);
-        matlabResult.values = [];
-        for fieldNumber = 1:pvaResult.fieldNames.length
-            fieldName = pvaResult.fieldNames(fieldNumber);
-            vector = toArray(pvaResult.get(fieldName));
-            matlabResult.values = setfield(matlabResult.values, char(fieldName), vector);
-        end
-
-    % A java type will never be returned but we keep these just in case
-    elseif (isa(pvaResult, 'java.lang.Byte'))
-        matlabResult = pvaResult.byteValue;
-
-    elseif (isa(pvaResult, 'java.lang.Boolean'))
-        matlabResult = pvaResult.booleanValue;
-
-    elseif (isa(pvaResult, 'java.lang.Short'))
-        matlabResult = pvaResult.shortValue;
-
-    elseif (isa(pvaResult, 'java.lang.Integer'))
-        matlabResult = pvaResult.intValue;
-
-    elseif (isa(pvaResult, 'java.lang.Long'))
-        matlabResult = pvaResult.longValue;
-
-    elseif (isa(pvaResult, 'java.lang.Float'))
-        matlabResult = pvaResult.floatValue;
-
-    elseif (isa(pvaResult, 'java.lang.Double'))
-        matlabResult = pvaResult.doubleValue;
-
-    elseif (isa(pvaResult, 'java.lang.String'))
-        matlabResult = char(pvaResult) ;
-
-    else
-        matlabResult = pvaResult;
-    end
-end
-```
-
-## src/pvaGet.m
-
-```matlab
-function out = pvaGet(channel, varargin)
-    if ( length(varargin) > 0 )
-        out = edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(channel, varargin{1});
-    else
-        out = edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(channel);
-    end
-end
-```
-
-## src/pvaGetM.m
-
-```matlab
-function out = pvaGet(channel, varargin)
-    if ( length(varargin) > 0 )
-        out = ML(edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(channel, varargin{1}));
-    else
-        out = ML(edu.stanford.slac.aida.client.AidaPvaClientUtils.pvaGet(channel));
-    end
-end
-```
-
-## src/pvarpc.m
-
-A script that can be called to make requests based on PvaClient has been created. Extracted from erpc.m.
-
-```matlab
-function [ PVDATA ] = pvarpc( NTURI )
-    import('org.epics.pvaccess.*')
-    import('org.epics.pvaClient.*')
-    import('org.epics.pvdata.*')
-
-    PVDATA = NaN;
-    nturi_pvs = NTURI;
-
-    % Get an PVA interface.
-    provider = 'pva';
-    client = PvaClient.get(provider);
-
-    % Create a channel to the optics pv.
-    pvname = nturi_pvs.getStringField('path').get();
-    channel = client.createChannel(pvname);
-
-    pvs = channel.rpc(nturi_pvs);
-
-    % Reset output var if all went well.
-    PVDATA = pvs;
-```
+- `src/`aidapva.m
+- `src/`aidapvainit.m
+- `src/`aidapvafninit.m
+- `src/`ezrpc.m  - A script that can be called to make requests based on ezPVA has been created. Extracted from erpc.m.
+- `src/`handleExceptions.m
+- `src/`ML.m
+- `src/`pvaGet.m
+- `src/`pvaGetM.m
+- `src/`pvarpc.m  - A script that can be called to make requests based on PvaClient has been created. Extracted from erpc.m.
+- `src/`toArray.m - To convert to an array.  Do not call this directly use ML.m if necessary.
