@@ -325,7 +325,7 @@ MCCDEV> TESTSHR AIDASLCDB
 ```
   3. Make sure that the forwarder is running on MCCDEV using WARMSLC then start AIDASLCDB with WARMSLC
   4. Run some client tests (pvcall etc) to verify all is working 
-
+  
 #### Create a TEST shareable in a place where all MCCDEV users will use it by default
   1. Log into `SLCSHR` account on `MCCDEV` 
   2. Create shared `TEST` sharable

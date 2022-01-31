@@ -1,5 +1,282 @@
 # 4 - A DevOps Guide to AIDA-PVA
 
+## Quick Reference
+### Synopsis
+```shell
+    WARMSLC AIDA_SLC<service> [ /KILL | /RESTART ]
+    EPICS_FWD_RESTART [ /KILL | /RESTART ]
+```
+ 
+@note To use any of these commands, login as SLCSHR, to MCC for production, or MCCDEV for development.  e.g. `ssh mcc /user=slcshr` 
+
+### SLCSHR Login
+```shell
+MCCDEV> ssh mcc /user=slcshr
+
+
+
+                           NOTICE TO USERS
+                           ---------------
+
+ This computer system and/or its connection to the network of the SLAC
+ National Accelerator Laboratory is for authorized use only.  Users
+ (authorized or unauthorized) have no explicit or implicit expectation of
+ privacy.
+
+ Any or all uses of this system or network and all stored or transmitted
+ files may be intercepted, monitored, recorded, copied, audited, inspected,
+ and disclosed to authorized site, government, and law enforcement
+ personnel.  By using this system or network, the user consents to such
+ interception, monitoring, recording, copying, auditing, inspection, and
+ disclosure at the discretion of authorized personnel.
+
+ Unauthorized or improper use of this system may result in administrative
+ disciplinary action and civil and criminal penalties.  By continuing to
+ use this system you indicate your awareness of and consent to these terms
+ and conditions of use.  LOG OFF IMMEDIATELY if you do not agree to the
+ conditions stated in this warning.
+
+
+
+slcshr's password:
+
+Authentication successful.
+
+    Last interactive login on Monday, 31-JAN-2022 05:54:42.04
+    Last non-interactive login on Monday, 31-JAN-2022 06:00:32.52
+
+*** _FTA142: ***
+*** ssh/mccdev-leb.slac.stanford.edu:3903 ***
+
+        SLAC MCC/SLC VMSCluster
+        -----------------------
+        Welcome to OpenVMS Alpha V8.4-2L1 on node MCC
+
+___________________________________________________________________________
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+-----------------------------------------------------------------------------
+---How to move files from VMS
+  http://www.slac.stanford.edu/grp/cd/soft/How_to/Copying_files_from_VMS.html
+-----------------------------------------------------------------------------
+
+        Ken Brobeck x2558
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+************
+
+New (Alpha VMS version) software features available with Newsoft:
+
+Date/                         Shareable   Ty
+Time   Name              Ext  Image       pe Description
+------ ---------------------- -------------- -----------------------------------
+
+(Year 2021)
+03-Mar Ed Miller              NTWKSHR    sa Increase MAX_FACILS to avert SCP
+11:30                                       crash in ERROR_LOG_DISP.FOR
+
+30-Mar Ed Miller              PARANOIA.EXE  Relink as a sanity check following
+11;20                                       two crashes in a few days.
+
+14-Nov G. White               AIDASHR    mn Add Entry for development mode override
+13:49                                       to allow 2nd dpslcbuff process to set mode
+
+16-Nov Ed Miller              AIDASHR    mn Add Entries for AIDA-PVA
+11:00
+
+17-Nov Ed Miller              MSGSHR     sa Fix addr of PSECT IN6ADDR_ANY, etc.
+16:30                                       (see MSGSHR_XFR_ALPHA.OPT)
+
+26-Jan Ed Miller              DSPSHR     sa Remove MCC SV printers.  Set
+15:30                                       MCC_BIG printer SCP MCC default
+
+************
+
+New micro software features available with Newsoft_micro:
+
+Date/                         Micro
+Time   Name              Ext  Image   Description
+------ ---------------------- ------- ------------------------------------------
+
+        None at the moment!  Stay tuned for further developments.
+
+--------------------------------------------------------------------------------
+--> Note:  see current contents of Newsoft files with command:  $ SEE_NEWSOFT
+--------------------------------------------------------------------------------
+
+___________________________________________________________________________
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+-----------------------------------------------------------------------------
+---How to move files from VMS
+  http://www.slac.stanford.edu/grp/cd/soft/How_to/Copying_files_from_VMS.html
+-----------------------------------------------------------------------------
+
+        Ken Brobeck x2558
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+orauser.com: inserting SERVER_2517241507 into LNM$FILE_DEV list.
+
+        User login on node MCC at 31-JAN-2022 06:07:24.88
+$
+$           SLCUPDN               :== @SLCCOM:SLCUPDN
+$           SHARE_INSTALL         :== @SLCCOM:SHARE_INSTALL
+$           TELE                  :== SEARCH SLC_ALLPHONE
+$           WARMSLCX              :== @SLCCOM:WARMSLCX
+$           EPICS_FWD_RESTART     :== @SLCCOM:EPICS_FWD_RESTART   ! New!!
+$           FLUSH_ERR_INT_MB      :== @SLCCOM:FLUSH_ERR_INT_MB
+$           SHOW_DB_IMAGES        :== @SLCCOM:SHOW_DB_IMAGES
+$           WS_RESTART            :== @CLU$MANAGER:WS_RESTART
+$           EOIC_Menu             :== @SLCCOM:EOIC_MENU
+$
+$           ACCESS           :== RUN/NODEB SLCIMAGE:ACCESS
+$           PURGEMICRO       :== @SLCCOM:PURGEMICRO.COM
+$           CONVERT_MAIL_DIS :== @SLCCOM:CONVERT_MAIL_DIS
+$
+MCC::SLCSHR>
+```
+
+### WARMSLC
+Start, Stop, or Restart the specified service.
+* service - One of **BPM**, **BPMBUFF**, **DB**, HISTORY, **KLYS**, **MAGNET**, MOSC, REF, **UTIL**
+
+#### e.g: To Stop the AIDASLCBPMBUFF service 
+```shell
+WARMSLC AIDA_SLCBPMBUFF /KILL
+
+WHO ARE YOU AND Why are You doing this?
+Data:	Stopping for a documentation example
+Killing AIDA_SLCBPMBUFF using KILL (FORCEX) command
+```
+
+#### e.g: To start the AIDASLCKLYS service 
+```shell
+WARMSLC AIDA_SLCKLYS
+
+WHO ARE YOU AND Why are You doing this?
+Data:	Starting for a documentation example
+Starting AIDA_SLCKLYS (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 2040923E
+```
+
+#### e.g: To restart the AIDASLCDB service 
+```shell
+WARMSLC AIDA_SLCDB /RESTART
+
+WHO ARE YOU AND Why are You doing this?
+Data:	Restarting for a documentation example
+Killing AIDA_SLCDB using KILL (FORCEX) command
+Starting AIDA_SLCDB (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 2040923F
+```
+
+### EPICS_FWD_RESTART
+Start, Stop, or Restart all AIDA-PVA services together.
+
+This command will restart the EPICS-FORWARDER process properly (if it has
+died or needs to be restarted for some other reason).  A special sequence is
+needed because the EPICS-FORWARDER cannot be started if any of the channel providers
+are still running.
+
+#### e.g: To Stop the AIDA-PVA services 
+```shell
+EPICS_FWD_RESTART /KILL
+
+This procedure should be used to restart the EPICS_FORWARDER process (if it has died or needs to be
+restarted.)  It will first WARMSLC /KILL the EPICS_FORWARDER process and all its AIDA PVA channel
+provider processes.  It will then proceed to restart all using WARMSLC.  This sequence is necessary when
+restarting EPICS_FORWARDER since it will fail to start if any of its channel provders are still present.
+
+NOTE:
+        To instead only KILL  all these processes use  WARMSLC EPICS_FWD_LIST /KILL
+        To instead only START all these processes use  WARMSLC EPICS_FWD_LIST
+
+  Do you want to RESTART the above?  [Y/N, default is Y]: y
+
+WHO ARE YOU AND Why are You doing this?
+Data:	Example stop all
+Killing AIDA_SLCUTIL using KILL (FORCEX) command
+Killing AIDA_SLCMAGNET using KILL (FORCEX) command
+Killing AIDA_SLCKLYS using KILL (FORCEX) command
+Killing AIDA_SLCDB using KILL (FORCEX) command
+Killing AIDA_SLCBPMBUFF using KILL (FORCEX) command
+Killing AIDA_SLCBPM using KILL (FORCEX) command
+Killing EPICS_FORWARDER using KILL (FORCEX) command
+```
+
+#### e.g: To start the AIDA-PVA services 
+```shell
+EPICS_FWD_RESTART
+
+This procedure should be used to restart the EPICS_FORWARDER process (if it has died or needs to be
+restarted.)  It will first WARMSLC /KILL the EPICS_FORWARDER process and all its AIDA PVA channel
+provider processes.  It will then proceed to restart all using WARMSLC.  This sequence is necessary when
+restarting EPICS_FORWARDER since it will fail to start if any of its channel provders are still present.
+
+NOTE:
+        To instead only KILL  all these processes use  WARMSLC EPICS_FWD_LIST /KILL
+        To instead only START all these processes use  WARMSLC EPICS_FWD_LIST
+
+  Do you want to RESTART the above?  [Y/N, default is Y]: y
+
+WHO ARE YOU AND Why are You doing this?
+Data:	Example start all
+Starting EPICS_FORWARDER (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201531
+Starting AIDA_SLCBPM (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201532
+Starting AIDA_SLCBPMBUFF (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201533
+Starting AIDA_SLCDB (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201534
+Starting AIDA_SLCKLYS (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201537
+Starting AIDA_SLCMAGNET (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201538
+Starting AIDA_SLCUTIL (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201539
+```
+
+#### e.g: To restart the AIDA-PVA services 
+```shell
+EPICS_FWD_RESTART /RESTART
+
+This procedure should be used to restart the EPICS_FORWARDER process (if it has died or needs to be
+restarted.)  It will first WARMSLC /KILL the EPICS_FORWARDER process and all its AIDA PVA channel
+provider processes.  It will then proceed to restart all using WARMSLC.  This sequence is necessary when
+restarting EPICS_FORWARDER since it will fail to start if any of its channel provders are still present.
+
+NOTE:
+        To instead only KILL  all these processes use  WARMSLC EPICS_FWD_LIST /KILL
+        To instead only START all these processes use  WARMSLC EPICS_FWD_LIST
+
+  Do you want to RESTART the above?  [Y/N, default is Y]: y
+
+WHO ARE YOU AND Why are You doing this?
+Data:	Example restart all
+Killing AIDA_SLCUTIL using KILL (FORCEX) command
+Killing AIDA_SLCMAGNET using KILL (FORCEX) command
+Killing AIDA_SLCKLYS using KILL (FORCEX) command
+Killing AIDA_SLCDB using KILL (FORCEX) command
+Killing AIDA_SLCBPMBUFF using KILL (FORCEX) command
+Killing AIDA_SLCBPM using KILL (FORCEX) command
+Killing EPICS_FORWARDER using KILL (FORCEX) command
+Waiting a few seconds to give processes time to terminate.
+Restarting them all...
+Starting EPICS_FORWARDER (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201531
+Starting AIDA_SLCBPM (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201532
+Starting AIDA_SLCBPMBUFF (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201533
+Starting AIDA_SLCDB (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201534
+Starting AIDA_SLCKLYS (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201537
+Starting AIDA_SLCMAGNET (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201538
+Starting AIDA_SLCUTIL (DETACHED)
+%RUN-S-PROC_ID, identification of created process is 20201539
+```
+
 ## Components
 
 AIDA-PVA is made up of the following components:
