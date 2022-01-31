@@ -259,7 +259,8 @@ configurations:
       - KLYS:RF00:4:TACT
   - name: Setter for KPHR
     getterConfig:
-      type: NONE
+      type: ALIAS
+      prefix: SLC
     setterConfig:
       type: TABLE
       fields:
@@ -483,7 +484,8 @@ configurations:
       - SBST:RF00:1:KPHR
   - name: Setter for PDES
     getterConfig:
-      type: NONE
+      type: ALIAS
+      prefix: SLC
     setterConfig:
       type: TABLE
       arguments:
@@ -709,7 +711,8 @@ configurations:
       - SBST:RF00:1:PDES
   - name: Setter FOR PCON or ACON
     getterConfig:
-      type: NONE
+      type: ALIAS
+      prefix: SLC
     setterConfig:
       type: VOID
       arguments:
