@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import static edu.stanford.slac.aida.lib.RequestExecutor.executeRequest;
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
@@ -36,6 +37,7 @@ public class AidaRPCService implements RPCService {
 
     /**
      * The constructor. will simply store the given AIDA-PVA Channel Provider for use later.
+     *
      * @param aidaChannelProvider the given AIDA-PVA Channel Provider
      */
     public AidaRPCService(ChannelProvider aidaChannelProvider) {
@@ -83,7 +85,7 @@ public class AidaRPCService implements RPCService {
             // Make sure that only one request occurs at a time because
             // the implementations are not thread safe.
             synchronized (this) {
-                retVal = request(channelName, arguments);
+                retVal = request(pvUri, channelName, arguments);
             }
         } catch (RPCRequestException e) {
             throw e;
@@ -108,6 +110,7 @@ public class AidaRPCService implements RPCService {
      * Make request to the specified channel with the uri and arguments specified
      * and return the NT_TABLE of results.
      *
+     * @param pvUri         the original PVStructure uri - used if we need to delegate the request to another provider
      * @param channelName   channel name
      * @param argumentsList arguments if any
      * @return the structure containing the results.
@@ -119,7 +122,7 @@ public class AidaRPCService implements RPCService {
      *                                          Usually caused when channel matches a pattern specified in the Channel Configuration File
      *                                          but is not yet supported in the service implementation
      */
-    private PVStructure request(String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException {
+    private PVStructure request(PVStructure pvUri, String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException, RPCRequestException {
         AidaType aidaType;
         AidaChannelOperationConfig config;
         String typeArgument = null;
@@ -143,6 +146,12 @@ public class AidaRPCService implements RPCService {
 
             aidaType = isSetterRequest ? aidaSetterType : aidaGetterType;
             config = isSetterRequest ? setterConfig : getterConfig;
+        }
+
+        // Check for split provider-operation implementation and redirect if this operation is supported by the other provider
+        PVStructure delegatedResponse = checkForAliasAndDelegateAppropriately(pvUri, config);
+        if (delegatedResponse != null) {
+            return delegatedResponse;
         }
 
         // See if the request type is supported for the channel
@@ -266,6 +275,30 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
+     * Check to see if the implementation for this channel is split between two different providers.  If it is then
+     * delegate operation to the other provider by adding the given prefix.
+     *
+     * @param pvUri  the original URI structure that needs to be modified if delegation is required
+     * @param config the configuration of this channel operation
+     * @return the delegated response or null if the implementation is not split.
+     * @throws AidaInternalException if the delegation is mis-configured in the config files
+     * @throws RPCRequestException   if there is a problem with the delegation
+     */
+    private PVStructure checkForAliasAndDelegateAppropriately(PVStructure pvUri, AidaChannelOperationConfig config) throws AidaInternalException, RPCRequestException {
+        AidaType aidaType = config.getType();
+        if (aidaType == ALIAS) {
+            String prefix = config.getPrefix();
+            if (config.getPrefix() == null) {
+                throw new AidaInternalException("Aliased provider defined without defining alternative provider's prefix in channel configuration file");
+            }
+
+            // Delegate and execute request
+            return delegateRequest(pvUri, prefix);
+        }
+        return null;
+    }
+
+    /**
      * Check that the configuration defines fields for table requests so that we will know how to create the PVStructure to return the result in
      *
      * @param aidaType the request type
@@ -351,6 +384,31 @@ public class AidaRPCService implements RPCService {
                 }
             }
         }
+    }
+
+    /**
+     * Delegate request and return result
+     *
+     * @param pvUri  the original uri request to be delegated
+     * @param prefix the prefix used to access the alternate channel provider
+     * @return the response to the delegated request
+     * @throws RPCRequestException if there is a problem with the delegation of the request
+     */
+    private PVStructure delegateRequest(PVStructure pvUri, String prefix) throws RPCRequestException {
+        // extract original channel name
+        String channelName = pvUri.getStringField("path").get();
+
+        // add the prefix
+        String delegatedChannelName = prefix + "::" + channelName;
+
+        // Log the delegation
+        logger.info("AIDA " + ": Alias " + channelName + " delegated to => " + delegatedChannelName);
+
+        // Set the new channel name in the request
+        pvUri.getStringField("path").put(delegatedChannelName);
+
+        // Execute with the new channel name
+        return executeRequest(pvUri, delegatedChannelName);
     }
 
     /**

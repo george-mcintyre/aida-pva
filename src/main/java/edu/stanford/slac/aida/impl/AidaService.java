@@ -8,6 +8,8 @@ package edu.stanford.slac.aida.impl;
 import edu.stanford.slac.aida.lib.AidaProviderRunner;
 import org.joda.time.DateTime;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Logger;
 
 /**
@@ -54,8 +56,37 @@ public class AidaService {
             logger.info("Loading Channel Provider Shared Library: " + aidaPvaLibName);
         }
 
+        // Set default EPICS_PVA properties for AIDA_PVA server
+        defaultEpicsPropertiesIfNotSet();
+
         // Load the Channel Provider library
         System.loadLibrary(aidaPvaLibName);
+    }
+
+    /**
+     * For AIDA-PVA servers we don't normally care about the EPICS_PVA_ADDR_LIST, and EPICS_PVA_AUTO_ADDR_LIST
+     * because they are for clients primarily.  But when the server delegates to another server
+     * when implementing an alias it needs to act as a client.  In this case there is only one
+     * way in which it should act.  It should ONLY send requests to the local host!
+     *
+     * So we need to set EPICS_PVA_AUTO_ADDR_LIST to no, and EPICS_AUTO_ADDR_LIST to the name of the local host.
+     * We could do this on the command line when starting the service but its better to do this automatically
+     * as it will never change.
+     */
+    private static void defaultEpicsPropertiesIfNotSet() {
+        if ( System.getenv("EPICS_PVA_ADDR_LIST") == null && System.getProperty("EPICS_PVA_ADDR_LIST") == null ) {
+            try {
+                String hostname = InetAddress.getLocalHost().getHostName();
+                System.setProperty("EPICS_PVA_ADDR_LIST", hostname);
+                logger.info("Defaulting EPICS_PVA_ADDR_LIST to: " + hostname);
+            } catch (UnknownHostException ignored) {
+            }
+        }
+
+        if ( System.getenv("EPICS_PVA_AUTO_ADDR_LIST") == null && System.getProperty("EPICS_PVA_AUTO_ADDR_LIST") == null ) {
+            System.setProperty("EPICS_PVA_AUTO_ADDR_LIST", "no");
+            logger.info("Defaulting EPICS_PVA_AUTO_ADDR_LIST to: no");
+        }
     }
 
     /**

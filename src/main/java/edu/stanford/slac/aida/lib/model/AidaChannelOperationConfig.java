@@ -71,6 +71,15 @@ public class AidaChannelOperationConfig {
     private @NonNull AidaType type;
 
     /**
+     * Prefix to use if support is split between two channel providers based on operation.
+     * This is the prefix to add to the request to allow the request to be intercepted by the correct channel provider.
+     * Whenever a ALIAS is used the PREFIX must be specified.
+     * When requests arrive at the incorrect service provider they will be automatically redirected to the correct provider
+     * by injecting a new local broadcast search request with the updated payload.
+     */
+    private String prefix;
+
+    /**
      * Stores the list of valid arguments for the `get` or `set` requests that this AidaChannelOperationConfig:: is configuring.
      * Any argument that is delivered with the request but is not in this list is trapped by the framework
      * and reported as an error

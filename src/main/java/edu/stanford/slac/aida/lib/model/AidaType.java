@@ -18,6 +18,12 @@ public enum AidaType {
     NONE,               ///< API Not valid. Means that this getter or setter is not supported
 
     /**
+     * API functionality supported by another service
+     * When used in a config file this requires an accompanying PREFIX tag containing the prefix to append to the request before redirecting
+     */
+    ALIAS,               ///< The functionality for this API is split between two channel providers depending on the operation.  For the operation where this is specified, the functionality is implemented in a provider with the given prefix
+
+    /**
      * No return value
      */
     VOID,               ///< No return value. Means that this setter does not return a value (only valid for setters)
