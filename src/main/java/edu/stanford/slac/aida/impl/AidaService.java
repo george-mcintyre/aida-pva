@@ -1,6 +1,5 @@
 /**
- * @file
- * The AidaService class is the main class that gets run to start an
+ * @file The AidaService class is the main class that gets run to start an
  * AIDA-PVA Provider.
  */
 package edu.stanford.slac.aida.impl;
@@ -74,7 +73,7 @@ public class AidaService {
      * as it will never change.
      */
     private static void defaultEpicsPropertiesIfNotSet() {
-        if ( System.getenv("EPICS_PVA_ADDR_LIST") == null && System.getProperty("EPICS_PVA_ADDR_LIST") == null ) {
+        if (System.getenv("EPICS_PVA_ADDR_LIST") == null && System.getProperty("EPICS_PVA_ADDR_LIST") == null) {
             try {
                 String hostname = InetAddress.getLocalHost().getHostName();
                 System.setProperty("EPICS_PVA_ADDR_LIST", hostname);
@@ -83,7 +82,7 @@ public class AidaService {
             }
         }
 
-        if ( System.getenv("EPICS_PVA_AUTO_ADDR_LIST") == null && System.getProperty("EPICS_PVA_AUTO_ADDR_LIST") == null ) {
+        if (System.getenv("EPICS_PVA_AUTO_ADDR_LIST") == null && System.getProperty("EPICS_PVA_AUTO_ADDR_LIST") == null) {
             System.setProperty("EPICS_PVA_AUTO_ADDR_LIST", "no");
             logger.info("Defaulting EPICS_PVA_AUTO_ADDR_LIST to: no");
         }
