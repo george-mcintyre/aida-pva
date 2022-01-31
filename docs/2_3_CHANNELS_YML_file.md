@@ -27,6 +27,14 @@
     5. **SCALAR_ARRAY** - This means that any _scalar array_ **get** operation or `TABLE` is permitted and the client
        will be required to provide a `TYPE` argument to determine which one to use. If you will be supporting `TABLE`
        requests then you must provide a `fields` section to define the fields that the table will contain.
+    6. **ALIAS** - This means that this operation for this list of channels is an alias for implementation in a different provider.  When 
+       `ALIAS` is used then you must include a `prefix` tag to define the implementing service. 
+        e.g. to alias the getter
+   ```yaml
+     getterConfig:
+      type: ALIAS
+      prefix: SLC
+   ```
 10. The list of channels that will be controlled by this configuration group. List each channel on a different line. A
     channel can be listed out fully, or by employing one or more wildcards.
 11. The example given uses wildcards so that it matches all requests that start with "`AIDA:CHAN:`" and end in "`:INT`"

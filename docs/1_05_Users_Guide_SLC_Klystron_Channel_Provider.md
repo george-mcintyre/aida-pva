@@ -820,13 +820,13 @@ set: KLYS:LI31:31:ACON (VALUE=5.0) ✔
 ████ Test 11: Get configuration secondary PDES value
 _________________________________________________
 
-get: SLC::KLYS:LI31:31:PDES => FLOAT
+get: KLYS:LI31:31:PDES => FLOAT
     PDES value: 0.0 ✔
 
 ████ Test 12: Get configuration secondary KPHR value
 _________________________________________________
 
-get: SLC::KLYS:LI31:31:KPHR => FLOAT
+get: KLYS:LI31:31:KPHR => FLOAT
     KPHR value: 59.724426 ✔
 
 ████ Test 13: Error Test: Invalid BEAM

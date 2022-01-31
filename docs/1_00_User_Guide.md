@@ -58,7 +58,10 @@ In some cases there are name clashes that can exist between channels supported b
 AIDA-PVA offers Channel Providers the possibility of prefixing a service identifier to the clashing channel names to
 disambiguate them for clients. These prefixes are delimited by double colons. e.g.,
 `SLC::KLYS:LI15:61:ACON` disambiguates the SLC Database Channel Provider channel from the Klystron Channel Provider
-channel (`KLYS:LI15:61:ACON`) of the same name.
+channel (`KLYS:LI15:61:ACON`) of the same name.  
+
+@note In the case of a name clash a provider will automatically 
+forward calls it receives for another provider so that the client seamlessly receives data from the correct provider.
 
 ## Call semantics
 

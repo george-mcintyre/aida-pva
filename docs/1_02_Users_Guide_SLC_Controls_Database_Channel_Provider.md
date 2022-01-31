@@ -71,9 +71,10 @@ _Return value_
 | any scalar array type |               |                                                         | the scalar array                               |
 | `TABLE`               | `value`       | depends on the accompanying <br />`TABLE_TYPE` argument | the scalar_array with <br />one or more values |
 
-@warning For the following Attributes `ACON`, `KPHR`, `PCON` and `PDES` you need to prefix the channel name with `SLC::`
+@warning For the following Attributes `ACON`, `KPHR`, `PCON` and `PDES` you can prefix the channel name with `SLC::`
 to disambiguate it from the channels provided by other Channel Providers. e.g. `SLC::KLYS:LI31:31:PDES`
-as this same channel name is supported by the Klystron Provider for setting values.
+as this same channel name is supported by the Klystron Provider for setting values.  Without the prefix requests will 
+hit the Klystron Provider which will forward the request to the SLC Database Provider automatically.
 
 ### <secn>  : set
 
@@ -102,7 +103,7 @@ None
 ```shell
 pvcall "XCOR:LI03:120:LEFF" TYPE=FLOAT
 0.262
-pvcall "SLC::KLYS:LI31:31:PDES" TYPE=FLOAT
+pvcall "KLYS:LI31:31:PDES" TYPE=FLOAT
 90
 ```
 
@@ -127,7 +128,7 @@ pvcall "XCOR:LI31:41:BCON" VALUE=5.0
 ```shell
 eget -s XCOR:LI03:120:LEFF -a TYPE 'FLOAT'
 0.262
-eget -s SLC::KLYS:LI31:31:PDES -a TYPE 'FLOAT'
+eget -s KLYS:LI31:31:PDES -a TYPE 'FLOAT'
 90
 ```
 
@@ -158,7 +159,7 @@ eget -s XCOR:LI31:41:BCON -a VALUE 5.0
 
 ```matlab
 try
-    floatResponse = pvaGet('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT)
+    floatResponse = pvaGet('KLYS:LI31:31:PDES', AIDA_FLOAT)
 catch e
     handleExceptions(e);
 end
@@ -168,7 +169,7 @@ floatResponse =
 
 ```matlab
 try
-    floatArrayResponse = pvaGetM('SLC::KLYS:LI31:31:PDES', AIDA_FLOAT_ARRAY)
+    floatArrayResponse = pvaGetM('KLYS:LI31:31:PDES', AIDA_FLOAT_ARRAY)
 catch e
     handleExceptions(e);
 end
