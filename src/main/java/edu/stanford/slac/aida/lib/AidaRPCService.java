@@ -33,6 +33,32 @@ public class AidaRPCService implements RPCService {
      */
     private static final Logger logger = Logger.getLogger(AidaRPCService.class.getName());
 
+    private static final long METERED_LOGGING_SAMPLE_WINDOW = 60000L;
+
+    /**
+     * The number of events withing the metering window that will trigger metering
+     */
+    private static final int METERING_TRIGGER = 60;
+
+    /**
+     * The number of events to skip when metering is on
+     */
+    private static final int METERING_SKIP = 9;
+
+    /**
+     * The list of unix times for the last log events that fall within the metering sample window
+     */
+    private static List<Long> logEventTimesWithinInMeteringWindow = new ArrayList<Long>();
+
+    /**
+     * The current number of log events that have been skipped in this metering window
+     */
+    private static int logEventsSkipped = 0;
+
+
+    /**
+     * The aida-pva channel provider
+     */
     private final ChannelProvider aidaChannelProvider;
 
     /**
@@ -402,7 +428,7 @@ public class AidaRPCService implements RPCService {
         String delegatedChannelName = prefix + "::" + channelName;
 
         // Log the delegation
-        logger.info("AIDA " + ": Alias " + channelName + " delegated to => " + delegatedChannelName);
+        logDelegatedRequest(channelName, delegatedChannelName);
 
         // Set the new channel name in the request
         pvUri.getStringField("path").put(delegatedChannelName);
@@ -421,8 +447,59 @@ public class AidaRPCService implements RPCService {
      * @param aidaType        the request type
      */
     private void logRequest(String channelName, List<AidaArgument> argumentsList, boolean isSetterRequest, AidaType aidaType) {
-        String normativeType = ntTypeOf(aidaType);
-        logger.info("AIDA " + (isSetterRequest ? "SetValue" : "GetValue") + ": " + channelName + argumentsList + " => " + aidaType + (normativeType == null ? "" : ("::" + normativeType)));
+        if (shouldLog()) {
+            String normativeType = ntTypeOf(aidaType);
+            logger.info("AIDA " + (isSetterRequest ? "SetValue" : "GetValue") + ": " + channelName + argumentsList + " => " + aidaType + (normativeType == null ? "" : ("::" + normativeType)));
+        }
+    }
+
+    /**
+     * Display the log entry that indicates that the request is being delegated
+     *
+     * @param channelName          the channel name
+     * @param delegatedChannelName the delegated channel name
+     */
+    private void logDelegatedRequest(String channelName, String delegatedChannelName) {
+        if (shouldLog()) {
+            logger.info("AIDA " + ": Alias " + channelName + " delegated to => " + delegatedChannelName);
+        }
+    }
+
+    /**
+     * Returns true if the metered logging criteria are met.
+     *
+     * @return true if we can log false otherwise
+     */
+    private boolean shouldLog() {
+        long now = System.currentTimeMillis();
+        long meteringWindowStart = now - METERED_LOGGING_SAMPLE_WINDOW;
+
+        synchronized (this) {
+            // Remove all log events times that are before the log metering window
+            for (int i = 0; i < logEventTimesWithinInMeteringWindow.size(); i++) {
+                if (logEventTimesWithinInMeteringWindow.get(0) < meteringWindowStart) {
+                    logEventTimesWithinInMeteringWindow.remove(0);
+                }
+            }
+
+            // Add the time of this log event to the log events list
+            logEventTimesWithinInMeteringWindow.add(now);
+
+            // Get rate of log events
+            int loggingRate = logEventTimesWithinInMeteringWindow.size();
+
+            // If we don't have to meter the logs, or we've already skipped enough events then return ok
+            if (loggingRate <= METERING_TRIGGER || logEventsSkipped >= METERING_SKIP) {
+                logEventsSkipped = 0;
+                return true;
+            }
+            if ( logEventsSkipped == 0 ) {
+                System.out.println(" ... more");
+            }
+
+            logEventsSkipped++;
+            return false;
+        }
     }
 
     /**
