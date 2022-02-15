@@ -47,7 +47,7 @@ public class AidaRPCService implements RPCService {
     /**
      * The list of unix times for the last log events that fall within the metering sample window
      */
-    private static List<Long> logEventTimesWithinInMeteringWindow = new ArrayList<Long>();
+    private static final List<Long> logEventTimesWithinInMeteringWindow = new ArrayList<Long>();
 
     /**
      * The current number of log events that have been skipped in this metering window
@@ -110,7 +110,7 @@ public class AidaRPCService implements RPCService {
             // Make sure that only one request occurs at a time because
             // the implementations are not thread safe.
             synchronized (this) {
-                retVal = request(pvUri, channelName, arguments);
+                retVal = request(channelName, arguments);
             }
         } catch (RPCRequestException e) {
             throw e;
@@ -135,7 +135,6 @@ public class AidaRPCService implements RPCService {
      * Make request to the specified channel with the uri and arguments specified
      * and return the NT_TABLE of results.
      *
-     * @param pvUri         the original PVStructure uri - used if we need to delegate the request to another provider
      * @param channelName   channel name
      * @param argumentsList arguments if any
      * @return the structure containing the results.
@@ -147,7 +146,7 @@ public class AidaRPCService implements RPCService {
      *                                          Usually caused when channel matches a pattern specified in the Channel Configuration File
      *                                          but is not yet supported in the service implementation
      */
-    private PVStructure request(PVStructure pvUri, String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException, RPCRequestException {
+    private PVStructure request(String channelName, List<AidaArgument> argumentsList) throws UnableToGetDataException, UnsupportedChannelException, UnableToSetDataException, AidaInternalException, MissingRequiredArgumentException, RPCRequestException {
         AidaType aidaType;
         AidaChannelOperationConfig config;
         String typeArgument = null;
