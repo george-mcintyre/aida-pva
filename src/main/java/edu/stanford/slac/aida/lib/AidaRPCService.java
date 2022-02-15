@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import static edu.stanford.slac.aida.lib.RequestExecutor.executeRequest;
 import static edu.stanford.slac.aida.lib.model.AidaType.*;
 import static edu.stanford.slac.aida.lib.util.AidaPVHelper.*;
 import static org.epics.pvdata.pv.Status.StatusType.ERROR;
@@ -174,11 +173,8 @@ public class AidaRPCService implements RPCService {
             config = isSetterRequest ? setterConfig : getterConfig;
         }
 
-        // Check for split provider-operation implementation and redirect if this operation is supported by the other provider
-        PVStructure delegatedResponse = checkForAliasAndDelegateAppropriately(pvUri, config);
-        if (delegatedResponse != null) {
-            return delegatedResponse;
-        }
+        // Check for split provider-operation implementation and show an error message directing client to use prefixed channel reference
+        checkForAliasAndThrowExceptionAppropriately(channelName, config.getPrefix(), isSetterRequest, aidaType);
 
         // See if the request type is supported for the channel
         checkThatRequestedOperationIsSupported(channelName, argumentsList, isSetterRequest, aidaType);
@@ -302,26 +298,28 @@ public class AidaRPCService implements RPCService {
 
     /**
      * Check to see if the implementation for this channel is split between two different providers.  If it is then
-     * delegate operation to the other provider by adding the given prefix.
+     * throw an error back to the client informing it to add the prefix and try again.
      *
-     * @param pvUri  the original URI structure that needs to be modified if delegation is required
-     * @param config the configuration of this channel operation
-     * @return the delegated response or null if the implementation is not split.
-     * @throws AidaInternalException if the delegation is mis-configured in the config files
-     * @throws RPCRequestException   if there is a problem with the delegation
+     * @param channelAlias    the given channel name
+     * @param prefix          the configured prefix or null if none is configured
+     * @param isSetterRequest true if this request is a for a set operation
+     * @throws AidaInternalException if the alias is mis-configured in the config files
+     * @throws RPCRequestException   if the request should be prefixed
      */
-    private PVStructure checkForAliasAndDelegateAppropriately(PVStructure pvUri, AidaChannelOperationConfig config) throws AidaInternalException, RPCRequestException {
-        AidaType aidaType = config.getType();
+    private void checkForAliasAndThrowExceptionAppropriately(String channelAlias, String prefix, boolean isSetterRequest, AidaType aidaType) throws AidaInternalException, RPCRequestException {
         if (aidaType == ALIAS) {
-            String prefix = config.getPrefix();
-            if (config.getPrefix() == null) {
-                throw new AidaInternalException("Aliased provider defined without defining alternative provider's prefix in channel configuration file");
+            if (prefix == null) {
+                throw new AidaInternalException("Aliased provider defined without configuring target provider's prefix in channel configuration file");
             }
 
-            // Delegate and execute request
-            return delegateRequest(pvUri, prefix);
+            // Add the prefix to get the real channel name
+            String channelName = prefix + "::" + channelAlias;
+
+            // Log the alias
+            logAliasRequest(channelAlias, channelName, isSetterRequest);
+
+            throw new RPCRequestException(ERROR, "Missing prefix for " + (isSetterRequest ? "Set" : "Get") + " request: " + channelAlias + " => " + channelName);
         }
-        return null;
     }
 
     /**
@@ -413,31 +411,6 @@ public class AidaRPCService implements RPCService {
     }
 
     /**
-     * Delegate request and return result
-     *
-     * @param pvUri  the original uri request to be delegated
-     * @param prefix the prefix used to access the alternate channel provider
-     * @return the response to the delegated request
-     * @throws RPCRequestException if there is a problem with the delegation of the request
-     */
-    private PVStructure delegateRequest(PVStructure pvUri, String prefix) throws RPCRequestException {
-        // extract original channel name
-        String channelName = pvUri.getStringField("path").get();
-
-        // add the prefix
-        String delegatedChannelName = prefix + "::" + channelName;
-
-        // Log the delegation
-        logDelegatedRequest(channelName, delegatedChannelName);
-
-        // Set the new channel name in the request
-        pvUri.getStringField("path").put(delegatedChannelName);
-
-        // Execute with the new channel name
-        return executeRequest(pvUri, delegatedChannelName);
-    }
-
-    /**
      * Display the log entry that indicated the request that is being passed to the
      * Channel Provider with its parameters and its expected return type
      *
@@ -456,12 +429,13 @@ public class AidaRPCService implements RPCService {
     /**
      * Display the log entry that indicates that the request is being delegated
      *
-     * @param channelName          the channel name
-     * @param delegatedChannelName the delegated channel name
+     * @param channelAlias    the channel alias
+     * @param channelName     the channel name
+     * @param isSetterRequest true if this request is a for a set operation
      */
-    private void logDelegatedRequest(String channelName, String delegatedChannelName) {
+    private void logAliasRequest(String channelAlias, String channelName, boolean isSetterRequest) {
         if (shouldLog()) {
-            logger.info("AIDA " + ": Alias " + channelName + " delegated to => " + delegatedChannelName);
+            logger.warning("AIDA " + (isSetterRequest ? "SetValue" : "GetValue") + ": " + channelAlias + " missing prefix => " + channelName);
         }
     }
 
@@ -493,7 +467,7 @@ public class AidaRPCService implements RPCService {
                 logEventsSkipped = 0;
                 return true;
             }
-            if ( logEventsSkipped == 0 ) {
+            if (logEventsSkipped == 0) {
                 System.out.println(" ... more");
             }
 

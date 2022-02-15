@@ -40,7 +40,8 @@ AIDA-PVA uses EPICS as shown below.
 - Disambiguation - some channels in the SLAC namespace are supported by more than one Channel Provider. So to allow
   clients have coherent and reliable results disambiguation is achieved by prefixing the channel name with the service
   provider short code and two colons. e.g. `SLC::KLYS:LI31:31:PDES`
-  @note In the case of a name clash a provider will automatically forward calls it receives for another provider so that the client seamlessly receives data from the correct provider.
+  @warning In the case of an incorrectly specified channel, a provider will notify the client that it must add 
+  the appropriate prefix before resubmitting the request.
 - EPICS **RPC** does not have the concept of setting a value, normally that is reserved for **put**. In AIDA-PVA we've
   added the "set-value" semantic to RPC by using the `VALUE` argument. In AIDA-PVA the `VALUE` argument is a reserved
   word and any request that has the `VALUE` argument is treated as a setter.

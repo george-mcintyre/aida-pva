@@ -20,7 +20,6 @@ public class AidaRPCServer extends RPCServer {
     public AidaRPCServer(ChannelProvider aidaChannelProvider) {
         this.aidaChannelProvider = aidaChannelProvider;
     }
-
     /**
      * Constructor.  Not used by AIDA-PVA.  May be removed
      *

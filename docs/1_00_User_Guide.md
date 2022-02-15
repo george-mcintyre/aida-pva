@@ -60,8 +60,8 @@ disambiguate them for clients. These prefixes are delimited by double colons. e.
 `SLC::KLYS:LI15:61:ACON` disambiguates the SLC Database Channel Provider channel from the Klystron Channel Provider
 channel (`KLYS:LI15:61:ACON`) of the same name.  
 
-@note In the case of a name clash a provider will automatically 
-forward calls it receives for another provider so that the client seamlessly receives data from the correct provider.
+@warning In the case of an incorrectly specified channel, a provider will notify the client that it must add 
+the appropriate prefix before resubmitting the request.
 
 ## Call semantics
 
