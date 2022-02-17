@@ -107,12 +107,12 @@ public class AidaService {
         DateTime checkpoint = DateTime.now();
 
         // Elapsed time is now minus start time
-        Long elapsedMs = checkpoint.minus(serviceStartTime.getMillis()).getMillis();
+        long elapsedMs = checkpoint.minus(serviceStartTime.getMillis()).getMillis();
 
         // Mess around to get minutes and seconds
-        Long elapsedS = elapsedMs / 1000;
+        long elapsedS = elapsedMs / 1000;
         elapsedMs -= elapsedS * 1000;
-        Long elapsedM = elapsedS / 60;
+        long elapsedM = elapsedS / 60;
         elapsedS -= elapsedM * 60;
 
         // Return the string with either minutes and seconds or just seconds and milliseconds

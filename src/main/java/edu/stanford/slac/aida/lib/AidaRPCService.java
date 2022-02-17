@@ -463,13 +463,13 @@ public class AidaRPCService implements RPCService {
 
             // If we don't have to meter the logs, or we've already skipped enough events then return ok
             if (loggingRate <= METERING_TRIGGER || logEventsSkipped >= METERING_SKIP) {
+                if (logEventsSkipped != 0) {
+                    System.out.println(" ... " +  logEventsSkipped + " more" );
+                }
+
                 logEventsSkipped = 0;
                 return true;
             }
-            if (logEventsSkipped == 0) {
-                System.out.println(" ... more");
-            }
-
             logEventsSkipped++;
             return false;
         }
