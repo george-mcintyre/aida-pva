@@ -1,7 +1,7 @@
 # 1.5 - SLC Klystron Data Users Guide
 
 This section describes what an AIDA-PVA user should know about accessing the SLC Klystron Data through AIDA-PVA. This
-data provider allows the retrieval of the status code or a status string for a specified klystron on a beam code. It
+data provider allows the retrieval of status code(s) or status string(s) for specified klystron(s) on a beam code. It
 also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or
 subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set.
 Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set. For general
@@ -11,7 +11,7 @@ information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md
 
 Supports **get** and **set** operations.
 
-The **get** operation obtains the status code or a status string for a specified klystron on a beam code.
+The **get** operation obtains the status code(s) or status string(s) for specified klystron(s) on a beam code.
 
 There are four **set** operations that can be performed:
 
@@ -22,26 +22,28 @@ There are four **set** operations that can be performed:
 
 ## Instances and Attributes
 
-| operation | info     | instance & attribute        |
-|-----------|----------|-----------------------------|
-| **get**   | Syntax   | `<prim>:<micr>:<unit>:TACT` |
-|           | Examples | `KLYS:LI31:31:TACT`         |
-| **set**   | Syntax   | `<prim>:<micr>:<unit>:TACT` |
-|           |          | `<prim>:<micr>:<unit>:PDES` |
-|           |          | `<prim>:<micr>:<unit>:KPHR` |
-|           |          | `<prim>:<micr>:<unit>:PCON` |
-|           |          | `<prim>:<micr>:<unit>:ACON` |
-|           | Examples | `KLYS:LI31:31:TACT`         |
-|           |          | `KLYS:LI31:31:PDES`         |
-|           |          | `KLYS:LI31:31:KPHR`         |
-|           |          | `KLYS:LI31:31:PCON`         |
-|           |          | `KLYS:LI31:31:ACON`         |
+| operation      | info     | instance & attribute        |
+|----------------|----------|-----------------------------|
+| **get**        | Syntax   | `<prim>:<micr>:<unit>:TACT` |
+|                | Examples | `KLYS:LI31:31:TACT`         |
+| multi- **get** | Syntax   | `KLYSTRONGET:TACT`          |
+|                | Examples | `KLYSTRONGET:TACT`          |
+| **set**        | Syntax   | `<prim>:<micr>:<unit>:TACT` |
+|                |          | `<prim>:<micr>:<unit>:PDES` |
+|                |          | `<prim>:<micr>:<unit>:KPHR` |
+|                |          | `<prim>:<micr>:<unit>:PCON` |
+|                |          | `<prim>:<micr>:<unit>:ACON` |
+|                | Examples | `KLYS:LI31:31:TACT`         |
+|                |          | `KLYS:LI31:31:PDES`         |
+|                |          | `KLYS:LI31:31:KPHR`         |
+|                |          | `KLYS:LI31:31:PCON`         |
+|                |          | `KLYS:LI31:31:ACON`         |
 
 ## Attribute operation summary
 
 | Attribute | operation | Description                                                                               |
 |-----------|-----------|-------------------------------------------------------------------------------------------|
-| `TACT`    | **get**   | Gets a status code or a status string for the specified klystron on a beam code           |
+| `TACT`    | **get**   | Gets status code(s), or status string(s) for the specified klystron(s) on a beam code     |
 | `TACT`    | **set**   | Deactivates or reactivates a specified klystron on a beam code                            |
 | `PDES`    | **set**   | Sets the PDES value and optionally trims the phase for a specified klystron or subbooster |
 | `KPHR`    | **set**   | Sets the KPHR value of a specified klystron or subbooster                                 |
@@ -56,9 +58,10 @@ _Parameters_
 
 | Parameter Names | Parameter Values | Description                                                                                                                           | 
 |-----------------|------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `TYPE`*         | return type      | Must be one of `SHORT`, `LONG`, or `STRING`                                                                                           |
+| `TYPE`*         | return type      | Must be one of `SHORT`, `LONG`, `STRING`, or `TABLE`. For `KLYSTRONGET` `TYPE` must be `TABLE`                                        |
 | `BEAM`*         | Integer          | Beam code number                                                                                                                      |
-| `DGRP`          | Dgrp name        | A display group associated with the specified klystron. Must be specified if the klystron does not belong to display group `LIN_KLYS` |
+| `DGRP`          | Dgrp name        | A display group associated with the specified Klystron. Must be specified if the Klystron does not belong to display group `LIN_KLYS` |
+| `DEVICES`             | Klystron Device  | For `KLYSTRONGET` this parameter is mandatory and contains an array of `<prim>:<micr>:<unit>` to get the status of.                      |
 
 _Return value_
 
@@ -69,6 +72,19 @@ _Return value_
 | `SHORT`  | A short value containing the status code for the klystron on a beam code. See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT) |
 | `LONG`   | A long value containing the status code for the klystron on a beam code. See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)  |
 | `STRING` | A string value containing a status string having one of two values: "deactivated" or "activated"                                                          |
+
+| TYPE    | Return Column | Column Type     | Description                 |
+|---------|---------------|-----------------|-----------------------------|
+| `TABLE` | `name`        | `STRING_ARRAY`  | device name `<micr>:<unit>` |
+|         | `opstat`      | `BOOLEAN_ARRAY` | operation status            |
+|         | `status`      | `SHORT_ARRAY`   | klystron status             |
+|         | `accel`       | `BOOLEAN_ARRAY` | is in accelerate state      |
+|         | `standby`     | `BOOLEAN_ARRAY` | is in standby mode          | 
+|         | `bad`         | `BOOLEAN_ARRAY` | is bad?                     |
+|         | `sled`        | `BOOLEAN_ARRAY` | true is sled                |
+|         | `sleded`      | `BOOLEAN_ARRAY` | true if sleded              |
+|         | `pampl`       | `BOOLEAN_ARRAY` | true if pampl               |
+|         | `pphas`       | `BOOLEAN_ARRAY` | true if pphas               |
 
 ### TACT : set
 
@@ -141,7 +157,10 @@ None
 
 ```shell
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=SHORT
+pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=LONG
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
+pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=TABLE
+pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:LI31:32"]' TYPE=TABLE
 ```
 
 </td>
@@ -167,7 +186,10 @@ pvcall "KLYS:LI31:31:PCON" VALUE=5.0
 
 ```shell
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'SHORT'
+eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'LONG'
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'STRING'
+eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'TABLE'
+eget -s KLYSTRONGET:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a DEVICES '["KLYS:LI31:31", "KLYS:LI31:32"]' -a TYPE 'TABLE'
 ```
 
 </td>
@@ -190,7 +212,7 @@ eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 
 ### Matlab Examples
 
-@note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md) 
+@note For general details about accessing AIDA-PVA from matlab see [User Guide for Matlab Users](1_12_Matlab_Code.md)
 
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
@@ -198,7 +220,6 @@ eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
-
 
 ```matlab
 try
@@ -226,6 +247,37 @@ end
 
 stringResponse =
 activated
+```
+
+```matlab
+try
+    builder = pvaRequest('KLYSTRONGET:TACT');
+    builder.with('BEAM', 8).with('DGRP', 'DEV_DGRP').with('devices', {'KLYS:LI31:31' 'KLYS:LI31:32'});
+    builder.returning(AIDA_TABLE);
+    tableResponse = ML(builder.get())
+catch e
+    handleExceptions(e);
+end
+
+tableResponse =
+            size: 2
+          labels: {'name'  'opstatus', 'status', 'accel', 'standby', 'bad', 'sled', 'sleded', 'pampl', 'pphas'}
+           units: []
+    descriptions: []
+      fieldnames: {'Device Name'  'Operation Status', 'Klystron Status', 'Accellerate', 'Standby', 'Bad', 'Sled Tuned', 'Sleded', 'Pampl', 'pphas'}
+          values: [2x10 struct]
+
+mstruct.values.status(1)
+ans =
+   18
+
+mstruct.values.opstatus(1)
+ans =
+    1          
+
+mstruct.values.name(1)
+ans =
+    'KLYS:LI31:31'         
 ```
 
 </td>
@@ -268,6 +320,7 @@ catch e
     handleExceptions(e);
 end
 ```
+
 ```matlab
 try
     pvaSet('KLYS:LI31:31:PCON', 5.0);
@@ -539,7 +592,7 @@ public class EzExample {
         args.getIntField("beam").put(8);
         args.getStringField("dgrp").put("DEV_DGRP");
         args.getStringField("type").put("SHORT");
-        
+
         EasyChannel channel = easypva.createChannel(pvName);
         if (!channel.connect(5.0)) {
             throw new RuntimeException("Unable to connect");
@@ -611,7 +664,7 @@ public class EzExample {
         args.getIntField("beam").put(8);
         args.getStringField("dgrp").put("DEV_DGRP");
         args.getShortField("value").put(value);
-        
+
         EasyChannel channel = easypva.createChannel(pvName);
         if (!channel.connect(5.0)) {
             throw new RuntimeException("Unable to connect");
@@ -679,7 +732,7 @@ public class JavaExample {
         args.getIntField("beam").put(8);
         args.getStringField("dgrp").put("DEV_DGRP");
         args.getStringField("type").put("SHORT");
-        
+
         RPCClientImpl client = new RPCClientImpl(pvName);
         PVStructure response = client.request(request, 3.0);
         client.destroy();
