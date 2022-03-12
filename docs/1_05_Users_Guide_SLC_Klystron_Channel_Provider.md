@@ -58,10 +58,9 @@ _Parameters_
 
 | Parameter Names | Parameter Values | Description                                                                                                                           | 
 |-----------------|------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `TYPE`*         | return type      | Must be one of `SHORT`, `LONG`, `STRING`, or `TABLE`. For `KLYSTRONGET` `TYPE` must be `TABLE`                                        |
+| `TYPE`*         | return type      | Must be one of `SHORT`, `LONG`, `STRING`, or `TABLE`                                         |
 | `BEAM`*         | Integer          | Beam code number                                                                                                                      |
 | `DGRP`          | Dgrp name        | A display group associated with the specified Klystron. Must be specified if the Klystron does not belong to display group `LIN_KLYS` |
-| `DEVICES`             | Klystron Device  | For `KLYSTRONGET` this parameter is mandatory and contains an array of `<prim>:<micr>:<unit>` to get the status of.                      |
 
 _Return value_
 
@@ -73,18 +72,43 @@ _Return value_
 | `LONG`   | A long value containing the status code for the klystron on a beam code. See [linklysta.txt](http://www-mcc.slac.stanford.edu/REF_/SLCTXT/LINKLYSTA.TXT)  |
 | `STRING` | A string value containing a status string having one of two values: "deactivated" or "activated"                                                          |
 
-| TYPE    | Return Column | Column Type     | Description                 |
-|---------|---------------|-----------------|-----------------------------|
-| `TABLE` | `name`        | `STRING_ARRAY`  | device name `<micr>:<unit>` |
-|         | `opstat`      | `BOOLEAN_ARRAY` | operation status            |
-|         | `status`      | `SHORT_ARRAY`   | klystron status             |
-|         | `accel`       | `BOOLEAN_ARRAY` | is in accelerate state      |
-|         | `standby`     | `BOOLEAN_ARRAY` | is in standby mode          | 
-|         | `bad`         | `BOOLEAN_ARRAY` | is bad?                     |
-|         | `sled`        | `BOOLEAN_ARRAY` | true is sled                |
-|         | `sleded`      | `BOOLEAN_ARRAY` | true if sleded              |
-|         | `pampl`       | `BOOLEAN_ARRAY` | true if pampl               |
-|         | `pphas`       | `BOOLEAN_ARRAY` | true if pphas               |
+| TYPE    | Return Column | Column Type     | Description                        |
+|---------|---------------|-----------------|------------------------------------|
+| `TABLE` | `name`        | `STRING_ARRAY`  | device name `<prim>:<micr>:<unit>` |
+|         | `opstat`      | `BOOLEAN_ARRAY` | operation status                   |
+|         | `status`      | `SHORT_ARRAY`   | klystron status                    |
+|         | `accel`       | `BOOLEAN_ARRAY` | is in accelerate state             |
+|         | `standby`     | `BOOLEAN_ARRAY` | is in standby mode                 | 
+|         | `bad`         | `BOOLEAN_ARRAY` | is bad?                            |
+|         | `sled`        | `BOOLEAN_ARRAY` | true is sled                       |
+|         | `sleded`      | `BOOLEAN_ARRAY` | true if sleded                     |
+|         | `pampl`       | `BOOLEAN_ARRAY` | true if pampl                      |
+|         | `pphas`       | `BOOLEAN_ARRAY` | true if pphas                      |
+
+### TACT : multi-get
+
+_Parameters_
+
+| Parameter Names | Parameter Values | Description                                                                                                                           | 
+|-----------------|------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `BEAM`*         | Integer          | Beam code number                                                                                                                      |
+| `DGRP`          | Dgrp name        | A display group associated with the specified Klystron. Must be specified if the Klystron does not belong to display group `LIN_KLYS` |
+| `DEVICES`*      | Klystron Device  | Contains an array of `<prim>:<micr>:<unit>` to get the status of.                                                                     |
+
+_Return value_
+
+| TYPE    | Return Column | Column Type     | Description                        |
+|---------|---------------|-----------------|------------------------------------|
+| `TABLE` | `name`        | `STRING_ARRAY`  | device name `<prim>:<micr>:<unit>` |
+|         | `opstat`      | `BOOLEAN_ARRAY` | operation status                   |
+|         | `status`      | `SHORT_ARRAY`   | klystron status                    |
+|         | `accel`       | `BOOLEAN_ARRAY` | is in accelerate state             |
+|         | `standby`     | `BOOLEAN_ARRAY` | is in standby mode                 | 
+|         | `bad`         | `BOOLEAN_ARRAY` | is bad?                            |
+|         | `sled`        | `BOOLEAN_ARRAY` | true is sled                       |
+|         | `sleded`      | `BOOLEAN_ARRAY` | true if sleded                     |
+|         | `pampl`       | `BOOLEAN_ARRAY` | true if pampl                      |
+|         | `pphas`       | `BOOLEAN_ARRAY` | true if pphas                      |
 
 ### TACT : set
 
@@ -160,7 +184,7 @@ pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=SHORT
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=LONG
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=TABLE
-pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:LI31:32"]' TYPE=TABLE
+pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:LI31:32"]'
 ```
 
 </td>
@@ -189,7 +213,7 @@ eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'SHORT'
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'LONG'
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'STRING'
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'TABLE'
-eget -s KLYSTRONGET:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a DEVICES '["KLYS:LI31:31", "KLYS:LI31:32"]' -a TYPE 'TABLE'
+eget -s KLYSTRONGET:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a DEVICES '["KLYS:LI31:31", "KLYS:LI31:32"]'
 ```
 
 </td>
@@ -253,7 +277,6 @@ activated
 try
     builder = pvaRequest('KLYSTRONGET:TACT');
     builder.with('BEAM', 8).with('DGRP', 'DEV_DGRP').with('devices', {'KLYS:LI31:31' 'KLYS:LI31:32'});
-    builder.returning(AIDA_TABLE);
     tableResponse = ML(builder.get())
 catch e
     handleExceptions(e);
