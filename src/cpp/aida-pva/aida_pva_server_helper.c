@@ -271,37 +271,39 @@ static bool isOnlyNumbers(char* string)
 	if (string == NULL) {
 		return false;
 	}
-	bool isDigit = true;
-	bool isComma = false;
-	bool isPoint = false;
-	int len = strlen(string);
+	bool isInNumber = true;
+	bool afterComma = false;
+	bool hasDecimalPoint = false;
+	int len = (int)strlen(string);
 	for (int i = 0; i < len; i++) {
-		// if we're reading digits digits are ok
-		if (isdigit(string[i]) && isDigit) {
-			isComma = false;
-			continue;
-		}
-		if (string[i] == '.') {
-			if (isPoint) {
-				return false;
+		// Digits (always ok)
+		if (isdigit(string[i])) {
+			// First digit clear comma and point flags
+			if (!isInNumber) {
+				afterComma = false;
+				hasDecimalPoint = false;
+				isInNumber = true;
 			}
-			if (isDigit && !isPoint)
-				isPoint = true;
-		}
-		if (isspace(string[i])) {
-			if (isPoint) {
-				return false;
-			}
-			isDigit = false;
 			continue;
-		}
-		if (string[i] == ',') {
-			// Double comma is not ok
-			if (isComma) {
-				return false;
+		} else if (string[i] == '.') {
+			// point is ok if this is in a number, and we've not had any other points in this number
+			if (!hasDecimalPoint && isInNumber) {
+				hasDecimalPoint = true;
+				continue;
 			}
-			isComma = true;
-			continue;
+		} else if (string[i] == ',') {
+			// comma is ok except after comma
+			if (!afterComma) {
+				isInNumber = false;
+				afterComma = true;
+				continue;
+			}
+		} else if (isspace(string[i])) {
+			// Space is ok after a comma or digit
+			if (afterComma || isInNumber) {
+				isInNumber = false;
+				continue;
+			}
 		}
 		return false;
 	}
