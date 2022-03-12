@@ -1,6 +1,6 @@
 # 3 - Platform Technical Reference
 
-Guide to the implementation of AIDA-PVA in Stanford National Laboratory.
+Guide to the implementation of AIDA-PVA in SLAC National Accelerator Laboratory.
 
 ## EPICS Backport 1.5
 In order to make AIDA-PVA work on VMS EPICS had to be backported to Java 1.5. This created
@@ -80,17 +80,13 @@ The source code is found in the github repository [slaclab/aida-pva](https://git
   - @ref slac.aida.NativeChannelProvider "NativeChannelProvider"
     - _The native endpoints that link to the JNI entry-points in the Channel Provider C code, implemented in AIDA-PVA Module in `AIDA_PVALIB`_.
 
-### AIDA-PVA is Strangely Linked :)
+### AIDA-PVA Linking
 ![](images/aida-pva-link.png)
-1. The AIDA-PVA Service loads the Channel Provider shared image but it does not call any functions in the image that it loads.
+1. The AIDA-PVA Service loads the Channel Provider shared image, but it does not call any functions in the image that it loads.
 2. The AIDA-PVA Service calls JNI Entry points implemented in the AIDA-PVA Module in `AIDA_PVALIB`
 3. It has access to them because the Channel Provider is linked with the AIDA-PVA Module to resolve those JNI references.
-4. AIDA-PVA Module calls the Channel Provider entrypoints when it is called by the AIDA-PVA Service.
+4. AIDA-PVA Module calls the Channel Provider entry-points when it is called by the AIDA-PVA Service.
 5. Whenever the Channel Provider needs help it calls the Helper functions in AIDA-PVA Module
- 
-Though it could look like it would be impossible to build the AIDA-PVA Module because it would have unresolved references 
-to an as-yet-undefined Channel Provider's entrypoints, it does work because unless the Module that makes those calls is referenced
-by an image being linked it, won't try to resolve the references.
 
 @note
 When linking the Channel Provider to the AIDA-PVA Module you need to explicitly request the Modules with the JNI Entry points

@@ -1,6 +1,6 @@
 # 1 - User Guide to AIDA-PVA
 
-This is the guide to using the AIDA-PVA system at Stanford National Laboratory. AIDA is the Accelerator Integrated Data
+This is the guide to using the AIDA-PVA system at SLAC National Accelerator Laboratory. AIDA is the Accelerator Integrated Data
 Access framework developed by SLAC in the early 2000s. AIDA-PVA is the latest version developed in the early 20s.
 
 If you are already familiar AIDA you can jump
