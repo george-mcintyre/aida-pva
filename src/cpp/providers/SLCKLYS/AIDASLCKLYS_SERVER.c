@@ -325,21 +325,23 @@ static int getDeviceList(JNIEnv* env, const char* uri, Arguments arguments, char
 		}
 	} else {
 		// Otherwise, extract the klystron device name from the uri
-		unsigned int lenKlystronDeviceName = strlen(uri) - STD_ATTRIBUTE_LEN;
+		unsigned int deviceNameLen = strlen(uri) - STD_ATTRIBUTE_LEN;
 
 		// Allocate memory.  Make sure that the allocated memory matches the pattern used by ascanf.
 		// e.g. 1 block of memory that contains the pointer followed by the string.
-		char** arrayPtr;
-		ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, arrayPtr, sizeof(char*) + lenKlystronDeviceName + 1,
+		char** deviceArray, * device;
+		size_t deviceNamePtrLen = sizeof(char*);
+		ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, deviceArray, deviceNamePtrLen + deviceNameLen + 1,
 				"Klystron Device Name List", EXIT_FAILURE);
-		arrayPtr[0] = (char*)(arrayPtr + sizeof(char*)); // point array element to string space
+		device = (char*)(deviceArray + deviceNamePtrLen); // point array element to string space
 
 		// Copy the name.
-		strncpy(arrayPtr[0], uri, lenKlystronDeviceName); // copy from uri
-		arrayPtr[0][lenKlystronDeviceName] = '\0'; // null terminate
+		strncpy(device, uri, deviceNameLen); // copy from uri
+		device[deviceNameLen] = '\0'; // null terminate
 
 		// Return the array
-		*devices = arrayPtr;
+		deviceArray[0] = device;
+		*devices = deviceArray;
 		*nDevices = 1; // one device in this array
 	}
 	return EXIT_SUCCESS;
