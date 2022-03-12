@@ -185,6 +185,9 @@ pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=LONG
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=TABLE
 pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:LI31:32"]'
+"Device Name" "Operation Status" "Klystron Status" Accellerate Standby   Bad "Sled Tuned" Sleded Pampl pphas
+ KLYS:LI31:31               true                18       false    true false        false   true false false
+ KLYS:LI31:32              false            -32763       false   false false        false  false false false
 ```
 
 </td>
@@ -284,23 +287,36 @@ end
 
 tableResponse =
             size: 2
-          labels: {'name'  'opstatus', 'status', 'accel', 'standby', 'bad', 'sled', 'sleded', 'pampl', 'pphas'}
+          labels: {'Device Name'  'Operation Status'  'Klystron Status'  'Accellerate'  'Standby'  'Bad'  'Sled Tuned'  'Sleded'  'Pampl'  'pphas'}
            units: []
     descriptions: []
-      fieldnames: {'Device Name'  'Operation Status', 'Klystron Status', 'Accellerate', 'Standby', 'Bad', 'Sled Tuned', 'Sleded', 'Pampl', 'pphas'}
-          values: [2x10 struct]
+      fieldnames: {'name'  'opstat'  'status'  'accel'  'standby'  'bad'  'sled'  'sleded'  'pampl'  'pphas'}
+          values: [1x1 struct]
 
-mstruct.values.status(1)
+tableResponse.values.status(1)
 ans =
    18
 
-mstruct.values.opstatus(1)
+tableResponse.values.opstat(1)
 ans =
-    1          
+     1
 
-mstruct.values.name(1)
+tableResponse.values.name(1)
 ans =
-    'KLYS:LI31:31'         
+    'KLYS:LI31:31'
+
+tableResponse.values
+ans =
+       name: {'KLYS:LI31:31'  'KLYS:LI31:32'}
+     opstat: [1 0]
+     status: [18 32757]
+      accel: [0 0]
+    standby: [1 0]
+        bad: [0 0]
+       sled: [0 0]
+     sleded: [1 0]
+      pampl: [0 0]
+      pphas: [0 0]
 ```
 
 </td>

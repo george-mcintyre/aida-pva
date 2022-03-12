@@ -331,7 +331,7 @@ static int getDeviceList(JNIEnv* env, const char* uri, Arguments arguments, char
 		// e.g. 1 block of memory that contains the pointer followed by the string.
 		char** deviceArray, * device;
 		size_t deviceNamePtrLen = sizeof(char*);
-		ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, deviceArray, deviceNamePtrLen + deviceNameLen + 1,
+		ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, deviceArray, deviceNamePtrLen + deviceNameLen + 1 + 1,
 				"Klystron Device Name List", EXIT_FAILURE);
 		device = (char*)(deviceArray + deviceNamePtrLen); // point array element to string space
 
@@ -488,8 +488,7 @@ static Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments,
 	PMU_STRING_FROM_URI(shortSlcName, uri)
 
 	TRACK_MEMORY(beam_c)
-	if (dgrp_c)
-		TRACK_MEMORY(dgrp_c)
+	TRACK_MEMORY(dgrp_c)
 
 	// Get the status
 	short klys_status;
