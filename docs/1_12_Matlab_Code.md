@@ -61,7 +61,7 @@ end
 In matlab 2012 you can't chain functions together so instead of writing this:
 
 ```matlab
-mstruct = ML(pvaRequest('NDRFACET:BUFFACQ').with('BPMD', 57).with('BPMS', { 'BPMS:LI11:501' }).get())
+mstruct = ML(pvaRequest('NDRFACET:BUFFACQ').with('BPMD', 57).with('BPMS', { 'BPMS:LI11:501' }).timeout(10).get())
 mstruct =
   struct with fields:
             size: 1
@@ -78,6 +78,7 @@ you have to write it on separate lines thus:
 builder = pvaRequest('NDRFACET:BUFFACQ');
 builder.with('BPMD', 57);
 builder.with('BPMS', { 'BPMS:LI11:501' });
+builder.timeout(10);
 mstruct = ML(builder.get())
 mstruct =
             size: 1

@@ -38,32 +38,32 @@ import static edu.stanford.slac.aida.client.AidaType.*;
 This encapsulates all the types that a client application can use to access AIDA-PVA Channel 
 Providers.  
 * Scalar types
-    * `BOOLEAN`            to return a java Boolean
-    * `BYTE`               to return a java Byte
-    * `CHAR`               to return a java Char
-    * `SHORT`              to return a java Short
-    * `INTEGER`            to return a java Integer
-    * `LONG`               to return a java Long
-    * `FLOAT`              to return a java Float
-    * `DOUBLE`             to return a java Double
-    * `STRING`             to return a java String
+    * `AIDA_BOOLEAN`            to return a java Boolean
+    * `AIDA_BYTE`               to return a java Byte
+    * `AIDA_CHAR`               to return a java Char
+    * `AIDA_SHORT`              to return a java Short
+    * `AIDA_INTEGER`            to return a java Integer
+    * `AIDA_LONG`               to return a java Long
+    * `AIDA_FLOAT`              to return a java Float
+    * `AIDA_DOUBLE`             to return a java Double
+    * `AIDA_STRING`             to return a java String
 * Scalar array types
-    * `BOOLEAN_ARRAY`      to return a java List<Boolean>
-    * `BYTE_ARRAY`         to return a java List<Byte>
-    * `CHAR_ARRAY`         to return a java List<Byte> - once character strings
-    * `SHORT_ARRAY`        to return a java List<Short>
-    * `INTEGER_ARRAY`      to return an java List<Integer>
-    * `LONG_ARRAY`         to return a java List<Long>
-    * `FLOAT_ARRAY`        to return a java List<Float>
-    * `DOUBLE_ARRAY`       to return a java List<Double>
-    * `STRING_ARRAY`       to return a java List<String>
+    * `AIDA_BOOLEAN_ARRAY`      to return a java List<Boolean>
+    * `AIDA_BYTE_ARRAY`         to return a java List<Byte>
+    * `AIDA_CHAR_ARRAY`         to return a java List<Byte> - once character strings
+    * `AIDA_SHORT_ARRAY`        to return a java List<Short>
+    * `AIDA_INTEGER_ARRAY`      to return an java List<Integer>
+    * `AIDA_LONG_ARRAY`         to return a java List<Long>
+    * `AIDA_FLOAT_ARRAY`        to return a java List<Float>
+    * `AIDA_DOUBLE_ARRAY`       to return a java List<Double>
+    * `AIDA_STRING_ARRAY`       to return a java List<String>
 * Tables
-    * `TABLE`              to return a table : PvaTable
+    * `AIDA_TABLE`              to return a table : PvaTable
 
 ### API
 #### Synopsis
 
-    pvaRequest(channel) [.with(name, value) ...] [ .returning(type) ] [ .get() | .set(value) ]
+    pvaRequest(channel) [.with(name, value) ...] [ .returning(type) ] [ .timeout(timeout) ] [ .get() | .set(value) ]
     pvaGet(channel [, type])
     pvaSet(channel , value)
     pvaUnpack(result)
@@ -73,6 +73,7 @@ Providers.
   - **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
   - **get**()** - To execute the request and return the results
   - **set**(`value`) - To execute the request setting the `value` and returning nothing or a table
+  - **timeout**() - To set the timeout for the request.
   - **uri**() - returns an NTURI for the builder.
 - **pvaGet**(`channel` [, `type`]) - Executes a simple get on a channel specifying an optional type for the return.
 - **pvaSet**(`channel`, `value`) - Executes a simple set of a channel to the given value.
@@ -93,6 +94,7 @@ Providers.
              "BPMS:LI11:601",
              "BPMS:LI11:701",
              "BPMS:LI11:801"))
+     .timeout(10.0)
      .get();
    String firstName = table.getValues().get("name").get(0)
 ```
