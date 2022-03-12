@@ -3,7 +3,6 @@
  *     **MEMBER**=SLCLIBS:AIDA_PVALIB
  *     **ATTRIBUTES**=JNI,LIBR_NOGLOBAL
  */
-#include <dbgetc.h>
 #include "aida_pva.h"
 #include "AIDASLCKLYS_SERVER.h"
 
@@ -12,7 +11,6 @@ static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgr
 static int klystronStatusDontThrow(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status);
 static int
 klystronStatusImpl(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status, bool onErrorThrow);
-
 static Table setActivateValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
 static Table setPdesValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
 		char* pmu, char* secn);
@@ -21,7 +19,7 @@ static Table setKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Val
 static Table setPdesOrKphrValue(JNIEnv* env, const char* uri, Arguments arguments, Value value,
 		char* trim, char* pmu, char* secn);
 static void setPconOrAconValue(JNIEnv* env, Arguments arguments, Value value, char* pmu, char* secn);
-static int getStandardArgs(Arguments arguments, char** beam_c, char** dgrp_c);
+static int getStandardArgs(JNIEnv* env, Arguments arguments, char** beam_c, char** dgrp_c);
 static int getDeviceList(JNIEnv* env, const char* uri, Arguments arguments, char*** devices, int* nDevices);
 static bool getKlystronStatuses(JNIEnv* env, char* const* devices, int nDevices,
 		char* beam_c, char* dgrp_c,
@@ -35,7 +33,14 @@ static bool getKlystronStatuses(JNIEnv* env, char* const* devices, int nDevices,
 		bool* isPampl,
 		bool* isPphas);
 
+/**
+ * The standard attribute suffix for status requests
+ */
 #define STD_ATTRIBUTE   ":TACT"
+
+/**
+ * The length of the standard attribute suffix for status requests
+ */
 #define STD_ATTRIBUTE_LEN strlen(STD_ATTRIBUTE)
 
 // API Stubs
@@ -136,7 +141,7 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
  * e.g. `DEVICES=["KLYS:LI31:31", "KLYS:LI31:32"]`
  *
  * If all of the queries fail then an exception is raised.
- * Otherwise the following fields returned are:
+ * Otherwise the following fields are returned:
  * 		`name`		STRING		device name `<micr>:<unit>`
  * 		`opstat`	BOOLEAN		operation status (true = success, false = failure)
  * 		`status`	SHORT		klystron status
@@ -169,7 +174,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	TRACK_MEMORY(devices)
 
 	// Get the standard arguments
-	if (getStandardArgs(arguments, &beam_c, &dgrp_c)) {
+	if (getStandardArgs(env, arguments, &beam_c, &dgrp_c)) {
 		ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
 	}
 	TRACK_MEMORY(beam_c)
@@ -186,7 +191,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	bool isPampl[nDevices];
 	bool isPphas[nDevices];
 
-	// Get the status for each klystron into the query result variables
+	// Get the status for each klystron into the query results variables
 	if (getKlystronStatuses(env, devices, nDevices, beam_c, dgrp_c,
 			status, isSuccessFull, isInAccelerateState,
 			isInStandByState, isInBadState, isSledTuned, isSleded, isPampl, isPphas)) {
@@ -550,7 +555,7 @@ static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, 
 	char* beam_c;
 	char* dgrp_c;
 
-	if (getStandardArgs(arguments, &beam_c, &dgrp_c)) {
+	if (getStandardArgs(env, arguments, &beam_c, &dgrp_c)) {
 		return EXIT_FAILURE;
 	}
 	TRACK_MEMORY(beam_c)
@@ -571,7 +576,7 @@ static int getKlystronStatus(JNIEnv* env, const char* uri, Arguments arguments, 
  * @param dgrp_c  the extracted dgrp, NULL if not specified
  * @return `EXIT_SUCCESS` if no errors occurred, otherwise `EXIT_FAILURE`
  */
-static int getStandardArgs(Arguments arguments, char** beam_c, char** dgrp_c)
+static int getStandardArgs(JNIEnv* env, Arguments arguments, char** beam_c, char** dgrp_c)
 {
 	*dgrp_c = NULL; // default
 	return ascanf(env, &arguments, "%s %os",
@@ -605,7 +610,6 @@ static int klystronStatus(JNIEnv* env, char slcName[30], char* beam_c, char* dgr
  */
 static int klystronStatusDontThrow(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, short* klys_status)
 {
-	DBFREE()
 	return klystronStatusImpl(env, slcName, beam_c, dgrp_c, klys_status, false);
 }
 
