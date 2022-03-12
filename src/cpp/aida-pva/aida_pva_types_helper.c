@@ -375,11 +375,12 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Try double array first
 			if (getDoubleArrayArgument(arguments, argumentName, (double**)&doubleArrayTarget, elementCount)
 					== EXIT_SUCCESS) {
+				TRACK_MEMORY(doubleArrayTarget)
 				if (aidaType == AIDA_FLOAT_ARRAY_TYPE) {  // use for float if that's what you need
 					// Allocate a new array and copy values
 					floatArrayTarget = calloc(*elementCount, sizeof(float));
+					TRACK_MEMORY(floatArrayTarget)
 					if (!floatArrayTarget) {
-						free(doubleArrayTarget);
 						PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION,
 								"Could not allocate memory for float argument",
 								EXIT_FAILURE)
@@ -388,7 +389,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					for (int i = 0; i < *elementCount; i++) {
 						floatArrayTarget[i] = (float)doubleArrayTarget[i];
 					}
-					free(doubleArrayTarget);
+					FREE_TRACKED_MEMORY(doubleArrayTarget)
 				} else {
 					*((double**)target) = doubleArrayTarget;
 				};
@@ -398,11 +399,12 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 			// Then try float array
 			if (getFloatArrayArgument(arguments, argumentName, (float**)&floatArrayTarget, elementCount)
 					== EXIT_SUCCESS) {
+				TRACK_MEMORY(floatArrayTarget)
 				if (aidaType == AIDA_DOUBLE_ARRAY_TYPE) {  // use for double if that's what you need
 					// Allocate a new array and copy values
 					doubleArrayTarget = calloc(*elementCount, sizeof(double));
+					TRACK_MEMORY(doubleArrayTarget)
 					if (!doubleArrayTarget) {
-						free(floatArrayTarget);
 						PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION,
 								"Could not allocate memory for double argument",
 								EXIT_FAILURE)
@@ -411,7 +413,7 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
 					for (int i = 0; i < *elementCount; i++) {
 						doubleArrayTarget[i] = (double)floatArrayTarget[i];
 					}
-					free(floatArrayTarget);
+					FREE_TRACKED_MEMORY(floatArrayTarget)
 				} else {
 					*((float**)target) = floatArrayTarget;
 				};

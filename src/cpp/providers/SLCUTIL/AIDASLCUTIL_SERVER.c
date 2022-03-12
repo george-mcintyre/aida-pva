@@ -172,6 +172,8 @@ Table aidaSetValueWithResponse(JNIEnv* env, const char* uri, Arguments arguments
  */
 static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
+	TRACK_ALLOCATED_MEMORY
+
 	// Check if operations are enabled?
 	if (!DPSLCUTIL_MKB_ACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
@@ -188,14 +190,14 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	)) {
 		RETURN_NULL_TABLE;
 	}
+	TRACK_MEMORY(mkb)
 	CONVERT_TO_VMS_FLOAT(&floatValue, 1)
 
 	// Set the value
 	int num_devices;
 	vmsstat_t status;
 	status = DPSLCUTIL_DO_MKB(mkb, &floatValue, &num_devices);
-	free(mkb);
-	mkb = NULL;
+	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
 		RETURN_NULL_TABLE;

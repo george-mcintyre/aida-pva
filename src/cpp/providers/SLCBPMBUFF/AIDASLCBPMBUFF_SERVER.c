@@ -73,10 +73,12 @@ void aidaServiceInit(JNIEnv* env)
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
+
 	// Get arguments
 	int bpmd = BPMD_ROGUE, nrpos = NRPOS_DEFAULT, nDevices = 0;
 	unsigned int nBpms = 0, nDevs = 0;
-	char** bpms, ** devices;
+	char** bpms = NULL, ** devices = NULL;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
 	TO_DGROUP(dGroupName, uri)
 
@@ -88,12 +90,13 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	)) {
 		RETURN_NULL_TABLE
 	}
+	TRACK_MEMORY(bpms)
+	TRACK_MEMORY(devices)
 
 	if (nBpms && nDevs) {
 		// Only one or the other not both
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Specify either DEVS or BPMS argument but not both");
-		free(bpms);
-		free(devices);
+		FREE_MEMORY
 		RETURN_NULL_TABLE
 	} else if (nBpms) {
 		for (int i = 0; i < nBpms; i++) {
@@ -101,13 +104,11 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 					deviceNames[i].prim_s._a,
 					deviceNames[i].micr_s._a,
 					&deviceNames[i].unit_s._i)) {
-				free(bpms);
-				free(devices);
+				FREE_MEMORY
 				RETURN_NULL_TABLE
 			}
 		}
 		nDevices += nBpms;
-		free(bpms);
 		bpms = NULL;
 	} else if (nDevs) {
 		for (int i = 0; i < nDevs; i++) {
@@ -115,15 +116,14 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 					deviceNames[i].prim_s._a,
 					deviceNames[i].micr_s._a,
 					&deviceNames[i].unit_s._i)) {
-				free(bpms);
-				free(devices);
+				FREE_MEMORY
 				RETURN_NULL_TABLE
 			}
 		}
 		nDevices += nDevs;
-		free(devices);
 		devices = NULL;
 	}
+	FREE_MEMORY
 
 	// Check arguments
 	if (checkArguments(env, bpmd, nrpos, nDevices)) {

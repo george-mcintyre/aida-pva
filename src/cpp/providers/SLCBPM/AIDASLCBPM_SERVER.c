@@ -65,6 +65,8 @@ void aidaServiceInit(JNIEnv* env)
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
+
 	// Get arguments
 	int bpmd, navg = NAVG, cnfnum = BPMD_ROGUE, sortOrder = SORTORDER_DISPLAY, cnftype = CNFTYPE_NONE;
 	char* cfnTypeString = NULL;
@@ -78,6 +80,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	)) {
 		RETURN_NULL_TABLE
 	}
+	TRACK_MEMORY(cfnTypeString)
 
 	// If cfnType was set then set cnftype variable appropriately
 	if (cfnTypeString) {
@@ -94,24 +97,21 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 		} else if (strcasecmp(cfnTypeString, "TEMPORARY") == 0) {
 			cnftype = CNFTYPE_TEMPORARY;
 		} else {
-			free(cfnTypeString);
-			cfnTypeString = NULL;
 			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "CNFTYPE argument not recognised");
+			FREE_MEMORY
 			RETURN_NULL_TABLE
 		}
 
+		FREE_MEMORY
+
 		// Check that if a cnftype that requires a config number to be given
 		// that one was given.
-		if ((strcasecmp(cfnTypeString, "SCRATCH") == 0 ||
-				strcasecmp(cfnTypeString, "NORMAL") == 0 ||
-				strcasecmp(cfnTypeString, "TEMPORARY") == 0) && cnfnum <= BPMD_ROGUE) {
-			free(cfnTypeString);
-			cfnTypeString = NULL;
+		if ((cnftype == CNFTYPE_SCRATCH || cnftype == CNFTYPE_NORMAL || cnftype == CNFTYPE_TEMPORARY)
+				&& cnfnum <= BPMD_ROGUE) {
 			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
 					"A CNFNUM argument (>0) is required with the CFNTYPE argument given");
 			RETURN_NULL_TABLE
 		}
-
 	}
 
 	// Check parameters

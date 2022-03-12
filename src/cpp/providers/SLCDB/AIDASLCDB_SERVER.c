@@ -654,6 +654,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
  */
 void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
 {
+	TRACK_ALLOCATED_MEMORY
+
 	if (!JNI_DBACCESSENABLED()) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
 				"Aida access for SLC Database set operations are not currently enabled");
@@ -665,11 +667,12 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	if (avscanf(env, &arguments, &value, "%fa", "value", &data, &length)) {
 		return;
 	}
+	TRACK_MEMORY(data)
 
 	TO_SLC_NAME(uri, slcName)
 	CONVERT_TO_VMS_FLOAT(data, length)
 	vmsstat_t status = JNI_DBSETFLOAT(slcName, data, (int)length);
-	free(data);
+	FREE_MEMORY
 
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "setting SLC db float array device data");

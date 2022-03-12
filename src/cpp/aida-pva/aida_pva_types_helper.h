@@ -174,9 +174,6 @@ extern "C" {
         } else if (jsonRoot->type == json_double) {                 \
             sprintf(nextStringPosition, "%g", jsonRoot->u.dbl); \
         } else { \
-            if (aidaType == AIDA_STRING_TYPE) { \
-                free(nextStringPosition);\
-            }\
             PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to string: <json>", EXIT_FAILURE) \
         } \
         *ptr = nextStringPosition; \
@@ -220,6 +217,8 @@ extern "C" {
 
 /**
  * Macro used internally to set a string array for ascanf() and avscanf().
+ * Allocates a string array by allocating a single block of memory.  First part of block is list of character pointers into the last part of block which holds the strings.
+ * To free the memory simply free the pointer to the first char *.
  */
 #define ASCANF_SET_STRING_ARRAY \
 { \

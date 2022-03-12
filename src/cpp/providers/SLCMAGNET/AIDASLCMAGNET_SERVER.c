@@ -62,6 +62,8 @@ void aidaServiceInit(JNIEnv* env)
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
+	TRACK_ALLOCATED_MEMORY
+
 	// Get arguments
 	char* micrPattern = NULL, * unitPattern = NULL;
 	if (ascanf(env, &arguments, "%os %os",
@@ -70,6 +72,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	)) {
 		RETURN_NULL_TABLE;
 	}
+	TRACK_MEMORY(micrPattern)
+	TRACK_MEMORY(unitPattern)
 
 	// Acquire Magnet values
 	int numMagnetPvs;
@@ -77,14 +81,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	vmsstat_t status = DPSLCMAGNET_GET((char*)legacyName, (micrPattern ? micrPattern : "ALL*"),
 			(unitPattern ? unitPattern : "ALL*"),
 			&numMagnetPvs);
-	if (micrPattern) {
-		free(micrPattern);
-		micrPattern = NULL;
-	}
-	if (unitPattern) {
-		free(unitPattern);
-		unitPattern = NULL;
-	}
+	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while reading magnet values");
 		RETURN_NULL_TABLE;
