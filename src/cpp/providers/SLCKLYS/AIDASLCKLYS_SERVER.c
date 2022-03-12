@@ -210,7 +210,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
 
 	// Add the klystron names as the first column
-	tableAddStringColumn(env, &table, devices);
+	tableAddColumn(env, &table, AIDA_STRING_TYPE, devices, false);
 	ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
 
 	// Free all allocated memory
