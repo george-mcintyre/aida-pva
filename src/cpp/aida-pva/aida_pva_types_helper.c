@@ -1537,7 +1537,7 @@ static Type getAidaType(JNIEnv* env, char format, short isArray, short isLong, s
  */
 Value asArrayValue(char* stringValue)
 {
-	char arrayValueToParse[strlen(stringValue + 17)];
+	char arrayValueToParse[strlen(stringValue) + 17];
 	if (isdigit(*stringValue)) {
 		sprintf(arrayValueToParse, "{\"_array\": [%s]}", stringValue);
 	} else {
