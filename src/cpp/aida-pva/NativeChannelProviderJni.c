@@ -37,7 +37,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBoolean
 
 	returnValue = aidaRequestBoolean(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -60,7 +60,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByte
 
 	returnValue = aidaRequestByte(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -83,7 +83,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShort
 
 	returnValue = aidaRequestShort(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -106,7 +106,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestInteger
 
 	returnValue = aidaRequestInteger(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -129,7 +129,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLong
 
 	returnValue = aidaRequestLong(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -152,7 +152,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloat
 
 	returnValue = aidaRequestFloat(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -175,7 +175,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDouble
 
 	returnValue = aidaRequestDouble(env, pv, arguments);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -206,7 +206,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestString
 		free(string);
 	}
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -233,7 +233,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestBooleanArray
 	// create result array
 	returnValue = toBooleanArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -260,7 +260,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestByteArray
 	// create result array
 	returnValue = toByteArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -287,7 +287,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestShortArray
 	// create result array
 	returnValue = toShortArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -314,7 +314,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestIntegerArray
 	// create result array
 	returnValue = toIntegerArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -341,7 +341,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestLongArray
 	// create result array
 	returnValue = toLongArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -368,7 +368,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestFloatArray
 	// create result array
 	returnValue = toFloatArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -395,7 +395,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestDoubleArray
 	// create result array
 	returnValue = toDoubleArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -422,7 +422,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestStringArray
 	// create result array
 	returnValue = toStringArray(env, array);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -450,7 +450,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaRequestTable
 	returnValue = toTable(env, table);
 	ON_EXCEPTION_FREE_TABLE_AND_PV_AND_ARGS_AND_RETURN_(NULL)
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
@@ -478,7 +478,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaSetValue
 	// Free up value
 	releaseValue(value);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 }
 
@@ -509,7 +509,7 @@ JNICALL Java_slac_aida_NativeChannelProvider_aidaSetValueWithResponse
 	// Free up value
 	releaseValue(value);
 
-	// Free up arguments list
+	// Free up pv and arguments list
 	releasePvAndArguments(env, uri, pv, arguments);
 
 	return returnValue;
