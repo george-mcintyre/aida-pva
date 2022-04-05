@@ -181,7 +181,7 @@ void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate,
  *
  * @param arguments the given arguments
  */
-void releaseArguments(Arguments arguments);
+void releasePvAndArguments(JNIEnv* env, jstring uri, const char* pv, Arguments arguments);
 
 /**
  * Free up any memory allocated the given scalar array.
