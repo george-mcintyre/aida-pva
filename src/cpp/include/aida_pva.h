@@ -177,7 +177,7 @@ void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri);
 void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message);
 
 /**
- * Free up any memory allocated for the given arguments.
+ * Free up any memory allocated for the given pv and arguments.
  *
  * @param arguments the given arguments
  */
