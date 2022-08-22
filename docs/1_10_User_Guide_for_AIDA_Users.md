@@ -23,14 +23,11 @@ AIDA-PVA differs from AIDA as shown below.
 ![AIDA vs AIDA-PVA](images/aida-old-and-new-simple.png)
 
 ## Client Library
-
-In AIDA there was a client library that helped programmers write code to access the AIDA framework. In AIDA-PVA there is
-no need for such a library because EPICS provides the access to the network. There are many client libraries in a
-variety of different languages available for EPICS. e.g., EasyPVA, PvaClient, etc. You can also use the code from
-our test suite framework as a library to help you write your frontend code.
-- edu.stanford.slac.aida.test.utils.AidaPvaTestUtils - Utility class to facilitate running all the AIDA-PVA tests 
-- edu.stanford.slac.aida.test.utils.AidaPvaRequest  - Class to create and execute AIDA-PVA requests
-- edu.stanford.slac.aida.test.utils.AidaType - Enumerated type representing an AIDA-PVA data type 
+AIDA-PVA clients can use various methods to connect to the supported EPICs Channel Providers.  These include: 
+- EasyPVA - see: [EasyPVA Documentation](http://epics-pvdata.sourceforge.net/docbuild/easyPVAJava/tip/documentation/easyPVA.html).  EasyPVA is end of life and is no longer supported.
+- PvaClient - see: [PvaClient documentation](https://github.com/epics-base/pvaClientJava).  PvaClient does not propagate server errors back to the client.
+- Plain PvAccess - see: [AIDA-PVA User Guide](1_00_User_Guide.md) for an example.  Is quite verbose.
+- aida-pva-client - see: [aida-pva-client User Guide](1_01_Aida_Pva_Client.md) - a purpose built replacement for the legacy AIDA client.  Lightweight and full functionality.
 
 ## CORBA vs EPICS
 

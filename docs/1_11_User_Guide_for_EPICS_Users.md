@@ -38,7 +38,7 @@ AIDA-PVA uses EPICS as shown below.
 ## What's a little bit different
 
 - Disambiguation - some channels in the SLAC namespace are supported by more than one Channel Provider. So to allow
-  clients have coherent and reliable results disambiguation is achieved by prefixing the channel name with the service
+  clients to have coherent and reliable results disambiguation is achieved by prefixing the channel name with the service
   provider short code and two colons. e.g. `SLC::KLYS:LI31:31:PDES`
   @warning In the case of an incorrectly specified channel, a provider will notify the client that it must add 
   the appropriate prefix before resubmitting the request.

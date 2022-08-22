@@ -17,8 +17,8 @@ Supports **get** and **set** operations.
 
 - The **get** operation obtains the status code or a status string for a specified trigger device on a beam code.
 - A **set** operation deactivates or reactivates a specified trigger device on a beam code
-- A  **set** set the devices referenced in a specified multiknob file by knob rotation using a specified delta value.
-- A **set** operation set the value of a specified variable for a specified BGRP.
+- A  **set** operation sets the devices referenced in a specified multiknob file by knob rotation using a specified delta value.
+- A **set** operation sets the value of a specified variable for a specified BGRP.
 
 ## Instances and Attributes
 
