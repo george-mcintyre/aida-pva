@@ -63,17 +63,25 @@ Providers.
 ### API
 #### Synopsis
 
-    pvaRequest(channel) [.with(name, value) ...] [ .returning(type) ] [ .timeout(timeout) ] [ .get() | .set(value) ]
+    pvaRequest(channel) [.with(name, value) ...] [.setResponseCallback(callback) ] [.setErrorCallback(callback) ] [.returning(type) ] [.timeout(timeout) ] [.asyncGet() ] [.asyncSet(value) ] [.cancel() | .isReady() | .isRunning() | .getResponse() | .get() | .set(value) ]
     pvaGet(channel [, type])
     pvaSet(channel , value)
     pvaUnpack(result)
 
 - **pvaRequest**(`channel`) - creates a request builder for the specified channel.
   - **with**(`name`, `value`) - Used to set argument called `name` to `value`, on a request
+  - **setResponseCallback**(`callback`) - For asynchronous requests.  This sets the method that will be called back when the request completes.
+  - **setErrorCallback**(`callback`) - For asynchronous requests.  This sets the method that will be called back if the request fails.
   - **returning**(`type`) - Used to set the return `type` for a request.  This is equivalent to setting the `TYPE` argument.
+  - **timeout**() - To set the timeout for the request.
+  - **asyncGet**()** - To execute the request and return the results asynchronously.
+  - **asyncSet**(`value`) - To execute the request asynchronously setting the `value` and returning nothing or a table
+  - **cancel**()** - To cancel an asynchronous request
+  - **isReady**()** - Returns true if the response to an asynchronous request is ready
+  - **isRunning**()** - Returns true if an asynchronous request is running
+  - **getResponse**()** - Gets the response from an asynchronous request if it is ready
   - **get**()** - To execute the request and return the results
   - **set**(`value`) - To execute the request setting the `value` and returning nothing or a table
-  - **timeout**() - To set the timeout for the request.
   - **uri**() - returns an NTURI for the builder.
 - **pvaGet**(`channel` [, `type`]) - Executes a simple get on a channel specifying an optional type for the return.
 - **pvaSet**(`channel`, `value`) - Executes a simple set of a channel to the given value.
@@ -129,6 +137,29 @@ Providers.
      .returning(STRING)
      .get();
 ```
+
+##### e.g. 7: Asynchronous example
+```java
+   final CountDownLatch complete = new CountDownLatch(1);
+   AidaPvaRequest request = pvaRequest("NDRFACET:BUFFACQ")
+     .with("BPMD", 57)
+     .with("NRPOS", 1800)
+     .with("BPMS", List.of(
+             "BPMS:LI11:501",
+             "BPMS:LI11:601",
+             "BPMS:LI11:701",
+             "BPMS:LI11:801"))
+     .setResponseCallback(new AidaConsumer<Object>() {
+         @Override
+         public void accept(Object response) {
+             PvaTable table = (PvaTable) response;
+             String firstName = table.getValues().get("name").get(0)
+             complete.countDown();
+          }
+      })
+     .asyncGet();
+```
+
 
 #### getRequest()
 - **getRequest**(`channel`, `type`) - For very simple get requests that don't take any arguments, use getRequest().
