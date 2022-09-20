@@ -84,6 +84,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while reading magnet values");
+		DPSLCMAGNET_GETCLEANUP();
 		RETURN_NULL_TABLE;
 	}
 
@@ -163,13 +164,13 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 	vmsstat_t status;
 	status = DPSLCMAGNET_SETCONFIG(count, primaryList, microList, unitList, secn, setValues);
 	FREE_MEMORY
+
+	// Clean up
+	DPSLCMAGNET_SETCLEANUP();
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "while setting magnet values");
 		return;
 	}
-
-	// Clean up
-	DPSLCMAGNET_SETCLEANUP();
 }
 
 /**
