@@ -200,11 +200,14 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
+		DPSLCUTIL_MKB_GETCLEANUP();
 		RETURN_NULL_TABLE;
 	}
 
 	if ( DPSLCUTIL_MKB_GETABSFLAG() ) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Specified multiknob file is absolute, which is not permitted");
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+				"Specified multiknob file is absolute, which is not permitted");
+		DPSLCUTIL_MKB_GETCLEANUP();
 		RETURN_NULL_TABLE;
 	}
 
