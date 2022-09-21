@@ -49,7 +49,7 @@ configurations:
           label: Device data
           description: SLC DB Device Data for named device
     setterConfig:
-      type: SCALAR_ARRAY
+      type: VOID
     channels:
       - ACCC:????:*:ALNM
       - ACCC:????:*:CNTL
