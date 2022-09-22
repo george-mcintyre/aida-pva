@@ -22,10 +22,10 @@ Acquires data for the named SLC device from the SLC database. Also allows settin
 
 ## Attribute operation summary
 
-| Attribute | Description                                                                                                                   |
-|-----------|-------------------------------------------------------------------------------------------------------------------------------|
-| `<secn>`  | Gets SLC db device data for a named device - the channel name                                                                 |
-| `<secn>`  | Sets the value of a float scalar secondary in the SLC database. <br />The `VALUE` argument is a float with the desired value. |
+| Attribute | Description                                                                                                                                            |
+|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `<secn>`  | Gets SLC db device data for a named device - the channel name                                                                                          |
+| `<secn>`  | Sets the value of a float or integer scalar secondary in the SLC database. <br />The `VALUE` argument is a float or an integer with the desired value. |
 
 ## Attribute operations
 
@@ -79,9 +79,16 @@ as this same channel name is supported by the Klystron Provider for setting valu
 
 _Parameters_
 
-| Parameter Names | Parameter Values          | Description            | 
-|-----------------|---------------------------|------------------------|
-| `VALUE`*        | `<floating point number>` | float to set secondary |
+| Parameter Names | Parameter Values                | Description                                                                                                                                                                                                | 
+|-----------------|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `VALUE`*        |                                 | float or integer to set secondary                                                                                                                                                                          |
+|                 | `<floating point number>`       | value to use to set secondary                                                                                                                                                                              |
+|                 | `<floating point number array>` | value to use to set secondary                                                                                                                                                                              |
+|                 | `<integer>`                     | value to use to set secondary                                                                                                                                                                              |
+|                 | `<integer>`                     | value to use to set secondary                                                                                                                                                                              |
+| `VALUE_TYPE`    |                                 | Determines type to set in secondary                                                                                                                                                                        |
+|                 | `FLOAT_ARRAY`                   | Default: value is cast as a float or float array and used to set secondary                                                                                                                                 |
+|                 | `INTEGER_ARRAY`                 | value is cast as an integer or integer array and used to set secondary.  If the value or any of the values in the values array cannot be converted to an integer then the function will throw an exception |
 
 _Return value_
 
@@ -114,6 +121,8 @@ pvcall "SLC::KLYS:LI31:31:PDES" TYPE=FLOAT
 
 ```shell
 pvcall "XCOR:LI31:41:BCON" VALUE=5.0
+
+pvcall "FBCK:LI11:26:HSTA" VALUE=268468385 VALUE_TYPE=INTEGER_ARRAY
 ```
 
 </td>
@@ -139,6 +148,8 @@ eget -s SLC::KLYS:LI31:31:PDES -a TYPE 'FLOAT'
 
 ```shell
 eget -s XCOR:LI31:41:BCON -a VALUE 5.0
+
+eget -s FBCK:LI11:26:HSTA -a VALUE 268468385 -s VALUE_TYPE INTEGER_ARRAY
 ```
 
 </td>
@@ -204,8 +215,9 @@ end
 
 ```matlab
 try
-    requestBuilder = pvaRequest('XCOR:LI31:41:BCON');
-    requestBuilder.set(5.0)
+    requestBuilder = pvaRequest('FBCK:LI11:26:HSTA');
+    requestBuilder.with("VALUE_TYPE", "INTEGER_ARRAY");
+    requestBuilder.set(268468385)
 catch e
     handleExceptions(e);
 end
@@ -261,8 +273,9 @@ public class AidaPvaClientExample {
         pvaSet("XCOR:LI31:41:BCON", value);
     }
 
-    public void setAnotherFloat(Float value) throws RPCException {
-        pvaRequest("XCOR:LI31:41:BCON")
+    public void setAnInteger(Integer value) throws RPCException {
+        pvaRequest("FBCK:LI11:26:HSTA")
+                .with("VALUE_TYPE", "INTEGER_ARRAY")
                 .set(value);
     }
 }
