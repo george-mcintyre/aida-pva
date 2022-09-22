@@ -25,6 +25,7 @@ extern vmsstat_t JNI_DBGETFLOATA(const char*, float**);
 extern int JNI_DBACCESSENABLED(void);
 
 extern vmsstat_t JNI_DBSETFLOAT(const char*, float*, int length);
+extern vmsstat_t JNI_DBSETINT(const char*, int*, int length);
 
 #define TEXT_SUBSTRING 8
 #define COLOR_SUBSTRING 8

@@ -50,6 +50,8 @@ configurations:
           description: SLC DB Device Data for named device
     setterConfig:
       type: VOID
+      arguments:
+        - VALUE_TYPE
     channels:
       - ACCC:????:*:ALNM
       - ACCC:????:*:CNTL

@@ -34,6 +34,7 @@ add_executable(cpp
         providers/SLCREF/AIDASLCREF_SERVER.h
         providers/SLCDB/AIDASLCDB_SERVER.c
         providers/SLCDB/AIDASLCDB_SERVER.h
+        providers/SLCDB/DPSLC_JNI_HELPER.C
         providers/SLCBPM/AIDASLCBPM_SERVER.c
         providers/SLCBPM/AIDASLCBPM_SERVER.h
         providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.c

@@ -662,19 +662,41 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		return;
 	}
 
-	float* data;
-	unsigned int length;
-	if (avscanf(env, &arguments, &value, "%fa", "value", &data, &length)) {
+	// Get optional VALUE_TYPE parameter
+	char* specifiedValueType = "FLOAT_ARRAY";
+	if (ascanf(env, &arguments, "%os", "VALUE_TYPE", &specifiedValueType)) {
 		return;
 	}
-	TRACK_MEMORY(data)
 
+	vmsstat_t status;
+	unsigned int length;
 	TO_SLC_NAME(uri, slcName)
-	CONVERT_TO_VMS_FLOAT(data, length)
-	vmsstat_t status = JNI_DBSETFLOAT(slcName, data, (int)length);
-	FREE_MEMORY
 
+	if (strcasecmp(specifiedValueType, "FLOAT_ARRAY") == 0) {
+		// If VALUE_TYPE is FLOAT_ARRAY then set float array
+		float* data;
+		if (avscanf(env, &arguments, &value, "%fa", "value", &data, &length)) {
+			return;
+		}
+		TRACK_MEMORY(data)
+		CONVERT_TO_VMS_FLOAT(data, length)
+		status = JNI_DBSETFLOAT(slcName, data, (int)length);
+	} else if (strcasecmp(specifiedValueType, "INTEGER_ARRAY") == 0) {
+		// If VALUE_TYPE is INTEGER_ARRAY then set int array
+		int* data;
+		if (avscanf(env, &arguments, &value, "%da", "value", &data, &length)) {
+			return;
+		}
+		TRACK_MEMORY(data)
+		status = JNI_DBSETINT(slcName, data, (int)length);
+	} else {
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
+				"Invalid VALUE_TYPE specified for SLC Database set operation");
+		return;
+	}
+
+	FREE_MEMORY
 	if (!SUCCESS(status)) {
-		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "setting SLC db float array device data");
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "setting SLC db array device data");
 	}
 }

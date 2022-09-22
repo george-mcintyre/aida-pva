@@ -1344,7 +1344,7 @@ static void* _getFloatArray(Arguments* arguments, char* path, bool forFloat, uns
 static void expectingJsonOrValue(const char* argumentName, short isArray, short* isValue,
 		short* valueShouldBeJson)
 {
-	if (strncasecmp(argumentName, "value", 5) == 0) {
+	if (strcasecmp(argumentName, "value") == 0) {
 		(*isValue) = true;
 	}
 
