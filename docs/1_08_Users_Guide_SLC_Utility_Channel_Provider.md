@@ -8,6 +8,7 @@ provider:
 - allows the setting of devices referenced in a specified multiknob file by knob rotation using a specified relative
   delta value. Only a relative (not absolute) multiknob file may be specified,
 - allows for the setting of a BGRP variable value
+- allows for setting of loop feedback status 
 
 see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
@@ -16,31 +17,39 @@ see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 Supports **get** and **set** operations.
 
 - The **get** operation obtains the status code or a status string for a specified trigger device on a beam code.
+- The **get** operation obtains the status of the specified feedback loop.
 - A **set** operation deactivates or reactivates a specified trigger device on a beam code
 - A  **set** operation sets the devices referenced in a specified multiknob file by knob rotation using a specified delta value.
 - A **set** operation sets the value of a specified variable for a specified BGRP.
+- A **set** operation sets the feedback status to OFF, COMPUTE, or FEEDBACK.
 
 ## Instances and Attributes
 
-| operation       | info        | instance & attribute        |
-|---------|----------|-----------------------------|
-| **get** | Syntax   | `<prim>:<micr>:<unit>:TACT` |
-|         | Examples | `TRIG:LI31:109:TACT`        |
-| **set** | Syntax   | `<prim>:<micr>:<unit>:TACT` |
-|         | Examples | `TRIG:LI31:109:TACT`        |
-| **set** | Syntax   | `MKB:VAL `                  |
-|         | Examples | `MKB:VAL`                   |
-| **set** | Syntax   | `BGRP:VAL `                 |
-|         | Examples | `BGRP:VAL`                  |
+| operation | info     | instance & attribute             |
+|-----------|----------|----------------------------------|
+| **get**   | Syntax   | `<prim>:<micr>:<unit>:TACT`      |
+|           | Examples | `TRIG:LI31:109:TACT`             |
+| **set**   | Syntax   | `<prim>:<micr>:<unit>:TACT`      |
+|           | Examples | `TRIG:LI31:109:TACT`             |
+| **set**   | Syntax   | `MKB:VAL `                       |
+|           | Examples | `MKB:VAL`                        |
+| **set**   | Syntax   | `BGRP:VAL `                      |
+|           | Examples | `BGRP:VAL`                       |
+| **get**   | Syntax   | `<prim>:<micr>:<unit>:LOOP_STAT` |
+|           | Examples | `FBCK:LI18:28:LOOP_STAT`         |
+| **set**   | Syntax   | `<prim>:<micr>:<unit>:LOOP_STAT` |
+|           | Examples | `FBCK:LI18:28:LOOP_STAT`         |
 
 ## Attribute operation summary
 
-| Attribute | operation | Description                                                                           |
-|-----------|-----------|---------------------------------------------------------------------------------------|
-| `TACT`    | **get**   | Gets a status code or a status string for the specified trigger device on a beam code |
-| `TACT`    | **set**   | Deactivates or reactivates a specified trigger device on a beam code                  |
-| `VAL`     | **set**   | Sets devices referenced in a specified multiknob file, which is a required parameter  |
-| `VAL`     | **set**   | Sets a BGRP variable to a new value                                                   |
+| Attribute   | operation | Description                                                                           |
+|-------------|-----------|---------------------------------------------------------------------------------------|
+| `TACT`      | **get**   | Gets a status code or a status string for the specified trigger device on a beam code |
+| `TACT`      | **set**   | Deactivates or reactivates a specified trigger device on a beam code                  |
+| `VAL`       | **set**   | Sets devices referenced in a specified multiknob file, which is a required parameter  |
+| `VAL`       | **set**   | Sets a BGRP variable to a new value                                                   |
+| `LOOP_STAT` | **get**   | Gets a feedback code or a string for the specified feedback device                    |
+| `LOOP_STAT` | **set**   | Sets the specified feedback device to off, compute, or feedback                       |
 
 ## Attribute operations
 
@@ -48,12 +57,13 @@ Supports **get** and **set** operations.
 
 _Parameters_
 
-| Parameter Names | Parameter Values | Description                                                                                                          | 
-|-----------------|------------------|----------------------------------------------------------------------------------------------------------------------|
-| `TYPE`*         | `SHORT`          | A short value containing the status code for the trigger device on a beam code: `0` => deactivated, `1` => activated |
-|                 | `LONG`           | A long value containing the status code for the trigger device on a beam code: `0` => deactivated, `1` => activated  |
-|                 | `STRING`         | string value containing a status string having one of two values: "deactivated" or "activated"                       |
-| `BEAM`*         | Integer          | Beam code number                                                                                                     |
+| Parameter Names | Parameter Values | Description                               | 
+|-----------------|------------------|-------------------------------------------|
+| `TYPE`*         |                  | Determines the return type of the request |
+|                 | `SHORT`          | return a short value.                     |
+|                 | `LONG`           | return a short value.                     |
+|                 | `STRING`         | return a string value.                    |
+| `BEAM`*         | Integer          | Beam code number                          |
 
 _Return value_
 
@@ -108,6 +118,39 @@ _Return value_
 
 None
 
+### LOOP_STAT : get
+
+_Parameters_
+
+| Parameter Names | Parameter Values | Description                               | 
+|-----------------|------------------|-------------------------------------------|
+| `TYPE`*         |                  | Determines the return type of the request |
+|                 | `BOOLEAN`        | return a boolean value.                   |
+|                 | `SHORT`          | return a short value.                     |
+|                 | `LONG`           | return a short value.                     |
+|                 | `STRING`         | return a string value.                    |
+
+_Return value_
+
+| TYPE      | Description                                                                                                                                  |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `BOOLEAN` | A boolean value containing the feedback status code for the loop device: <br />`true` => in feedback state, `false` => not in feedback state |
+| `SHORT`   | A short value containing the status code for the loop device: <br />`0` => off, `1` => compute, `2` => feedback                              |
+| `LONG`    | A long value containing the status code for the loop: <br />`0` => off, `1` => compute, `2` => feedback                                      |
+| `STRING`  | A string value containing a status string having one of three values: "off", "compute" or "feedback"                                         |
+
+### LOOP_STAT : set
+
+_Parameters_
+
+| Parameter Names | Parameter Values | Description                                                                                                 | 
+|-----------------|------------------|-------------------------------------------------------------------------------------------------------------|
+| `VALUE`*        | String           | flag string indicating the desired status: <br />`"off"` => off, `"compute"` => compute, `"feedback"` => feedback. |
+
+_Return value_
+
+None
+
 ## Examples
 
 ### Commandline Examples
@@ -124,6 +167,10 @@ None
 pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=SHORT
 pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=LONG
 pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=STRING
+pvcall "FBCK:LI18:28:LOOP_STAT" TYPE=BOOLEAN
+pvcall "FBCK:LI18:28:LOOP_STAT" TYPE=SHORT
+pvcall "FBCK:LI18:28:LOOP_STAT" TYPE=LONG
+pvcall "FBCK:LI18:28:LOOP_STAT" TYPE=STRING
 ```
 
 </td>
@@ -136,6 +183,7 @@ pvcall "TRIG:LI31:109:TACT" BEAM=1 TYPE=STRING
 pvcall "TRIG:LI31:109:TACT" BEAM=1 VALUE=0
 pvcall "MKB:VAL" MKB='mkb:li02b_xb.mkb' VALUE=1.0 
 pvcall "BGRP:VAL" BGRP=LCLS VARNAME=T_CAV VALUE='Yes'
+pvcall "FBCK:LI18:28:LOOP_STAT" VALUE='feedback'
 ```
 
 </td>
@@ -150,6 +198,10 @@ pvcall "BGRP:VAL" BGRP=LCLS VARNAME=T_CAV VALUE='Yes'
 eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE SHORT 
 eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE LONG 
 eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE STRING 
+eget -s FBCK:LI18:28:LOOP_STAT -a BEAM 1 -a TYPE BOOLEAN 
+eget -s FBCK:LI18:28:LOOP_STAT -a BEAM 1 -a TYPE SHORT 
+eget -s FBCK:LI18:28:LOOP_STAT -a BEAM 1 -a TYPE LONG 
+eget -s FBCK:LI18:28:LOOP_STAT -a BEAM 1 -a TYPE STRING 
 ```
 
 </td>
@@ -162,6 +214,7 @@ eget -s TRIG:LI31:109:TACT -a BEAM 1 -a TYPE STRING
 eget -s TRIG:LI31:109:TACT -a BEAM 1 VALUE 0
 eget -s MKB:VAL -a MKB 'mkb:li02b_xb.mkb' -a VALUE 1.0 
 eget -s BGRP:VAL -a BGRP LCLS -a VARNAME T_CAV -a VALUE=Y
+eget -s FBCK:LI18:28:LOOP_STAT 1 VALUE compute
 ```
 
 </td>
@@ -218,6 +271,54 @@ stringResponse =
 
 deactivated
 ```
+```matlab
+try
+    builder = pvaRequest('FBCK:LI18:28:LOOP_STAT');
+    builder.returning(AIDA_BOOLEAN)
+    booleanResponse = builder.get()
+catch e
+    handleExceptions(e);
+end
+booleanResponse =
+     true
+```
+
+```matlab
+try
+    builder = pvaRequest('FBCK:LI18:28:LOOP_STAT');
+    builder.returning(AIDA_SHORT)
+    shortResponse = builder.get()
+catch e
+    handleExceptions(e);
+end
+shortResponse =
+     0
+```
+
+```matlab
+try
+    builder = pvaRequest('FBCK:LI18:28:LOOP_STAT');
+    builder.returning(AIDA_LONG)
+    longResponse = builder.get()
+catch e
+    handleExceptions(e);
+end
+longResponse =
+     1
+```
+
+```matlab
+try
+    builder = pvaRequest('FBCK:LI18:28:LOOP_STAT');
+    builder.returning(AIDA_STRING)
+    stringResponse = builder.get()
+catch e
+    handleExceptions(e);
+end
+stringResponse =
+
+feedback
+```
 
 </td>
 </tr>
@@ -256,6 +357,15 @@ catch e
 end
 ```
 
+```matlab
+try
+    pvaSet('FBCK:LI18:28:LOOP_STAT', 'compute');
+catch e
+    handleExceptions(e);
+end
+```
+
+
 </td>
 </tr>
 
@@ -282,6 +392,10 @@ public class AidaPvaClientExample {
         Short shortValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).returning(SHORT).get();
         Long longValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).returning(LONG).get();
         String stringValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).returning(STRING).get();
+        Boolean fbckBooleanValue = pvaRequest("FBCK:LI18:28:LOOP_STAT").returning(BOOLEAN).get();
+        Short fbckShortValue = pvaRequest("FBCK:LI18:28:LOOP_STAT").returning(SHORT).get();
+        Long fbckLongValue = pvaRequest("FBCK:LI18:28:LOOP_STAT").returning(LONG).get();
+        String fbckStringValue = pvaRequest("FBCK:LI18:28:LOOP_STAT").returning(STRING).get();
     }
 }
 ```
@@ -299,6 +413,10 @@ import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
 import static edu.stanford.slac.aida.client.AidaType.*;
 
 public class AidaPvaClientExample {
+    private static String FBCK_OFF = "off";
+    private static String FBCK_COMPUTE = "compute";
+    private static String FBCK_FEEDBACK = "feedback";
+    
     public void setValues() throws RPCException {
         AidaTable tableValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).set(0);
         Map<String, List<Object>> values = tableValue.getValues();
@@ -310,6 +428,7 @@ public class AidaPvaClientExample {
         List<Float> values = values.get("value");
 
         pvaRequest("BGRP:VAL").with("BGRP", "LCLS").with("VARNAME", "T_CAV").set(TRUE);
+        pvaSet("FBCK:LI18:28:LOOP_STAT", FBCK_FEEDBACK);
     }
 }
 ```

@@ -11,14 +11,14 @@ Acquires data for the named SLC device from the SLC database. Also allows settin
 
 ## Instances and Attributes
 
-| operation       | info     | instance & attribute                  |
-|---------|----------|---------------------------------------|
-| **get** | Syntax   | `<prim>:<micr>:<unit>:<secn>`         |
-|         |          | `ASTS:<micr>:<channel>:<pseudo-secn>` |
-|         | Examples | `XCOR:LI03:120:LEFF`                  | 
-|         |          | `ASTS:PR02:VP3012:DATA`               |
-| **set** | Syntax   | `<prim>:<micr>:<unit>:<secn>`         |
-|         | Examples | `XCOR:LI31:41:BCON`                   |
+| operation | info     | instance & attribute                  |
+|-----------|----------|---------------------------------------|
+| **get**   | Syntax   | `<prim>:<micr>:<unit>:<secn>`         |
+|           |          | `ASTS:<micr>:<channel>:<pseudo-secn>` |
+|           | Examples | `XCOR:LI03:120:LEFF`                  | 
+|           |          | `ASTS:PR02:VP3012:DATA`               |
+| **set**   | Syntax   | `<prim>:<micr>:<unit>:<secn>`         |
+|           | Examples | `XCOR:LI31:41:BCON`                   |
 
 ## Attribute operation summary
 
@@ -85,7 +85,7 @@ _Parameters_
 |                 | `<floating point number>`       | value to use to set secondary                                                                                                                                                                              |
 |                 | `<floating point number array>` | value to use to set secondary                                                                                                                                                                              |
 |                 | `<integer>`                     | value to use to set secondary                                                                                                                                                                              |
-|                 | `<integer>`                     | value to use to set secondary                                                                                                                                                                              |
+|                 | `<integer array>`               | value to use to set secondary                                                                                                                                                                              |
 | `VALUE_TYPE`    |                                 | Determines type to set in secondary                                                                                                                                                                        |
 |                 | `FLOAT_ARRAY`                   | Default: value is cast as a float or float array and used to set secondary                                                                                                                                 |
 |                 | `INTEGER_ARRAY`                 | value is cast as an integer or integer array and used to set secondary.  If the value or any of the values in the values array cannot be converted to an integer then the function will throw an exception |
