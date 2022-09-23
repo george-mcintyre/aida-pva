@@ -1497,3 +1497,10 @@ configurations:
       - TRIG:TA03:915:TACT
       - TRIG:TL00:115:TACT
       - TRIG:TL00:215:TACT
+  - name: SCP transverse feedback Config
+    getterConfig:
+      type: SCALAR
+    setterConfig:
+      type: VOID
+    channels:
+      - FBCK:????:*:LOOP_STAT
