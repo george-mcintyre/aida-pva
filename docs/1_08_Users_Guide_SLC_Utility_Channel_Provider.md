@@ -8,7 +8,7 @@ provider:
 - allows the setting of devices referenced in a specified multiknob file by knob rotation using a specified relative
   delta value. Only a relative (not absolute) multiknob file may be specified,
 - allows for the setting of a BGRP variable value
-- allows for setting of loop feedback status 
+- allows for setting of SCP transverse feedback 
 
 see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
@@ -17,11 +17,11 @@ see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 Supports **get** and **set** operations.
 
 - The **get** operation obtains the status code or a status string for a specified trigger device on a beam code.
-- The **get** operation obtains the status of the specified feedback loop.
+- The **get** operation obtains the status of the specified SCP transverse feedback.
 - A **set** operation deactivates or reactivates a specified trigger device on a beam code
 - A  **set** operation sets the devices referenced in a specified multiknob file by knob rotation using a specified delta value.
 - A **set** operation sets the value of a specified variable for a specified BGRP.
-- A **set** operation sets the feedback status to OFF, COMPUTE, or FEEDBACK.
+- A **set** operation sets the SCP transverse feedback to OFF, COMPUTE, or FEEDBACK.
 
 ## Instances and Attributes
 
@@ -42,14 +42,14 @@ Supports **get** and **set** operations.
 
 ## Attribute operation summary
 
-| Attribute   | operation | Description                                                                           |
-|-------------|-----------|---------------------------------------------------------------------------------------|
-| `TACT`      | **get**   | Gets a status code or a status string for the specified trigger device on a beam code |
-| `TACT`      | **set**   | Deactivates or reactivates a specified trigger device on a beam code                  |
-| `VAL`       | **set**   | Sets devices referenced in a specified multiknob file, which is a required parameter  |
-| `VAL`       | **set**   | Sets a BGRP variable to a new value                                                   |
-| `LOOP_STAT` | **get**   | Gets a feedback code or a string for the specified feedback device                    |
-| `LOOP_STAT` | **set**   | Sets the specified feedback device to off, compute, or feedback                       |
+| Attribute   | operation | Description                                                                                |
+|-------------|-----------|--------------------------------------------------------------------------------------------|
+| `TACT`      | **get**   | Gets a status code or a status string for the specified trigger device on a beam code      |
+| `TACT`      | **set**   | Deactivates or reactivates a specified trigger device on a beam code                       |
+| `VAL`       | **set**   | Sets devices referenced in a specified multiknob file, which is a required parameter       |
+| `VAL`       | **set**   | Sets a BGRP variable to a new value                                                        |
+| `LOOP_STAT` | **get**   | Gets a code or a string that describes the status of the specified SCP transverse feedback |
+| `LOOP_STAT` | **set**   | Sets the specified SCP transverse feedback to off, compute, or feedback                    |
 
 ## Attribute operations
 
@@ -132,20 +132,20 @@ _Parameters_
 
 _Return value_
 
-| TYPE      | Description                                                                                                                                  |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
-| `BOOLEAN` | A boolean value containing the feedback status code for the loop device: <br />`true` => in feedback state, `false` => not in feedback state |
-| `SHORT`   | A short value containing the status code for the loop device: <br />`0` => off, `1` => compute, `2` => feedback                              |
-| `LONG`    | A long value containing the status code for the loop: <br />`0` => off, `1` => compute, `2` => feedback                                      |
-| `STRING`  | A string value containing a status string having one of three values: "off", "compute" or "feedback"                                         |
+| TYPE      | Description                                                                                                                                                 |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `BOOLEAN` | A boolean value containing the SCP transverse feedback status code for the loop device: <br />`true` => in feedback state, `false` => not in feedback state |
+| `SHORT`   | A short value containing the SCP transverse feedback status code for the loop device: <br />`0` => off, `1` => compute, `2` => feedback                     |
+| `LONG`    | A long value containing the SCP transverse feedback status code for the loop: <br />`0` => off, `1` => compute, `2` => feedback                             |
+| `STRING`  | A string value containing a SCP transverse feedback status string having one of three values: "off", "compute" or "feedback"                                |
 
 ### LOOP_STAT : set
 
 _Parameters_
 
-| Parameter Names | Parameter Values | Description                                                                                                 | 
-|-----------------|------------------|-------------------------------------------------------------------------------------------------------------|
-| `VALUE`*        | String           | flag string indicating the desired status: <br />`"off"` => off, `"compute"` => compute, `"feedback"` => feedback. |
+| Parameter Names | Parameter Values | Description                                                                                                       | 
+|-----------------|------------------|-------------------------------------------------------------------------------------------------------------------|
+| `VALUE`*        | String           | flag string indicating the desired state: <br />`"off"` => off, `"compute"` => compute, `"feedback"` => feedback. |
 
 _Return value_
 
@@ -413,9 +413,9 @@ import static edu.stanford.slac.aida.client.AidaPvaClientUtils.*;
 import static edu.stanford.slac.aida.client.AidaType.*;
 
 public class AidaPvaClientExample {
-    private static String FBCK_OFF = "off";
-    private static String FBCK_COMPUTE = "compute";
-    private static String FBCK_FEEDBACK = "feedback";
+    private static String FBCK_OFF = "OFF";
+    private static String FBCK_COMPUTE = "COMPUTE";
+    private static String FBCK_FEEDBACK = "FEEDBACK";
     
     public void setValues() throws RPCException {
         AidaTable tableValue = pvaRequest("TRIG:LI31:109:TACT").with("BEAM", 1).set(0);
