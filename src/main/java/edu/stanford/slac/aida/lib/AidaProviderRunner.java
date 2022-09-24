@@ -6,6 +6,7 @@ package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.PVAException;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static edu.stanford.slac.aida.impl.AidaService.elapsedTime;
@@ -26,15 +27,39 @@ public class AidaProviderRunner {
      * @param aidaChannelProvider the given AIDA-PVA Channel Provider
      */
     public static void run(ChannelProvider aidaChannelProvider) {
+        logger.info("Creating RPC Server ...");
         // Create new RPCServer
-        AidaRPCServer server = new AidaRPCServer(aidaChannelProvider);
+        AidaRPCServer server = null;
+        try {
+            server = new AidaRPCServer(aidaChannelProvider);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to create RPC Server: " + e.getMessage());
+            return;
+        }
+        logger.info("Done");
 
         // Create new Service for handling requests on the server
         // pass it an AidaChannelProvider which implements request() method
-        AidaRPCService service = new AidaRPCService(aidaChannelProvider);
+        logger.info("Creating AIDA Service ...");
+        AidaRPCService service = null;
+        try {
+            service = new AidaRPCService(aidaChannelProvider);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to create AIDA Service: " + e.getMessage());
+            return;
+        }
+        logger.info("Done");
 
         // Register each channel hosted by this server, with the service
-        server.registerServices(service);
+        try {
+            logger.info("Registering Services ...");
+            server.registerServices(service);
+            logger.info("Services Registered");
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Server Failed to register channels: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
 
         // Run the server to start servicing requests
         try {

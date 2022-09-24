@@ -7,6 +7,7 @@ package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.lib.model.*;
 import edu.stanford.slac.aida.lib.util.AidaPva;
+import edu.stanford.slac.except.ServerInitialisationException;
 import slac.aida.NativeChannelProvider;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * <p>
      * Calls the ChannelProvider::logHostedChannels()
      */
-    public ChannelProvider() {
+    public ChannelProvider() throws ServerInitialisationException {
         // Aida server Banner on standard output
         System.out.println(AidaPva.banner());
 
@@ -72,7 +73,9 @@ public abstract class ChannelProvider extends NativeChannelProvider {
         logHostedChannels();
 
         // Call initialisation for the channel provider
+        logger.info("Calling aidaServiceInit() for " + getProviderName() + " ...");
         aidaServiceInit();
+        logger.info("Service Initialized");
     }
 
     /**

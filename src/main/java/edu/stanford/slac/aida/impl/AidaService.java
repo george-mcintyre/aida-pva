@@ -5,6 +5,7 @@
 package edu.stanford.slac.aida.impl;
 
 import edu.stanford.slac.aida.lib.AidaProviderRunner;
+import edu.stanford.slac.except.ServerInitialisationException;
 import org.joda.time.DateTime;
 
 import java.net.InetAddress;
@@ -94,7 +95,12 @@ public class AidaService {
      * @param args the commandline arguments to the service are ignored
      */
     public static void main(String[] args) {
-        AidaProviderRunner.run(new AidaChannelProvider());
+        try {
+            AidaProviderRunner.run(new AidaChannelProvider());
+        } catch (ServerInitialisationException e) {
+            logger.info("Failed to initialise service: " + e.getMessage() );
+            e.printStackTrace();
+        }
     }
 
     /**

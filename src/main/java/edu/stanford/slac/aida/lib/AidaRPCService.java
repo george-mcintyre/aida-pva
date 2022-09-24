@@ -395,7 +395,7 @@ public class AidaRPCService implements RPCService {
         for (AidaArgument argument : argumentsList) {
             String argumentName = argument.getName().toUpperCase();
 
-            if (!"TYPE".equals(argumentName) && !"VALUE".equals(argumentName)) { // Ignore TYPE and VALUE arguments because they are validated elsewhere
+            if (!"TYPE".equalsIgnoreCase(argumentName) && !"VALUE".equalsIgnoreCase(argumentName) && !"TIMEOUT".equalsIgnoreCase(argumentName)) { // Ignore TYPE, VALUE, and TIMEOUT arguments because they are validated elsewhere
                 List<String> arguments = config.getArguments();
                 if (arguments == null || !arguments.contains(argumentName)) { // if the given argument name is not in the acceptable set of argument names then error out
                     throw new UnsupportedChannelException(channelName +
