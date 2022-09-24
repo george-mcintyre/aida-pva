@@ -9,7 +9,7 @@
 static int
 acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceNames, char* dGroupName,
 		int bpmd,
-		int nrpos);
+		int nrpos, int timeout);
 static int getBuffAcqData(JNIEnv* env,
 		char** namesData,
 		float* xData, float* yData, float* tmitData, unsigned long* pulseIdData,
@@ -76,17 +76,18 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 	TRACK_ALLOCATED_MEMORY
 
 	// Get arguments
-	int bpmd = BPMD_ROGUE, nrpos = NRPOS_DEFAULT, nDevices = 0;
+	int bpmd = BPMD_ROGUE, nrpos = NRPOS_DEFAULT, nDevices = 0, timeout = 3;
 	unsigned int nBpms = 0, nDevs = 0;
 	char** bpms = NULL, ** devices = NULL;
 	DEVICE_NAME_TS deviceNames[MAX_DGRP_BPMS];
 	TO_DGROUP(dGroupName, uri)
 
-	if (ascanf(env, &arguments, "%d %od %osa %osa",
+	if (ascanf(env, &arguments, "%d %od %osa %osa %od",
 			"bpmd", &bpmd,
 			"nrpos", &nrpos,
 			"bpms", &bpms, &nBpms,
-			"devs", &devices, &nDevs
+			"devs", &devices, &nDevs,
+			"timeout", &timeout
 	)) {
 		RETURN_NULL_TABLE
 	}
@@ -132,7 +133,7 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 
 	// Acquire Data
 	int rows;
-	if (acquireBuffAcqData(env, &rows, nDevices, &deviceNames[0], dGroupName, bpmd, nrpos)) {
+	if (acquireBuffAcqData(env, &rows, nDevices, &deviceNames[0], dGroupName, bpmd, nrpos, timeout)) {
 		RETURN_NULL_TABLE
 	}
 
@@ -227,7 +228,7 @@ static int checkArguments(JNIEnv* env, int bpmd, int nrpos, int nDevices)
 static int
 acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceNames, char* dGroupName,
 		int bpmd,
-		int nrpos)
+		int nrpos, int timeout)
 {
 	vmsstat_t status;
 
@@ -238,7 +239,7 @@ acquireBuffAcqData(JNIEnv* env, int* rows, int nDevices, DEVICE_NAME_TS* deviceN
 	}
 
 	// Acquire BPM values
-	status = DPSLCBUFF_ACQ(nDevices, deviceNames, dGroupName, bpmd, nrpos);
+	status = DPSLCBUFF_ACQ_WITH_TIMEOUT(nDevices, deviceNames, dGroupName, bpmd, nrpos, timeout);
 	if (!$VMS_STATUS_SUCCESS(status)) {
 		endAcquireBuffAcq(env);
 		aidaThrow(env, status, UNABLE_TO_GET_DATA_EXCEPTION, "while making Buffered Data acquisition");
