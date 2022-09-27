@@ -29,14 +29,14 @@ mvn install -DskipTests
 [INFO] epics-forwarder                                                    [jar]
 [INFO] 
 [INFO] -----------------------< org.epics:epics-parent >-----------------------
-[INFO] Building EPICS Core Server BackPort 1.5 Build 7.0.8-SNAPSHOT       [1/6]
+[INFO] Building EPICS Core Server BackPort 1.5 Build 7.0.8-bp            [1/6]
 [INFO] --------------------------------[ pom ]---------------------------------
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ epics-parent ---
-[INFO] Installing pom.xml to ~/.m2/repository/org/epics/epics-parent/7.0.8-SNAPSHOT/epics-parent-7.0.8-SNAPSHOT.pom
+[INFO] Installing pom.xml to ~/.m2/repository/org/epics/epics-parent/7.0.8-bp/epics-parent-7.0.8-bp.pom
 [INFO] 
 [INFO] ------------------------< org.epics:epics-util >------------------------
-[INFO] Building org.epics.util 1.0.5-SNAPSHOT                             [2/6]
+[INFO] Building org.epics.util 1.0.5-bp                                   [2/6]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ epics-util ---
@@ -58,14 +58,14 @@ mvn install -DskipTests
 [INFO] Tests are skipped.
 [INFO] 
 [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ epics-util ---
-[INFO] Building jar: epics-util/target/epics-util-1.0.5-SNAPSHOT.jar
+[INFO] Building jar: epics-util/target/epics-util-1.0.5-bp.jar
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ epics-util ---
-[INFO] Installing epics-util/target/epics-util-1.0.5-SNAPSHOT.jar to ~/.m2/repository/org/epics/epics-util/1.0.5-SNAPSHOT/epics-util-1.0.5-SNAPSHOT.jar
-[INFO] Installing epics-util/pom.xml to ~/.m2/repository/org/epics/epics-util/1.0.5-SNAPSHOT/epics-util-1.0.5-SNAPSHOT.pom
+[INFO] Installing epics-util/target/epics-util-1.0.5-bp.jar to ~/.m2/repository/org/epics/epics-util/1.0.5-bp/epics-util-1.0.5-bp.jar
+[INFO] Installing epics-util/pom.xml to ~/.m2/repository/org/epics/epics-util/1.0.5-bp/epics-util-1.0.5-bp.pom
 [INFO] 
 [INFO] -----------------------< org.epics:epics-pvdata >-----------------------
-[INFO] Building pvDataJava 6.1.7-SNAPSHOT                                 [3/6]
+[INFO] Building pvDataJava 6.1.7-bp                                 [3/6]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ epics-pvdata ---
@@ -88,11 +88,11 @@ mvn install -DskipTests
 [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ epics-pvdata ---
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ epics-pvdata ---
-[INFO] Installing pvDataJava/target/epics-pvdata-6.1.7-SNAPSHOT.jar to ~/.m2/repository/org/epics/epics-pvdata/6.1.7-SNAPSHOT/epics-pvdata-6.1.7-SNAPSHOT.jar
-[INFO] Installing pvDataJava/pom.xml to ~/.m2/repository/org/epics/epics-pvdata/6.1.7-SNAPSHOT/epics-pvdata-6.1.7-SNAPSHOT.pom
+[INFO] Installing pvDataJava/target/epics-pvdata-6.1.7-bp.jar to ~/.m2/repository/org/epics/epics-pvdata/6.1.7-bp/epics-pvdata-6.1.7-bp.jar
+[INFO] Installing pvDataJava/pom.xml to ~/.m2/repository/org/epics/epics-pvdata/6.1.7-bp/epics-pvdata-6.1.7-bp.pom
 [INFO] 
 [INFO] ----------------------< org.epics:epics-pvaccess >----------------------
-[INFO] Building pvAccessJava 5.1.7-SNAPSHOT                               [4/6]
+[INFO] Building pvAccessJava 5.1.7-bp                               [4/6]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ epics-pvaccess ---
@@ -115,11 +115,11 @@ mvn install -DskipTests
 [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ epics-pvaccess ---
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ epics-pvaccess ---
-[INFO] Installing pvAccessJava/target/epics-pvaccess-5.1.7-SNAPSHOT.jar to ~/.m2/repository/org/epics/epics-pvaccess/5.1.7-SNAPSHOT/epics-pvaccess-5.1.7-SNAPSHOT.jar
-[INFO] Installing pvAccessJava/pom.xml to ~/.m2/repository/org/epics/epics-pvaccess/5.1.7-SNAPSHOT/epics-pvaccess-5.1.7-SNAPSHOT.pom
+[INFO] Installing pvAccessJava/target/epics-pvaccess-5.1.7-bp.jar to ~/.m2/repository/org/epics/epics-pvaccess/5.1.7-bp/epics-pvaccess-5.1.7-bp.jar
+[INFO] Installing pvAccessJava/pom.xml to ~/.m2/repository/org/epics/epics-pvaccess/5.1.7-bp/epics-pvaccess-5.1.7-bp.pom
 [INFO] 
 [INFO] -----------------------< org.epics:epics-ntypes >-----------------------
-[INFO] Building normativeTypesJava 0.3.7-SNAPSHOT                         [5/6]
+[INFO] Building normativeTypesJava 0.3.7-bp                         [5/6]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ epics-ntypes ---
@@ -142,11 +142,11 @@ mvn install -DskipTests
 [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ epics-ntypes ---
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ epics-ntypes ---
-[INFO] Installing normativeTypesJava/target/epics-ntypes-0.3.7-SNAPSHOT.jar to ~/.m2/repository/org/epics/epics-ntypes/0.3.7-SNAPSHOT/epics-ntypes-0.3.7-SNAPSHOT.jar
-[INFO] Installing normativeTypesJava/pom.xml to ~/.m2/repository/org/epics/epics-ntypes/0.3.7-SNAPSHOT/epics-ntypes-0.3.7-SNAPSHOT.pom
+[INFO] Installing normativeTypesJava/target/epics-ntypes-0.3.7-bp.jar to ~/.m2/repository/org/epics/epics-ntypes/0.3.7-bp/epics-ntypes-0.3.7-bp.jar
+[INFO] Installing normativeTypesJava/pom.xml to ~/.m2/repository/org/epics/epics-ntypes/0.3.7-bp/epics-ntypes-0.3.7-bp.pom
 [INFO] 
 [INFO] ---------------------< org.epics:epics-forwarder >----------------------
-[INFO] Building epics-forwarder 1.0.0-SNAPSHOT                            [6/6]
+[INFO] Building epics-forwarder 1.0.0-bp                            [6/6]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ epics-forwarder ---
@@ -169,9 +169,9 @@ mvn install -DskipTests
 [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ epics-forwarder ---
 [INFO] 
 [INFO] --- maven-shade-plugin:3.2.1:shade (default) @ epics-forwarder ---
-[INFO] Including org.epics:epics-pvaccess:jar:5.1.7-SNAPSHOT in the shaded jar.
-[INFO] Including org.epics:epics-pvdata:jar:6.1.7-SNAPSHOT in the shaded jar.
-[INFO] Including org.epics:epics-util:jar:1.0.5-SNAPSHOT in the shaded jar.
+[INFO] Including org.epics:epics-pvaccess:jar:5.1.7-bp in the shaded jar.
+[INFO] Including org.epics:epics-pvdata:jar:6.1.7-bp in the shaded jar.
+[INFO] Including org.epics:epics-util:jar:1.0.5-bp in the shaded jar.
 [INFO] Including org.epics:jca:jar:2.3.6 in the shaded jar.
 [INFO] Including org.apache.felix:maven-bundle-plugin:jar:5.1.1 in the shaded jar.
 [INFO] Including org.osgi:org.osgi.core:jar:6.0.0 in the shaded jar.
@@ -240,13 +240,13 @@ mvn install -DskipTests
 [INFO] Including org.apache.maven.doxia:doxia-module-xhtml:jar:1.0 in the shaded jar.
 [INFO] Including org.jdom:jdom:jar:1.1 in the shaded jar.
 [INFO] Including joda-time:joda-time:jar:2.10.10 in the shaded jar.
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-velocity-1.1.7.jar define 5 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-velocity-1.1.7.jar define 5 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.velocity.VelocityComponent
 [WARNING]   - org.codehaus.plexus.velocity.VelocityComponent$1
 [WARNING]   - org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader
 [WARNING]   - org.codehaus.plexus.velocity.SiteResourceLoader
 [WARNING]   - org.codehaus.plexus.velocity.DefaultVelocityComponent
-[WARNING] plexus-classworlds-2.5.2.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 37 overlapping classes: 
+[WARNING] plexus-classworlds-2.5.2.jar, epics-forwarder-1.0.0-bp.jar define 37 overlapping classes: 
 [WARNING]   - org.codehaus.classworlds.DefaultClassRealm
 [WARNING]   - org.codehaus.classworlds.ClassWorldReverseAdapter
 [WARNING]   - org.codehaus.plexus.classworlds.strategy.Strategy
@@ -258,7 +258,7 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.classworlds.DuplicateRealmException
 [WARNING]   - org.codehaus.classworlds.ClassWorldAdapter
 [WARNING]   - 27 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, org.apache.felix.utils-1.6.0.jar define 12 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, org.apache.felix.utils-1.6.0.jar define 12 overlapping classes: 
 [WARNING]   - org.apache.felix.utils.extender.AbstractExtender$1
 [WARNING]   - org.apache.felix.utils.service.BaseManagedServiceFactory$1
 [WARNING]   - org.apache.felix.utils.extender.AbstractExtender$2
@@ -270,7 +270,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.felix.utils.properties.Properties$1
 [WARNING]   - org.apache.felix.utils.service.BaseManagedServiceFactory$2
 [WARNING]   - 2 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-sec-dispatcher-1.3.jar define 13 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-sec-dispatcher-1.3.jar define 13 overlapping classes: 
 [WARNING]   - org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher
 [WARNING]   - org.sonatype.plexus.components.sec.dispatcher.PasswordDecryptorException
 [WARNING]   - org.sonatype.plexus.components.sec.dispatcher.PasswordDecryptor$1
@@ -282,14 +282,14 @@ mvn install -DskipTests
 [WARNING]   - org.sonatype.plexus.components.sec.dispatcher.model.io.xpp3.SecurityConfigurationXpp3Writer
 [WARNING]   - org.sonatype.plexus.components.sec.dispatcher.PasswordDecryptor
 [WARNING]   - 3 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-cipher-1.4.jar define 6 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-cipher-1.4.jar define 6 overlapping classes: 
 [WARNING]   - org.sonatype.plexus.components.cipher.PlexusCipherException
 [WARNING]   - org.sonatype.plexus.components.cipher.PlexusCipher
 [WARNING]   - org.sonatype.plexus.components.cipher.Base64
 [WARNING]   - org.sonatype.plexus.components.cipher.PlexusCipher$1
 [WARNING]   - org.sonatype.plexus.components.cipher.DefaultPlexusCipher
 [WARNING]   - org.sonatype.plexus.components.cipher.PBECipher
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, jdom-1.1.jar define 76 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, jdom-1.1.jar define 76 overlapping classes: 
 [WARNING]   - org.jdom.transform.JDOMResult
 [WARNING]   - org.jdom.transform.JDOMSource
 [WARNING]   - org.jdom.DataConversionException
@@ -301,7 +301,7 @@ mvn install -DskipTests
 [WARNING]   - org.jdom.DocType
 [WARNING]   - org.jdom.transform.JDOMResult$DocumentBuilder
 [WARNING]   - 66 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, org.eclipse.sisu.plexus-0.3.2.jar define 82 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, org.eclipse.sisu.plexus-0.3.2.jar define 82 overlapping classes: 
 [WARNING]   - org.eclipse.sisu.plexus.RequirementImpl
 [WARNING]   - org.eclipse.sisu.plexus.PlexusBundlePlan
 [WARNING]   - org.eclipse.sisu.plexus.PlexusAnnotatedMetadata
@@ -313,7 +313,7 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.sisu.plexus.PlexusBindingModule
 [WARNING]   - org.eclipse.sisu.plexus.PlexusTypeBinder
 [WARNING]   - 72 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, oro-2.0.8.jar define 62 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, oro-2.0.8.jar define 62 overlapping classes: 
 [WARNING]   - org.apache.oro.text.perl.MalformedPerl5PatternException
 [WARNING]   - org.apache.oro.text.regex.Perl5Pattern
 [WARNING]   - org.apache.oro.text.GenericPatternCache
@@ -325,7 +325,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.oro.text.PatternCacheLRU
 [WARNING]   - org.apache.oro.text.regex.Substitution
 [WARNING]   - 52 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-interpolation-1.21.jar define 44 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-interpolation-1.21.jar define 44 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource
 [WARNING]   - org.codehaus.plexus.interpolation.multi.MultiDelimiterInterpolatorFilterReader
 [WARNING]   - org.codehaus.plexus.interpolation.FeedbackEnabledValueSource
@@ -337,7 +337,7 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.plexus.interpolation.reflection.ReflectionValueExtractor
 [WARNING]   - org.codehaus.plexus.interpolation.QueryEnabledValueSource
 [WARNING]   - 34 more...
-[WARNING] epics-util-1.0.5-SNAPSHOT.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 161 overlapping classes: 
+[WARNING] epics-util-1.0.5-bp.jar, epics-forwarder-1.0.0-bp.jar define 161 overlapping classes: 
 [WARNING]   - org.epics.util.compat.jdk5.functional.Consumer
 [WARNING]   - org.epics.util.array.ListDouble
 [WARNING]   - org.epics.util.array.UnsafeUnwrapper$Array
@@ -349,7 +349,7 @@ mvn install -DskipTests
 [WARNING]   - org.epics.util.array.ArrayFloat$1
 [WARNING]   - org.epics.util.stats.Statistics
 [WARNING]   - 151 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-archiver-4.2.0.jar define 132 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-archiver-4.2.0.jar define 132 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.archiver.tar.XZTarFile
 [WARNING]   - org.codehaus.plexus.archiver.tar.PlexusIoTarSnappyFileResourceCollection
 [WARNING]   - org.codehaus.plexus.archiver.zip.ZipSymlinkResource
@@ -361,7 +361,7 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.plexus.archiver.dir.DirectoryArchiver
 [WARNING]   - org.codehaus.plexus.archiver.tar.TarSnappyUnArchiver
 [WARNING]   - 122 more...
-[WARNING] maven-plugin-api-3.3.9.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 27 overlapping classes: 
+[WARNING] maven-plugin-api-3.3.9.jar, epics-forwarder-1.0.0-bp.jar define 27 overlapping classes: 
 [WARNING]   - org.apache.maven.plugin.MojoFailureException
 [WARNING]   - org.apache.maven.plugin.descriptor.Parameter
 [WARNING]   - org.apache.maven.monitor.logging.DefaultLog
@@ -373,7 +373,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.plugin.descriptor.InvalidParameterException
 [WARNING]   - org.apache.maven.plugin.MojoExecutionException
 [WARNING]   - 17 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, guava-18.0.jar define 1690 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, guava-18.0.jar define 1690 overlapping classes: 
 [WARNING]   - com.google.common.collect.ImmutableMapValues$1
 [WARNING]   - com.google.common.io.LineProcessor
 [WARNING]   - com.google.common.util.concurrent.AbstractService$5
@@ -385,7 +385,7 @@ mvn install -DskipTests
 [WARNING]   - com.google.common.cache.AbstractCache$StatsCounter
 [WARNING]   - com.google.common.util.concurrent.CycleDetectingLockFactory$Policies
 [WARNING]   - 1680 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, cdi-api-1.0.jar define 75 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, cdi-api-1.0.jar define 75 overlapping classes: 
 [WARNING]   - javax.enterprise.context.ApplicationScoped
 [WARNING]   - javax.enterprise.inject.InjectionException
 [WARNING]   - javax.enterprise.context.SessionScoped
@@ -397,7 +397,7 @@ mvn install -DskipTests
 [WARNING]   - javax.enterprise.inject.spi.BeforeBeanDiscovery
 [WARNING]   - javax.enterprise.inject.Model
 [WARNING]   - 65 more...
-[WARNING] wagon-provider-api-2.10.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 39 overlapping classes: 
+[WARNING] wagon-provider-api-2.10.jar, epics-forwarder-1.0.0-bp.jar define 39 overlapping classes: 
 [WARNING]   - org.apache.maven.wagon.events.SessionEvent
 [WARNING]   - org.apache.maven.wagon.proxy.ProxyInfoProvider
 [WARNING]   - org.apache.maven.wagon.observers.AbstractTransferListener
@@ -409,7 +409,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.wagon.PathUtils
 [WARNING]   - org.apache.maven.wagon.LazyFileOutputStream
 [WARNING]   - 29 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-compat-3.3.9.jar define 162 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-compat-3.3.9.jar define 162 overlapping classes: 
 [WARNING]   - org.apache.maven.repository.MetadataResolutionResult
 [WARNING]   - org.apache.maven.repository.legacy.resolver.conflict.NearestConflictResolver
 [WARNING]   - org.apache.maven.repository.metadata.DefaultClasspathTransformation$ClasspathGraphVisitor$1
@@ -421,7 +421,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.artifact.repository.metadata.RepositoryMetadataReadException
 [WARNING]   - org.apache.maven.artifact.repository.metadata.MetadataBridge
 [WARNING]   - 152 more...
-[WARNING] easymock-2.4.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 71 overlapping classes: 
+[WARNING] easymock-2.4.jar, epics-forwarder-1.0.0-bp.jar define 71 overlapping classes: 
 [WARNING]   - org.easymock.internal.matchers.LessOrEqual
 [WARNING]   - org.easymock.internal.ExpectedInvocation
 [WARNING]   - org.easymock.internal.matchers.Any
@@ -433,7 +433,7 @@ mvn install -DskipTests
 [WARNING]   - org.easymock.internal.matchers.CompareEqual
 [WARNING]   - org.easymock.IArgumentMatcher
 [WARNING]   - 61 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-builder-support-3.3.9.jar define 10 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-builder-support-3.3.9.jar define 10 overlapping classes: 
 [WARNING]   - org.apache.maven.building.ProblemCollector
 [WARNING]   - org.apache.maven.building.UrlSource
 [WARNING]   - org.apache.maven.building.DefaultProblemCollector
@@ -444,7 +444,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.building.DefaultProblem
 [WARNING]   - org.apache.maven.building.StringSource
 [WARNING]   - org.apache.maven.building.Problem$Severity
-[WARNING] maven-artifact-3.3.9.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 32 overlapping classes: 
+[WARNING] maven-artifact-3.3.9.jar, epics-forwarder-1.0.0-bp.jar define 32 overlapping classes: 
 [WARNING]   - org.apache.maven.repository.Proxy
 [WARNING]   - org.apache.maven.artifact.resolver.filter.ArtifactFilter
 [WARNING]   - org.apache.maven.artifact.DefaultArtifact
@@ -456,7 +456,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.artifact.versioning.ComparableVersion$IntegerItem
 [WARNING]   - org.apache.maven.artifact.resolver.AbstractArtifactResolutionException
 [WARNING]   - 22 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, commons-io-2.5.jar define 123 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, commons-io-2.5.jar define 123 overlapping classes: 
 [WARNING]   - org.apache.commons.io.FileCleaningTracker
 [WARNING]   - org.apache.commons.io.comparator.SizeFileComparator
 [WARNING]   - org.apache.commons.io.input.CloseShieldInputStream
@@ -468,7 +468,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.commons.io.comparator.PathFileComparator
 [WARNING]   - org.apache.commons.io.filefilter.NotFileFilter
 [WARNING]   - 113 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, doxia-core-1.0.jar define 48 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, doxia-core-1.0.jar define 48 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.util.LineBreaker
 [WARNING]   - org.apache.maven.doxia.sink.AbstractTextSink
 [WARNING]   - org.apache.maven.doxia.markup.XmlMarkup
@@ -480,7 +480,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.doxia.parser.manager.DefaultParserManager
 [WARNING]   - org.apache.maven.doxia.module.site.manager.SiteModuleManager$1
 [WARNING]   - 38 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-io-3.2.0.jar define 64 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-io-3.2.0.jar define 64 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.components.io.resources.PlexusIoCompressedFileResourceCollection$2
 [WARNING]   - org.codehaus.plexus.components.io.resources.AbstractPlexusIoResource
 [WARNING]   - org.codehaus.plexus.components.io.resources.AbstractPlexusIoArchiveResourceCollection
@@ -492,7 +492,7 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection$1$1
 [WARNING]   - org.codehaus.plexus.components.io.resources.Deferred
 [WARNING]   - 54 more...
-[WARNING] epics-pvaccess-5.1.7-SNAPSHOT.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 261 overlapping classes: 
+[WARNING] epics-pvaccess-5.1.7-bp.jar, epics-forwarder-1.0.0-bp.jar define 261 overlapping classes: 
 [WARNING]   - org.epics.pvaccess.server.rpc.impl.RPCChannelProvider$1
 [WARNING]   - org.epics.pvaccess.impl.remote.request.ResponseHandler
 [WARNING]   - org.epics.pvaccess.client.ChannelPutRequester
@@ -504,7 +504,7 @@ mvn install -DskipTests
 [WARNING]   - org.epics.pvaccess.client.impl.remote.ChannelProcessRequestImpl
 [WARNING]   - org.epics.pvaccess.client.impl.remote.handlers.AbstractClientResponseHandler
 [WARNING]   - 251 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-model-3.3.9.jar define 54 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-model-3.3.9.jar define 54 overlapping classes: 
 [WARNING]   - org.apache.maven.model.DistributionManagement
 [WARNING]   - org.apache.maven.model.ActivationProperty
 [WARNING]   - org.apache.maven.model.io.xpp3.MavenXpp3Reader$1
@@ -516,14 +516,14 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.model.DependencyManagement
 [WARNING]   - org.apache.maven.model.PluginContainer
 [WARNING]   - 44 more...
-[WARNING] plexus-i18n-1.0-beta-7.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 6 overlapping classes: 
+[WARNING] plexus-i18n-1.0-beta-7.jar, epics-forwarder-1.0.0-bp.jar define 6 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.i18n.I18NTokenizer$AcceptLanguage
 [WARNING]   - org.codehaus.plexus.i18n.I18N$1
 [WARNING]   - org.codehaus.plexus.i18n.I18NTokenizer$1
 [WARNING]   - org.codehaus.plexus.i18n.DefaultI18N
 [WARNING]   - org.codehaus.plexus.i18n.I18N
 [WARNING]   - org.codehaus.plexus.i18n.I18NTokenizer
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, doxia-site-renderer-1.0.jar define 9 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, doxia-site-renderer-1.0.jar define 9 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.siterenderer.DefaultSiteRenderer
 [WARNING]   - org.apache.maven.doxia.siterenderer.RendererException
 [WARNING]   - org.apache.maven.doxia.siterenderer.SiteRenderingContext
@@ -533,7 +533,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.doxia.siterenderer.DoxiaDocumentRenderer
 [WARNING]   - org.apache.maven.doxia.siterenderer.Renderer$1
 [WARNING]   - org.apache.maven.doxia.siterenderer.sink.SiteRendererSink
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, doxia-module-xdoc-1.0.jar define 13 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, doxia-module-xdoc-1.0.jar define 13 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.module.xdoc.XdocSiteModule
 [WARNING]   - org.apache.maven.doxia.module.xdoc.XdocMarkup$4
 [WARNING]   - org.apache.maven.doxia.module.xdoc.XdocMarkup$5
@@ -545,7 +545,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.doxia.module.xdoc.XdocMarkup$2
 [WARNING]   - org.apache.maven.doxia.module.xdoc.XdocMarkup$7
 [WARNING]   - 3 more...
-[WARNING] doxia-module-xhtml-1.0.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 7 overlapping classes: 
+[WARNING] doxia-module-xhtml-1.0.jar, epics-forwarder-1.0.0-bp.jar define 7 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.module.xhtml.XhtmlMarkup$1
 [WARNING]   - org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext
 [WARNING]   - org.apache.maven.doxia.module.xhtml.XhtmlParser
@@ -553,7 +553,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.doxia.module.xhtml.XhtmlSink
 [WARNING]   - org.apache.maven.doxia.module.xhtml.XhtmlMarkup
 [WARNING]   - org.apache.maven.doxia.module.xhtml.StringsMap
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-model-builder-3.3.9.jar define 121 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-model-builder-3.3.9.jar define 121 overlapping classes: 
 [WARNING]   - org.apache.maven.model.building.DefaultModelBuilder
 [WARNING]   - org.apache.maven.model.building.DefaultModelBuilderFactory$StubLifecycleBindingsInjector
 [WARNING]   - org.apache.maven.model.building.ModelCacheTag
@@ -565,7 +565,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.model.profile.ProfileActivationContext
 [WARNING]   - org.apache.maven.model.building.DefaultModelProblemCollector
 [WARNING]   - 111 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-bundle-plugin-5.1.1.jar define 59 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-bundle-plugin-5.1.1.jar define 59 overlapping classes: 
 [WARNING]   - org.apache.felix.obrplugin.ObrUpdate
 [WARNING]   - org.apache.maven.shared.osgi.DefaultMaven2OsgiConverter
 [WARNING]   - org.apache.felix.bundleplugin.AbstractDependencyFilter$8
@@ -577,13 +577,13 @@ mvn install -DskipTests
 [WARNING]   - org.apache.felix.bundleplugin.AntPlugin
 [WARNING]   - org.apache.felix.obrplugin.ObrCleanRepo
 [WARNING]   - 49 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-archiver-3.5.0.jar define 5 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-archiver-3.5.0.jar define 5 overlapping classes: 
 [WARNING]   - org.apache.maven.archiver.PomPropertiesUtil
 [WARNING]   - org.apache.maven.archiver.MavenArchiver
 [WARNING]   - org.apache.maven.archiver.ManifestSection
 [WARNING]   - org.apache.maven.archiver.ManifestConfiguration
 [WARNING]   - org.apache.maven.archiver.MavenArchiveConfiguration
-[WARNING] jsr250-api-1.0.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 11 overlapping classes: 
+[WARNING] jsr250-api-1.0.jar, epics-forwarder-1.0.0-bp.jar define 11 overlapping classes: 
 [WARNING]   - javax.annotation.PreDestroy
 [WARNING]   - javax.annotation.Resource$AuthenticationType
 [WARNING]   - javax.annotation.Generated
@@ -595,7 +595,7 @@ mvn install -DskipTests
 [WARNING]   - javax.annotation.Resources
 [WARNING]   - javax.annotation.security.RolesAllowed
 [WARNING]   - 1 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, guice-4.0-no_aop.jar define 329 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, guice-4.0-no_aop.jar define 329 overlapping classes: 
 [WARNING]   - com.google.inject.Scope
 [WARNING]   - com.google.inject.internal.InjectorImpl$2$1
 [WARNING]   - com.google.inject.Binding
@@ -607,7 +607,7 @@ mvn install -DskipTests
 [WARNING]   - com.google.inject.internal.CycleDetectingLock
 [WARNING]   - com.google.inject.internal.AbstractBindingProcessor
 [WARNING]   - 319 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, aether-util-1.0.2.v20150114.jar define 101 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, aether-util-1.0.2.v20150114.jar define 101 overlapping classes: 
 [WARNING]   - org.eclipse.aether.util.graph.transformer.ConflictResolver$OptionalitySelector
 [WARNING]   - org.eclipse.aether.util.version.UnionVersionRange
 [WARNING]   - org.eclipse.aether.util.repository.JreProxySelector
@@ -619,13 +619,13 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.aether.util.repository.DefaultProxySelector$ProxyDef
 [WARNING]   - org.eclipse.aether.util.filter.PatternExclusionsDependencyFilter
 [WARNING]   - 91 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, doxia-module-fml-1.0.jar define 5 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, doxia-module-fml-1.0.jar define 5 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.module.fml.FmlSiteModule
 [WARNING]   - org.apache.maven.doxia.module.fml.model.Faqs
 [WARNING]   - org.apache.maven.doxia.module.fml.model.Faq
 [WARNING]   - org.apache.maven.doxia.module.fml.FmlParser
 [WARNING]   - org.apache.maven.doxia.module.fml.model.Part
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, doxia-module-apt-1.0.jar define 27 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, doxia-module-apt-1.0.jar define 27 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.module.apt.AptReaderSource
 [WARNING]   - org.apache.maven.doxia.module.apt.AptParser$Verbatim
 [WARNING]   - org.apache.maven.doxia.module.apt.AptSource
@@ -637,7 +637,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.doxia.module.apt.AptParser$Block
 [WARNING]   - org.apache.maven.doxia.module.apt.AptParser$Paragraph
 [WARNING]   - 17 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, org.osgi.core-6.0.0.jar define 81 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, org.osgi.core-6.0.0.jar define 81 overlapping classes: 
 [WARNING]   - org.osgi.framework.namespace.PackageNamespace
 [WARNING]   - org.osgi.framework.dto.ServiceReferenceDTO
 [WARNING]   - org.osgi.framework.hooks.bundle.CollisionHook
@@ -649,7 +649,7 @@ mvn install -DskipTests
 [WARNING]   - org.osgi.framework.hooks.service.EventHook
 [WARNING]   - org.osgi.framework.hooks.bundle.package-info
 [WARNING]   - 71 more...
-[WARNING] slf4j-api-1.7.25.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 34 overlapping classes: 
+[WARNING] slf4j-api-1.7.25.jar, epics-forwarder-1.0.0-bp.jar define 34 overlapping classes: 
 [WARNING]   - org.slf4j.helpers.SubstituteLogger
 [WARNING]   - org.slf4j.helpers.NamedLoggerBase
 [WARNING]   - org.slf4j.helpers.NOPMDCAdapter
@@ -661,7 +661,7 @@ mvn install -DskipTests
 [WARNING]   - org.slf4j.helpers.MessageFormatter
 [WARNING]   - org.slf4j.helpers.Util$ClassContextSecurityManager
 [WARNING]   - 24 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-aether-provider-3.3.9.jar define 26 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-aether-provider-3.3.9.jar define 26 overlapping classes: 
 [WARNING]   - org.apache.maven.repository.internal.DefaultVersionResolver$VersionInfo
 [WARNING]   - org.apache.maven.repository.internal.DefaultArtifactDescriptorReader
 [WARNING]   - org.apache.maven.repository.internal.MavenAetherModule
@@ -673,7 +673,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.repository.internal.DefaultVersionResolver$Record
 [WARNING]   - org.apache.maven.repository.internal.DefaultModelCache
 [WARNING]   - 16 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, aether-spi-1.0.2.v20150114.jar define 34 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, aether-spi-1.0.2.v20150114.jar define 34 overlapping classes: 
 [WARNING]   - org.eclipse.aether.spi.connector.ArtifactDownload
 [WARNING]   - org.eclipse.aether.spi.connector.transport.TransporterProvider
 [WARNING]   - org.eclipse.aether.spi.connector.RepositoryConnector
@@ -685,7 +685,7 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.aether.spi.connector.MetadataTransfer
 [WARNING]   - org.eclipse.aether.spi.connector.Transfer
 [WARNING]   - 24 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, snappy-0.4.jar define 24 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, snappy-0.4.jar define 24 overlapping classes: 
 [WARNING]   - org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
 [WARNING]   - org.iq80.snappy.SnappyFramedOutputStream
 [WARNING]   - org.iq80.snappy.SnappyInternalUtils
@@ -697,12 +697,12 @@ mvn install -DskipTests
 [WARNING]   - org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
 [WARNING]   - org.iq80.snappy.UnsafeMemory
 [WARNING]   - 14 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, doxia-sink-api-1.0.jar define 4 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, doxia-sink-api-1.0.jar define 4 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.sink.SinkFactory
 [WARNING]   - org.codehaus.doxia.sink.Sink
 [WARNING]   - org.apache.maven.doxia.sink.Sink
 [WARNING]   - org.apache.maven.doxia.sink.Sink$1
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, aether-impl-1.0.2.v20150114.jar define 96 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, aether-impl-1.0.2.v20150114.jar define 96 overlapping classes: 
 [WARNING]   - org.eclipse.aether.impl.RepositoryConnectorProvider
 [WARNING]   - org.eclipse.aether.internal.impl.Utils
 [WARNING]   - org.eclipse.aether.impl.ArtifactDescriptorReader
@@ -714,7 +714,7 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.aether.internal.impl.DefaultDeployer$EventCatapult
 [WARNING]   - org.eclipse.aether.internal.impl.PrioritizedComponents
 [WARNING]   - 86 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, jca-2.3.6.jar define 196 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, jca-2.3.6.jar define 196 overlapping classes: 
 [WARNING]   - gov.aps.jca.event.PutListener
 [WARNING]   - gov.aps.jca.jni.ThreadSafeContext$MessageCallbackRequest
 [WARNING]   - gov.aps.jca.Monitor
@@ -726,7 +726,7 @@ mvn install -DskipTests
 [WARNING]   - gov.aps.jca.event.LatestMonitorOnlyQueuedEventDispatcher$6
 [WARNING]   - gov.aps.jca.jni.ThreadSafeContext$ConnectionCallbackRequest
 [WARNING]   - 186 more...
-[WARNING] org.apache.felix.bundlerepository-1.6.6.jar, epics-forwarder-1.0.0-SNAPSHOT.jar, org.apache.felix.utils-1.6.0.jar define 24 overlapping classes: 
+[WARNING] org.apache.felix.bundlerepository-1.6.6.jar, epics-forwarder-1.0.0-bp.jar, org.apache.felix.utils-1.6.0.jar define 24 overlapping classes: 
 [WARNING]   - org.apache.felix.utils.version.VersionCleaner
 [WARNING]   - org.apache.felix.utils.filter.FilterImpl
 [WARNING]   - org.apache.felix.utils.collections.DictionaryAsMap$KeyEntry
@@ -738,12 +738,12 @@ mvn install -DskipTests
 [WARNING]   - org.apache.felix.utils.manifest.Parser
 [WARNING]   - org.apache.felix.utils.collections.DictionaryAsMap$1$1
 [WARNING]   - 14 more...
-[WARNING] plexus-build-api-0.0.7.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 4 overlapping classes: 
+[WARNING] plexus-build-api-0.0.7.jar, epics-forwarder-1.0.0-bp.jar define 4 overlapping classes: 
 [WARNING]   - org.sonatype.plexus.build.incremental.BuildContext
 [WARNING]   - org.sonatype.plexus.build.incremental.ThreadBuildContext
 [WARNING]   - org.sonatype.plexus.build.incremental.EmptyScanner
 [WARNING]   - org.sonatype.plexus.build.incremental.DefaultBuildContext
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, joda-time-2.10.10.jar define 247 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, joda-time-2.10.10.jar define 247 overlapping classes: 
 [WARNING]   - org.joda.time.field.RemainderDateTimeField
 [WARNING]   - org.joda.time.convert.ReadableDurationConverter
 [WARNING]   - org.joda.time.convert.ReadableIntervalConverter
@@ -755,7 +755,7 @@ mvn install -DskipTests
 [WARNING]   - org.joda.time.field.OffsetDateTimeField
 [WARNING]   - org.joda.time.format.ISODateTimeFormat
 [WARNING]   - 237 more...
-[WARNING] org.apache.felix.bundlerepository-1.6.6.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 60 overlapping classes: 
+[WARNING] org.apache.felix.bundlerepository-1.6.6.jar, epics-forwarder-1.0.0-bp.jar define 60 overlapping classes: 
 [WARNING]   - org.apache.felix.bundlerepository.impl.Activator
 [WARNING]   - org.apache.felix.bundlerepository.impl.RepositoryParser
 [WARNING]   - org.apache.felix.bundlerepository.impl.RepositoryAdminImpl$1
@@ -767,7 +767,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.felix.bundlerepository.impl.DataModelHelperImpl
 [WARNING]   - org.apache.felix.bundlerepository.impl.ResourceCapability
 [WARNING]   - 50 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-settings-3.3.9.jar define 19 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-settings-3.3.9.jar define 19 overlapping classes: 
 [WARNING]   - org.apache.maven.settings.RepositoryPolicy
 [WARNING]   - org.apache.maven.settings.RepositoryBase
 [WARNING]   - org.apache.maven.settings.ActivationFile
@@ -779,7 +779,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.settings.io.xpp3.SettingsXpp3Reader$1
 [WARNING]   - org.apache.maven.settings.ActivationOS
 [WARNING]   - 9 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-settings-builder-3.3.9.jar define 32 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-settings-builder-3.3.9.jar define 32 overlapping classes: 
 [WARNING]   - org.apache.maven.settings.io.SettingsReader
 [WARNING]   - org.apache.maven.settings.building.DefaultSettingsBuildingRequest
 [WARNING]   - org.apache.maven.settings.building.SettingsBuildingResult
@@ -791,7 +791,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.settings.validation.DefaultSettingsValidator
 [WARNING]   - org.apache.maven.settings.building.DefaultSettingsProblem
 [WARNING]   - 22 more...
-[WARNING] aopalliance-1.0.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 9 overlapping classes: 
+[WARNING] aopalliance-1.0.jar, epics-forwarder-1.0.0-bp.jar define 9 overlapping classes: 
 [WARNING]   - org.aopalliance.intercept.ConstructorInterceptor
 [WARNING]   - org.aopalliance.intercept.MethodInvocation
 [WARNING]   - org.aopalliance.intercept.MethodInterceptor
@@ -801,7 +801,7 @@ mvn install -DskipTests
 [WARNING]   - org.aopalliance.intercept.Joinpoint
 [WARNING]   - org.aopalliance.intercept.ConstructorInvocation
 [WARNING]   - org.aopalliance.aop.Advice
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, epics-pvdata-6.1.7-SNAPSHOT.jar define 246 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, epics-pvdata-6.1.7-bp.jar define 246 overlapping classes: 
 [WARNING]   - org.epics.pvdata.misc.TimeFunctionRequester
 [WARNING]   - org.epics.pvdata.factory.BasePVStructureArray
 [WARNING]   - org.epics.pvdata.misc.ThreadPriority
@@ -813,7 +813,7 @@ mvn install -DskipTests
 [WARNING]   - org.epics.pvdata.property.MultiChoiceFactory$MultiChoiceImpl
 [WARNING]   - org.epics.pvdata.factory.StandardPVFieldFactory$StandardPVFieldImpl
 [WARNING]   - 236 more...
-[WARNING] xz-1.8.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 116 overlapping classes: 
+[WARNING] xz-1.8.jar, epics-forwarder-1.0.0-bp.jar define 116 overlapping classes: 
 [WARNING]   - org.tukaani.xz.lzma.LZMADecoder$LengthDecoder
 [WARNING]   - org.tukaani.xz.index.IndexDecoder
 [WARNING]   - org.tukaani.xz.lzma.LZMADecoder
@@ -825,11 +825,11 @@ mvn install -DskipTests
 [WARNING]   - org.tukaani.xz.rangecoder.RangeCoder
 [WARNING]   - org.tukaani.xz.XZOutputStream
 [WARNING]   - 106 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-component-annotations-1.6.jar define 3 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-component-annotations-1.6.jar define 3 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.component.annotations.Requirement
 [WARNING]   - org.codehaus.plexus.component.annotations.Component
 [WARNING]   - org.codehaus.plexus.component.annotations.Configuration
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-repository-metadata-3.3.9.jar define 9 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-repository-metadata-3.3.9.jar define 9 overlapping classes: 
 [WARNING]   - org.apache.maven.artifact.repository.metadata.Versioning
 [WARNING]   - org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader$1
 [WARNING]   - org.apache.maven.artifact.repository.metadata.Metadata
@@ -839,7 +839,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader
 [WARNING]   - org.apache.maven.artifact.repository.metadata.Snapshot
 [WARNING]   - org.apache.maven.artifact.repository.metadata.SnapshotVersion
-[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-SNAPSHOT.jar, org.osgi.core-6.0.0.jar define 69 overlapping classes: 
+[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-bp.jar, org.osgi.core-6.0.0.jar define 69 overlapping classes: 
 [WARNING]   - org.osgi.framework.AdminPermission$1
 [WARNING]   - org.osgi.framework.FrameworkUtil$FilterImpl$Parser
 [WARNING]   - org.osgi.framework.PrototypeServiceFactory
@@ -851,7 +851,7 @@ mvn install -DskipTests
 [WARNING]   - org.osgi.framework.AdaptPermissionCollection
 [WARNING]   - org.osgi.framework.VersionRange
 [WARNING]   - 59 more...
-[WARNING] commons-collections-3.2.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 458 overlapping classes: 
+[WARNING] commons-collections-3.2.jar, epics-forwarder-1.0.0-bp.jar define 458 overlapping classes: 
 [WARNING]   - org.apache.commons.collections.map.AbstractLinkedMap$LinkMapIterator
 [WARNING]   - org.apache.commons.collections.bidimap.TreeBidiMap$Node
 [WARNING]   - org.apache.commons.collections.comparators.TransformingComparator
@@ -863,7 +863,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.commons.collections.comparators.ComparatorChain
 [WARNING]   - org.apache.commons.collections.KeyValue
 [WARNING]   - 448 more...
-[WARNING] plexus-utils-3.3.0.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 105 overlapping classes: 
+[WARNING] plexus-utils-3.3.0.jar, epics-forwarder-1.0.0-bp.jar define 105 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.util.xml.pull.EntityReplacementMap
 [WARNING]   - org.codehaus.plexus.util.introspection.ReflectionValueExtractor
 [WARNING]   - org.codehaus.plexus.util.InterpolationFilterReader
@@ -875,14 +875,14 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.plexus.util.FastMap
 [WARNING]   - org.codehaus.plexus.util.xml.SerializerXMLWriter
 [WARNING]   - 95 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, javax.inject-1.jar define 6 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, javax.inject-1.jar define 6 overlapping classes: 
 [WARNING]   - javax.inject.Inject
 [WARNING]   - javax.inject.Singleton
 [WARNING]   - javax.inject.Scope
 [WARNING]   - javax.inject.Named
 [WARNING]   - javax.inject.Provider
 [WARNING]   - javax.inject.Qualifier
-[WARNING] commons-compress-1.19.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 354 overlapping classes: 
+[WARNING] commons-compress-1.19.jar, epics-forwarder-1.0.0-bp.jar define 354 overlapping classes: 
 [WARNING]   - org.apache.commons.compress.archivers.dump.ShortFileException
 [WARNING]   - org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 [WARNING]   - org.apache.commons.compress.archivers.dump.DumpArchiveEntry
@@ -894,7 +894,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream$CurrentEntry
 [WARNING]   - org.apache.commons.compress.compressors.pack200.Pack200Strategy$2
 [WARNING]   - 344 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, commons-lang3-3.4.jar define 224 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, commons-lang3-3.4.jar define 224 overlapping classes: 
 [WARNING]   - org.apache.commons.lang3.time.StopWatch$State$1
 [WARNING]   - org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle
 [WARNING]   - org.apache.commons.lang3.SerializationUtils
@@ -906,7 +906,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.commons.lang3.reflect.TypeUtils
 [WARNING]   - org.apache.commons.lang3.ArrayUtils
 [WARNING]   - 214 more...
-[WARNING] commons-lang-2.1.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 110 overlapping classes: 
+[WARNING] commons-lang-2.1.jar, epics-forwarder-1.0.0-bp.jar define 110 overlapping classes: 
 [WARNING]   - org.apache.commons.lang.NotImplementedException
 [WARNING]   - org.apache.commons.lang.math.JVMRandom
 [WARNING]   - org.apache.commons.lang.builder.ToStringBuilder
@@ -918,7 +918,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.commons.lang.mutable.MutableDouble
 [WARNING]   - org.apache.commons.lang.UnhandledException
 [WARNING]   - 100 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, org.eclipse.sisu.plexus-0.3.2.jar, plexus-container-default-1.0-alpha-30.jar define 82 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, org.eclipse.sisu.plexus-0.3.2.jar, plexus-container-default-1.0-alpha-30.jar define 82 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.component.configurator.MapOrientedComponentConfigurator
 [WARNING]   - org.codehaus.plexus.configuration.PlexusConfigurationException
 [WARNING]   - org.codehaus.plexus.component.configurator.ComponentConfigurator
@@ -930,7 +930,7 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.plexus.personality.plexus.lifecycle.phase.StartingException
 [WARNING]   - org.codehaus.plexus.component.configurator.converters.lookup.DefaultConverterLookup
 [WARNING]   - 72 more...
-[WARNING] aether-api-1.0.2.v20150114.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 128 overlapping classes: 
+[WARNING] aether-api-1.0.2.v20150114.jar, epics-forwarder-1.0.0-bp.jar define 128 overlapping classes: 
 [WARNING]   - org.eclipse.aether.SessionData
 [WARNING]   - org.eclipse.aether.repository.ProxySelector
 [WARNING]   - org.eclipse.aether.transfer.TransferResource
@@ -942,7 +942,7 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.aether.transfer.NoRepositoryConnectorException
 [WARNING]   - org.eclipse.aether.metadata.Metadata$Nature
 [WARNING]   - 118 more...
-[WARNING] maven-dependency-tree-3.0.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 20 overlapping classes: 
+[WARNING] maven-dependency-tree-3.0.jar, epics-forwarder-1.0.0-bp.jar define 20 overlapping classes: 
 [WARNING]   - org.apache.maven.shared.dependency.graph.traversal.BuildingDependencyNodeVisitor
 [WARNING]   - org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException
 [WARNING]   - org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor
@@ -954,7 +954,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.shared.dependency.graph.internal.Maven3DependencyGraphBuilder
 [WARNING]   - org.apache.maven.shared.dependency.graph.internal.Maven31DependencyGraphBuilder
 [WARNING]   - 10 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, org.osgi.compendium-4.2.0.jar define 177 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, org.osgi.compendium-4.2.0.jar define 177 overlapping classes: 
 [WARNING]   - org.osgi.util.measurement.State
 [WARNING]   - org.osgi.service.blueprint.container.EventConstants
 [WARNING]   - org.osgi.service.blueprint.reflect.ReferenceMetadata
@@ -966,7 +966,7 @@ mvn install -DskipTests
 [WARNING]   - info.dmtree.Uri$1
 [WARNING]   - org.osgi.service.useradmin.UserAdminPermission
 [WARNING]   - 167 more...
-[WARNING] doxia-decoration-model-1.0.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 18 overlapping classes: 
+[WARNING] doxia-decoration-model-1.0.jar, epics-forwarder-1.0.0-bp.jar define 18 overlapping classes: 
 [WARNING]   - org.apache.maven.doxia.site.decoration.Banner
 [WARNING]   - org.apache.maven.doxia.site.decoration.inheritance.PathUtils
 [WARNING]   - org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader
@@ -978,7 +978,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.doxia.site.decoration.MenuItem
 [WARNING]   - org.apache.maven.doxia.site.decoration.inheritance.DefaultDecorationModelInheritanceAssembler$URLContainer
 [WARNING]   - 8 more...
-[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 1152 overlapping classes: 
+[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-bp.jar define 1152 overlapping classes: 
 [WARNING]   - aQute.lib.exceptions.RunnableWithException
 [WARNING]   - aQute.bnd.component.annotations.ServiceScope
 [WARNING]   - aQute.lib.io.CharBufferReader
@@ -990,12 +990,12 @@ mvn install -DskipTests
 [WARNING]   - aQute.bnd.build.Project
 [WARNING]   - aQute.bnd.url.HttpsVerification
 [WARNING]   - 1142 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-reporting-api-3.0.jar define 4 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-reporting-api-3.0.jar define 4 overlapping classes: 
 [WARNING]   - org.apache.maven.reporting.MavenReport$1
 [WARNING]   - org.apache.maven.reporting.MavenMultiPageReport
 [WARNING]   - org.apache.maven.reporting.MavenReportRenderer
 [WARNING]   - org.apache.maven.reporting.MavenReport
-[WARNING] maven-core-3.3.9.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 394 overlapping classes: 
+[WARNING] maven-core-3.3.9.jar, epics-forwarder-1.0.0-bp.jar define 394 overlapping classes: 
 [WARNING]   - org.apache.maven.artifact.metadata.ResolutionGroup
 [WARNING]   - org.apache.maven.artifact.handler.DefaultArtifactHandler
 [WARNING]   - org.apache.maven.plugin.prefix.NoPluginFoundForPrefixException
@@ -1007,7 +1007,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.plugin.CompoundMojoExecutionListener
 [WARNING]   - org.apache.maven.artifact.repository.metadata.RepositoryMetadata
 [WARNING]   - 384 more...
-[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-SNAPSHOT.jar, org.osgi.core-6.0.0.jar, org.osgi.compendium-4.2.0.jar define 8 overlapping classes: 
+[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-bp.jar, org.osgi.core-6.0.0.jar, org.osgi.compendium-4.2.0.jar define 8 overlapping classes: 
 [WARNING]   - org.osgi.util.tracker.ServiceTrackerCustomizer
 [WARNING]   - org.osgi.util.tracker.ServiceTracker
 [WARNING]   - org.osgi.util.tracker.BundleTracker$Tracked
@@ -1016,7 +1016,7 @@ mvn install -DskipTests
 [WARNING]   - org.osgi.util.tracker.ServiceTracker$AllTracked
 [WARNING]   - org.osgi.util.tracker.AbstractTracked
 [WARNING]   - org.osgi.util.tracker.ServiceTracker$Tracked
-[WARNING] velocity-1.5.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 246 overlapping classes: 
+[WARNING] velocity-1.5.jar, epics-forwarder-1.0.0-bp.jar define 246 overlapping classes: 
 [WARNING]   - org.apache.velocity.runtime.parser.node.ASTFloatingPointLiteral
 [WARNING]   - org.apache.velocity.app.event.EventHandlerMethodExecutor
 [WARNING]   - org.apache.velocity.io.UnicodeInputStream
@@ -1028,7 +1028,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.velocity.runtime.resource.loader.DataSourceResourceLoader
 [WARNING]   - org.apache.velocity.app.event.implement.InvalidReferenceInfo
 [WARNING]   - 236 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, plexus-container-default-1.0-alpha-30.jar define 130 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, plexus-container-default-1.0-alpha-30.jar define 130 overlapping classes: 
 [WARNING]   - org.codehaus.plexus.configuration.PlexusConfigurationMerger
 [WARNING]   - org.codehaus.plexus.lifecycle.LifecycleHandler
 [WARNING]   - org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceablePhase
@@ -1040,9 +1040,9 @@ mvn install -DskipTests
 [WARNING]   - org.codehaus.plexus.personality.plexus.lifecycle.phase.ContextualizePhase
 [WARNING]   - org.codehaus.plexus.component.composition.CompositionResolver
 [WARNING]   - 120 more...
-[WARNING] epics-forwarder-1.0.0-SNAPSHOT.jar, maven-compat-3.3.9.jar, maven-reporting-api-3.0.jar define 1 overlapping classes: 
+[WARNING] epics-forwarder-1.0.0-bp.jar, maven-compat-3.3.9.jar, maven-reporting-api-3.0.jar define 1 overlapping classes: 
 [WARNING]   - org.apache.maven.reporting.MavenReportException
-[WARNING] maven-shared-utils-3.2.1.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 84 overlapping classes: 
+[WARNING] maven-shared-utils-3.2.1.jar, epics-forwarder-1.0.0-bp.jar define 84 overlapping classes: 
 [WARNING]   - org.apache.maven.shared.utils.io.FileUtils$FilterWrapper
 [WARNING]   - org.apache.maven.shared.utils.logging.LoggerLevelRenderer
 [WARNING]   - org.apache.maven.shared.utils.io.DirectoryScanner
@@ -1054,7 +1054,7 @@ mvn install -DskipTests
 [WARNING]   - org.apache.maven.shared.utils.introspection.ClassMap$1
 [WARNING]   - org.apache.maven.shared.utils.Expand
 [WARNING]   - 74 more...
-[WARNING] org.eclipse.sisu.inject-0.3.2.jar, epics-forwarder-1.0.0-SNAPSHOT.jar define 270 overlapping classes: 
+[WARNING] org.eclipse.sisu.inject-0.3.2.jar, epics-forwarder-1.0.0-bp.jar define 270 overlapping classes: 
 [WARNING]   - org.eclipse.sisu.wire.BeanProviders$3
 [WARNING]   - org.eclipse.sisu.space.WildcardKey$Qualified
 [WARNING]   - org.eclipse.sisu.inject.RankedSequence
@@ -1066,7 +1066,7 @@ mvn install -DskipTests
 [WARNING]   - org.eclipse.sisu.inject.DeferredProvider
 [WARNING]   - org.eclipse.sisu.wire.EntryListAdapter$ValueListIterator
 [WARNING]   - 260 more...
-[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-SNAPSHOT.jar, org.osgi.compendium-4.2.0.jar define 4 overlapping classes: 
+[WARNING] biz.aQute.bndlib-5.1.1.jar, epics-forwarder-1.0.0-bp.jar, org.osgi.compendium-4.2.0.jar define 4 overlapping classes: 
 [WARNING]   - org.osgi.service.log.LogListener
 [WARNING]   - org.osgi.service.log.LogReaderService
 [WARNING]   - org.osgi.service.log.LogEntry
@@ -1079,21 +1079,21 @@ mvn install -DskipTests
 [WARNING] mvn dependency:tree -Ddetail=true and the above output.
 [WARNING] See http://maven.apache.org/plugins/maven-shade-plugin/
 [INFO] Replacing original artifact with shaded artifact.
-[INFO] Replacing epics-forwarder/target/epics-forwarder-1.0.0-SNAPSHOT.jar with epics-forwarder/target/epics-forwarder-1.0.0-SNAPSHOT-shaded.jar
+[INFO] Replacing epics-forwarder/target/epics-forwarder-1.0.0-bp.jar with epics-forwarder/target/epics-forwarder-1.0.0-bp-shaded.jar
 [INFO] Dependency-reduced POM written at: epics-forwarder/dependency-reduced-pom.xml
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ epics-forwarder ---
-[INFO] Installing epics-forwarder/target/epics-forwarder-1.0.0-SNAPSHOT.jar to ~/.m2/repository/org/epics/epics-forwarder/1.0.0-SNAPSHOT/epics-forwarder-1.0.0-SNAPSHOT.jar
-[INFO] Installing epics-forwarder/dependency-reduced-pom.xml to ~/.m2/repository/org/epics/epics-forwarder/1.0.0-SNAPSHOT/epics-forwarder-1.0.0-SNAPSHOT.pom
+[INFO] Installing epics-forwarder/target/epics-forwarder-1.0.0-bp.jar to ~/.m2/repository/org/epics/epics-forwarder/1.0.0-bp/epics-forwarder-1.0.0-bp.jar
+[INFO] Installing epics-forwarder/dependency-reduced-pom.xml to ~/.m2/repository/org/epics/epics-forwarder/1.0.0-bp/epics-forwarder-1.0.0-bp.pom
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary:
 [INFO] 
-[INFO] EPICS Core Server BackPort 1.5 Build 7.0.8-SNAPSHOT  SUCCESS [  0.347 s]
-[INFO] org.epics.util 1.0.5-SNAPSHOT ...................... SUCCESS [  2.776 s]
-[INFO] pvDataJava 6.1.7-SNAPSHOT .......................... SUCCESS [  0.194 s]
-[INFO] pvAccessJava 5.1.7-SNAPSHOT ........................ SUCCESS [  0.636 s]
-[INFO] normativeTypesJava 0.3.7-SNAPSHOT .................. SUCCESS [  0.073 s]
-[INFO] epics-forwarder 1.0.0-SNAPSHOT ..................... SUCCESS [  2.590 s]
+[INFO] EPICS Core Server BackPort 1.5 Build 7.0.8-bp  SUCCESS [  0.347 s]
+[INFO] org.epics.util 1.0.5-bp ...................... SUCCESS [  2.776 s]
+[INFO] pvDataJava 6.1.7-bp .......................... SUCCESS [  0.194 s]
+[INFO] pvAccessJava 5.1.7-bp ........................ SUCCESS [  0.636 s]
+[INFO] normativeTypesJava 0.3.7-bp .................. SUCCESS [  0.073 s]
+[INFO] epics-forwarder 1.0.0-bp ..................... SUCCESS [  2.590 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -1111,7 +1111,7 @@ pvDataJava, pvAccessJava, normativeTypesJava  and org.epics.util don't need to b
 
 The only Jar to copy to VMS is the Forwarder.
 ```shell
-cp ~/.m2/repository/org/epics/epics-forwarder/1.0.0-SNAPSHOT/epics-forwarder-1.0.0-SNAPSHOT.jar epics-forwarder.jar
+cp ~/.m2/repository/org/epics/epics-forwarder/1.0.0-bp/epics-forwarder-1.0.0-bp.jar epics-forwarder.jar
 sftp mccdev
 Connecting to mccdev...
  

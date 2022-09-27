@@ -14,14 +14,14 @@ mvn install
 [INFO] Scanning for projects...
 [INFO] 
 [INFO] ------------------< edu.stanford.slac.aida:aida-pva >-------------------
-[INFO] Building Aida PVA 3.0.0-SNAPSHOT
+[INFO] Building Aida PVA 3.0.0
 [INFO] --------------------------------[ jar ]---------------------------------
-Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-parent/7.0.8-SNAPSHOT/maven-metadata.xml
-Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-parent/7.0.8-SNAPSHOT/maven-metadata.xml (598 B at 576 B/s)
-Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-pvdata/6.1.7-SNAPSHOT/maven-metadata.xml
-Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-pvdata/6.1.7-SNAPSHOT/maven-metadata.xml (1.2 kB at 4.3 kB/s)
-Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-util/1.0.5-SNAPSHOT/maven-metadata.xml
-Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-util/1.0.5-SNAPSHOT/maven-metadata.xml (1.2 kB at 4.3 kB/s)
+Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-parent/7.0.8-bp/maven-metadata.xml
+Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-parent/7.0.8-bp/maven-metadata.xml (598 B at 576 B/s)
+Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-pvdata/6.1.7-bp/maven-metadata.xml
+Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-pvdata/6.1.7-bp/maven-metadata.xml (1.2 kB at 4.3 kB/s)
+Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-util/1.0.5-bp/maven-metadata.xml
+Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/org/epics/epics-util/1.0.5-bp/maven-metadata.xml (1.2 kB at 4.3 kB/s)
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ aida-pva ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
@@ -41,10 +41,10 @@ Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repos
 [INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ aida-pva ---
 [INFO] 
 [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ aida-pva ---
-[INFO] Building jar: target/aida-pva-3.0.0-SNAPSHOT.jar
+[INFO] Building jar: target/aida-pva-3.0.0.jar
 [INFO] 
 [INFO] --- maven-shade-plugin:3.2.1:shade (default) @ aida-pva ---
-[INFO] Including org.epics:epics-pvaccess:jar:5.1.7-SNAPSHOT in the shaded jar.
+[INFO] Including org.epics:epics-pvaccess:jar:5.1.7-bp in the shaded jar.
 [INFO] Including org.epics:jca:jar:2.3.6 in the shaded jar.
 [INFO] Including org.apache.felix:maven-bundle-plugin:jar:5.1.1 in the shaded jar.
 [INFO] Including org.osgi:org.osgi.core:jar:6.0.0 in the shaded jar.
@@ -112,10 +112,10 @@ Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repos
 [INFO] Including org.apache.maven.doxia:doxia-module-xdoc:jar:1.0 in the shaded jar.
 [INFO] Including org.apache.maven.doxia:doxia-module-xhtml:jar:1.0 in the shaded jar.
 [INFO] Including org.jdom:jdom:jar:1.1 in the shaded jar.
-[INFO] Including org.epics:epics-pvdata:jar:6.1.7-SNAPSHOT in the shaded jar.
-[INFO] Including org.epics:epics-util:jar:1.0.5-SNAPSHOT in the shaded jar.
+[INFO] Including org.epics:epics-pvdata:jar:6.1.7-bp in the shaded jar.
+[INFO] Including org.epics:epics-util:jar:1.0.5-bp in the shaded jar.
 [INFO] Including joda-time:joda-time:jar:2.10.10 in the shaded jar.
-[INFO] Including org.epics:epics-ntypes:jar:0.3.7-SNAPSHOT in the shaded jar.
+[INFO] Including org.epics:epics-ntypes:jar:0.3.7-bp in the shaded jar.
 [INFO] Including com.fasterxml.jackson.core:jackson-databind:jar:2.1.5 in the shaded jar.
 [INFO] Including com.fasterxml.jackson.core:jackson-annotations:jar:2.1.5 in the shaded jar.
 [INFO] Including com.fasterxml.jackson.core:jackson-core:jar:2.1.5 in the shaded jar.
@@ -181,12 +181,12 @@ Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repos
 [WARNING] mvn dependency:tree -Ddetail=true and the above output.
 [WARNING] See http://maven.apache.org/plugins/maven-shade-plugin/
 [INFO] Replacing original artifact with shaded artifact.
-[INFO] Replacing target/aida-pva-3.0.0-SNAPSHOT.jar with target/aida-pva-3.0.0-SNAPSHOT-shaded.jar
+[INFO] Replacing target/aida-pva-3.0.0.jar with target/aida-pva-3.0.0-shaded.jar
 [INFO] Dependency-reduced POM written at: dependency-reduced-pom.xml
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ aida-pva ---
-[INFO] Installing target/aida-pva-3.0.0-SNAPSHOT.jar to /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0-SNAPSHOT/aida-pva-3.0.0-SNAPSHOT.jar
-[INFO] Installing dependency-reduced-pom.xml to /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0-SNAPSHOT/aida-pva-3.0.0-SNAPSHOT.pom
+[INFO] Installing target/aida-pva-3.0.0.jar to /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0/aida-pva-3.0.0.jar
+[INFO] Installing dependency-reduced-pom.xml to /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0/aida-pva-3.0.0.pom
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -200,7 +200,7 @@ Process finished with exit code 0
 
 3. Copy jar to VMS
 ```shell
-cp /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0-SNAPSHOT/aida-pva-3.0.0-SNAPSHOT.jar aida-pva.jar
+cp /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0/aida-pva-3.0.0.jar aida-pva.jar
 sftp mccdev
 Connecting to mccdev...
  

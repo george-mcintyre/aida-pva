@@ -158,7 +158,7 @@ git clone git@github.com:slaclab/aida-pva-tests.git
 cd aida-pva-tests
 mvn install
 ```
-The shaded jar file is found in the target directory. `./target/aida-pva-tests-1.0-SNAPSHOT.jar`
+The shaded jar file is found in the target directory. `./target/aida-pva-tests-1.0.jar`
 
 ### To run the tests
 Running the tests are equally simple. You need to make sure that your environment is set up so that you can find the epics providers. All you need to do is to set the `EPICS_PVA_ADDR_LIST` variable to identify the network or host you want to search.
@@ -173,7 +173,7 @@ _commands_
 ```shell 
 export EPICS_PVA_ADDR_LIST=mccdev.slac.stanford.edu
 cd ./target
-java -cp aida-pva-tests-1.0-SNAPSHOT.jar  "edu.stanford.slac.aida.test.SlcTest"
+java -cp aida-pva-tests-1.0.jar  "edu.stanford.slac.aida.test.SlcTest"
 ```
 
 _output_
