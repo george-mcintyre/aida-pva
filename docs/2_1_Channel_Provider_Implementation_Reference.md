@@ -210,7 +210,7 @@ see [Test Framework Documentation](2_5_4_Testing_Framework.md) for more informat
 
 ## Building and Deploying your Channel Provider
 
-Follow instructions [here](3_3_Building_AIDA_PVA_Channel_Provider.md) to build your AIDA-PVA Channel Provider.
+Follow instructions [here](3_2_Building_AIDA_PVA_Channel_Providers.md) to build your AIDA-PVA Channel Provider.
 
 ## Reference Service
  

@@ -226,9 +226,7 @@ For a full description of how to deploy AIDA-PVA in SLAC see [A DevOps Guide to 
 ## Building AIDA-PVA SERVICE
 see [Building AIDA-PVA SERVICE](3_1_Building_AIDA_PVA_Service.md)
 ## Building AIDA-PVA Module
-see [Building AIDA-PVA Module](3_2_Building_AIDA_PVA_into_AIDA_PVALIB.md)
-## Building AIDA-PVA a Channel Provider
-see [Building AIDA-PVA a Channel Provider](3_3_Building_AIDA_PVA_Channel_Provider.md)
+see [Building AIDA-PVA Channel Providers](3_2_Building_AIDA_PVA_Channel_Providers.md)
 
 ## Test Framework
 see [Test Framework Documentation](2_5_4_Testing_Framework.md) for more information on testing framework
