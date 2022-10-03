@@ -125,304 +125,377 @@ remaining files that are in CMS to build the libraries and shared libraries requ
 ## Procedures for Building, Testing and Deploying
 
 - Groups 1, 2, & 3
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - Build the `AIDA-PVA` _channel-provider_ module in a private object library
-        - Build and Test the `AIDA-PVA` _channel-provider_ shareable image privately
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - Commit and Rebuild the `AIDA-PVA` _channel-provider_ module in `AIDA_PVALIB` object library
-        - Rebuild and Test the `AIDA-PVA` _channel-provider_ shareable image in DEV
-        - Move the `AIDA-PVA` _channel-provider_ shareable image to PROD
+    1. For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+        1. **BUILD PRIVATE CHANNEL PROVIDER MODULE**
+        2. **BUILD PRIVATE CHANNEL PROVIDER SHAREABLE**
+    2. For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+        1. **COMMIT & BUILD CHANNEL PROVIDER MODULE**
+        2. **BUILD & TEST CHANNEL PROVIDER SHAREABLE IN DEV**
+        3. **MOVE CHANNEL PROVIDER SHAREABLE TO PROD**
 - Group 4
-    - Build `AIDASHR` shared library privately
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - Build and Test the `AIDA-PVA` _channel-provider_ shareable image privately using private `AIDASHR` library
-    - Build and Test all `AIDA` providers privately
-    - Commit changes to `AIDASHR` shared library
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - Rebuild and Test the `AIDA-PVA` _channel-provider_ shareable image in DEV
-        - Move the `AIDA-PVA` _channel-provider_ shareable image to PROD
-- Groups 5, 6, 7, 8, 9, & 10: _Channel Config files_
-    - Deploy appropriate Channel Config file to PROD
-- Groups 5, 6, 7, 8, 9, & 10: _All files except Channel Config files_
-    - Build the `AIDA-PVA` _channel-provider_ module in a private object library
-    - Build and Test the `AIDA-PVA` _channel-provider_ shareable image privately
-    - Commit and Rebuild the `AIDA-PVA` _channel-provider_ module in `AIDA_PVALIB` object library
-    - Rebuild and Test the `AIDA-PVA` _channel-provider_ shareable image in DEV
-    - Move the `AIDA-PVA` _channel-provider_ shareable image to PROD
+    1. **BUILD PRIVATE AIDASHR**
+    2. For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+        1. **BUILD PRIVATE CHANNEL PROVIDER SHAREABLE USING PRIVATE AIDASHR**
+    3. **BUILD AND TEST AIDA PROVIDERS PRIVATELY**
+    4. **COMMIT AIDASHR CHANGES TO CMS**
+    5. For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+        1. **BUILD & TEST CHANNEL PROVIDER SHAREABLE IN DEV**
+        2. **MOVE CHANNEL PROVIDER SHAREABLE TO PROD**
+- Groups 5, 6, 7, 8, 9, & 10
+    - _Channel Config files_
+        1. **DEPLOY CHANNEL CONFIG TO PROD**
+    - All files except _Channel Config files_
+        1. **BUILD PRIVATE CHANNEL PROVIDER MODULE**
+        2. **BUILD PRIVATE CHANNEL PROVIDER SHAREABLE**
+        3. **COMMIT & BUILD CHANNEL PROVIDER MODULE**
+        4. **BUILD & TEST CHANNEL PROVIDER SHAREABLE IN DEV**
+        5. **MOVE CHANNEL PROVIDER SHAREABLE TO PROD**
 
 ## Channel Provider Build Procedures
 
-### Build an AIDA-PVA channel provider module in a private object library
+### BUILD PRIVATE CHANNEL PROVIDER MODULE
 
-- Create DEV library
+Build an `AIDA-PVA` channel provider module in a private object library
 
-```shell
-MCCDEV> LIBRARY /CREATE DEVLIB
-```
+1. Create DEV library
 
-- Compile all changed C files including local header files
-
-```shell
-MCCDEV> CINC *.C
-```
-
-### Build and Test an AIDA-PVA channel provider shareable image privately
-
-- Build shareable image
-    - edit `GENERAL.OPT` file (either checkout or change updated) to comment out line ending
-      in `! copy to DEV direct and remove this line for BUILDTEST /DEF`
-    - build by running one of the following commands:
     ```shell
-    MCCDEV> BUILDTEST AIDASLCBPM /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCBPMBUFF /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCKLYS /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDSLCMAGNET /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCUTIL /ALL /DEFAULT
+    MCCDEV> LIBRARY /CREATE DEVLIB
     ```
 
-  @note `/DEFAULT` means use the files in the local directory
+2. Compile all changed C files including local header files
 
-- Test shareable image
-    - log into dev machine using `SLCSHR` account
     ```shell
-    MCCDEV> ssh MCCDEV /user=slcshr
-    ```
-    - shutdown running provider on dev, one of:
-    ```shell
-    MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /KILL
-    ```
-    - log out of `SLCSHR` account
-    ```shell
-    MCCDEV> logout
-    ```
-    - run private shareable, one of:
-    ```shell
-    MCCDEV> @AIDA_ASLCBPM.SUBMIT
-    MCCDEV> @AIDA_ASLCBPMBUFF.SUBMIT
-    MCCDEV> @AIDA_ASLCDB.SUBMIT
-    MCCDEV> @AIDA_ASLCKLYS.SUBMIT
-    MCCDEV> @AIDA_SLCMAGNET.SUBMIT
-    MCCDEV> @AIDA_ASLCUTIL.SUBMIT
+    MCCDEV> CINC *.C
     ```
 
-### Commit and Rebuild an AIDA-PVA channel provider module in the AIDA_PVALIB object library
+### BUILD PRIVATE CHANNEL PROVIDER SHAREABLE
 
-- Build and Test locally first (see above)
-- Reserve changed files in CMS
-    - Enter CMS cli
-    ```shell
-    MCCDEV> slccms
-    ```
-    - Select library based on type of changed file, one of:
-    ```shell
-    SlcCMS> set libr CMS_AIDA_PVA
-    SlcCMS> set libr CMS_C_INC
-    SlcCMS> set libr CMS_SLCSHR_CONTROL  
-    SlcCMS> set libr CMS_SLCTXT  
-    ```
-    - Reserve changed file, one of:
-    ```shell
-    SlcCMS> reserve AIDAASLCBPM_SERVER.C /nooutput 
-    SlcCMS> reserve AIDAASLCBPM_SERVER.h /nooutput 
-    SlcCMS> reserve AIDAASLCBPM_GENERAL.OPT /nooutput 
-  
-    SlcCMS> reserve AIDASLCBPMBUFF_SERVER.C /nooutput 
-    SlcCMS> reserve AIDASLCBPMBUFF_SERVER.h /nooutput 
-    SlcCMS> reserve AIDASLCBPMBUFF_GENERAL.OPT /nooutput 
-  
-    SlcCMS> reserve AIDASLCDB_SERVER.C /nooutput 
-    SlcCMS> reserve AIDASLCDB_SERVER.h /nooutput 
-    SlcCMS> reserve AIDASLCDB_GENERAL.OPT /nooutput 
-  
-    SlcCMS> reserve AIDASLCKLYS_SERVER.C /nooutput 
-    SlcCMS> reserve AIDASLCKLYS_SERVER.h /nooutput 
-    SlcCMS> reserve AIDASLCKLYS_GENERAL.OPT /nooutput 
-  
-    SlcCMS> reserve AIDASLCMAGNET_SERVER.C /nooutput 
-    SlcCMS> reserve AIDASLCMAGNET_SERVER.h /nooutput 
-    SlcCMS> reserve AIDASLCMAGNET_GENERAL.OPT /nooutput 
-  
-    SlcCMS> reserve AIDASLCUTIL_SERVER.C /nooutput 
-    SlcCMS> reserve AIDASLCUTIL_SERVER.h /nooutput 
-    SlcCMS> reserve AIDASLCUTIL_GENERAL.OPT /nooutput 
-    ```
-    - Exit CMS cli
-    ```shell
-    SlcCMS> exit 
-    ```
-- Commit changed files, one of:
+Build and Test an `AIDA-PVA` channel provider shareable image privately
 
-```shell
-MCCDEV>  cmp AIDAASLCBPM_SERVER.C  
-MCCDEV>  cmp AIDAASLCBPM_SERVER.h  
-MCCDEV>  cmp AIDAASLCBPM_GENERAL.OPT  
+1. Build shareable image
+    1. Edit `GENERAL.OPT` file (either checkout or change updated) to comment out line ending
+       in `! copy to DEV direct and remove this line for BUILDTEST /DEF`
+    2. Build by running one of the following commands:
+       ```shell
+       MCCDEV> BUILDTEST AIDASLCBPM /ALL /DEFAULT
+       MCCDEV> BUILDTEST AIDASLCBPMBUFF /ALL /DEFAULT
+       MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
+       MCCDEV> BUILDTEST AIDASLCKLYS /ALL /DEFAULT
+       MCCDEV> BUILDTEST AIDSLCMAGNET /ALL /DEFAULT
+       MCCDEV> BUILDTEST AIDASLCUTIL /ALL /DEFAULT
+       ```
 
-MCCDEV>  cmp AIDASLCBPMBUFF_SERVER.C  
-MCCDEV>  cmp AIDASLCBPMBUFF_SERVER.h  
-MCCDEV>  cmp AIDASLCBPMBUFF_GENERAL.OPT  
+   @note `/DEFAULT` means use the files in the local directory
 
-MCCDEV>  cmp AIDASLCDB_SERVER.C  
-MCCDEV>  cmp AIDASLCDB_SERVER.h  
-MCCDEV>  cmp AIDASLCDB_GENERAL.OPT  
+2. Test shareable image
+    1. Log into dev machine using `SLCSHR` account
+       ```shell
+       MCCDEV> ssh MCCDEV /user=slcshr
+       ```
+    2. Shutdown running provider on dev, one of:
+        ```shell
+        MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /KILL
+        MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /KILL
+        MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /KILL
+        MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /KILL
+        MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /KILL
+        MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /KILL
+        ```
+    3. Log out of `SLCSHR` account
+       ```shell
+       MCCDEV> logout
+       ```
 
-MCCDEV>  cmp AIDASLCKLYS_SERVER.C  
-MCCDEV>  cmp AIDASLCKLYS_SERVER.h  
-MCCDEV>  cmp AIDASLCKLYS_GENERAL.OPT  
+    4. Run private shareable, one of:
+        ```shell
+        MCCDEV> @AIDA_ASLCBPM.SUBMIT
+        MCCDEV> @AIDA_ASLCBPMBUFF.SUBMIT
+        MCCDEV> @AIDA_ASLCDB.SUBMIT
+        MCCDEV> @AIDA_ASLCKLYS.SUBMIT
+        MCCDEV> @AIDA_SLCMAGNET.SUBMIT
+        MCCDEV> @AIDA_ASLCUTIL.SUBMIT
+        ```
 
-MCCDEV>  cmp AIDASLCMAGNET_SERVER.C  
-MCCDEV>  cmp AIDASLCMAGNET_SERVER.h  
-MCCDEV>  cmp AIDASLCMAGNET_GENERAL.OPT  
+### COMMIT & BUILD CHANNEL PROVIDER MODULE
 
-MCCDEV>  cmp AIDASLCUTIL_SERVER.C  
-MCCDEV>  cmp AIDASLCUTIL_SERVER.h  
-MCCDEV>  cmp AIDASLCUTIL_GENERAL.OPT  
-```
+Commit and Rebuild an `AIDA-PVA` channel provider module in the `AIDA_PVALIB` object library
 
-### Rebuild and Test an AIDA-PVA channel provider shareable image in DEV
+1. Build and Test locally first (see above)
+2. Reserve changed files in CMS
+    1. Enter CMS cli
+       ```shell
+       MCCDEV> slccms
+       ```
+    2. Select library based on type of changed file, one of:
+       ```shell
+       SlcCMS> set libr CMS_AIDA_PVA
+       SlcCMS> set libr CMS_C_INC
+       SlcCMS> set libr CMS_SLCSHR_CONTROL  
+       SlcCMS> set libr CMS_SLCTXT  
+       ```
+    3. Reserve changed file, one of:
+       ```shell
+       SlcCMS> reserve AIDAASLCBPM_SERVER.C /nooutput 
+       SlcCMS> reserve AIDAASLCBPM_SERVER.h /nooutput 
+       SlcCMS> reserve AIDAASLCBPM_GENERAL.OPT /nooutput 
+     
+       SlcCMS> reserve AIDASLCBPMBUFF_SERVER.C /nooutput 
+       SlcCMS> reserve AIDASLCBPMBUFF_SERVER.h /nooutput 
+       SlcCMS> reserve AIDASLCBPMBUFF_GENERAL.OPT /nooutput 
+     
+       SlcCMS> reserve AIDASLCDB_SERVER.C /nooutput 
+       SlcCMS> reserve AIDASLCDB_SERVER.h /nooutput 
+       SlcCMS> reserve AIDASLCDB_GENERAL.OPT /nooutput 
+     
+       SlcCMS> reserve AIDASLCKLYS_SERVER.C /nooutput 
+       SlcCMS> reserve AIDASLCKLYS_SERVER.h /nooutput 
+       SlcCMS> reserve AIDASLCKLYS_GENERAL.OPT /nooutput 
+     
+       SlcCMS> reserve AIDASLCMAGNET_SERVER.C /nooutput 
+       SlcCMS> reserve AIDASLCMAGNET_SERVER.h /nooutput 
+       SlcCMS> reserve AIDASLCMAGNET_GENERAL.OPT /nooutput 
+     
+       SlcCMS> reserve AIDASLCUTIL_SERVER.C /nooutput 
+       SlcCMS> reserve AIDASLCUTIL_SERVER.h /nooutput 
+       SlcCMS> reserve AIDASLCUTIL_GENERAL.OPT /nooutput 
+       ```
 
-- Must have committed changes to CMS prior to executing this step
-- Rebuild a new shareable on DEV
-    - log into dev machine using `SLCSHR` account
-  ```shell
-  MCCDEV> ssh MCCDEV /user=slcshr
-  ```
-    - Build new shareable, one of:
-  ```shell
-  MCCDEV::SLCSHR> BUILDSHR AIDASLCBPMBUFF
-  MCCDEV::SLCSHR> BUILDSHR AIDASLCDB
-  MCCDEV::SLCSHR> BUILDSHR AIDASLCKLYS
-  MCCDEV::SLCSHR> BUILDSHR AIDSLCMAGNET
-  MCCDEV::SLCSHR> BUILDSHR AIDASLCUTIL
-  ```
-    - Present share on DEV server, one of:
-  ```shell
-  MCCDEV::SLCSHR> DEVSHR AIDASLCBPMBUFF
-  MCCDEV::SLCSHR> DEVSHR AIDASLCDB
-  MCCDEV::SLCSHR> DEVSHR AIDASLCKLYS
-  MCCDEV::SLCSHR> DEVSHR AIDSLCMAGNET
-  MCCDEV::SLCSHR> DEVSHR AIDASLCUTIL
-  ```
-    - start new provider on dev, one of:
-  ```shell
-  MCCDEV::SLCSHR> WARMSLC AIDASLCBPM /RESTART
-  MCCDEV::SLCSHR> WARMSLC AIDASLCBPMBUFF /RESTART
-  MCCDEV::SLCSHR> WARMSLC AIDASLCDB /RESTART
-  MCCDEV::SLCSHR> WARMSLC AIDASLCKLYS /RESTART
-  MCCDEV::SLCSHR> WARMSLC AIDSLCMAGNET /RESTART
-  MCCDEV::SLCSHR> WARMSLC AIDASLCUTIL /RESTART
-  ```
-    - log out of `SLCSHR` account
-  ```shell
-  MCCDEV::SLCSHR> logout
-  ```
-- test for a number of days
+    4. Exit CMS cli
+       ```shell
+       SlcCMS> exit 
+       ```
 
-### Move an AIDA-PVA channel provider shareable image to PROD
+3. Commit changed files, one of:
 
-- log into dev machine using `SLCSHR` account
-```shell
-MCCDEV> ssh MCCDEV /user=slcshr
-```
-- Copy Dev share to PROD, one of:
-```shell
-MCCDEV::SLCSHR> NEWSHR AIDASLCBPMBUFF
-MCCDEV::SLCSHR> NEWSHR AIDASLCDB
-MCCDEV::SLCSHR> NEWSHR AIDASLCKLYS
-MCCDEV::SLCSHR> NEWSHR AIDSLCMAGNET
-MCCDEV::SLCSHR> NEWSHR AIDASLCUTIL
-```
-- start new provider on dev, one of:
-```shell
-MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
-```
-- log into prod machine using `SLCSHR` account
-```shell
-MCCDEV::SLCSHR> ssh MCC /user=slcshr
-```
-- start new provider on prod, one of:
-```shell
-MCC::SLCSHR> WARMSLC AIDASLCBPM /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCBPMBUFF /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCDB /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCKLYS /RESTART
-MCC::SLCSHR> WARMSLC AIDSLCMAGNET /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCUTIL /RESTART
-```
-- log out of `SLCSHR` account on prod
-```shell
-MCC::SLCSHR> logout
-```
-- log out of `SLCSHR` account on dev
-```shell
-MCCDEV::SLCSHR> logout
-```
+   ```shell
+   MCCDEV>  cmp AIDAASLCBPM_SERVER.C  
+   MCCDEV>  cmp AIDAASLCBPM_SERVER.h  
+   MCCDEV>  cmp AIDAASLCBPM_GENERAL.OPT  
+   
+   MCCDEV>  cmp AIDASLCBPMBUFF_SERVER.C  
+   MCCDEV>  cmp AIDASLCBPMBUFF_SERVER.h  
+   MCCDEV>  cmp AIDASLCBPMBUFF_GENERAL.OPT  
+   
+   MCCDEV>  cmp AIDASLCDB_SERVER.C  
+   MCCDEV>  cmp AIDASLCDB_SERVER.h  
+   MCCDEV>  cmp AIDASLCDB_GENERAL.OPT  
+   
+   MCCDEV>  cmp AIDASLCKLYS_SERVER.C  
+   MCCDEV>  cmp AIDASLCKLYS_SERVER.h  
+   MCCDEV>  cmp AIDASLCKLYS_GENERAL.OPT  
+   
+   MCCDEV>  cmp AIDASLCMAGNET_SERVER.C  
+   MCCDEV>  cmp AIDASLCMAGNET_SERVER.h  
+   MCCDEV>  cmp AIDASLCMAGNET_GENERAL.OPT  
+   
+   MCCDEV>  cmp AIDASLCUTIL_SERVER.C  
+   MCCDEV>  cmp AIDASLCUTIL_SERVER.h  
+   MCCDEV>  cmp AIDASLCUTIL_GENERAL.OPT  
+   ```
 
-## AIDASHR Build Procedures
+### BUILD & TEST CHANNEL PROVIDER SHAREABLE IN DEV
 
-### Build AIDASHR shared library privately
+Rebuild and Test an `AIDA-PVA` channel provider shareable image in `DEV`
 
-- see [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+1. Must have committed changes to CMS prior to executing this step
+2. Rebuild a new shareable on DEV
+    1. Log into dev machine using `SLCSHR` account
+       ```shell
+       MCCDEV> ssh MCCDEV /user=slcshr
+       ```
 
-### Build and Test an AIDA-PVA channel provider shareable image privately using private AIDASHR library
-- Build shareable image
-    - edit `GENERAL.OPT` file (checkout first) to comment out line ending
-      in `! copy to DEV direct and remove this line for BUILDTEST /DEF`
-    - build by running one of the following commands:
-    ```shell
-    MCCDEV> BUILDTEST AIDASLCBPM /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCBPMBUFF /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCKLYS /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDSLCMAGNET /ALL /DEFAULT
-    MCCDEV> BUILDTEST AIDASLCUTIL /ALL /DEFAULT
-    ```
+    2. Build new shareable, one of:
+       ```shell
+       MCCDEV::SLCSHR> BUILDSHR AIDASLCBPMBUFF
+       MCCDEV::SLCSHR> BUILDSHR AIDASLCDB
+       MCCDEV::SLCSHR> BUILDSHR AIDASLCKLYS
+       MCCDEV::SLCSHR> BUILDSHR AIDSLCMAGNET
+       MCCDEV::SLCSHR> BUILDSHR AIDASLCUTIL
+       ```
 
-  @note `/DEFAULT` means use the files in the local directory
+    3. Present share on DEV server, one of:
+       ```shell
+       MCCDEV::SLCSHR> DEVSHR AIDASLCBPMBUFF
+       MCCDEV::SLCSHR> DEVSHR AIDASLCDB
+       MCCDEV::SLCSHR> DEVSHR AIDASLCKLYS
+       MCCDEV::SLCSHR> DEVSHR AIDSLCMAGNET
+       MCCDEV::SLCSHR> DEVSHR AIDASLCUTIL
+       ```
+    4. Start new provider on dev, one of:
+       ```shell
+       MCCDEV::SLCSHR> WARMSLC AIDASLCBPM /RESTART
+       MCCDEV::SLCSHR> WARMSLC AIDASLCBPMBUFF /RESTART
+       MCCDEV::SLCSHR> WARMSLC AIDASLCDB /RESTART
+       MCCDEV::SLCSHR> WARMSLC AIDASLCKLYS /RESTART
+       MCCDEV::SLCSHR> WARMSLC AIDSLCMAGNET /RESTART
+       MCCDEV::SLCSHR> WARMSLC AIDASLCUTIL /RESTART
+        ```
+    5. Log out of `SLCSHR` account
+       ```shell
+       MCCDEV::SLCSHR> logout
+       ```
+    6. Leave and test for a number of days
 
-- Test shareable image
-    - log into dev machine using `SLCSHR` account
+### MOVE CHANNEL PROVIDER SHAREABLE TO PROD
+
+Move an `AIDA-PVA` channel provider shareable image to `PROD`
+
+1. Log into dev machine using `SLCSHR` account
+
     ```shell
     MCCDEV> ssh MCCDEV /user=slcshr
     ```
-    - shutdown running provider on dev, one of:
+
+2. Copy DEV share to PROD, one of:
+
     ```shell
-    MCCDEV::SLCSHR> WARMSLC AIDASLCBPM /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDASLCBPMBUFF /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDASLCDB /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDASLCKLYS /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDSLCMAGNET /KILL
-    MCCDEV::SLCSHR> WARMSLC AIDASLCUTIL /KILL
-    ```
-    - log out of `SLCSHR` account
-    ```shell
-    MCCDEV> logout
-    ```
-    - run private shareable, one of:
-    ```shell
-    MCCDEV> @AIDA_ASLCBPM.SUBMIT
-    MCCDEV> @AIDA_ASLCBPMBUFF.SUBMIT
-    MCCDEV> @AIDA_ASLCDB.SUBMIT
-    MCCDEV> @AIDA_ASLCKLYS.SUBMIT
-    MCCDEV> @AIDA_SLCMAGNET.SUBMIT
-    MCCDEV> @AIDA_ASLCUTIL.SUBMIT
+    MCCDEV::SLCSHR> NEWSHR AIDASLCBPMBUFF
+    MCCDEV::SLCSHR> NEWSHR AIDASLCDB
+    MCCDEV::SLCSHR> NEWSHR AIDASLCKLYS
+    MCCDEV::SLCSHR> NEWSHR AIDSLCMAGNET
+    MCCDEV::SLCSHR> NEWSHR AIDASLCUTIL
     ```
 
-### Build and Test all AIDA providers privately
+3. Start new provider on dev, one of:
 
-- see [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+   ```shell
+   MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
+   MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
+   MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
+   MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
+   MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
+   MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
+   ```
 
-### Commit changes to AIDASHR shared library
+4. Log into prod machine using `SLCSHR` account
 
-- see [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+   ```shell
+   MCCDEV::SLCSHR> ssh MCC /user=slcshr
+   ```
+
+5. Start new provider on prod, one of:
+
+   ```shell
+   MCC::SLCSHR> WARMSLC AIDASLCBPM /RESTART
+   MCC::SLCSHR> WARMSLC AIDASLCBPMBUFF /RESTART
+   MCC::SLCSHR> WARMSLC AIDASLCDB /RESTART
+   MCC::SLCSHR> WARMSLC AIDASLCKLYS /RESTART
+   MCC::SLCSHR> WARMSLC AIDSLCMAGNET /RESTART
+   MCC::SLCSHR> WARMSLC AIDASLCUTIL /RESTART
+   ```
+
+6. Log out of `SLCSHR` account on prod
+
+   ```shell
+   MCC::SLCSHR> logout
+   ```
+
+7. Log out of `SLCSHR` account on dev
+
+   ```shell
+   MCCDEV::SLCSHR> logout
+   ```
+
+### DEPLOY CHANNEL CONFIG TO PROD
+
+Deploy appropriate Channel Config file to PROD
+
+1. Reserve changed files in CMS
+    1. Enter CMS cli
+       ```shell
+       MCCDEV> slccms
+       SlcCMS> set libr CMS_SLCTXT  
+       ```
+    2. Reserve changed file, one of:
+       ```shell
+       SlcCMS> reserve AIDAASLCBPM_CHANNELS.YML /nooutput 
+       SlcCMS> reserve AIDASLCBPMBUFF_CHANNELS.YML /nooutput 
+       SlcCMS> reserve AIDASLCDB_CHANNELS.YML /nooutput 
+       SlcCMS> reserve AIDASLCDB_CHANNELS.YAML /nooutput 
+       SlcCMS> reserve AIDASLCKLYS_CHANNELS.YML /nooutput 
+       SlcCMS> reserve AIDASLCMAGNET_CHANNELS.YML /nooutput 
+       SlcCMS> reserve AIDASLCUTIL_CHANNELS.YML /nooutput 
+       ```
+    3. Exit CMS cli
+       ```shell
+       SlcCMS> exit 
+       ```
+2. Commit changed file, one of:
+
+    ```shell
+    MCCDEV>  cmp AIDAASLCBPM_CHANNELS.YML  
+    MCCDEV>  cmp AIDASLCBPMBUFF_CHANNELS.YML  
+    MCCDEV>  cmp AIDASLCDB_CHANNELS.YML  
+    MCCDEV>  cmp AIDASLCDB_CHANNELS.YAML  
+    MCCDEV>  cmp AIDASLCKLYS_CHANNELS.YML  
+    MCCDEV>  cmp AIDASLCMAGNET_CHANNELS.YML  
+    MCCDEV>  cmp AIDASLCUTIL_CHANNELS.YML  
+    ```
+
+## AIDASHR Specific Build Procedures
+
+### BUILD PRIVATE AIDASHR
+
+Build `AIDASHR` shared library privately
+
+1. See [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+
+### BUILD PRIVATE CHANNEL PROVIDER SHAREABLE USING PRIVATE AIDASHR
+
+Build and Test an `AIDA-PVA` channel provider shareable image privately using private `AIDASHR` library
+
+1. Build shareable image
+    1. Edit `GENERAL.OPT` file (checkout first) to comment out line ending
+       in `! copy to DEV direct and remove this line for BUILDTEST /DEF`
+    2. Build by running one of the following commands:
+        ```shell
+        MCCDEV> BUILDTEST AIDASLCBPM /ALL /DEFAULT
+        MCCDEV> BUILDTEST AIDASLCBPMBUFF /ALL /DEFAULT
+        MCCDEV> BUILDTEST AIDASLCDB /ALL /DEFAULT
+        MCCDEV> BUILDTEST AIDASLCKLYS /ALL /DEFAULT
+        MCCDEV> BUILDTEST AIDSLCMAGNET /ALL /DEFAULT
+        MCCDEV> BUILDTEST AIDASLCUTIL /ALL /DEFAULT
+        ```
+       @note `/DEFAULT` means use the files in the local directory
+
+2. Test shareable image
+    1. Log into dev machine using `SLCSHR` account
+       ```shell
+       MCCDEV> ssh MCCDEV /user=slcshr
+       ```
+    2. Shutdown running provider on dev, one of:
+       ```shell
+       MCCDEV::SLCSHR> WARMSLC AIDASLCBPM /KILL
+       MCCDEV::SLCSHR> WARMSLC AIDASLCBPMBUFF /KILL
+       MCCDEV::SLCSHR> WARMSLC AIDASLCDB /KILL
+       MCCDEV::SLCSHR> WARMSLC AIDASLCKLYS /KILL
+       MCCDEV::SLCSHR> WARMSLC AIDSLCMAGNET /KILL
+       MCCDEV::SLCSHR> WARMSLC AIDASLCUTIL /KILL
+       ```
+    3. Log out of `SLCSHR` account
+       ```shell
+       MCCDEV> logout
+       ```
+    4. Run private shareable, one of:
+       ```shell
+       MCCDEV> @AIDA_ASLCBPM.SUBMIT
+       MCCDEV> @AIDA_ASLCBPMBUFF.SUBMIT
+       MCCDEV> @AIDA_ASLCDB.SUBMIT
+       MCCDEV> @AIDA_ASLCKLYS.SUBMIT
+       MCCDEV> @AIDA_SLCMAGNET.SUBMIT
+       MCCDEV> @AIDA_ASLCUTIL.SUBMIT
+       ```
+
+### BUILD AND TEST AIDA PROVIDERS PRIVATELY
+
+Build and Test all `AIDA` providers privately
+
+1. See [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+
+### COMMIT AIDASHR CHANGES TO CMS
+
+Commit changes to `AIDASHR` shared library
+
+1. See [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
 
