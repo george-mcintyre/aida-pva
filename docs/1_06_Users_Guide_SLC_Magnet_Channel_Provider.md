@@ -21,13 +21,13 @@ Supports **get** and **set** operations.
 
 ## Instances and Attributes
 
-| operation       | info        | instance & attribute        |
-|---------|----------|---------------------------------|
-| **get** | Syntax   | `<dgrp-mnemonic>:<prim>:<secn>` |
-|         | Examples | `DEV_DGRP:XCOR:BDES`            |
-| **set** | Syntax   | `MAGNETSET:<secn>`              |
-|         | Examples | `MAGNETSET:BDES`                |
-|         |          | `MAGNETSET:BCON`                |
+| operation | info     | instance & attribute            |
+|-----------|----------|---------------------------------|
+| **get**   | Syntax   | `<dgrp-mnemonic>:<prim>:<secn>` |
+|           | Examples | `DEV_DGRP:XCOR:BDES`            |
+| **set**   | Syntax   | `MAGNETSET:<secn>`              |
+|           | Examples | `MAGNETSET:BDES`                |
+|           |          | `MAGNETSET:BCON`                |
 
 ## Attribute operation summary
 

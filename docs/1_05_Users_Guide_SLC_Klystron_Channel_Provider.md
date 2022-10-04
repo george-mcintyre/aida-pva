@@ -4,12 +4,14 @@ This section describes what an AIDA-PVA user should know about accessing the SLC
 data provider allows the retrieval of status code(s) or status string(s) for specified klystron(s) on a beam code. It
 also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or
 subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set.
+The service allows multiple values to be set for the main drive line phase (PMDL) and other secondaries
+of specified subboosters simultaneously.  
 Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set. For general
 information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
 ## Summary
 
-Supports **get** and **set** operations.
+Supports **get**, **set**  and **multi-set** operations.
 
 The **get** operation obtains the status code(s) or status string(s) for specified klystron(s) on a beam code.
 
@@ -19,6 +21,8 @@ There are four **set** operations that can be performed:
 2. set the `PDES` value and optionally trim the phase of a specified klystron or subbooster,
 3. set the `KPHR` value of a specified klystron or subbooster, and
 4. set a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster
+
+The **multi-set** operation sets `PMDL` values for multiple specified subboosters simultaneously
 
 ## Instances and Attributes
 
@@ -38,17 +42,20 @@ There are four **set** operations that can be performed:
 |                |          | `KLYS:LI31:31:KPHR`         |
 |                |          | `KLYS:LI31:31:PCON`         |
 |                |          | `KLYS:LI31:31:ACON`         |
+| **multi-set**  | Syntax   | `KLYSSET:<secn>`            |
+|                | Examples | `KLYSSET:PMDL`              |
 
 ## Attribute operation summary
 
-| Attribute | operation | Description                                                                               |
-|-----------|-----------|-------------------------------------------------------------------------------------------|
-| `TACT`    | **get**   | Gets status code(s), or status string(s) for the specified klystron(s) on a beam code     |
-| `TACT`    | **set**   | Deactivates or reactivates a specified klystron on a beam code                            |
-| `PDES`    | **set**   | Sets the PDES value and optionally trims the phase for a specified klystron or subbooster |
-| `KPHR`    | **set**   | Sets the KPHR value of a specified klystron or subbooster                                 |
-| `PCON`    | **set**   | Sets the PCON value of a specified klystron or subbooster                                 |
-| `ACON`    | **set**   | Sets the ACON value of a specified klystron or subbooster                                 |
+| Attribute | operation     |     | Description                                                                                 |
+|-----------|---------------|:----|---------------------------------------------------------------------------------------------|
+| `TACT`    | **get**       |     | Gets status code(s), or status string(s) for the specified klystron(s) on a beam code       |
+| `TACT`    | **set**       |     | Deactivates or reactivates a specified klystron on a beam code                              |
+| `PDES`    | **set**       |     | Sets the `PDES` value and optionally trims the phase for a specified klystron or subbooster |
+| `KPHR`    | **set**       |     | Sets the `KPHR` value of a specified klystron or subbooster                                 |
+| `PCON`    | **set**       |     | Sets the `PCON` value of a specified klystron or subbooster                                 |
+| `ACON`    | **set**       |     | Sets the `ACON` value of a specified klystron or subbooster                                 |
+| `PMDL`    | **multi-set** |     | Sets the `PMDL` values of the specified subboosters                                         |
 
 ## Attribute operations
 
@@ -167,6 +174,18 @@ _Return value_
 
 None
 
+### PMDL : multi-set
+
+_Parameters_
+
+| Parameter Names | Parameter Values               | Description                                                           | 
+|-----------------|--------------------------------|-----------------------------------------------------------------------|
+| `VALUE`*        | structure: {names[], values[]} | an array of subbooster names and an array of corresponding set values |
+
+_Return value_
+
+None
+
 ## Examples
 
 ### Commandline Examples
@@ -174,7 +193,7 @@ None
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">example type</th><th class="markdownTableHeadNone">action</th><th class="markdownTableHeadNone">example</th></tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline **pvcall**</td>
+<td rowspan=3 class="markdownTableBodyNone">commandline **pvcall**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -206,7 +225,17 @@ pvcall "KLYS:LI31:31:PCON" VALUE=5.0
 </td>
 </tr>
 <tr class="markdownTableRowOdd">
-<td rowspan=2 class="markdownTableBodyNone">commandline **eget**</td>
+<td class="markdownTableBodyNone">Multi-Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+pvcall "KLYSSET:PMDL" VALUE='{"names": [ "SBST:LI31:41"], "values": [ 4.0 ] }'
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td rowspan=3 class="markdownTableBodyNone">commandline **eget**</td>
 <td class="markdownTableBodyNone">Get</td>
 
 <td class="markdownTableBodyNone">
@@ -221,7 +250,7 @@ eget -s KLYSTRONGET:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a DEVICES '["KLYS:LI31:31
 
 </td>
 </tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Set</td>
 <td class="markdownTableBodyNone">
 
@@ -230,6 +259,16 @@ eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a VALUE 0
 eget -s KLYS:LI31:31:PDES -a VALUE 90.0
 eget -s KLYS:LI31:31:KPHR -a VALUE 60.0
 eget -s KLYS:LI31:31:PCON -a VALUE 5.0
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Multi-Set</td>
+<td class="markdownTableBodyNone">
+
+```shell
+eget -s KLYSSET:PMDL -a VALUE '{"names": [ "SBST:LI31:41"], "values": [ 5.0 ] }'
 ```
 
 </td>
@@ -363,6 +402,24 @@ end
 ```matlab
 try
     pvaSet('KLYS:LI31:31:PCON', 5.0);
+catch e
+    handleExceptions(e);
+end
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Multi-Set</td>
+<td class="markdownTableBodyNone">
+
+```matlab
+try
+    builder = pvaRequest('KLYSSET:PMDL');
+    jstruct = AidaPvaStruct();
+    jstruct.put('names', { 'SBST:LI31:41'});
+    jstruct.put('values', { 4.0 } );
+    builder.set(jstruct);
 catch e
     handleExceptions(e);
 end
