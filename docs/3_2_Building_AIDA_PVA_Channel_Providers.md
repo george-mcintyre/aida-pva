@@ -11,7 +11,7 @@ Whenever you make changes to any of the following files you need to:
 
 @warning You must verify that your code runs as expected **before** committing it to CMS.
 
-## AIDA-PVA Channel Provider source files
+## 3.2.1 AIDA-PVA Channel Provider source files
 
 If any of these files change follow the procedures below to rebuild and deploy the updated Channel Providers. 
 
@@ -83,9 +83,9 @@ CMS.
 git clone  git@github.com:slaclab/aida-pva.git
 ```
 
-## Preparation
+## 3.2.2 Preparation
 
-### Verify Source Code has correct CARDS
+### 3.2.2.1 Verify Source Code has correct CARDS
 
 CARDS are comments that are placed at the top of files that are recognised by the SLAC build tools.
 
@@ -121,13 +121,13 @@ CARDS are comments that are placed at the top of files that are recognised by th
        **ATTRIBUTES**=JNI,LIBR_NOGLOBAL */
 ```
 
-### Copy changed files to a clean directory on DEV
+### 3.2.2.2 Copy changed files to a clean directory on DEV
 
 To build a new version for test and subsequent deployment you need to copy changed
 files to a clean directory on MCCDEV. The build tools will combine the changed files with the
 remaining unchanged files from CMS to build the object library modules and shareable images required.
 
-## Procedures for Building, Testing and Deploying
+## 3.2.3 Procedures for Building, Testing and Deploying
 Select the appropriate ⚙-numbered Build Procedure(s) based on the files you've changed.  
 
 @note Clicking on the ⚙ symbol will link to the procedure steps to follow.
@@ -159,7 +159,7 @@ Select the appropriate ⚙-numbered Build Procedure(s) based on the files you've
 - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
 - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
 
-## Build Procedures
+## 3.2.4 Channel Provider Build Procedures
 @note the 🔂 symbol means, select only one or more of the listed procedures that apply to your changed files 
 
 ### ⚙-1: Build Private Channel Provider Module {#procedure1}
@@ -944,7 +944,7 @@ MCC::SLCSHR> logout
 
 </table>
 
-## AIDASHR Specific Build Procedures
+## 3.2.5 AIDASHR Specific Build Procedures
 
 ### ⚙-7: Build Private AIDASHR {#procedure7}
 
@@ -1435,7 +1435,7 @@ MCCDEV::SLCSHR> logout
 
 </table>
 
-### Graphical representation of files in AIDA-PVA
+## 3.2.6 Graphical representation of files in AIDA-PVA
 
 ![AIDA-PVA files graphical representation](images/aida-pva-files.png)
 
