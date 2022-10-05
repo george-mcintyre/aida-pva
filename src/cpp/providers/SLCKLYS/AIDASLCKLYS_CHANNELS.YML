@@ -1182,3 +1182,10 @@ configurations:
       - SBST:LI31:1:PCON
       - SBST:LI32:1:PCON
       - SBST:RF00:1:PCON
+  - name: Subbooster secondary Multi-Setter
+    getterConfig:
+      type: NONE
+    setterConfig:
+      type: VOID
+    channels:
+      - KLYSTRONSET:PMDL

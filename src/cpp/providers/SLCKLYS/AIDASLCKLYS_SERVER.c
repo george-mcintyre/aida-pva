@@ -32,6 +32,13 @@ static bool getKlystronStatuses(JNIEnv* env, char* const* devices, int nDevices,
 		bool* isSleded,
 		bool* isPampl,
 		bool* isPphas);
+static void simpleSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
+static void multiSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value);
+static int getKlystronMultiSetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value,
+		int* count, char** prim_list,
+		char** micr_list, int** unit_list, int4u* secn, float** set_values, char** name_validity);
+static bool isAllValid(int count, const char* name_validity);
+static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity);
 
 /**
  * The standard attribute suffix for status requests
@@ -359,6 +366,23 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		return;
 	}
 
+	if (startsWith(uri, "KLYSTRONSET")) {
+		multiSetValue(env, uri, arguments, value);
+	} else {
+		simpleSetValue(env, uri, arguments, value);
+	}
+}
+
+/**
+ * Simple Set a value
+ *
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
+ * @param uri the uri
+ * @param arguments the arguments
+ * @param value to set
+ */
+static void simpleSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value)
+{
 	PMU_STRING_FROM_URI(pmu_str, uri)
 
 	if (endsWith(uri, "PCON")) {
@@ -367,6 +391,49 @@ void aidaSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value
 		setPconOrAconValue(env, arguments, value, pmu_str, "ACON");
 	} else {
 		aidaThrowNonOsException(env, UNSUPPORTED_CHANNEL_EXCEPTION, uri);
+		return;
+	}
+}
+
+/**
+ * Multi-Set values
+ *
+ * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
+ * @param uri the uri
+ * @param arguments the arguments
+ * @param value to set
+ */
+static void multiSetValue(JNIEnv* env, const char* uri, Arguments arguments, Value value) {
+	// Get the arguments
+	int count;
+
+	TRACK_ALLOCATED_MEMORY
+	char* primaryList = NULL, * microList = NULL, * name_validity = NULL;
+	int* unitList = NULL;
+
+	int4u secn;
+	float* setValues = NULL;
+
+	if (getKlystronMultiSetArguments(env, uri,
+			arguments, value, &count, &primaryList, &microList, &unitList, &secn, &setValues, &name_validity)) {
+		return;
+	}
+	TRACK_MEMORY(primaryList)
+	TRACK_MEMORY(microList)
+	TRACK_MEMORY(name_validity)
+	TRACK_MEMORY(unitList)
+	TRACK_MEMORY(setValues)
+
+	// Convert values to VMS floats
+	CONVERT_TO_VMS_FLOAT(setValues, count);
+
+	// set the secondary value for each of the specified lists of primaries, micros, and units
+	vmsstat_t status;
+	status = DPSLCKLYS_SETVALUES(count, primaryList, microList, unitList, secn, setValues);
+	FREE_MEMORY
+
+	if (!SUCCESS(status)) {
+		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "while setting sub-booster values");
 		return;
 	}
 }
@@ -633,3 +700,137 @@ klystronStatusImpl(JNIEnv* env, char slcName[30], char* beam_c, char* dgrp_c, sh
 
 	return EXIT_SUCCESS;
 }
+
+/**
+ * Get Klystron multi-set arguments
+ *
+ * @param env to be used to throw exceptions using {link aidaThrow} and {link aidaThrowNonOsException}
+ * @param uri the uri
+ * @param arguments the arguments
+ * @param value the value argument which contains the list of device names and values
+ * @param count pointer to store the count of the number of device names found in the values
+ * @param prim_list pointer to store the list of primaries
+ * @param micr_list pointer to store the list of micros
+ * @param unit_list pointer to store the list of units
+ * @param secn pointer to store the secondary
+ * @param set_values pointer to store the list of values to set in the secondaries
+ * @param name_validity pointer to store the validity status of each device name checked
+ * @return status of call
+ */
+static int
+getKlystronMultiSetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value value, int* count, char** prim_list,
+		char** micr_list, int** unit_list, int4u* secn, float** set_values, char** name_validity)
+{
+	TRACK_ALLOCATED_MEMORY
+	*prim_list = NULL;
+	*micr_list = NULL;
+	*unit_list = NULL;
+	*set_values = NULL;
+	*name_validity = NULL;
+
+	unsigned int nNames, nValues;
+	char** names = NULL;
+
+	// Get congruent list of values to set, name and value pairs
+	// value contains an object with two congruent arrays
+	if (avscanf(env, &arguments, &value, "%sa %fa",
+			"value.names", &names, &nNames,
+			"value.values", set_values, &nValues
+	)) {
+		return EXIT_FAILURE;
+	}
+	TRACK_MEMORY(names)
+	TRACK_MEMORY(set_values)
+
+	// Find out how many values were supplied and check that both lists are the same length
+	*count = (int)nNames;
+	if (nNames != nValues) {
+		FREE_MEMORY
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "supplied lists are not the same length");
+		return EXIT_FAILURE;
+	}
+
+	// Get names array - and break up names into their components for other lists
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *prim_list, (*count * PRIM_LEN) + 1, "primary list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *micr_list, (*count * MICRO_LEN) + 1, "micro list", EXIT_FAILURE)
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *unit_list, *count * sizeof(unsigned long), "unit list", EXIT_FAILURE)
+	unsigned long longUnitList[*count];
+	for (int i = 0; i < nNames; i++) {
+		if (pmuFromDeviceName(env, names[i], *prim_list + i * PRIM_LEN, *micr_list + i * MICRO_LEN, &longUnitList[i])) {
+			FREE_MEMORY
+			return EXIT_FAILURE;
+		}
+		*((char*)(*prim_list + PRIM_LEN + i * PRIM_LEN)) = 0x0;   // null terminate last one
+		*((char*)(*micr_list + MICRO_LEN + i * MICRO_LEN)) = 0x0; // null terminate last one
+		((int*)*unit_list)[i] = (int)longUnitList[i];
+	}
+	// Secondary name
+	secnFromUri(uri, secn);
+
+	// Call names validate to see which names are valid
+	ALLOCATE_AND_TRACK_MEMORY_AND_ON_ERROR_RETURN_(env, *name_validity, (*count * MAX_VALIDITY_STRING_LEN) + 1, "name validity list", EXIT_FAILURE)
+	DPSLCKLYS_SETNAMESVALIDATE(*count, *prim_list, *micr_list, *unit_list, *secn, *name_validity);
+
+	// Check if all names are valid
+	if (!isAllValid(*count, *name_validity)) {
+		char invalidNames[MAX_URI_LEN * nNames + 1];
+		getInvalidNames(invalidNames, *count, names, *name_validity);
+		SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(UNABLE_TO_SET_DATA_EXCEPTION, "Some of the names were not valid: %s",
+				invalidNames,
+				EXIT_FAILURE)
+	}
+
+	// Free up the names as we don't need them anymore as they have been validated
+	FREE_TRACKED_MEMORY(names)
+
+	return EXIT_SUCCESS;
+}
+
+/**
+ * Check if all the names are valid.  String will be Success if valid
+ *
+ * @param count count of names in name validity status list
+ * @param name_validity name validity status list
+ * @return true if all are valid
+ */
+static bool isAllValid(int count, const char* name_validity)
+{
+	if (!name_validity) {
+		return false;
+	}
+
+	for (int i = 0; i < count; i++) {
+		if (strncasecmp(name_validity + (i * MAX_VALIDITY_STRING_LEN), "Success", sizeof("Success") - 1) != 0) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+/**
+ * Get a string listing the invalid names into a pre allocated buffer
+ *
+ * @param dst pre-allocated buffer
+ * @param count the number if names in the provided array
+ * @param names the array of pointers to names
+ * @param name_validity the name validity structure returned from the back end
+ */
+static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity)
+{
+	if (!name_validity || !names) {
+		return;
+	}
+
+	*dst = 0x0; // null terminate initial string
+	for (int i = 0; i < count; i++) {
+		if (strncasecmp(name_validity + (i * MAX_VALIDITY_STRING_LEN), "Success", sizeof("Success") - 1) != 0) {
+			strcat(dst, names[i]);
+			if (i != count - 1) {
+				strcat(dst, ", ");
+			}
+		}
+	}
+}
+

@@ -71,29 +71,36 @@ typedef struct
 	int2 data;
 } KLYS_STATUS_TS;
 
-vmsstat_t linac_klys_stat(void  * const list_ps,
-		int4  * const micr_p,
-		int4  * const unit_p,
-		int4  * const beam_p,
-		float * const dgrp_p);
+vmsstat_t linac_klys_stat(void* const list_ps,
+		int4* const micr_p,
+		int4* const unit_p,
+		int4* const beam_p,
+		float* const dgrp_p);
 
-vmsstat_t tm_deactivate_klys(long int * micro,
-		long int * unit,
-		long int * i_beam_num,
-		long int * i_notify);
+vmsstat_t tm_deactivate_klys(long int* micro,
+		long int* unit,
+		long int* i_beam_num,
+		long int* i_notify);
 
-vmsstat_t tm_reactivate_klys(long int * micro,
-		long int * unit,
-		long int * i_beam_num,
-		long int * i_notify);
+vmsstat_t tm_reactivate_klys(long int* micro,
+		long int* unit,
+		long int* i_beam_num,
+		long int* i_notify);
 
-int chk_aida_access(const struct dsc$descriptor *,
-		int *,
-		int *);
+int chk_aida_access(const struct dsc$descriptor*,
+		int*,
+		int*);
 
 /*
 ** Define symbols
 */
+
+#define MAX_PRIM_NAME_LEN 4
+#define MAX_MICR_NAME_LEN 4
+#define MAX_PMU_STRING_LEN 15
+#define MAX_STATE_NAME_LEN 9
+#define MAX_VALIDITY_STRING_LEN 40
+#define SUCCESS_STRING "Success"
 
 /*
 #define DEBUG
@@ -110,7 +117,7 @@ int chk_aida_access(const struct dsc$descriptor *,
 /* Micro and unit stored from parseDeviceName.
 ---------------------------------------------- */
 char global_micro[5] = "    ";
-char global_unit[5]  = "    ";
+char global_unit[5] = "    ";
 
 
 void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
@@ -119,16 +126,16 @@ void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
 /*
 ** Static Function Prototype(s)
 */
-static void parseName(char *slcname,
-		int4u *prim_pi,
-		int4u *micr_pi,
-		int4u *lunit_pi,
-		int4u *secn_pi);
+static void parseName(char* slcname,
+		int4u* prim_pi,
+		int4u* micr_pi,
+		int4u* lunit_pi,
+		int4u* secn_pi);
 
-static void parseDeviceName(char *slcname,
-		prim_name_ts *prim_ps,
-		micr_name_ts *micr_ps,
-		unit_name_ts *unit_ps);
+static void parseDeviceName(char* slcname,
+		prim_name_ts* prim_ps,
+		micr_name_ts* micr_ps,
+		unit_name_ts* unit_ps);
 
 /* ================================================================================
 
@@ -148,14 +155,14 @@ static void parseDeviceName(char *slcname,
 
 ==============================================================================*/
 
-vmsstat_t DPSLCKLYS_DB_INIT ()
+vmsstat_t DPSLCKLYS_DB_INIT()
 {
 	vmsstat_t status;
 	$DESCRIPTOR (PROCESS_NAME, "AIDA_DPSLCKLYS");
 
 /*---------------------------------------------------*/
 
-	status = standalone_init ( &PROCESS_NAME, &((long)(TRUE)),
+	status = standalone_init(&PROCESS_NAME, &((long)(TRUE)),
 			NULL, &((long)(FALSE)), &((long)(FALSE)));
 	return status;
 }
@@ -190,14 +197,14 @@ vmsstat_t DPSLCKLYS_DB_INIT ()
 
 ==============================================================================*/
 
-vmsstat_t DPSLCKLYS_DBGETKLYSFLOAT(char *slcname,
-		float *retfloat)
+vmsstat_t DPSLCKLYS_DBGETKLYSFLOAT(char* slcname,
+		float* retfloat)
 {
 	vmsstat_t iss;
 
 	int2u one = 1;
 
-	int4u   prim_i=0x20202020, micr_i=0x20202020, unit_i=0, secn_i=0x20202020;
+	int4u prim_i = 0x20202020, micr_i = 0x20202020, unit_i = 0, secn_i = 0x20202020;
 
 	DBLIST(analog_ps, float);
 
@@ -206,7 +213,7 @@ vmsstat_t DPSLCKLYS_DBGETKLYSFLOAT(char *slcname,
 
 #ifdef DEBUG
 	fprintf(stderr, "entering DPSLCKLYS_DBGETKLYSFLOAT\n");
-    fprintf(stderr, "slcname = %s\n", slcname);
+	fprintf(stderr, "slcname = %s\n", slcname);
 #endif
 
 	iss = 1;
@@ -220,7 +227,7 @@ vmsstat_t DPSLCKLYS_DBGETKLYSFLOAT(char *slcname,
 
 	DBCLEAR(analog_ps);
 
-	iss = DBgetC( ((void *)(&analog_ps)), prim_i, micr_i,
+	iss = DBgetC(((void*)(&analog_ps)), prim_i, micr_i,
 			unit_i, secn_i, NULL);
 	if (!SUCCESS(iss))
 	{
@@ -229,7 +236,7 @@ vmsstat_t DPSLCKLYS_DBGETKLYSFLOAT(char *slcname,
 
 	*retfloat = analog_ps->dat[0];
 
-	cvt_vms_to_ieee_flt (retfloat, retfloat, &one);
+	cvt_vms_to_ieee_flt(retfloat, retfloat, &one);
 
 egress:
 
@@ -289,10 +296,10 @@ egress:
 
 ==============================================================================*/
 
-vmsstat_t DPSLCKLYS_GETSTATUS (char *slcname,
-		char *beam,
-		char *dgrp,
-		short *klys_status)
+vmsstat_t DPSLCKLYS_GETSTATUS(char* slcname,
+		char* beam,
+		char* dgrp,
+		short* klys_status)
 {
 	vmsstat_t iss;
 
@@ -310,16 +317,16 @@ vmsstat_t DPSLCKLYS_GETSTATUS (char *slcname,
 /*---------------------------------------------------*/
 #ifdef DEBUG
 	fprintf(stderr, "entering DPSLCKLYS_GETSTATUS\n");
-    fprintf(stderr, "slcname = %s\n", slcname);
-    fprintf(stderr, "beam = %s\n", beam);
-    fprintf(stderr, "dgrp = %s\n", dgrp);
+	fprintf(stderr, "slcname = %s\n", slcname);
+	fprintf(stderr, "beam = %s\n", beam);
+	fprintf(stderr, "dgrp = %s\n", dgrp);
 #endif
 
 	iss = 1;
 
 	/* Convert the beam code from a string to an integer.
 	----------------------------------------------------- */
-	sscanf((const char *) beam, "%d", &beam_i);
+	sscanf((const char*)beam, "%d", &beam_i);
 
 	if (strcmp(dgrp, "NULL") != 0)
 	{
@@ -341,11 +348,11 @@ vmsstat_t DPSLCKLYS_GETSTATUS (char *slcname,
 	klys_status_s.list_length = 3;
 	klys_status_s.data_length = 0;
 
-	iss = linac_klys_stat((void *) &klys_status_s,
-			(void *) micr_s._a,
-			(void *) unit_s._a,
+	iss = linac_klys_stat((void*)&klys_status_s,
+			(void*)micr_s._a,
+			(void*)unit_s._a,
 			&beam_i,
-			(void *) dgrp_pa);
+			(void*)dgrp_pa);
 	if (!SUCCESS(iss))
 	{
 		fprintf(stderr, "return from linac_klys_stat = %x\n", iss);
@@ -380,7 +387,7 @@ egress:
         false flag value if access is currently disabled.
 
 ==============================================================================*/
-int DPSLCKLYS_ACCESSENABLED ()
+int DPSLCKLYS_ACCESSENABLED()
 {
 	int status;
 	int enabled_flag;
@@ -392,14 +399,14 @@ int DPSLCKLYS_ACCESSENABLED ()
 
 /*---------------------------------------------------*/
 
-	status = chk_aida_access(DESCRN1( ((void *)
-					(klystron_access_logical_name)) ),
+	status = chk_aida_access(DESCRN1(((void*)
+					(klystron_access_logical_name))),
 			&enabled_flag,
 			&seconds_to_expire);
 
 #ifdef DEBUG
 	fprintf(stderr, "chk_aida_access enabled_flag = %d\n",
-        enabled_flag);
+		enabled_flag);
 #endif
 
 	return enabled_flag;
@@ -446,9 +453,9 @@ int DPSLCKLYS_ACCESSENABLED ()
 
 ==============================================================================*/
 
-vmsstat_t DPSLCKLYS_SETDEACTORREACT (char *slcname,
+vmsstat_t DPSLCKLYS_SETDEACTORREACT(char* slcname,
 		int deact_or_react_flag,
-		char *beam)
+		char* beam)
 {
 	vmsstat_t iss;
 
@@ -463,16 +470,16 @@ vmsstat_t DPSLCKLYS_SETDEACTORREACT (char *slcname,
 
 #ifdef DEBUG
 	fprintf(stderr, "entering DPSLCKLYS_SETDEACTORREACT\n");
-    fprintf(stderr, "slcname = %s\n", slcname);
-    fprintf(stderr, "deact_or_react_flag = %d\n", deact_or_react_flag);
-    fprintf(stderr, "beam = %s\n", beam);
+	fprintf(stderr, "slcname = %s\n", slcname);
+	fprintf(stderr, "deact_or_react_flag = %d\n", deact_or_react_flag);
+	fprintf(stderr, "beam = %s\n", beam);
 #endif
 
 	iss = 1;
 
 	/* Convert the beam code from a string to an integer.
 	----------------------------------------------------- */
-	sscanf((const char *) beam, "%d", &beam_i);
+	sscanf((const char*)beam, "%d", &beam_i);
 
 	/* Parse the specified klystron primary:micro:unit string
 	   to primary, micro, unit fields.
@@ -484,8 +491,8 @@ vmsstat_t DPSLCKLYS_SETDEACTORREACT (char *slcname,
 	----------------------------------------------------------- */
 	if (deact_or_react_flag == 0)
 	{
-		iss = tm_deactivate_klys((void *) micr_s._a,
-				(void *) unit_s._a,
+		iss = tm_deactivate_klys((void*)micr_s._a,
+				(void*)unit_s._a,
 				&beam_i,
 				&notify);
 		if (!SUCCESS(iss))
@@ -496,8 +503,8 @@ vmsstat_t DPSLCKLYS_SETDEACTORREACT (char *slcname,
 	}
 	else
 	{
-		iss = tm_reactivate_klys((void *) micr_s._a,
-				(void *) unit_s._a,
+		iss = tm_reactivate_klys((void*)micr_s._a,
+				(void*)unit_s._a,
 				&beam_i,
 				&notify);
 		if (!SUCCESS(iss))
@@ -548,9 +555,9 @@ egress:
 
 ==============================================================================*/
 
-vmsstat_t DPSLCKLYS_SETCONFIG (char *pmu_str,
-		float *config_value_array,
-		char *secn)
+vmsstat_t DPSLCKLYS_SETCONFIG(char* pmu_str,
+		float* config_value_array,
+		char* secn)
 {
 	vmsstat_t iss;
 
@@ -571,10 +578,10 @@ vmsstat_t DPSLCKLYS_SETCONFIG (char *pmu_str,
 
 #ifdef DEBUG
 	fprintf(stderr, "entering DPSLCKLYS_SETCONFIG\n");
-    fprintf(stderr, "pmu_str = %s\n", pmu_str);
-    fprintf(stderr, "config_value_array[0] = %f\n",
-        config_value_array[0]);
-    fprintf(stderr, "secn = %s\n", secn);
+	fprintf(stderr, "pmu_str = %s\n", pmu_str);
+	fprintf(stderr, "config_value_array[0] = %f\n",
+		config_value_array[0]);
+	fprintf(stderr, "secn = %s\n", secn);
 #endif
 
 	/* Parse the specified klystron primary:micro:unit string
@@ -593,7 +600,7 @@ vmsstat_t DPSLCKLYS_SETCONFIG (char *pmu_str,
 
 	DBCLEAR(float_ps);
 
-	iss = DBgetC( ((void *)&float_ps),
+	iss = DBgetC(((void*)&float_ps),
 			prim_i,
 			micr_i,
 			unit_i,
@@ -608,7 +615,7 @@ vmsstat_t DPSLCKLYS_SETCONFIG (char *pmu_str,
 
 	float_ps->dat[0] = config_value_array[0];
 
-	iss = DBputC( ((void *)&float_ps),
+	iss = DBputC(((void*)&float_ps),
 			prim_i,
 			micr_i,
 			unit_i,
@@ -678,11 +685,11 @@ egress:
 
 ==============================================================================*/
 
-vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
-		char *secn,
-		float *secn_value_array,
-		char *trim,
-		float *phas_value)
+vmsstat_t DPSLCKLYS_SETTRIMPHASE(char* pmu_str,
+		char* secn,
+		float* secn_value_array,
+		char* trim,
+		float* phas_value)
 {
 	vmsstat_t iss;
 	vmsstat_t iss_1;
@@ -710,11 +717,11 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 
 #ifdef DEBUG
 	fprintf(stderr, "entering DPSLCKLYS_SETTRIMPHASE\n");
-    fprintf(stderr, "pmu_str = %s\n", pmu_str);
-    fprintf(stderr, "secn = %s\n", secn);
-    fprintf(stderr, "secn_value_array[0] = %f\n",
-        secn_value_array[0]);
-    fprintf(stderr, "trim = %s\n", trim);
+	fprintf(stderr, "pmu_str = %s\n", pmu_str);
+	fprintf(stderr, "secn = %s\n", secn);
+	fprintf(stderr, "secn_value_array[0] = %f\n",
+		secn_value_array[0]);
+	fprintf(stderr, "trim = %s\n", trim);
 #endif
 
 	/* Parse the specified klystron primary:micro:unit string
@@ -727,9 +734,9 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 		/* Call klystrim_one to set the KPHR secondary of the
 		   subbooster or klystron to the specified value.
 		----------------------------------------------------- */
-		iss = klystrim_one((void *)&prim_s,
-				(void *)&micr_s,
-				(void *)&unit_s,
+		iss = klystrim_one((void*)&prim_s,
+				(void*)&micr_s,
+				(void*)&unit_s,
 				&((unsigned long)('KPHR')),
 				secn_value_array,
 				0,
@@ -750,9 +757,9 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 			/* Call klystrim_one to trim the phase of the specified
 			   subbooster or klystron to the specified PDES value.
 			------------------------------------------------------- */
-			iss = klystrim_one((void *)&prim_s,
-					(void *)&micr_s,
-					(void *)&unit_s,
+			iss = klystrim_one((void*)&prim_s,
+					(void*)&micr_s,
+					(void*)&unit_s,
 					&((unsigned long)('PDES')),
 					secn_value_array,
 					0,
@@ -778,7 +785,7 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 
 			DBCLEAR(float_ps);
 
-			iss = DBgetC( ((void *)&float_ps),
+			iss = DBgetC(((void*)&float_ps),
 					prim_i,
 					micr_i,
 					unit_i,
@@ -793,7 +800,7 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 
 			float_ps->dat[0] = secn_value_array[0];
 
-			iss = DBputC( ((void *)&float_ps),
+			iss = DBputC(((void*)&float_ps),
 					prim_i,
 					micr_i,
 					unit_i,
@@ -817,7 +824,7 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 
 	DBCLEAR(float_ps);
 
-	iss = DBgetC( ((void *)&float_ps),
+	iss = DBgetC(((void*)&float_ps),
 			prim_i,
 			micr_i,
 			unit_i,
@@ -837,21 +844,285 @@ vmsstat_t DPSLCKLYS_SETTRIMPHASE (char *pmu_str,
 
 	DBFREE(float_ps);
 
-	cvt_vms_to_ieee_flt (phas_value, phas_value, &one);
+	cvt_vms_to_ieee_flt(phas_value, phas_value, &one);
 
 egress:
 	return iss;
 }
 
+/* ================================================================================
+
+  Abs:  Set multiple secondary values for primary/micro/unit sub-boosters
+
+  Name: DPSLCKLYS_SETVALUES
+
+  Args:
+        count                         Number of specified primary/micro/unit devices.
+          Use:   integer
+          Type:  int
+          Acc:   read-only
+          Mech:  value
+
+        prim_list                     List of specified primary names.
+          Use:   string
+          Type:  char *
+          Acc:   read-only
+          Mech:  reference
+
+        micr_list                     List of specified micro names.
+          Use:   string
+          Type:  char *
+          Acc:   read-only
+          Mech:  reference
+
+        unit_list                     List of specified unit numbers.
+          Use:   integer pointer
+          Type:  int *
+          Acc:   read-only
+          Mech:  reference
+
+        secn                          Specified klystron secondary (e.g., PMDL).
+          Use:   unsigned integer
+          Type:  int4u
+          Acc:   read-only
+          Mech:  value
+
+        set_values                     The list of values to set each
+          Use:   string                of the given device's secondaries
+          Type:  char *
+          Acc:   write-only
+          Mech:  reference
+
+  Rem:  This routine sets the values for each of the given devices
+        secondaries to the corresponding value from the set_values
+        list
+
+
+
+  Ret:  None
+
+==============================================================================*/
+
+int DPSLCKLYS_SETVALUES(int count, char *prim_list, char *micr_list, int *unit_list, int4u secn, float *set_values)
+{
+	vmsstat_t status;
+	int i;
+	int4u prim, micr, unit;
+	DBLIST(float_ps, float);   /* database list data struct */
+
+#ifdef DEBUG
+	char cur_prim[MAX_PRIM_NAME_LEN + 1];
+	char cur_micr[MAX_MICR_NAME_LEN + 1];
+
+	fprintf(stderr, "entering DPSLCKLYS_SETVALUES\n");
+	fprintf(stderr, "secn = %x\n", secn);
+	fprintf(stderr, "count = %d\n", count);
+
+	for (i = 0; i < count; i++)
+	{
+		memcpy(cur_prim, prim_list + (i * MAX_PRIM_NAME_LEN), MAX_PRIM_NAME_LEN);
+		cur_prim[MAX_PRIM_NAME_LEN] = '\0';
+		fprintf(stderr, "prim_list[%d] = %s\n", i, cur_prim);
+
+		memcpy(cur_micr, micr_list + (i * MAX_MICR_NAME_LEN), MAX_MICR_NAME_LEN);
+		cur_micr[MAX_MICR_NAME_LEN] = '\0';
+		fprintf(stderr, "micr_list[%d] = %s\n", i, cur_micr);
+		fprintf(stderr, "unit_list[%d] = %d\n", i, unit_list[i]);
+	}
+#endif
+
+	/* For each device call DBputC to set the specified secondary value after
+	   calling DBgetC to allocate memory.
+	-------------------------------------------------------- */
+	for (i = 0; i < count; i++) {
+		memcpy(&prim, prim_list + (i * MAX_PRIM_NAME_LEN), MAX_PRIM_NAME_LEN);
+		memcpy(&micr, micr_list + (i * MAX_MICR_NAME_LEN), MAX_MICR_NAME_LEN);
+		unit = (int4u)unit_list[i];
+
+		DBCLEAR(float_ps);
+
+		status = DBgetC(((void*)&float_ps), prim, micr, unit, secn, NULL);
+		if (!SUCCESS(status))
+		{
+			printf("error status returned from DBgetC = %x\n", status);
+			DBFREE(float_ps);
+			goto egress;
+		}
+
+		float_ps->dat[0] = set_values[i];
+
+		status = DBputC(((void*)&float_ps), prim, micr, unit, secn, NULL);
+		if (!SUCCESS(status))
+		{
+			printf("error status returned from DBputC = %x\n", status);
+			DBFREE(float_ps);
+			goto egress;
+		}
+	}
+	DBFREE(float_ps);
+
+egress:
+	return status;
+}
+
+/* ================================================================================
+
+  Abs:  Validate primary/micro/unit names
+
+  Name: DPSLCKLYS_SETNAMESVALIDATE
+
+  Args:
+        num_names                     Number of specified primary/micro/unit names.
+          Use:   integer
+          Type:  int
+          Acc:   read-only
+          Mech:  value
+
+        prim_list                     List of specified primary names.
+          Use:   string
+          Type:  char *
+          Acc:   read-only
+          Mech:  reference
+
+        micr_list                     List of specified micro names.
+          Use:   string
+          Type:  char *
+          Acc:   read-only
+          Mech:  reference
+
+        unit_list                     List of specified unit numbers.
+          Use:   integer pointer
+          Type:  int *
+          Acc:   read-only
+          Mech:  reference
+
+        secn                          Specified klystron secondary (e.g., PMDL).
+          Use:   unsigned integer
+          Type:  int4u
+          Acc:   read-only
+          Mech:  value
+
+        name_validity                  String specifying the validity of each
+          Use:   string                specified klystron PV.  If a klystron PV
+          Type:  char *                validates successfully, its entry in
+          Acc:   write-only            the string will contain the string
+          Mech:  reference             specified by #define constant SUCCESS_STRING.
+
+  Rem:  This routine validates the specified set method klystron PVs.
+        As part of this validation, this routine also attempts to
+        obtain the klystron lower and upper limits for each of these
+        set klystron PVs.  These limits are stored in a dynamically
+        allocated array for later retrieval.
+
+  Ret:  None
+
+==============================================================================*/
+
+void DPSLCKLYS_SETNAMESVALIDATE(int num_names, char* prim_list, char* micr_list, int* unit_list, int4u secn,
+		char* name_validity)
+{
+	vmsstat_t status;
+
+	int i;
+	int str_len;
+
+	int4u prim;
+	int4u micr;
+	int4u unit;
+
+	float lower_limit;
+	float upper_limit;
+
+	char* token;
+
+	char cur_prim[MAX_PRIM_NAME_LEN + 1];
+	char cur_micr[MAX_MICR_NAME_LEN + 1];
+	char cur_validity_str[MAX_VALIDITY_STRING_LEN + 1];
+
+	DBLIST(db_list_ps, int2u); /* database list data struct */
+
+	char errmsg[256] = { '\0' };
+	$DESCRIPTOR(MESSAGE, errmsg);
+	struct dsc$descriptor errmsg_dsc = { 256, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&errmsg };
+
+/*---------------------------------------------------*/
+
+#ifdef DEBUG
+	fprintf(stderr, "entering DPSLCKLYS_SETNAMESVALIDATE\n");
+	fprintf(stderr, "secn = %x\n", secn);
+	fprintf(stderr, "num_names = %d\n", num_names);
+
+	for (i = 0; i < num_names; i++)
+	{
+		memcpy(cur_prim, prim_list + (i * MAX_PRIM_NAME_LEN), MAX_PRIM_NAME_LEN);
+		cur_prim[MAX_PRIM_NAME_LEN] = '\0';
+		fprintf(stderr, "prim_list[%d] = %s\n", i, cur_prim);
+
+		memcpy(cur_micr, micr_list + (i * MAX_MICR_NAME_LEN), MAX_MICR_NAME_LEN);
+		cur_micr[MAX_MICR_NAME_LEN] = '\0';
+		fprintf(stderr, "micr_list[%d] = %s\n", i, cur_micr);
+		fprintf(stderr, "unit_list[%d] = %d\n", i, unit_list[i]);
+	}
+
+#endif
+
+	DBCLEAR(db_list_ps);
+
+	/* Validate the primary, micro, and unit for each PV using the routine DBlistC.
+	---------------------------------------------------------------------- */
+	for (i = 0; i < num_names; i++) {
+		memcpy(&prim, prim_list + (i * MAX_PRIM_NAME_LEN), MAX_PRIM_NAME_LEN);
+		memcpy(&micr, micr_list + (i * MAX_MICR_NAME_LEN), MAX_MICR_NAME_LEN);
+		unit = (int4u)unit_list[i];
+		status = DBlistC((void*)&db_list_ps, prim, micr, unit, secn, NULL);
+
+#ifdef DEBUG
+		fprintf(stderr, "DBlistC status = %x\n", status);
+#endif
+
+		if (SUCCESS(status)) {
+			/* The DBlistC routine validation was successful
+			------------------------------------------------------------------ */
+			memcpy(name_validity + (i * MAX_VALIDITY_STRING_LEN), SUCCESS_STRING, MAX_VALIDITY_STRING_LEN);
+		} else {
+			/* The DBlistC routine validation was not successful.  Call routine
+			   JNI_ERR_KLYSTRANSLATE to translate the returned error code into
+			   a string.  Then, if the string contains a colon (which will not
+			   be followed by anything), write a null character at the position
+			   of the colon (by C routine strtok) and write another null character
+			   before it (which was previously a blank character).  Finally, store
+			   the string indicating the error into the PV element's location in
+			   the output string name_validity.
+			---------------------------------------------------------------------- */
+			JNI_ERR_KLYSTRANSLATE(&status, &errmsg_dsc);
+
+#ifdef DEBUG
+			fprintf(stderr, "errmsg_dsc = %s\n", errmsg_dsc.dsc$a_pointer);
+#endif
+
+			strncpy(cur_validity_str, errmsg_dsc.dsc$a_pointer, MAX_VALIDITY_STRING_LEN);
+			cur_validity_str[MAX_VALIDITY_STRING_LEN] = '\0';
+
+			token = strtok(cur_validity_str, ":");
+			if (token != NULL) {
+				str_len = strlen(cur_validity_str);
+				cur_validity_str[str_len - 1] = '\0';
+			}
+
+			memcpy(name_validity + (i * MAX_VALIDITY_STRING_LEN), cur_validity_str, MAX_VALIDITY_STRING_LEN);
+		}
+	}
+}
+
 void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
 		struct dsc$descriptor* msgdsc_ps)
 {
-	char *msg_p;
+	char* msg_p;
 	int ii;
 
 /*---------------------------------------------------*/
 
-	err_translate (errcode_p, msgdsc_ps, global_micro, global_unit);
+	err_translate(errcode_p, msgdsc_ps, global_micro, global_unit);
 	msg_p = msgdsc_ps->dsc$a_pointer;
 
 	/* Loop backwards through the message to find the first non-blank
@@ -861,7 +1132,7 @@ void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
 	{
 		if( isalnum(msg_p[ii]) || ispunct(msg_p[ii]) )
 		{
-			msg_p[ii+1] = '\0';
+			msg_p[ii + 1] = '\0';
 			break;
 		}
 	}
@@ -872,24 +1143,24 @@ void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
 *********************** Local routines ************************
 */
 
-static void parseName(char *slcname,
-		int4u *prim_pi,
-		int4u *micr_pi,
-		int4u *lunit_pi,
-		int4u *secn_pi)
+static void parseName(char* slcname,
+		int4u* prim_pi,
+		int4u* micr_pi,
+		int4u* lunit_pi,
+		int4u* secn_pi)
 {
-	int  cindex, clen;                          /* counters for lengths */
-	int  num_converted; /* Number of items converted by sscanf */
+	int cindex, clen;                          /* counters for lengths */
+	int num_converted; /* Number of items converted by sscanf */
 
-	char unit_c[5] = {'\0','\0','\0','\0','\0'};
+	char unit_c[5] = { '\0', '\0', '\0', '\0', '\0' };
 
-	clen = strcspn (slcname, ".:;");           /* Find # chars in primary */
+	clen = strcspn(slcname, ".:;");           /* Find # chars in primary */
 	memcpy (prim_pi, slcname, clen);
 	cindex = ++clen;                           /* Get past delimiter */
-	*micr_pi = *(unsigned long *) &slcname[cindex];
+	*micr_pi = *(unsigned long*)&slcname[cindex];
 	/* Micro always 4 chars */
 	cindex += 5;                               /* Index to unit */
-	clen = strcspn (&slcname[cindex], ".:;/"); /* Find length of unit */
+	clen = strcspn(&slcname[cindex], ".:;/"); /* Find length of unit */
 
 	num_converted = 0;
 	if (clen <= 4)
@@ -899,33 +1170,33 @@ static void parseName(char *slcname,
 		 * convert it into a number.
 		 */
 		memcpy (&unit_c, &slcname[cindex], clen);
-		num_converted = sscanf ((const char *)&unit_c, "%d", lunit_pi);
+		num_converted = sscanf((const char*)&unit_c, "%d", lunit_pi);
 	}
 
 	cindex += ++clen;
-	clen = strcspn (&slcname[cindex], " .:;");   /* Find length of secondary */
+	clen = strcspn(&slcname[cindex], " .:;");   /* Find length of secondary */
 	memcpy(secn_pi, &slcname[cindex], clen);     /* secondary */
 
 	return;
 }
 
-static void parseDeviceName(char *slcname,
-		prim_name_ts *prim_ps,
-		micr_name_ts *micr_ps,
-		unit_name_ts *unit_ps)
+static void parseDeviceName(char* slcname,
+		prim_name_ts* prim_ps,
+		micr_name_ts* micr_ps,
+		unit_name_ts* unit_ps)
 {
-	int  cindex, clen;                          /* counters for lengths */
-	char unit_c[5] = {'\0','\0','\0','\0','\0'};
+	int cindex, clen;                          /* counters for lengths */
+	char unit_c[5] = { '\0', '\0', '\0', '\0', '\0' };
 
-	clen = strcspn (slcname, ".:;");           /* Find # chars in primary */
+	clen = strcspn(slcname, ".:;");           /* Find # chars in primary */
 	memcpy (prim_ps, slcname, clen);
 	cindex = ++clen;                           /* Get past delimiter */
-	micr_ps->_i = *(unsigned long *) &slcname[cindex];
+	micr_ps->_i = *(unsigned long*)&slcname[cindex];
 	/* Micro always 4 chars */
 	cindex += 5;                               /* Index to unit */
-	clen = strcspn (&slcname[cindex], ".:;/"); /* Find length of unit */
+	clen = strcspn(&slcname[cindex], ".:;/"); /* Find length of unit */
 	memcpy (unit_c, &slcname[cindex], clen);   /* Copy unit into a char */
-	sscanf ((const char *)unit_c, "%d", &unit_ps->_i);
+	sscanf((const char*)unit_c, "%d", &unit_ps->_i);
 	/* make unit numeric */
 
 	/* Store global micro and unit strings for use in
@@ -938,10 +1209,10 @@ static void parseDeviceName(char *slcname,
 
 #ifdef DEBUG
 	printf("cindex = %d\n", cindex);
-    printf("clen = %d\n", clen);
-    printf("strlen(slcname) = %d\n", strlen(slcname));
-    printf("Prim %4.4s micro %4.4s unit %d\n",
-        prim_ps->_a, micr_ps->_a, unit_ps->_i);
+	printf("clen = %d\n", clen);
+	printf("strlen(slcname) = %d\n", strlen(slcname));
+	printf("Prim %4.4s micro %4.4s unit %d\n",
+		prim_ps->_a, micr_ps->_a, unit_ps->_i);
 #endif
 
 	return;
@@ -950,19 +1221,19 @@ static void parseDeviceName(char *slcname,
 #ifdef STANDALONE_TEST
 static int main()
 {
-    vmsstat_t status;
+	vmsstat_t status;
 
 
-    /*** Logic begins */
+	/*** Logic begins */
 
-    status = DPSLCKLYS_DB_INIT();
-    if (!SUCCESS(status))
-    {
-        fprintf(stderr, "return from dpslcklys_db_init = %x\n", status);
-        status = 0;
-        return status;
-    }
+	status = DPSLCKLYS_DB_INIT();
+	if (!SUCCESS(status))
+	{
+		fprintf(stderr, "return from dpslcklys_db_init = %x\n", status);
+		status = 0;
+		return status;
+	}
 
-    return status;
+	return status;
 }
 #endif

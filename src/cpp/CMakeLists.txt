@@ -30,17 +30,18 @@ add_executable(cpp
         include/aida_pva_memory.h
         include/aida_pva_types.h
         include/aida_pva_uri.h
+        providers/DPSLC_JNI_HELPER.C
+        providers/DPSLCBUFF.H
+        providers/DPSLCBUFF_JNI_HELPER.C
+        providers/DPSLCKLYS_JNI_HELPER.C
         providers/SLCREF/AIDASLCREF_SERVER.c
         providers/SLCREF/AIDASLCREF_SERVER.h
         providers/SLCDB/AIDASLCDB_SERVER.c
         providers/SLCDB/AIDASLCDB_SERVER.h
-        providers/SLCDB/DPSLC_JNI_HELPER.C
         providers/SLCBPM/AIDASLCBPM_SERVER.c
         providers/SLCBPM/AIDASLCBPM_SERVER.h
         providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.c
         providers/SLCBPMBUFF/AIDASLCBPMBUFF_SERVER.h
-        providers/SLCBPMBUFF/DPSLCBUFF_JNI_HELPER.C
-        providers/SLCBPMBUFF/DPSLCBUFF.H
         providers/SLCKLYS/AIDASLCKLYS_SERVER.c
         providers/SLCKLYS/AIDASLCKLYS_SERVER.h
         providers/SLCMAGNET/AIDASLCMAGNET_SERVER.c
