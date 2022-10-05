@@ -229,7 +229,7 @@ pvcall "KLYS:LI31:31:PCON" VALUE=5.0
 <td class="markdownTableBodyNone">
 
 ```shell
-pvcall "KLYSTRONSET:PMDL" VALUE='{"names": [ "SBST:LI31:41"], "values": [ 4.0 ] }'
+pvcall 'KLYSTRONSET:PMDL' VALUE='{"names":["SBST:LI00:1", "SBST:LI01:1"], "values":[0.1, 1.2]}'
 ```
 
 </td>
@@ -268,7 +268,7 @@ eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 <td class="markdownTableBodyNone">
 
 ```shell
-eget -s KLYSTRONSET:PMDL -a VALUE '{"names": [ "SBST:LI31:41"], "values": [ 5.0 ] }'
+eget -s KLYSTRONSET:PMDL -a VALUE '{"names": ["SBST:LI00:1", "SBST:LI01:1"], "values":[0.1, 1.2] }'
 ```
 
 </td>
@@ -417,8 +417,8 @@ end
 try
     builder = pvaRequest('KLYSTRONSET:PMDL');
     jstruct = AidaPvaStruct();
-    jstruct.put('names', { 'SBST:LI31:41'});
-    jstruct.put('values', { 4.0 } );
+    jstruct.put('names', { 'SBST:LI00:1', 'SBST:LI01:1'});
+    jstruct.put('values', { 0.1, 1.2 } );
     builder.set(jstruct);
 catch e
     handleExceptions(e);

@@ -145,7 +145,7 @@ Select the appropriate ⚙-numbered Build Procedure(s) based on the files you've
 - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
     - [⚙-8 Build Private Channel Provider Shareable Image using Private AIDASHR](@ref procedure8)
 - [⚙-9 Build and Test AIDA Providers Privately](@ref procedure9)
-- [⚙-10 Commit AIDASHR Changes to CMS](@ref procedure10)
+- [⚙-10 Commit AIDASHR changes to CMS and Deploy to PROD](@ref procedure10)
 - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
     - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
     - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
@@ -212,6 +212,8 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately
 <td class="markdownTableBodyNone">
 
 ➊ 🔂 Edit `GENERAL.OPT` file
+
+@note to save and exit press `F10`
 
 </td>
 <td class="markdownTableBodyNone">
@@ -290,7 +292,7 @@ MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /KILL
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /KILL
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /KILL
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /KILL
-MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCMAGNET /KILL
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /KILL
 ```
 
@@ -316,6 +318,8 @@ MCCDEV::SLCSHR> logout
 <td class="markdownTableBodyNone">
 
 ➍ 🔂 Run private Shareable Image
+
+@note to stop press `CTRL-Y` not `CTRL-C`. Pressing `CTRL-Y` this will prevent an automatic restart
 
 </td>
 <td class="markdownTableBodyNone">
@@ -538,11 +542,11 @@ MCCDEV> ssh MCCDEV /user=slcshr
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV::SLCSHR> BUILDSHR AIDASLCBPMBUFF
-MCCDEV::SLCSHR> BUILDSHR AIDASLCDB
-MCCDEV::SLCSHR> BUILDSHR AIDASLCKLYS
-MCCDEV::SLCSHR> BUILDSHR AIDSLCMAGNET
-MCCDEV::SLCSHR> BUILDSHR AIDASLCUTIL
+MCCDEV::SLCSHR> BUILDSHR AIDASLCBPMBUFF SAME
+MCCDEV::SLCSHR> BUILDSHR AIDASLCDB SAME
+MCCDEV::SLCSHR> BUILDSHR AIDASLCKLYS SAME
+MCCDEV::SLCSHR> BUILDSHR AIDSLCMAGNET SAME
+MCCDEV::SLCSHR> BUILDSHR AIDASLCUTIL SAME
 ```
 
 </td>
@@ -576,12 +580,12 @@ MCCDEV::SLCSHR> DEVSHR AIDASLCUTIL
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV::SLCSHR> WARMSLC AIDASLCBPM /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDASLCBPMBUFF /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDASLCDB /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDASLCKLYS /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDSLCMAGNET /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDASLCUTIL /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCMAGNET /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
 ```
 
 </td>
@@ -668,7 +672,7 @@ MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCMAGNET /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
 ```
 
@@ -697,12 +701,12 @@ MCCDEV::SLCSHR> ssh MCC /user=slcshr
 <td class="markdownTableBodyNone">
 
 ```shell
-MCC::SLCSHR> WARMSLC AIDASLCBPM /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCBPMBUFF /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCDB /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCKLYS /RESTART
-MCC::SLCSHR> WARMSLC AIDSLCMAGNET /RESTART
-MCC::SLCSHR> WARMSLC AIDASLCUTIL /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCMAGNET /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
 ```
 
 </td>
@@ -861,7 +865,7 @@ MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
-MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCMAGNET /RESTART
 MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
 ```
 
@@ -916,7 +920,7 @@ MCC::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
 MCC::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
 MCC::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
 MCC::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
-MCC::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCMAGNET /RESTART
 MCC::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
 ```
 
@@ -1022,6 +1026,8 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately using pr
 
 ➊ 🔂 Edit `GENERAL.OPT` file
 
+@note to save and exit press `F10`
+
 </td>
 <td class="markdownTableBodyNone">
 
@@ -1095,12 +1101,12 @@ MCCDEV> ssh MCCDEV /user=slcshr
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV::SLCSHR> WARMSLC AIDASLCBPM /KILL
-MCCDEV::SLCSHR> WARMSLC AIDASLCBPMBUFF /KILL
-MCCDEV::SLCSHR> WARMSLC AIDASLCDB /KILL
-MCCDEV::SLCSHR> WARMSLC AIDASLCKLYS /KILL
-MCCDEV::SLCSHR> WARMSLC AIDSLCMAGNET /KILL
-MCCDEV::SLCSHR> WARMSLC AIDASLCUTIL /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCMAGNET /KILL
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /KILL
 ```
 
 </td>
@@ -1125,6 +1131,8 @@ MCCDEV> logout
 <td class="markdownTableBodyNone">
 
 ➍ 🔂 Run private Shareable Image
+
+@note to stop press `CTRL-Y` not `CTRL-C`. Pressing `CTRL-Y` this will prevent an automatic restart
 
 </td>
 <td class="markdownTableBodyNone">
@@ -1165,25 +1173,265 @@ See [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/)
 
 </table>
 
-### ⚙-10: Commit AIDASHR Changes to CMS {#procedure10}
+### ⚙-10: Commit AIDASHR changes to CMS and deploy to PROD {#procedure10}
 
 Commit changes to `AIDASHR` Shared Library
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">step</th><th class="markdownTableHeadNone">procedure</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">step</th><th class="markdownTableHeadNone">sub-step</th><th class="markdownTableHeadNone">procedure</th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
-➀ Commit changes to `AIDASHR` Shared Library
+➀ Build and Test locally first
 
 </td>
 <td class="markdownTableBodyNone">
+</td>
+<td class="markdownTableBodyNone">
 
-See [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+see above
 
 </td>
 </tr>
 
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
+
+➁ Reserve changed files in CMS
+
+</td>
+<td class="markdownTableBodyNone">
+
+➊ Enter CMS CLI
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> slccms
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
+</td>
+<td class="markdownTableBodyNone">
+
+➋ 🔂 Select library based on type of changed file
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+SlcCMS> set libr CMS_AIDASHR
+SlcCMS> set libr CMS_C_INC
+SlcCMS> set libr CMS_SLCSHR_CONTROL  
+SlcCMS> set libr CMS_SLCTXT  
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➌ 🔂 Reserve changed file
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+SlcCMS> reserve DPSLC_JNI_HELPER.C /nooutput 
+SlcCMS> reserve DPSLCBUFF.H /nooutput 
+SlcCMS> reserve DPSLCBUFF_JNI_HELPER.C /nooutput 
+SlcCMS> reserve DPSLCKLYS_JNI_HELPER.c /nooutput 
+SlcCMS> reserve AIDASHR_XFR_ALPHA.OPT /nooutput 
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➍ Exit CMS CLI
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+SlcCMS> exit 
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
+
+➂ Commit changed files:
+
+</td>
+<td class="markdownTableBodyNone">
+➊ 🔂
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV>  cmp DPSLC_JNI_HELPER.C  
+MCCDEV>  cmp DPSLCBUFF.H  
+MCCDEV>  cmp DPSLCBUFF_JNI_HELPER.C  
+MCCDEV>  cmp DPSLCKLYS_JNI_HELPER.c  
+MCCDEV>  cmp AIDASHR_XFR_ALPHA.OPT  
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
+
+➃ Rebuild a new Shareable Image on DEV
+
+</td>
+<td class="markdownTableBodyNone">
+
+➊ Log into dev machine using `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> ssh MCCDEV /user=slcshr
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➋ 🔂 Build new Shareable Image
+
+@note use `SAME` if no new entry points are added, `MINOR` if you added some
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> BUILDSHR AIDASHR SAME
+MCCDEV::SLCSHR> BUILDSHR AIDASHR MINOR
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➌ Make Sharable Image available on DEV server
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> DEVSHR AIDASHR
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➍ 🔂 Build and deploy Channel providers using `AIDASHR` on DEV
+
+</td>
+<td class="markdownTableBodyNone">
+
+[⚙-3 Commit & Build Channel Provider Module](@ref procedure3)
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➎ Log out of `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> logout
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowEven">
+ <td class="markdownTableBodyNone"></td>
+ <td class="markdownTableBodyNone">
+
+➏ Leave and test for a number of days ...
+
+ </td>
+ <td class="markdownTableBodyNone">
+
+ </td>
+</tr>
+
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
+
+➃ Deploy `AIDASHR` to PROD
+
+</td>
+<td class="markdownTableBodyNone">
+
+➊ Log in to `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> ssh MCCDEV /user=slcshr
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➋ Copy DEV Shareable Image to PROD
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> NEWSHR AIDASHR
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➌ Log out of `SLCSHR` account on DEV
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> logout
+```
+
+</td>
+</tr>
 
 </table>
 
