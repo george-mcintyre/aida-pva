@@ -211,7 +211,7 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately
 </td>
 <td class="markdownTableBodyNone">
 
-➊ Edit `GENERAL.OPT` file
+➊ 🔂 Edit `GENERAL.OPT` file
 
 </td>
 <td class="markdownTableBodyNone">
@@ -221,7 +221,16 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately
     - change if updated
 - Comment out line ending in
 
-  `! copy to DEV direct and remove this line for BUILDTEST /DEF`
+  `remove this line for BUILDTEST /DEF`
+
+```shell
+MCCDEV>  eve AIDAASLCBPM_GENERAL.OPT  
+MCCDEV>  eve AIDASLCBPMBUFF_GENERAL.OPT  
+MCCDEV>  eve AIDASLCDB_GENERAL.OPT  
+MCCDEV>  eve AIDASLCKLYS_GENERAL.OPT  
+MCCDEV>  eve AIDASLCMAGNET_GENERAL.OPT  
+MCCDEV>  eve AIDASLCUTIL_GENERAL.OPT  
+```
 
 </td>
 </tr>
@@ -312,12 +321,12 @@ MCCDEV::SLCSHR> logout
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV> @AIDA_ASLCBPM.SUBMIT
-MCCDEV> @AIDA_ASLCBPMBUFF.SUBMIT
-MCCDEV> @AIDA_ASLCDB.SUBMIT
-MCCDEV> @AIDA_ASLCKLYS.SUBMIT
+MCCDEV> @AIDA_SLCBPM.SUBMIT
+MCCDEV> @AIDA_SLCBPMBUFF.SUBMIT
+MCCDEV> @AIDA_SLCDB.SUBMIT
+MCCDEV> @AIDA_SLCKLYS.SUBMIT
 MCCDEV> @AIDA_SLCMAGNET.SUBMIT
-MCCDEV> @AIDA_ASLCUTIL.SUBMIT
+MCCDEV> @AIDA_SLCUTIL.SUBMIT
 ```
 
 </td>
@@ -938,21 +947,63 @@ MCC::SLCSHR> logout
 Build `AIDASHR` Shared Library privately
 
 <table class="markdownTable">
-<tr class="markdownTableHead"><th class="markdownTableHeadNone">step</th><th class="markdownTableHeadNone">procedure</th></tr>
+<tr class="markdownTableHead"><th class="markdownTableHeadNone">step</th><th class="markdownTableHeadNone">sub-step</th><th class="markdownTableHeadNone">procedure</th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
-➀ Build `AIDASHR` Shared Library privately
+➀ Create DEV library
 
 </td>
 <td class="markdownTableBodyNone">
 
-See [legacy AIDA documentation](https://www.slac.stanford.edu/grp/cd/soft/aida/) for instructions
+➊ Create DEV library
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> LIBRARY /CREATE AIDASHR_DEVLIB
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➋ 🔂 Build
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> CINC DPSLC_JNI_HELPER.C
+MCCDEV> CINC DPSLCBUFF_JNI_HELPER.C
+MCCDEV> CINC DPSLCKLYS_JNI_HELPER.c
+```
 
 </td>
 </tr>
 
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
 
+➁ Create Shareable Image
+
+</td>
+<td class="markdownTableBodyNone">
+
+➊ Create image
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> BUILDTEST AIDASHR /ALL /DEFAULT
+```
+
+</td>
+</tr>
 </table>
 
 ### ⚙-8: Build Private Channel Provider Shareable Image using Private AIDASHR {#procedure8}
@@ -969,7 +1020,7 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately using pr
 </td>
 <td class="markdownTableBodyNone">
 
-➊ Edit `GENERAL.OPT` file
+➊ 🔂 Edit `GENERAL.OPT` file
 
 </td>
 <td class="markdownTableBodyNone">
@@ -979,7 +1030,16 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately using pr
     - change if updated
 - Comment out line ending in
 
-  `! copy to DEV direct and remove this line for BUILDTEST /DEF`
+  `remove this line for BUILDTEST /DEF`
+
+```shell
+MCCDEV>  eve AIDAASLCBPM_GENERAL.OPT  
+MCCDEV>  eve AIDASLCBPMBUFF_GENERAL.OPT  
+MCCDEV>  eve AIDASLCDB_GENERAL.OPT  
+MCCDEV>  eve AIDASLCKLYS_GENERAL.OPT  
+MCCDEV>  eve AIDASLCMAGNET_GENERAL.OPT  
+MCCDEV>  eve AIDASLCUTIL_GENERAL.OPT  
+```
 
 </td>
 </tr>
@@ -1070,12 +1130,12 @@ MCCDEV> logout
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV> @AIDA_ASLCBPM.SUBMIT
-MCCDEV> @AIDA_ASLCBPMBUFF.SUBMIT
-MCCDEV> @AIDA_ASLCDB.SUBMIT
-MCCDEV> @AIDA_ASLCKLYS.SUBMIT
+MCCDEV> @AIDA_SLCBPM.SUBMIT
+MCCDEV> @AIDA_SLCBPMBUFF.SUBMIT
+MCCDEV> @AIDA_SLCDB.SUBMIT
+MCCDEV> @AIDA_SLCKLYS.SUBMIT
 MCCDEV> @AIDA_SLCMAGNET.SUBMIT
-MCCDEV> @AIDA_ASLCUTIL.SUBMIT
+MCCDEV> @AIDA_SLCUTIL.SUBMIT
 ```
 
 </td>

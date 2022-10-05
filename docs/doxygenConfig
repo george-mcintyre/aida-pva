@@ -985,11 +985,11 @@ EXCLUDE                = root/cpp/aida-pva/aida_pva_json.c \
                          root/cpp/include/aida-pva/json.h \
                          root/cpp/include/aida-pva/slac_aida_NativeChannelProvider.h \
                          root/cpp/slac_aida_NativeChannelProvider.h \
-                         root/cpp/providers/SLCBPMBUFF/DPSLCBUFF.H \
-                         root/cpp/providers/SLCBPMBUFF/DPSLCBUFF_JNI_HELPER.C \
-                         root/cpp/providers/SLCDB/DPSLC_JNI_HELPER.C \
-                         root/cpp/providers/SLCDB/AIDASLCDB_CHANNELS.YML \
-                         root/cpp/providers/SLCKLYS/DPSLCKLYS_JNI_HELPER.c
+                         root/cpp/providers/DPSLC_JNI_HELPER.C \
+                         root/cpp/providers/DPSLCBUFF.H \
+                         root/cpp/providers/DPSLCBUFF_JNI_HELPER.C \
+                         root/cpp/providers/DPSLCKLYS_JNI_HELPER.c \
+                         root/cpp/providers/SLCDB/AIDASLCDB_CHANNELS.YML
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
