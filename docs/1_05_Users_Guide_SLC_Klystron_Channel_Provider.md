@@ -42,8 +42,8 @@ The **multi-set** operation sets `PMDL` values for multiple specified subbooster
 |                |          | `KLYS:LI31:31:KPHR`         |
 |                |          | `KLYS:LI31:31:PCON`         |
 |                |          | `KLYS:LI31:31:ACON`         |
-| **multi-set**  | Syntax   | `KLYSSET:<secn>`            |
-|                | Examples | `KLYSSET:PMDL`              |
+| **multi-set**  | Syntax   | `KLYSTRONSET:<secn>`        |
+|                | Examples | `KLYSTRONSET:PMDL`          |
 
 ## Attribute operation summary
 
@@ -229,7 +229,7 @@ pvcall "KLYS:LI31:31:PCON" VALUE=5.0
 <td class="markdownTableBodyNone">
 
 ```shell
-pvcall "KLYSSET:PMDL" VALUE='{"names": [ "SBST:LI31:41"], "values": [ 4.0 ] }'
+pvcall "KLYSTRONSET:PMDL" VALUE='{"names": [ "SBST:LI31:41"], "values": [ 4.0 ] }'
 ```
 
 </td>
@@ -268,7 +268,7 @@ eget -s KLYS:LI31:31:PCON -a VALUE 5.0
 <td class="markdownTableBodyNone">
 
 ```shell
-eget -s KLYSSET:PMDL -a VALUE '{"names": [ "SBST:LI31:41"], "values": [ 5.0 ] }'
+eget -s KLYSTRONSET:PMDL -a VALUE '{"names": [ "SBST:LI31:41"], "values": [ 5.0 ] }'
 ```
 
 </td>
@@ -415,7 +415,7 @@ end
 
 ```matlab
 try
-    builder = pvaRequest('KLYSSET:PMDL');
+    builder = pvaRequest('KLYSTRONSET:PMDL');
     jstruct = AidaPvaStruct();
     jstruct.put('names', { 'SBST:LI31:41'});
     jstruct.put('values', { 4.0 } );

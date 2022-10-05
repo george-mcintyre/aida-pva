@@ -13,66 +13,68 @@ Whenever you make changes to any of the following files you need to:
 
 ## AIDA-PVA Channel Provider source files
 
-If any of these files change follow the procedures below to rebuild and deploy the updated Channel Providers.
+If any of these files change follow the procedures below to rebuild and deploy the updated Channel Providers. 
+
+@note Clicking on the ➥ symbol will link to the correct procedure to follow for the changed file.
 
 - **Group 1**: `AIDA-PVA` Module Header Files
-    - `aida_pva_jni_helper.h` (_**C header file**_)
-    - `aida_pva_server_helper.h` (_**C header file**_)
-    - `aida_pva_types_helper.h` (_**C header file**_)
-    - `slac_aida_NativeChannelProvider.h` (_**C header file**_)
+    - [➥](@ref group123)`aida_pva_jni_helper.h` (_**C header file**_)
+    - [➥](@ref group123)`aida_pva_server_helper.h` (_**C header file**_)
+    - [➥](@ref group123)`aida_pva_types_helper.h` (_**C header file**_)
+    - [➥](@ref group123)`slac_aida_NativeChannelProvider.h` (_**C header file**_)
 - **Group 2**: `AIDA-PVA` Module C Source files
-    - `aida_pva_json.c` (_**C source file**_)
-    - `aida_pva_server_helper.c` (_**C source file**_)
-    - `aida_pva_types_helper.c` (_**C source file**_)
-    - `NativeChannelProviderJni.c` (_**C source file**_)
+    - [➥](@ref group123)`aida_pva_json.c` (_**C source file**_)
+    - [➥](@ref group123)`aida_pva_server_helper.c` (_**C source file**_)
+    - [➥](@ref group123)`aida_pva_types_helper.c` (_**C source file**_)
+    - [➥](@ref group123)`NativeChannelProviderJni.c` (_**C source file**_)
 - **Group 3**: `AIDA-PVA` Common Header Files for both `AIDA-PVA` Module and Channel Provider(s)
-    - `aida_pva.h` (_Common **C header file**_)
-    - `aida_pva_api.h` (_Common **C header file**_)
-    - `aida_pva_convert.h` (_Common **C header file**_)
-    - `aida_pva_exceptions.h` (_Common **C header file**_)
-    - `aida_pva_json.h` (_Common **C header file**_)
-    - `aida_pva_memory.h` (_Common **C header file**_)
-    - `aida_pva_types.h` (_Common **C header file**_)
-    - `aida_pva_uri.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_api.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_convert.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_exceptions.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_json.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_memory.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_types.h` (_Common **C header file**_)
+    - [➥](@ref group123)`aida_pva_uri.h` (_Common **C header file**_)
 - **Group 4**: `AIDASHR` Transfer Vectors
-    - `AIDASHR_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - [➥](@ref group4)`AIDASHR_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 - **Group 5**: `AIDA-PVA` BPM Channel Provider Files (Group 5)
-    - `AIDASLCBPM_CHANNELS.YML` (_**Channel Config**_)
-    - `AIDASLCBPM_GENERAL.OPT` (_**Linker options** file_)
-    - `AIDASLCBPM_SERVER.c` (_**C source file**_)
-    - `AIDASLCBPM_SERVER.h` (_**C header file**_)
-    - `AIDASLCBPM_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - [➥](@ref groupconfig)`AIDASLCBPM_CHANNELS.YML` (_**Channel Config**_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPM_GENERAL.OPT` (_**Linker options** file_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPM_SERVER.c` (_**C source file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPM_SERVER.h` (_**C header file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPM_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 - **Group 6**: `AIDA-PVA` BPM Buffered Acquisition Channel Provider Files
-    - `AIDASLCBPMBUFF_CHANNELS.YML` (_**Channel Config**_)
-    - `AIDASLCBPMBUFF_GENERAL.OPT` (_**Linker options** file_)
-    - `AIDASLCBPMBUFF_SERVER.c` (_**C source file**_)
-    - `AIDASLCBPMBUFF_SERVER.h` (_**C header file**_)
-    - `AIDASLCBPMBUFF_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - ➥`AIDASLCBPMBUFF_CHANNELS.YML` (_**Channel Config**_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPMBUFF_GENERAL.OPT` (_**Linker options** file_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPMBUFF_SERVER.c` (_**C source file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPMBUFF_SERVER.h` (_**C header file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCBPMBUFF_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 - **Group 7**: `AIDA-PVA` SLC Database Channel Provider Files
-    - `AIDASLCDB_CHANNELS.YAML` (_**Channel Config**_)
-    - `AIDASLCDB_CHANNELS.YML` (Very large _**Channel Config**_)
-    - `AIDASLCDB_GENERAL.OPT` (_**Linker options** file_)
-    - `AIDASLCDB_SERVER.c` (_**C source file**_)
-    - `AIDASLCDB_SERVER.h` (_**C header file**_)
-    - `AIDASLCDB_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - [➥](@ref groupconfig)`AIDASLCDB_CHANNELS.YAML` (_**Channel Config**_)
+    - [➥](@ref groupconfig)`AIDASLCDB_CHANNELS.YML` (Very large _**Channel Config**_)
+    - [➥](@ref groupnonconfig)`AIDASLCDB_GENERAL.OPT` (_**Linker options** file_)
+    - [➥](@ref groupnonconfig)`AIDASLCDB_SERVER.c` (_**C source file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCDB_SERVER.h` (_**C header file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCDB_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 - **Group 8**: `AIDA-PVA` Klystron Channel Provider Files
-    - `AIDASLCKLYS_CHANNELS.YML` (_**Channel Config**_)
-    - `AIDASLCKLYS_GENERAL.OPT` (_**Linker options** file_)
-    - `AIDASLCKLYS_SERVER.c` (_**C source file**_)
-    - `AIDASLCKLYS_SERVER.h` (_**C header file**_)
-    - `AIDASLCKLYS_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - [➥](@ref groupconfig)`AIDASLCKLYS_CHANNELS.YML` (_**Channel Config**_)
+    - [➥](@ref groupnonconfig)`AIDASLCKLYS_GENERAL.OPT` (_**Linker options** file_)
+    - [➥](@ref groupnonconfig)`AIDASLCKLYS_SERVER.c` (_**C source file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCKLYS_SERVER.h` (_**C header file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCKLYS_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 - **Group 9**: `AIDA-PVA` Magnet Channel Provider Files
-    - `AIDASLCMAGNET_CHANNELS.YML` (_**Channel Config**_)
-    - `AIDASLCMAGNET_GENERAL.OPT` (_**Linker options** file_)
-    - `AIDASLCMAGNET_SERVER.c` (_**C source file**_)
-    - `AIDASLCMAGNET_SERVER.h` (_**C header file**_)
-    - `AIDASLCMAGNET_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - [➥](@ref groupconfig)`AIDASLCMAGNET_CHANNELS.YML` (_**Channel Config**_)
+    - [➥](@ref groupnonconfig)`AIDASLCMAGNET_GENERAL.OPT` (_**Linker options** file_)
+    - [➥](@ref groupnonconfig)`AIDASLCMAGNET_SERVER.c` (_**C source file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCMAGNET_SERVER.h` (_**C header file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCMAGNET_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 - **Group 10**: `AIDA-PVA` Utilities Channel Provider Files
-    - `AIDASLCUTIL_CHANNELS.YML` (_**Channel Config**_)
-    - `AIDASLCUTIL_GENERAL.OPT` (_**Linker options** file_)
-    - `AIDASLCUTIL_SERVER.c` (_**C source file**_)
-    - `AIDASLCUTIL_SERVER.h` (_**C header file**_)
-    - `AIDASLCUTIL_XFR_ALPHA.OPT` (_**Transfer vectors**_)
+    - [➥](@ref groupconfig)`AIDASLCUTIL_CHANNELS.YML` (_**Channel Config**_)
+    - [➥](@ref groupnonconfig)`AIDASLCUTIL_GENERAL.OPT` (_**Linker options** file_)
+    - [➥](@ref groupnonconfig)`AIDASLCUTIL_SERVER.c` (_**C source file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCUTIL_SERVER.h` (_**C header file**_)
+    - [➥](@ref groupnonconfig)`AIDASLCUTIL_XFR_ALPHA.OPT` (_**Transfer vectors**_)
 
 @note These files are also stored in the SLAC git repository for use with modern IDEs via git. The master version is in
 CMS.
@@ -126,36 +128,39 @@ files to a clean directory on MCCDEV. The build tools will combine the changed f
 remaining unchanged files from CMS to build the object library modules and shareable images required.
 
 ## Procedures for Building, Testing and Deploying
-Select the appropriate ⚙-numbered Build Procedure(s) based on the files you've changed.
+Select the appropriate ⚙-numbered Build Procedure(s) based on the files you've changed.  
 
-- Groups 1, 2, & 3
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - [⚙-1 Build Private Channel Provider Module](@ref procedure1)
-        - [⚙-2 Build Private Channel Provider Shareable Image](@ref procedure2)
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - [⚙-3 Commit & Build Channel Provider Module](@ref procedure3)
-        - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
-        - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
-- Group 4
-    - [⚙-7 Build Private AIDASHR](@ref procedure7)
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - [⚙-8 Build Private Channel Provider Shareable Image using Private AIDASHR](@ref procedure8)
-    - [⚙-9 Build and Test AIDA Providers Privately](@ref procedure9)
-    - [⚙-10 Commit AIDASHR Changes to CMS](@ref procedure10)
-    - For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
-        - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
-        - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
-- Groups 5, 6, 7, 8, 9, & 10
-    - _Channel Config files_
-        - [⚙-6 Deploy Channel Config to PROD](@ref procedure6)
-    - All files except _Channel Config files_
-        - [⚙-1 Build Private Channel Provider Module](@ref procedure1)
-        - [⚙-2 Build Private Channel Provider Shareable Image](@ref procedure2)
-        - [⚙-3 Commit & Build Channel Provider Module](@ref procedure3)
-        - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
-        - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
+@note Clicking on the ⚙ symbol will link to the procedure steps to follow.
+
+### Groups 1, 2, & 3  {#group123}
+- For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+    - [⚙-1 Build Private Channel Provider Module](@ref procedure1)
+    - [⚙-2 Build Private Channel Provider Shareable Image](@ref procedure2)
+- For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+    - [⚙-3 Commit & Build Channel Provider Module](@ref procedure3)
+    - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
+    - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
+### Group 4 {#group4}
+- [⚙-7 Build Private AIDASHR](@ref procedure7)
+- For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+    - [⚙-8 Build Private Channel Provider Shareable Image using Private AIDASHR](@ref procedure8)
+- [⚙-9 Build and Test AIDA Providers Privately](@ref procedure9)
+- [⚙-10 Commit AIDASHR Changes to CMS](@ref procedure10)
+- For each _channel-provider_ in [`SLCBPM`, `SLCBPMBUFF`, `SLCDB`, `SLCKLYS`, `SLCMAGNET`, `SLCUTIL`]
+    - [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
+    - [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
+### Groups 5, 6, 7, 8, 9, & 10
+#### Channel Config files {#groupconfig}
+- [⚙-6 Deploy Channel Config to PROD](@ref procedure6)
+#### All files except Channel Config files {#groupnonconfig}
+- [⚙-1 Build Private Channel Provider Module](@ref procedure1)
+- [⚙-2 Build Private Channel Provider Shareable Image](@ref procedure2)
+- [⚙-3 Commit & Build Channel Provider Module](@ref procedure3)
+- [⚙-4 Build & Test Channel Provider Shareable in DEV](@ref procedure4)
+- [⚙-5 Move Channel Provider Shareable to PROD](@ref procedure5)
 
 ## Build Procedures
+@note the 🔂 symbol means, select only one or more of the listed procedures that apply to your changed files 
 
 ### ⚙-1: Build Private Channel Provider Module {#procedure1}
 
@@ -810,6 +815,115 @@ MCCDEV>  cmp AIDASLCDB_CHANNELS.YAML
 MCCDEV>  cmp AIDASLCKLYS_CHANNELS.YML  
 MCCDEV>  cmp AIDASLCMAGNET_CHANNELS.YML  
 MCCDEV>  cmp AIDASLCUTIL_CHANNELS.YML  
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">
+
+➂ Reload Config on DEV if required
+
+</td>
+<td class="markdownTableBodyNone">
+
+➊ Log into DEV machine using `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> ssh MCCDEV /user=slcshr
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➋ Restart running Channel Provider on DEV 🔂
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
+MCCDEV::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➌ Log out of `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV::SLCSHR> logout
+```
+
+</td>
+</tr>
+
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">
+
+➃ Reload Config on PROD if required
+
+</td>
+<td class="markdownTableBodyNone">
+
+➊ Log into PROD machine using `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCCDEV> ssh MCC /user=slcshr
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➋ Restart running Channel Provider on PROD 🔂
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCC::SLCSHR> WARMSLC AIDA_SLCBPM /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCBPMBUFF /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCDB /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCKLYS /RESTART
+MCC::SLCSHR> WARMSLC AIDS_LCMAGNET /RESTART
+MCC::SLCSHR> WARMSLC AIDA_SLCUTIL /RESTART
+```
+
+</td>
+</tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"></td>
+<td class="markdownTableBodyNone">
+
+➌ Log out of `SLCSHR` account
+
+</td>
+<td class="markdownTableBodyNone">
+
+```shell
+MCC::SLCSHR> logout
 ```
 
 </td>
