@@ -3,59 +3,70 @@
 This section describes what an AIDA-PVA user should know about accessing the SLC Klystron Data through AIDA-PVA. This
 data provider allows the retrieval of status code(s) or status string(s) for specified klystron(s) on a beam code. It
 also allows the deactivation or reactivation of a specified klystron on a beam code. The `PDES` value for a klystron or
-subbooster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or subboster may be set.
+sub-booster may be set and the phase may be optionally trimmed. The `KPHR` value for a klystron or sub-boster may be set.
 The service allows multiple values to be set for the main drive line phase (PMDL) and other secondaries
-of specified subboosters simultaneously.  
-Finally, a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster may be set. For general
+of specified sub-boosters simultaneously. 
+A configuration value (`PCON` or `ACON`) of a specified klystron or sub-booster may also be set. 
+
+A new feature of this provider is its ability to perform fast phase scan/dither for Klystron Golding.  A correlated plot
+that has been set up and saved as a button file can be run and the results returned by this new feature. 
+
+For general
 information on using AIDA-PVA see [Basic Users Guide to Aida](1_00_User_Guide.md), and the EPICS javadoc.
 
 ## Summary
 
 Supports **get**, **set**  and **multi-set** operations.
 
-The **get** operation obtains the status code(s) or status string(s) for specified klystron(s) on a beam code.
+There are three **get** operations that can be performed:
 
-There are four **set** operations that can be performed:
+1. obtain the status code or string for specified klystron on a beam code, 
+2. obtain multiple status codes and strings for the specified klystrons on a beam code, 
+3. get the results returned from running a specified phase scan - a correlated plot.
+
+There are five **set** operations that can be performed:
 
 1. deactivate or reactivate a specified klystron on a beam code,
-2. set the `PDES` value and optionally trim the phase of a specified klystron or subbooster,
-3. set the `KPHR` value of a specified klystron or subbooster, and
-4. set a configuration value (`PCON` or `ACON`) of a specified klystron or subbooster
-
-The **multi-set** operation sets `PMDL` values for multiple specified subboosters simultaneously
+2. set the `PDES` value and optionally trim the phase of a specified klystron or sub-booster,
+3. set the `KPHR` value of a specified klystron or sub-booster, and
+4. set a configuration value (`PCON` or `ACON`) of a specified klystron or sub-booster,
+5. sets `PMDL` values for multiple specified sub-boosters simultaneously.
 
 ## Instances and Attributes
 
-| operation      | info     | instance & attribute        |
-|----------------|----------|-----------------------------|
-| **get**        | Syntax   | `<prim>:<micr>:<unit>:TACT` |
-|                | Examples | `KLYS:LI31:31:TACT`         |
-| multi- **get** | Syntax   | `KLYSTRONGET:TACT`          |
-|                | Examples | `KLYSTRONGET:TACT`          |
-| **set**        | Syntax   | `<prim>:<micr>:<unit>:TACT` |
-|                |          | `<prim>:<micr>:<unit>:PDES` |
-|                |          | `<prim>:<micr>:<unit>:KPHR` |
-|                |          | `<prim>:<micr>:<unit>:PCON` |
-|                |          | `<prim>:<micr>:<unit>:ACON` |
-|                | Examples | `KLYS:LI31:31:TACT`         |
-|                |          | `KLYS:LI31:31:PDES`         |
-|                |          | `KLYS:LI31:31:KPHR`         |
-|                |          | `KLYS:LI31:31:PCON`         |
-|                |          | `KLYS:LI31:31:ACON`         |
-| **multi-set**  | Syntax   | `KLYSTRONSET:<secn>`        |
-|                | Examples | `KLYSTRONSET:PMDL`          |
+| operation          | info     | instance & attribute        |
+|--------------------|----------|-----------------------------|
+| **get**            | Syntax   | `<prim>:<micr>:<unit>:TACT` |
+|                    | Examples | `KLYS:LI31:31:TACT`         |
+| multi- **get**     | Syntax   | `KLYSTRONGET:TACT`          |
+|                    | Examples | `KLYSTRONGET:TACT`          |
+| phase scan **get** | Syntax   | `KLYSTRONGET:SCAN`          |
+|                    | Examples | `KLYSTRONGET:SCAN`          |
+| **set**            | Syntax   | `<prim>:<micr>:<unit>:TACT` |
+|                    |          | `<prim>:<micr>:<unit>:PDES` |
+|                    |          | `<prim>:<micr>:<unit>:KPHR` |
+|                    |          | `<prim>:<micr>:<unit>:PCON` |
+|                    |          | `<prim>:<micr>:<unit>:ACON` |
+|                    | Examples | `KLYS:LI31:31:TACT`         |
+|                    |          | `KLYS:LI31:31:PDES`         |
+|                    |          | `KLYS:LI31:31:KPHR`         |
+|                    |          | `KLYS:LI31:31:PCON`         |
+|                    |          | `KLYS:LI31:31:ACON`         |
+| **multi-set**      | Syntax   | `KLYSTRONSET:<secn>`        |
+|                    | Examples | `KLYSTRONSET:PMDL`          |
 
 ## Attribute operation summary
 
-| Attribute | operation     |     | Description                                                                                 |
-|-----------|---------------|:----|---------------------------------------------------------------------------------------------|
-| `TACT`    | **get**       |     | Gets status code(s), or status string(s) for the specified klystron(s) on a beam code       |
-| `TACT`    | **set**       |     | Deactivates or reactivates a specified klystron on a beam code                              |
-| `PDES`    | **set**       |     | Sets the `PDES` value and optionally trims the phase for a specified klystron or subbooster |
-| `KPHR`    | **set**       |     | Sets the `KPHR` value of a specified klystron or subbooster                                 |
-| `PCON`    | **set**       |     | Sets the `PCON` value of a specified klystron or subbooster                                 |
-| `ACON`    | **set**       |     | Sets the `ACON` value of a specified klystron or subbooster                                 |
-| `PMDL`    | **multi-set** |     | Sets the `PMDL` values of the specified subboosters                                         |
+| Attribute | operation     |     | Description                                                                                  |
+|-----------|---------------|:----|----------------------------------------------------------------------------------------------|
+| `TACT`    | **get**       |     | Gets status code(s), or status string(s) for the specified klystron(s) on a beam code        |
+| `SCAN`    | **get**       |     | Executes the specified phase scan and returns phase and BPM data                             |
+| `TACT`    | **set**       |     | Deactivates or reactivates a specified klystron on a beam code                               |
+| `PDES`    | **set**       |     | Sets the `PDES` value and optionally trims the phase for a specified klystron or sub-booster |
+| `KPHR`    | **set**       |     | Sets the `KPHR` value of a specified klystron or sub-booster                                 |
+| `PCON`    | **set**       |     | Sets the `PCON` value of a specified klystron or sub-booster                                 |
+| `ACON`    | **set**       |     | Sets the `ACON` value of a specified klystron or sub-booster                                 |
+| `PMDL`    | **multi-set** |     | Sets the `PMDL` values of the specified sub-boosters                                         |
 
 ## Attribute operations
 
@@ -65,7 +76,7 @@ _Parameters_
 
 | Parameter Names | Parameter Values | Description                                                                                                                           | 
 |-----------------|------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `TYPE`*         | return type      | Must be one of `SHORT`, `LONG`, `STRING`, or `TABLE`                                         |
+| `TYPE`*         | return type      | Must be one of `SHORT`, `LONG`, `STRING`, or `TABLE`                                                                                  |
 | `BEAM`*         | Integer          | Beam code number                                                                                                                      |
 | `DGRP`          | Dgrp name        | A display group associated with the specified Klystron. Must be specified if the Klystron does not belong to display group `LIN_KLYS` |
 
@@ -116,6 +127,28 @@ _Return value_
 |         | `sleded`      | `BOOLEAN_ARRAY` | true if sleded                     |
 |         | `pampl`       | `BOOLEAN_ARRAY` | true if pampl                      |
 |         | `pphas`       | `BOOLEAN_ARRAY` | true if pphas                      |
+### SCAN : phase scan get
+
+_Parameters_
+
+| Parameter Names | Parameter Values | Description                                                                                                                       | 
+|-----------------|------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `FILE`*         | Button File Name | Scan file name. <br />including the "BTN" suffix.  The file must be in the standard <br />button file directory `SLC_CRR_BUTTON:` |
+
+_Return value_
+
+| TYPE    | Return Column    | Column Type     | Description                                                                                                   |
+|---------|------------------|-----------------|---------------------------------------------------------------------------------------------------------------|
+| `TABLE` | `primary_step`   | `FLOAT_ARRAY`   | value of primary step variable for this data set                                                              |
+|         | `secondary_step` | `FLOAT_ARRAY`   | value of secondary step variable for this data set <br />If there is only a secondary this will always be `0` |
+|         | `name`           | `STRING_ARRAY`  | name of each BPM  <br />(repeats for each combination of primary and secondary step value)                    |
+|         | `pulseId`        | `INTEGER_ARRAY` | pulse ID                                                                                                      |
+|         | `x`              | `FLOAT_ARRAY`   | x offsets (mm)                                                                                                |
+|         | `y`              | `FLOAT_ARRAY`   | y offsets (mm)                                                                                                |
+|         | `tmits`          | `FLOAT_ARRAY`   | tmits (num particles)                                                                                         |
+|         | `stat`           | `INTEGER_ARRAY` | (32 bit field)                                                                                                |
+|         | `goodmeas`       | `BOOLEAN_ARRAY` | true = good, false = bad                                                                                      |
+|         | `phas`           | `FLOAT_ARRAY`   | phase secondary value                                                                                         |
 
 ### TACT : set
 
@@ -178,9 +211,9 @@ None
 
 _Parameters_
 
-| Parameter Names | Parameter Values               | Description                                                           | 
-|-----------------|--------------------------------|-----------------------------------------------------------------------|
-| `VALUE`*        | structure: {names[], values[]} | an array of subbooster names and an array of corresponding set values |
+| Parameter Names | Parameter Values               | Description                                                            | 
+|-----------------|--------------------------------|------------------------------------------------------------------------|
+| `VALUE`*        | structure: {names[], values[]} | an array of sub-booster names and an array of corresponding set values |
 
 _Return value_
 
@@ -207,6 +240,13 @@ pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:L
 "Device Name" "Operation Status" "Klystron Status" Accellerate Standby   Bad "Sled Tuned" Sleded Pampl pphas
  KLYS:LI31:31               true                18       false    true false        false   true false false
  KLYS:LI31:32              false            -32763       false   false false        false  false false false
+pvcall "KLYSTRONGET:SCAN" FILE='TEST.BTN'
+"primary step" "secondary step"    "BPM Name" "pulse id" "x offset (mm)" "y offset (mm)" "num particles (coulomb)" "stat" "good measurement" "phase"
+    -0.9996438              0.0 BPMS:LI11:501      71311      0.45966175      0.81614506                   1.0E-10      1                 15    0.38
+    -0.9996439              0.0 BPMS:LI11:501      71311      -0.9996438      -0.9657358                   1.0E-10      1                 15    0.21
+    -0.9996440              0.0 BPMS:LI11:501      71311     -0.28856283      0.69943863                   1.0E-10      1                 15    0.41
+    -0.9996441              0.0 BPMS:LI11:501      71311      -0.9565048     -0.91913205                   1.0E-10      1                 15    0.21
+    -0.9996442              0.0 BPMS:LI11:501      71311       0.5896404     -0.47585112                   1.0E-10      1                 15    0.33
 ```
 
 </td>
@@ -246,6 +286,7 @@ eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'LONG'
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'STRING'
 eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'TABLE'
 eget -s KLYSTRONGET:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a DEVICES '["KLYS:LI31:31", "KLYS:LI31:32"]'
+eget -s KLYSTRONGET:SCAN -a FILE 'TEST.BTN'
 ```
 
 </td>
@@ -356,6 +397,52 @@ ans =
      sleded: [1 0]
       pampl: [0 0]
       pphas: [0 0]
+```
+
+```matlab
+try
+    builder = pvaRequest('KLYSTRONGET:SCAN');
+    builder.with('FILE', 'TEST.BTN');
+    tableResponse = ML(builder.get())
+catch e
+    handleExceptions(e);
+end
+
+"primary step" "secondary step"    "BPM Name" "pulse id" "x offset (mm)" "y offset (mm)" "num particles (coulomb)" "stat" "good measurement" "phase"
+    -0.9996438              0.0 BPMS:LI11:501      71311      0.45966175      0.81614506                   1.0E-10      1                 15    0.38
+
+tableResponse =
+            size: 2
+          labels: {'primary step' 'secondary step'    'BPM Name' 'pulse id' 'x offset ()' 'y offset (mm)' 'num particles (coulomb)' 'stat' 'good measurement' 'phase'}
+           units: []
+    descriptions: []
+      fieldnames: {'primary_step'  'secondary_step'  'name'  'pulseId'  'x'  'y'  'tmits'  'stat'  'goodmeas'  'phas'}
+          values: [320x1 struct]
+
+tableResponse.values.status(1)
+ans =
+   320
+
+tableResponse.values.primary_step(1)
+ans =
+     -0.9996438
+
+tableResponse.values.name(1)
+ans =
+    'BPMS:LI11:501'
+
+tableResponse.values
+ans =
+         primary_step: {-0.9996438 -0.9996439 ...}
+       secondary_step: {0.0 0.0  ...}
+                 name: {'BPMS:LI11:501' 'BPMS:LI11:501'  ...}
+              pulseId: [71311 71311 ...]
+                    x: [0.45966175 -0.9996438 ...]
+                    y: [0.81614506 -0.9657358 ...]
+                tmits: [1.0E-10 1.0E-10 ...]
+                 stat: [1 1 ...]
+             goodmeas: [15 15 ...]
+                 phas: [0.38 0.21 ...]
 ```
 
 </td>
@@ -941,7 +1028,7 @@ _________________________________________________
 set: KLYS:LI31:31:PDES (VALUE=90.0)
   Klystron; UnableToSetDataException; Error setting value ✘
 
-████ Test 7: Set a subbooster or klystron PDES value without the trim operation
+████ Test 7: Set a sub-booster or klystron PDES value without the trim operation
 _________________________________________________
 
 set: KLYS:LI31:31:PDES (TRIM=NO, VALUE=90.0)
@@ -950,7 +1037,7 @@ set: KLYS:LI31:31:PDES (TRIM=NO, VALUE=90.0)
                  PHAS
                   0.0
 
-████ Test 8: Set a subbooster or klystron KPHR value
+████ Test 8: Set a sub-booster or klystron KPHR value
 _________________________________________________
 
 set: KLYS:LI31:31:KPHR (VALUE=60.0)

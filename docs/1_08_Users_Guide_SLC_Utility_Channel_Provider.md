@@ -21,7 +21,7 @@ Supports **get** and **set** operations.
 - A **set** operation deactivates or reactivates a specified trigger device on a beam code
 - A  **set** operation sets the devices referenced in a specified multiknob file by knob rotation using a specified delta value.
 - A **set** operation sets the value of a specified variable for a specified BGRP.
-- A **set** operation sets the SCP transverse feedback to OFF, COMPUTE, or FEEDBACK.
+- A **set** operation sets the SCP transverse feedback to OFF, SAMPLE, COMPUTE, ON, ACTUATE, DITHER, or FEEDBACK.
 
 ## Instances and Attributes
 
@@ -42,14 +42,14 @@ Supports **get** and **set** operations.
 
 ## Attribute operation summary
 
-| Attribute   | operation | Description                                                                                |
-|-------------|-----------|--------------------------------------------------------------------------------------------|
-| `TACT`      | **get**   | Gets a status code or a status string for the specified trigger device on a beam code      |
-| `TACT`      | **set**   | Deactivates or reactivates a specified trigger device on a beam code                       |
-| `VAL`       | **set**   | Sets devices referenced in a specified multiknob file, which is a required parameter       |
-| `VAL`       | **set**   | Sets a BGRP variable to a new value                                                        |
-| `LOOP_STAT` | **get**   | Gets a code or a string that describes the status of the specified SCP transverse feedback |
-| `LOOP_STAT` | **set**   | Sets the specified SCP transverse feedback to off, compute, or feedback                    |
+| Attribute   | operation | Description                                                                                               |
+|-------------|-----------|-----------------------------------------------------------------------------------------------------------|
+| `TACT`      | **get**   | Gets a status code or a status string for the <br />specified trigger device on a beam code               |
+| `TACT`      | **set**   | Deactivates or reactivates a specified trigger <br />device on a beam code                                |
+| `VAL`       | **set**   | Sets devices referenced in a specified multiknob<br /> file, which is a required parameter                |
+| `VAL`       | **set**   | Sets a BGRP variable to a new value                                                                       |
+| `LOOP_STAT` | **get**   | Gets a code or a string that describes the <br />status of the specified SCP transverse feedback          |
+| `LOOP_STAT` | **set**   | Sets the specified SCP transverse feedback to:<br />off, sample, compute/on, actuate, dither, or feedback |
 
 ## Attribute operations
 
@@ -127,25 +127,27 @@ _Parameters_
 | `TYPE`*         |                  | Determines the return type of the request |
 |                 | `BOOLEAN`        | return a boolean value.                   |
 |                 | `SHORT`          | return a short value.                     |
-|                 | `LONG`           | return a short value.                     |
+|                 | `INTEGER`        | return an integer value.                  |
+|                 | `LONG`           | return a long value.                      |
 |                 | `STRING`         | return a string value.                    |
 
 _Return value_
 
-| TYPE      | Description                                                                                                                                                 |
-|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `BOOLEAN` | A boolean value containing the SCP transverse feedback status code for the loop device: <br />`true` => in feedback state, `false` => not in feedback state |
-| `SHORT`   | A short value containing the SCP transverse feedback status code for the loop device: <br />`0` => off, `1` => compute, `2` => feedback                     |
-| `LONG`    | A long value containing the SCP transverse feedback status code for the loop: <br />`0` => off, `1` => compute, `2` => feedback                             |
-| `STRING`  | A string value containing a SCP transverse feedback status string having one of three values: "off", "compute" or "feedback"                                |
+| TYPE      | Description                                                                                                                                                            |
+|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `BOOLEAN` | A boolean value containing the SCP transverse feedback <br />status code for the loop device: <br />`true` => in feedback state, `false` => not in feedback state      |
+| `SHORT`   | A short value containing the SCP transverse feedback <br />status code for the loop device: <br />`0` => off, `1` => compute, `2` => feedback                          |
+| `INTEGER` | An integer value containing the SCP transverse feedback <br />status code for the loop device: <br />`0` => off, `1` => compute, `2` => feedback                       |
+| `LONG`    | A long value containing the SCP transverse feedback <br />status code for the loop: <br /> the HSTA bitmask                                                            |
+| `STRING`  | A string value containing a SCP transverse feedback <br />status string having one of six values:<br /> "off", "sample", "compute", "actuate", "dither", or "feedback" |
 
 ### LOOP_STAT : set
 
 _Parameters_
 
-| Parameter Names | Parameter Values | Description                                                                                                       | 
-|-----------------|------------------|-------------------------------------------------------------------------------------------------------------------|
-| `VALUE`*        | String           | flag string indicating the desired state: <br />`"off"` => off, `"compute"` => compute, `"feedback"` => feedback. |
+| Parameter Names | Parameter Values | Description                                                                                                                                                                                                           | 
+|-----------------|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `VALUE`*        | String           | flag string indicating the desired state: <br />`"off"` => off, `"sample"` => sample, `"compute"` => compute. <br />`"on"` => compute, `"actuate"` => actuate, `"dither"` => dither.  <br />`"feedback"` => feedback. |
 
 _Return value_
 

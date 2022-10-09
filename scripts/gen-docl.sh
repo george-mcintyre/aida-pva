@@ -17,7 +17,7 @@ doxygen docs/doxygenConfig
 echo "Documentation Generated"
 DOC_END_TIME=$(date +%s)
 
-rsync -avzcP --delete --delete-excluded docGen/html/* /afs/slac/www/grp/cd/soft/aida/aida-pva
+rsync -avP --size-only --delete --delete-excluded docGen/html/* /afs/slac/www/grp/cd/soft/aida/aida-pva
 TRANSFER_END_TIME=$(date +%s)
 echo "Documentation Site Updated"
 
