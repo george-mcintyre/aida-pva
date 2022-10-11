@@ -128,27 +128,57 @@ _Return value_
 |         | `pampl`       | `BOOLEAN_ARRAY` | true if pampl                      |
 |         | `pphas`       | `BOOLEAN_ARRAY` | true if pphas                      |
 ### SCAN : phase scan get
+Prior to calling this AIDA-PVA endpoint the operator needs to set up the parameters of a Correlation Plot 
+in the Data Acquisition panel for "Correlation Plots" of the SCP application program and save them
+to a button file.  The correlation plot application can be used for a large
+variety of plots but the only step and sample variables that this provider supports are:
+
+- **Step Variables**: `KLYS:PDES` only. Iterating the desired phase of a sub-booster. 
+- **Sample Variables**: Type: `BPM` only; Sample: `X`, `Y`, or `TMIT`. e.g. `BPMS:LI20:3315:TMIT`
+
+The single parameter `FILE` is then used when this endpoint is accessed to retrieve these parameters and 
+execute the correlation plot and return the results.
 
 _Parameters_
 
-| Parameter Names | Parameter Values | Description                                                                                                                       | 
-|-----------------|------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `FILE`*         | Button File Name | Scan file name. <br />including the "BTN" suffix.  The file must be in the standard <br />button file directory `SLC_CRR_BUTTON:` |
+| Parameter Names | Parameter Values | Description                                                                                                                         | 
+|-----------------|------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `FILE`*         | Button File Name | Button file name. <br />including the "BTN" suffix.  The file must be in the standard <br />button file directory `SLC_CRR_BUTTON:` |
 
 _Return value_
 
-| TYPE    | Return Column    | Column Type     | Description                                                                                                   |
-|---------|------------------|-----------------|---------------------------------------------------------------------------------------------------------------|
-| `TABLE` | `primary_step`   | `FLOAT_ARRAY`   | value of primary step variable for this data set                                                              |
-|         | `secondary_step` | `FLOAT_ARRAY`   | value of secondary step variable for this data set <br />If there is only a secondary this will always be `0` |
-|         | `name`           | `STRING_ARRAY`  | name of each BPM  <br />(repeats for each combination of primary and secondary step value)                    |
-|         | `pulseId`        | `INTEGER_ARRAY` | pulse ID                                                                                                      |
-|         | `x`              | `FLOAT_ARRAY`   | x offsets (mm)                                                                                                |
-|         | `y`              | `FLOAT_ARRAY`   | y offsets (mm)                                                                                                |
-|         | `tmits`          | `FLOAT_ARRAY`   | tmits (num particles)                                                                                         |
-|         | `stat`           | `INTEGER_ARRAY` | (32 bit field)                                                                                                |
-|         | `goodmeas`       | `BOOLEAN_ARRAY` | true = good, false = bad                                                                                      |
-|         | `phas`           | `FLOAT_ARRAY`   | phase secondary value                                                                                         |
+| TYPE    | Return Column | Column Type     | Description                                                               |
+|---------|---------------|-----------------|---------------------------------------------------------------------------|
+| `TABLE` | `step`        | `INTEGER_ARRAY` | The step variable number, 1,2,3,...<br/>repeats for each name             |
+|         | `pdes`        | `FLOAT_ARRAY`   | The step variable: `PDES` desired phase setting<br/>repeats for each name |
+|         | `name`        | `STRING_ARRAY`  | name of each BPM sample variable                                          |
+|         | `x`           | `FLOAT_ARRAY`   | x offsets (mm)                                                            |
+|         | `y`           | `FLOAT_ARRAY`   | y offsets (mm)                                                            |
+|         | `tmits`       | `FLOAT_ARRAY`   | tmits (num particles)                                                     |
+
+_Example Return values_
+
+| step | phase  | name           | x             | y             | tmits         |
+|------|--------|----------------|---------------|---------------|---------------|
+| `1`  | `0.26` | BPMS:LI20:2445 | `0.103910382` | `0.103910382` | `0.103910382` |
+| `1`  | `0.26` | BPMS:LI20:3013 | `0.103910382` | `0.103910382` | `0.103910382` |
+| `1`  | `0.26` | BPMS:LI20:3036 | `0.103910382` | `0.103910382` | `0.103910382` |
+| `1`  | `0.26` | BPMS:LI20:3120 | `0.103910382` | `0.103910382` | `0.103910382` |
+| `1`  | `0.26` | BPMS:LI20:3101 | `0.103910382` | `0.103910382` | `0.103910382` |
+| `1`  | `0.26` | BPMS:LI20:3156 | `0.103910382` | `0.103910382` | `0.103910382` |
+| `2`  | `0.27` | BPMS:LI20:2445 | `0.203910382` | `0.303910382` | `0.403910382` |
+| `2`  | `0.27` | BPMS:LI20:3013 | `0.203910382` | `0.303910382` | `0.403910382` |
+| `2`  | `0.27` | BPMS:LI20:3036 | `0.203910382` | `0.303910382` | `0.403910382` |
+| `2`  | `0.27` | BPMS:LI20:3120 | `0.203910382` | `0.303910382` | `0.403910382` |
+| `2`  | `0.27` | BPMS:LI20:3101 | `0.203910382` | `0.303910382` | `0.403910382` |
+| `2`  | `0.27` | BPMS:LI20:3156 | `0.203910382` | `0.303910382` | `0.403910382` |
+| `3`  | `0.28` | BPMS:LI20:2445 | `0.303910382` | `0.503910382` | `0.703910382` |
+| `3`  | `0.28` | BPMS:LI20:3013 | `0.303910382` | `0.503910382` | `0.703910382` |
+| `3`  | `0.28` | BPMS:LI20:3036 | `0.303910382` | `0.503910382` | `0.703910382` |
+| `3`  | `0.28` | BPMS:LI20:3120 | `0.303910382` | `0.503910382` | `0.703910382` |
+| `3`  | `0.28` | BPMS:LI20:3101 | `0.303910382` | `0.503910382` | `0.703910382` |
+| `3`  | `0.28` | BPMS:LI20:3156 | `0.303910382` | `0.503910382` | `0.703910382` |
+
 
 ### TACT : set
 
@@ -241,12 +271,17 @@ pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:L
  KLYS:LI31:31               true                18       false    true false        false   true false false
  KLYS:LI31:32              false            -32763       false   false false        false  false false false
 pvcall "KLYSTRONGET:SCAN" FILE='TEST.BTN'
-"primary step" "secondary step"    "BPM Name" "pulse id" "x offset (mm)" "y offset (mm)" "num particles (coulomb)" "stat" "good measurement" "phase"
-    -0.9996438              0.0 BPMS:LI11:501      71311      0.45966175      0.81614506                   1.0E-10      1                 15    0.38
-    -0.9996439              0.0 BPMS:LI11:501      71311      -0.9996438      -0.9657358                   1.0E-10      1                 15    0.21
-    -0.9996440              0.0 BPMS:LI11:501      71311     -0.28856283      0.69943863                   1.0E-10      1                 15    0.41
-    -0.9996441              0.0 BPMS:LI11:501      71311      -0.9565048     -0.91913205                   1.0E-10      1                 15    0.21
-    -0.9996442              0.0 BPMS:LI11:501      71311       0.5896404     -0.47585112                   1.0E-10      1                 15    0.33
+"step"       "pdes"        "BPM Name" "x offset (mm)" "y offset (mm)" "num particles (coulomb)"
+     1  -0.9996438     BPMS:LI11:501      0.45966175      0.81614506                   1.0E-10
+     1  -0.9996438     BPMS:LI11:502      -0.9996438      -0.9657358                   1.0E-10
+     2  -0.9996439     BPMS:LI11:501     -0.28856283      0.69943863                   1.0E-10
+     2  -0.9996439     BPMS:LI11:502      -0.9565048     -0.91913205                   1.0E-10
+     3  -0.9996440     BPMS:LI11:501       0.5896404     -0.47585112                   1.0E-10
+     3  -0.9996440     BPMS:LI11:502      0.45966175      0.81614506                   1.0E-10
+     4  -0.9996441     BPMS:LI11:501      -0.9996438      -0.9657358                   1.0E-10
+     4  -0.9996441     BPMS:LI11:502     -0.28856283      0.69943863                   1.0E-10
+     5  -0.9996442     BPMS:LI11:501      -0.9565048     -0.91913205                   1.0E-10
+     5  -0.9996442     BPMS:LI11:502       0.5896404     -0.47585112                   1.0E-10
 ```
 
 </td>
