@@ -133,8 +133,9 @@ in the Data Acquisition panel for "Correlation Plots" of the SCP application pro
 to a button file.  The correlation plot application can be used for a large
 variety of plots but the only step and sample variables that this provider supports are:
 
-- **Step Variables**: `KLYS:PDES` only. Iterating the desired phase of a sub-booster. 
-- **Sample Variables**: Type: `BPM` only; Sample: `X`, `Y`, or `TMIT`. e.g. `BPMS:LI20:3315:TMIT`
+- **Primary Step Variable**: `KLYS:PDES` only. Iterating the desired phase of a sub-booster. 
+- **Secondary Step Variable**: `ZERO` only.  Only 2D scans are supported at present. 
+- n x **Sample Variables**: Type: `BPM` only; Sample: `X`, `Y`, or `TMIT`. e.g. `BPMS:LI20:3315:TMIT`
 
 The single parameter `FILE` is then used when this endpoint is accessed to retrieve these parameters and 
 execute the correlation plot and return the results.
