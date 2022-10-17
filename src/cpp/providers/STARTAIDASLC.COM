@@ -1,11 +1,11 @@
 $!       **CMS**=COM_GEN
 $!
 $!===============================================================================
-$! @file
+$!
 $!
 $! Name:  STARTAIDASLC.COM
 $!
-$! @brief  Starts an AIDA-PVA Channel Provider or EPICS forwarder on VMS.
+$! Abs:   Starts an AIDA-PVA Channel Provider on VMS.
 $!
 $!
 $!===============================================================================
@@ -16,27 +16,27 @@ $!
 $! Make intermediate logicals to pass system properties
 $! and avoid the VMS DCL 255 char limit.
 $!
-$ portconf == ""
-$
-$ if f$trnlnm ("AIDA_MODE") .eqs. "PROD"
-$ then
-$   portconf == " -DEPICS_PVA_BROADCAST_PORT=5077 "
-$ endif
-$
-$ IF procname .EQS. "EPICS_FORWARDER" THEN GOTO STARTFORWARDER
+$  IF procname .EQS. "EPICS_FORWARDER" THEN GOTO STARTFORWARDER
 $ libpath == "-Djava.library.path=/SLCSHR"
-$ conf == portconf + " -Daida.pva.channels.filename=/SLCTXT/''config'"
+$ conf == "-Daida.pva.channels.filename=/SLCTXT/''config'"
 $ libname = procname - "_"
 $ lib == "-Daida.pva.lib.name=''libname'"
 $!
+$! There are two types of garbage collector that are implemented for Java 1.5 in the Open VMS Alpha JDK.
+$!  1) the compacting garbage collector (default),
+$!  2) the copying garbage collector.
+$! Switching to the copying garbage collector eliminated an access violation error that was present
+$! for long periods in the klystron provider.  It may also positively affect the apparent memory leak that depletes
+$! the page file count over the course of operation of the providers.
+$ gcflags == "-Xgc:copying"
 $!
 $ write sys$output "Starting ''procname' Server"
-$       java_argstring = "-jar $conf $libpath $lib SLCLIBS:AIDA-PVA.JAR"
+$       java_argstring = "-jar $conf $gcflags $libpath $lib SLCLIBS:AIDA-PVA.JAR"
 $       @slccom:RUNJAVA_BUT_RESTART_ON_ABORT
 $       exit
 $!
 $STARTFORWARDER:
 $ write sys$output "Starting FORWARDER Server"
-$       java_argstring = "-jar $portconf SLCLIBS:EPICS_FORWARDER.JAR"
+$       java_argstring = "-jar SLCLIBS:EPICS_FORWARDER.JAR"
 $       @slccom:RUNJAVA_BUT_RESTART_ON_ABORT
 $       exit
