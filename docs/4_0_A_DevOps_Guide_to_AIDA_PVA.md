@@ -60,12 +60,13 @@ The Model and Master Oscillator Channel Providers have been mostly implemented b
 
 ### AIDA-PVA SERVICE (AIDA-PVA.JAR)
 * launches the Channel Provider Shared Images integrating them into the EPICS PV-Access network
-* Built from [AIDA-PVA Github Repo](https://github.com/slaclab/aida-pva) on Linux and copied to SLCLIBS
+* Built from [AIDA-PVA Github Repo](https://github.com/slaclab/aida-pva) on Linux and copied to SLCIMAGE.
+* SLCIMAGE:AIDA-PVA.JAR has been added to the java classpath
 
 @see [Building AIDA-PVA Service](3_1_Building_AIDA_PVA_Service.md) for instructions on how to build it.
 
 ### EPICS 7 
-EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in VMS SLCLIBS.  They exist only in Linux for building AIDA-PVA.JAR
+EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in VMS SLCIMAGE.  They exist only in Linux for building AIDA-PVA.JAR
 * `EPICS-PVACCESS-bp15.JAR`
 * `EPICS-PVDATA-bp15.JAR`
 * Built from [EPICS Backport GitHub Repo](https://github.com/slaclab/epics-server-java-backport-1.5) on Linux.
@@ -74,20 +75,20 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
 
 ### EPICS-7 Forwarder (specially built for AIDA-PVA)
 * `EPICS_FORWARDER.JAR`
-* Built from [EPICS Backport GitHub Repo](https://github.com/slaclab/epics-server-java-backport-1.5) on Linux and copied to SLCLIBS.
+* Built from [EPICS Backport GitHub Repo](https://github.com/slaclab/epics-server-java-backport-1.5) on Linux and copied to SLCIMAGE.
 
 @see [Porting EPICS to Java 1.5](5_0_Porting_EPICS_to_Java_1_5_on_VMS.md) for instructions on how to build it.
 
 ### Channel Provider Shared Images loaded by the AIDA-PVA SERVICE
 * Shared Images (CMS Library):
-    * `AIDASLCDB.EXE` - (CMS_AIDASLCDB)
-    * `AIDASLCBPM.EXE` - (CMS_AIDASLCBPM)
-    * `AIDASLCBPMBUFF.EXE` - (CMS_AIDASLCBPMBUFF)
-    * `AIDASLCKLYS.EXE` - (CMS_AIDASLCKLYS)
-    * `AIDASLCMAGNET.EXE` - (CMS_AIDASLCMAGNET)
-    * `AIDASLCMODEL.EXE` - (CMS_AIDASLCMODEL)
-    * `AIDASLCMOSC.EXE` - (CMS_AIDASLCMOSC)
-    * `AIDASLCUTIL.EXE` - (CMS_AIDASLCUTIL)
+    * `AIDASLCDB.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCBPM.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCBPMBUFF.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCKLYS.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCMAGNET.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCMODEL.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCMOSC.EXE` - (CMS_AIDAPVA)
+    * `AIDASLCUTIL.EXE` - (CMS_AIDAPVA)
 * Built from CMS but original source code [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers)
 
 @see [Building AIDA-PVA Channel Providers](3_2_Building_AIDA_PVA_Channel_Providers.md) for instructions on how to build them.
@@ -99,6 +100,15 @@ EPICS 7 that run on VMS (specially ported for AIDA-PVA).  These Jars are not in 
     * `AIDA_PVA_TYPES_HELPER` - Functions that help AIDA-PVA Module marshal and unmarshal JNI types
     * `NATIVECHANNELPROVIDERJNI` - JNI Entry points from AIDA-PVA.JAR
     * `AIDA_PVA_JSON` - Used by AIDA-PVA Module to parse JSON
+* Provider Modules:
+    * `AIDASLCDB` - Source code for SLC Database Provider
+    * `AIDASLCBPM` - Source code for SLC BPM Provider
+    * `AIDASLCBPMBUFF` - Source code for SLC Buffered Acquisition Provider
+    * `AIDASLCKLYS` - Source code for SLC Klystron Provider
+    * `AIDASLCMAGNET` - Source code for SLC Magnet Provider
+    * `AIDASLCMODEL` - Source code for SLC Model Provider
+    * `AIDASLCMOSC` - Source code for SLC Master Oscilloscope Provider
+    * `AIDASLCUTIL` - Source code for SLC Util Provider
 * Build from CMS_AIDA_PVA but original code from [AIDA-PVA Github repo](https://github.com/slaclab/aida-pva/tree/master/src/cpp/aida-pva)
 
 ### AIDA-PVA Header Files
@@ -268,22 +278,23 @@ case_sensitive=NO
 ![Running AIDA-PVA](images/aida-pva-system-components-wa.png)
 
 ### 1 - Run the Forwarder
+* With the forwarder jar in the classpath, 
 * startup with the following command:
 ```shell
-MCCDEV> java -jar SLCLIBS:EPICS_FORWARDER.JAR
+MCCDEV> java PVAForwarder
 Nov 15, 2021 4:17:05 AM org.epics.forwarder.PVAForwarder main
 INFO: EPICS Request Forwarder started: 1530 milliseconds
 12:17 >
 13:17 > 78 requests/h
 ```
-* You can also run it using `java -jar /SLCLIBS/EPICS_FORWARDER.JAR`
+* You can also run it using `java -jar SLCIMAGE:EPICS_FORWARDER.JAR`
 @warning 
 It is imperative that the Forwarder is started before any Channel Provider service. If the Forwarder dies then all the Channel Provider services must be shutdown and only restarted after starting the Forwarder. This is because of a port contention that exists if the Forwarder finds any Channel Provider service running when it starts up.
 
 ### 2 - Run the AIDA-PVA SERVICE for each Channel Provider
 * startup with a command similar to the following:
 ```shell
-java -jar "-Daida.pva.channels.filename=/SLCTXT/AIDASLCDB_CHANNELS.YAML" "-Djava.library.path=/SLCSHR" "-Daida.pva.lib.name=AIDASLCDB" SLCLIBS:AIDA-PVA.JAR
+java "-Daida.pva.channels.filename=/SLCTXT/AIDASLCDB_CHANNELS.YAML" "-Djava.library.path=/SLCSHR" "-Daida.pva.lib.name=AIDASLCDB" AidaService
 Oct 24, 2021 12:58:50 PM edu.stanford.slac.aida.impl.AidaService <clinit>
 INFO: Loading Channel Provider Shared Library: AIDASLCDB
 
@@ -308,7 +319,7 @@ INFO: Channels hosted:
 LENS:????:*//DVIC, ...]
 ```
 
-### 3 - AIDA-PVA SERVICE is linked with EPICS BACKPORT jars prior to installing in SLCLIBS
+### 3 - AIDA-PVA SERVICE is linked with EPICS BACKPORT jars prior to installing in SLCIMAGE
 
 ### 4 -  AIDA-PVA SERVICE loads the Channel Provider
 * _Selection of Channel Provider_

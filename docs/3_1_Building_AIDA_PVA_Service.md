@@ -208,8 +208,8 @@ sftp> mput aida-pva.jar
 
 ```
 
-4. Move code to SLCLIBS
+4. Move code to SLCIMAGE
 On VMS
 ```shell
-MCCDEV> COPY AIDA-PVA.JAR SLCLIBS:AIDA-PVA.JAR
+MCCDEV> COPY AIDA-PVA.JAR SLCIMAGE:AIDA-PVA.JAR
 ```
