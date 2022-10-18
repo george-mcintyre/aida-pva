@@ -222,7 +222,7 @@ public class AidaRPCService implements RPCService {
      * @return the PVStructure returned from the native call
      * @throws UnsupportedChannelException if operation is invalid for channel
      */
-    private PVStructure callNativeChannelProvider(String channelName, AidaArguments arguments, boolean isSetterRequest, AidaType aidaType, AidaChannelOperationConfig config) throws UnsupportedChannelException {
+    private PVStructure callNativeChannelProvider(String channelName, AidaArguments arguments, boolean isSetterRequest, AidaType aidaType, AidaChannelOperationConfig config) throws UnsupportedChannelException, AidaInternalException {
         if (isSetterRequest) {  // Setter requests
             if (aidaType == VOID) { // Returning VOID
                 this.aidaChannelProvider.setValue(channelName, arguments);

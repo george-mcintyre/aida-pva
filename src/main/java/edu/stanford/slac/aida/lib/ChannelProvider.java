@@ -7,6 +7,7 @@ package edu.stanford.slac.aida.lib;
 
 import edu.stanford.slac.aida.lib.model.*;
 import edu.stanford.slac.aida.lib.util.AidaPva;
+import edu.stanford.slac.except.AidaInternalException;
 import edu.stanford.slac.except.ServerInitialisationException;
 import slac.aida.NativeChannelProvider;
 
@@ -28,7 +29,7 @@ import static edu.stanford.slac.aida.lib.util.AidaStringUtils.lessStrings;
  * Specific customisations should be coded in the {@link edu.stanford.slac.aida.impl.AidaChannelProvider}
  * class.
  *
- * @note  This facility if subclassing ChannelProvider will be deprecated
+ * @note This facility if subclassing ChannelProvider will be deprecated
  *
  * <p>
  * This class automatically calls the initialisation of the underlying Channel Provider
@@ -118,54 +119,88 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param aidaType    the scalar type underpinning this scalar array
      * @return List of scalar object
      */
-    public List<?> requestScalarArray(String channelName, AidaArguments arguments, AidaType aidaType) {
+    public List<?> requestScalarArray(String channelName, AidaArguments arguments, AidaType aidaType) throws AidaInternalException {
         switch (aidaType) {
             case BOOLEAN_ARRAY:
                 List<Boolean> tList = new ArrayList<Boolean>();
-                for (Boolean b : aidaRequestBooleanArray(channelName, arguments)) {
-                    tList.add(b);
+                boolean[] tArray = aidaRequestBooleanArray(channelName, arguments);
+                if (tArray != null) {
+                    for (Boolean t : tArray) {
+                        tList.add(t);
+                    }
+                    return tList;
                 }
-                return tList;
+                break;
             case BYTE_ARRAY:
                 List<Byte> bList = new ArrayList<Byte>();
-                for (Byte b : aidaRequestByteArray(channelName, arguments)) {
-                    bList.add(b);
+                byte[] bArray = aidaRequestByteArray(channelName, arguments);
+                if (bArray != null) {
+                    for (Byte b : bArray) {
+                        bList.add(b);
+                    }
+                    return bList;
                 }
-                return bList;
+                break;
             case SHORT_ARRAY:
                 List<Short> sList = new ArrayList<Short>();
-                for (Short s : aidaRequestShortArray(channelName, arguments)) {
-                    sList.add(s);
+                short[] sArray = aidaRequestShortArray(channelName, arguments);
+                if (sArray != null) {
+                    for (Short s : sArray) {
+                        sList.add(s);
+                    }
+                    return sList;
                 }
-                return sList;
+                break;
             case INTEGER_ARRAY:
                 List<Integer> iList = new ArrayList<Integer>();
-                for (Integer i : aidaRequestIntegerArray(channelName, arguments)) {
-                    iList.add(i);
+                int[] iArray = aidaRequestIntegerArray(channelName, arguments);
+                if (iArray != null) {
+                    for (Integer i : iArray) {
+                        iList.add(i);
+                    }
+                    return iList;
                 }
-                return iList;
+                break;
             case LONG_ARRAY:
                 List<Long> lList = new ArrayList<Long>();
-                for (Long l : aidaRequestLongArray(channelName, arguments)) {
-                    lList.add(l);
+                long[] lArray = aidaRequestLongArray(channelName, arguments);
+                if (lArray != null) {
+                    for (Long l : lArray) {
+                        lList.add(l);
+                    }
+                    return lList;
                 }
-                return lList;
+                break;
             case FLOAT_ARRAY:
                 List<Float> fList = new ArrayList<Float>();
-                for (Float f : aidaRequestFloatArray(channelName, arguments)) {
-                    fList.add(f);
+                float[] fArray = aidaRequestFloatArray(channelName, arguments);
+                if (fArray != null) {
+                    for (Float f : fArray) {
+                        fList.add(f);
+                    }
+                    return fList;
                 }
-                return fList;
+                break;
             case DOUBLE_ARRAY:
                 List<Double> dList = new ArrayList<Double>();
-                for (Double d : aidaRequestDoubleArray(channelName, arguments)) {
-                    dList.add(d);
+                double[] dArray = aidaRequestDoubleArray(channelName, arguments);
+                if (dArray != null) {
+                    for (Double d : dArray) {
+                        dList.add(d);
+                    }
+                    return dList;
                 }
-                return dList;
+                break;
             case STRING_ARRAY:
-                return Arrays.asList(aidaRequestStringArray(channelName, arguments));
+                String[] stringArray = aidaRequestStringArray(channelName, arguments);
+                if (stringArray != null) {
+                    return Arrays.asList(stringArray);
+                }
+                break;
         }
-        return null;
+        // Should never get here - empty arrays should be handled above and all null responses should already be handled as exceptions
+        logger.warning("Received null result when expecting an array");
+        throw new AidaInternalException("Received null result when expecting an array");
     }
 
     /**
@@ -175,8 +210,13 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   arguments
      * @return return list of lists
      */
-    public List<List<Object>> requestTable(String channelName, AidaArguments arguments) {
-        return aidaRequestTable(channelName, arguments).asList();
+    public List<List<Object>> requestTable(String channelName, AidaArguments arguments) throws AidaInternalException {
+        AidaTable table = aidaRequestTable(channelName, arguments);
+        if ( table == null ) {
+            logger.warning("Received null result when requesting a table");
+            throw new AidaInternalException("Received null result when requesting a table");
+        }
+        return table.asList();
     }
 
     /**
@@ -198,8 +238,13 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
      * @return return list of lists
      */
-    public List<List<Object>> setValueWithResponse(String channelName, AidaArguments arguments) {
-        return aidaSetValueWithResponse(channelName, arguments).asList();
+    public List<List<Object>> setValueWithResponse(String channelName, AidaArguments arguments) throws AidaInternalException {
+        AidaTable table = aidaSetValueWithResponse(channelName, arguments);
+        if ( table == null ) {
+            logger.warning("Received null result when expecting a table");
+            throw new AidaInternalException("Received null result when expecting a table");
+        }
+        return table.asList();
     }
 
     /**
