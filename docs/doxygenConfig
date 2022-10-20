@@ -1025,6 +1025,8 @@ RECURSIVE              = YES
 #
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
+crrutil/wsopt_wire_transform_chisq.for...
+Generating code for file root/cpp/fbckutil
 
 EXCLUDE                = root/cpp/aida-pva/aida_pva_json.c \
                          root/cpp/aida-pva/NativeChannelProviderJni.c \
@@ -1032,6 +1034,8 @@ EXCLUDE                = root/cpp/aida-pva/aida_pva_json.c \
                          root/cpp/include/aida-pva/json.h \
                          root/cpp/include/aida-pva/slac_aida_NativeChannelProvider.h \
                          root/cpp/slac_aida_NativeChannelProvider.h \
+                         root/cpp/crrutil \
+                         root/cpp/fbckutil \
                          root/cpp/providers/DPSLC_JNI_HELPER.C \
                          root/cpp/providers/DPSLCBUFF.H \
                          root/cpp/providers/DPSLCBUFF_JNI_HELPER.C \

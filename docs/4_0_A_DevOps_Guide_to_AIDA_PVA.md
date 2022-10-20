@@ -55,9 +55,6 @@ AIDA-PVA is made up of the following components:
 
 ![AIDA-PVA Files](images/aida-pva-files.png)
 
-@note 
-The Model and Master Oscillator Channel Providers have been mostly implemented but have not been deployed.  The code is only in the github repository.  [AIDASLCMOSC code](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers/SLCMosc), [AIDASLCMODEL code](https://github.com/slaclab/aida-pva/tree/master/src/cpp/providers/SLCModel).  Documentation: [MOSC](1_07_Users_Guide_SLC_Master_Oscillator_Channel_Provider.md), Tests: [MOSC](https://www.slac.stanford.edu/grp/cd/soft/aida/aida-pva/classedu_1_1stanford_1_1slac_1_1aida_1_1test_1_1_slc_mosc_test.html) 
-
 ### AIDA-PVA SERVICE (AIDA-PVA.JAR)
 * launches the Channel Provider Shared Images integrating them into the EPICS PV-Access network
 * Built from [AIDA-PVA Github Repo](https://github.com/slaclab/aida-pva) on Linux and copied to SLCIMAGE.

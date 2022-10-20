@@ -351,8 +351,6 @@ Here is the documentation for all the implemented AIDA-PVA channel providers.
 - [SLC Buffered Acquisition Channel Provider](1_04_Users_Guide_SLC_Buffered_Acquisition_Channel_Provider.md)
 - [SLC Klystron Channel Provider](1_05_Users_Guide_SLC_Klystron_Channel_Provider.md)
 - [SLC Magnet Channel Provider](1_06_Users_Guide_SLC_Magnet_Channel_Provider.md)
-- [SLC Master Oscillator Channel Provider](1_07_Users_Guide_SLC_Master_Oscillator_Channel_Provider.md)
-- [SLC Utilities Channel Provider](1_08_Users_Guide_SLC_Utility_Channel_Provider.md)
-- [Reference Data Provider for testing](1_09_Users_Guide_Reference_Channel_Provider.md)
+- [SLC Utilities Channel Provider](1_07_Users_Guide_SLC_Utility_Channel_Provider.md)
 
 
