@@ -305,7 +305,7 @@ pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=STRING
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP TYPE=TABLE
 ``` 
 
-``` shell
+```shell
 pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:LI31:32"]'
 "Device Name" "Operation Status" "Klystron Status" Accellerate Standby   Bad "Sled Tuned" Sleded Pampl pphas
  KLYS:LI31:31               true                18       false    true false        false   true false false
@@ -313,25 +313,11 @@ pvcall "KLYSTRONGET:TACT" BEAM=8 DGRP=DEV_DGRP DEVICES='["KLYS:LI31:31", "KLYS:L
 ```
 
 ```shell
-pvcall "KLYSTRONGET:SCAN" FILE='TEST.BTN'
-"step"       "pdes"        "BPM Name" "x offset (mm)" "y offset (mm)" "num particles (coulomb)"
-     1  -0.9996438     BPMS:LI11:501      0.45966175      0.81614506                   1.0E-10
-     1  -0.9996438     BPMS:LI11:502      -0.9996438      -0.9657358                   1.0E-10
-     2  -0.9996439     BPMS:LI11:501     -0.28856283      0.69943863                   1.0E-10
-     2  -0.9996439     BPMS:LI11:502      -0.9565048     -0.91913205                   1.0E-10
-     3  -0.9996440     BPMS:LI11:501       0.5896404     -0.47585112                   1.0E-10
-     3  -0.9996440     BPMS:LI11:502      0.45966175      0.81614506                   1.0E-10
-     4  -0.9996441     BPMS:LI11:501      -0.9996438      -0.9657358                   1.0E-10
-     4  -0.9996441     BPMS:LI11:502     -0.28856283      0.69943863                   1.0E-10
-     5  -0.9996442     BPMS:LI11:501      -0.9565048     -0.91913205                   1.0E-10
-     5  -0.9996442     BPMS:LI11:502       0.5896404     -0.47585112                   1.0E-10
-```
-
-```shell
 pvcall "KLYS:LI31:31:TACT" BEAM=8 DGRP=DEV_DGRP VALUE=0
 pvcall "KLYS:LI31:31:PDES" VALUE=90.0
 pvcall "KLYS:LI31:31:KPHR" VALUE=60.0
 pvcall "KLYS:LI31:31:PCON" VALUE=5.0
+pvcall "KLYS:LI31:31:ACON" VALUE=5.0
 ```
 
 ```shell
@@ -355,7 +341,6 @@ eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a TYPE 'TABLE'
 
 ```shell
 eget -s KLYSTRONGET:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a DEVICES '["KLYS:LI31:31", "KLYS:LI31:32"]'
-eget -s KLYSTRONGET:SCAN -a FILE 'TEST.BTN'
 ```
 
 ```shell
@@ -363,6 +348,7 @@ eget -s KLYS:LI31:31:TACT -a BEAM 8 -a DGRP 'DEV_DGRP' -a VALUE 0
 eget -s KLYS:LI31:31:PDES -a VALUE 90.0
 eget -s KLYS:LI31:31:KPHR -a VALUE 60.0
 eget -s KLYS:LI31:31:PCON -a VALUE 5.0
+eget -s KLYS:LI31:31:ACON -a VALUE 5.0
 ```
 
 ```shell
@@ -456,51 +442,6 @@ ans =
       pphas: [0 0]
 ```
 
-```matlab
-try
-    builder = pvaRequest('KLYSTRONGET:SCAN');
-    builder.with('FILE', 'TEST.BTN');
-    tableResponse = ML(builder.get())
-catch e
-    handleExceptions(e);
-end
-
-"primary step" "secondary step"    "BPM Name" "pulse id" "x offset (mm)" "y offset (mm)" "num particles (coulomb)" "stat" "good measurement" "phase"
-    -0.9996438              0.0 BPMS:LI11:501      71311      0.45966175      0.81614506                   1.0E-10      1                 15    0.38
-
-tableResponse =
-            size: 2
-          labels: {'primary step' 'secondary step'    'BPM Name' 'pulse id' 'x offset ()' 'y offset (mm)' 'num particles (coulomb)' 'stat' 'good measurement' 'phase'}
-           units: []
-    descriptions: []
-      fieldnames: {'primary_step'  'secondary_step'  'name'  'pulseId'  'x'  'y'  'tmits'  'stat'  'goodmeas'  'phas'}
-          values: [320x1 struct]
-
-tableResponse.values.status(1)
-ans =
-   320
-
-tableResponse.values.primary_step(1)
-ans =
-     -0.9996438
-
-tableResponse.values.name(1)
-ans =
-    'BPMS:LI11:501'
-
-tableResponse.values
-ans =
-         primary_step: {-0.9996438 -0.9996439 ...}
-       secondary_step: {0.0 0.0  ...}
-                 name: {'BPMS:LI11:501' 'BPMS:LI11:501'  ...}
-              pulseId: [71311 71311 ...]
-                    x: [0.45966175 -0.9996438 ...]
-                    y: [0.81614506 -0.9657358 ...]
-                tmits: [1.0E-10 1.0E-10 ...]
-                 stat: [1 1 ...]
-             goodmeas: [15 15 ...]
-                 phas: [0.38 0.21 ...]
-```
 
 </td>
 </tr>
