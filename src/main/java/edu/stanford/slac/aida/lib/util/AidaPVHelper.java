@@ -380,11 +380,13 @@ public class AidaPVHelper {
      * - Integer, Long, Float,
      * - Double or String
      *
-     * @param values            the list of values
+     * @param table             the table
      * @param aidaChannelConfig the configuration
      * @return the returned PVStructure containing the NT_TABLE
      */
-    public static PVStructure asNtTable(List<List<Object>> values, AidaChannelOperationConfig aidaChannelConfig) {
+    public static PVStructure asNtTable(AidaTable table, AidaChannelOperationConfig aidaChannelConfig) {
+        List<List<Object>> values = table.asList();
+
         // If there is nothing to add or that the list is empty or if the columns are empty return an empty
         //  PVStructure
         if (values == null || values.isEmpty() || values.get(0).isEmpty()) {
@@ -403,8 +405,8 @@ public class AidaPVHelper {
         // Channel Configuration File loaded when the service initialises.
         // We need to retrieve these configured values from the given configuration associated with the
         // request we're processing
-        List<String> fieldNames = new ArrayList<String>();
-        List<String> labels = new ArrayList<String>();
+        List<String> fieldNames = table.getFields();
+        List<String> labels = table.getLabels();
         List<AidaType> aidaTypes = new ArrayList<AidaType>();
         // We need to create a set of fields that we will fill with these values
         List<Field> pvFields = new ArrayList<Field>();
@@ -454,13 +456,16 @@ public class AidaPVHelper {
      * @param fieldsToPopulate      the fields to populate - provide an empty list
      * @param channelConfig         the config
      * @param values                the supplied values
-     * @param fieldNamesToPopulate  the field names to populate - provide an empty list
-     * @param fieldLabelsToPopulate the labels to populate - provide an empty list
+     * @param fieldNamesToPopulate  the field names to populate - provide an empty list if you want to generate field names
+     * @param fieldLabelsToPopulate the labels to populate - provide an empty list if you want to generate labels
      * @param fieldTypesToPopulate  the types to populate - provide an empty list
      */
     private static void setFieldsWithNamesLabelsAndTypesFromConfig(
             List<Field> fieldsToPopulate, AidaChannelOperationConfig channelConfig, List<List<Object>> values,
             List<String> fieldNamesToPopulate, List<String> fieldLabelsToPopulate, List<AidaType> fieldTypesToPopulate) {
+
+        boolean addFieldsFromConfig = fieldNamesToPopulate.isEmpty();
+        boolean addLabelsFromConfig = fieldLabelsToPopulate.isEmpty();
 
         // Loop over values and fields simultaneously
         Iterator<AidaField> fieldIterator = channelConfig.getFields().listIterator();
@@ -468,18 +473,28 @@ public class AidaPVHelper {
             AidaType aidaType = aidaTypeOf(column);
             ScalarType scalarType = scalarTypeOf(aidaType);
             fieldsToPopulate.add(FieldFactory.getFieldCreate().createScalarArray(scalarType));
-
-            if (!fieldIterator.hasNext()) {
-                break;
-            }
-            AidaField fieldConfig = fieldIterator.next();
-
-            // Get type, field name and label
-            // TODO description and units
             fieldTypesToPopulate.add(aidaType);
-            fieldNamesToPopulate.add(fieldConfig.getName());
-            String units = fieldConfig.getUnits();
-            fieldLabelsToPopulate.add(fieldConfig.getLabel() + ((units == null || units.length() == 0) ? "" : " (" + units + ")"));
+
+            // If the provider has not overridden the fields or labels then load from config
+            if (addFieldsFromConfig || addLabelsFromConfig) {
+                if (!fieldIterator.hasNext()) {
+                    break;
+                }
+                AidaField fieldConfig = fieldIterator.next();
+
+                // If the provider has not overridden the fields then load them from config
+                if (addFieldsFromConfig) {
+                    // Add field name from config
+                    fieldNamesToPopulate.add(fieldConfig.getName());
+                }
+
+                // If the provider has not overridden the labels then load them from config
+                if (addLabelsFromConfig) {
+                    // Add label name from config
+                    String units = fieldConfig.getUnits();
+                    fieldLabelsToPopulate.add(fieldConfig.getLabel() + ((units == null || units.length() == 0) ? "" : " (" + units + ")"));
+                }
+            }
         }
     }
 

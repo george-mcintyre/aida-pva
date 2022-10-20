@@ -208,15 +208,15 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *
      * @param channelName channel name
      * @param arguments   arguments
-     * @return return list of lists
+     * @return return AidaTable
      */
-    public List<List<Object>> requestTable(String channelName, AidaArguments arguments) throws AidaInternalException {
+    public AidaTable requestTable(String channelName, AidaArguments arguments) throws AidaInternalException {
         AidaTable table = aidaRequestTable(channelName, arguments);
         if ( table == null ) {
             logger.warning("Received null result when requesting a table");
             throw new AidaInternalException("Received null result when requesting a table");
         }
-        return table.asList();
+        return table;
     }
 
     /**
@@ -236,15 +236,15 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param channelName channel name
      * @param arguments   arguments
      *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
-     * @return return list of lists
+     * @return return AidaTable
      */
-    public List<List<Object>> setValueWithResponse(String channelName, AidaArguments arguments) throws AidaInternalException {
+    public AidaTable setValueWithResponse(String channelName, AidaArguments arguments) throws AidaInternalException {
         AidaTable table = aidaSetValueWithResponse(channelName, arguments);
         if ( table == null ) {
             logger.warning("Received null result when expecting a table");
             throw new AidaInternalException("Received null result when expecting a table");
         }
-        return table.asList();
+        return table;
     }
 
     /**

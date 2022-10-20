@@ -4,6 +4,7 @@
  */
 package edu.stanford.slac.aida.lib.model;
 
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ import java.util.List;
  * It is the class that is returned from the Native Providers for requests that return a TABLE.
  * <p>
  * It contains a single property AidaTable::getData() that stores a List of column Lists.
- * @note
- * Note that it uses the `lombok.ToString` annotation to provide the toString() method.
+ *
+ * @note Note that it uses the `lombok.ToString` annotation to provide the toString() method.
  */
 @ToString
 public class AidaTable {
@@ -29,17 +30,30 @@ public class AidaTable {
     private final List<List<Object>> data = new ArrayList<List<Object>>();
 
     /**
+     * The property that is used by providers to override the labels for this table.
+     * If this is set then these are used instead of the configured labels
+     */
+    @Getter
+    private final List<String> labels = new ArrayList<String>();
+
+    /**
+     * The property that is used by providers to override the field names for this table.
+     * If this is set then these are used instead of the configured field names
+     */
+    @Getter
+    private final List<String> fields = new ArrayList<String>();
+
+    /**
      * Add an element to the specified column in this AidaTable::getData().
      * <p>
      * Each new column is added by successive calls to AidaTable::add(int, Object)
      * and so the columnId specified will either have to be inserted, or added at the end.
      * <p>
-     * @warning
-     * This is called by the Channel Provider code in C so be careful when refactoring the signature or name.
      *
      * @param columnId the number representing the number of the column to add to
      * @param object   the object to add to that column
      * @return true if added correctly
+     * @warning This is called by the Channel Provider code in C so be careful when refactoring the signature or name.
      */
     public boolean add(int columnId, Object object) {
         // Only allow this to be run by one thread at a time
@@ -73,6 +87,30 @@ public class AidaTable {
             // Add the column of data to the correct column
             return column.add(object);
         }
+    }
+
+    /**
+     * Add a field to this table to override the configured fields.  It is
+     * the responsibility of the caller to add fields in column order
+     *
+     * @param field field to add
+     * @return true if added
+     * @warning This is called by the Channel Provider code in C so be careful when refactoring the signature or name.
+     */
+    public boolean addField(String field) {
+        return fields.add(field);
+    }
+
+    /**
+     * Add a label to this table to override the configured labels.  It is
+     * the responsibility of the caller to add labels in column order
+     *
+     * @param label label to add
+     * @return true if added
+     * @warning This is called by the Channel Provider code in C so be careful when refactoring the signature or name.
+     */
+    public boolean addLabel(String label) {
+        return labels.add(label);
     }
 
     /**
