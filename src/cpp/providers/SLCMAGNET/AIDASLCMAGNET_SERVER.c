@@ -439,15 +439,22 @@ getMagnetArguments(JNIEnv* env, const char* uri, Arguments arguments, Value valu
 	*magFunc = NULL;
 	*limitCheck = NULL;
 
+	TRACK_ALLOCATED_MEMORY
 	if (getBaseMagnetArguments(env, uri, arguments, value, count, prim_list, micr_list, unit_list, secn, set_values,
 			name_validity)) {
 		return EXIT_FAILURE;
 	}
+	TRACK_MEMORY(prim_list)
+	TRACK_MEMORY(micr_list)
+	TRACK_MEMORY(unit_list)
+	TRACK_MEMORY(set_values)
+	TRACK_MEMORY(name_validity)
 
 	if (ascanf(env, &arguments, "%s %os",
 			"magfunc", magFunc,
 			"limitcheck", limitCheck
 	)) {
+		FREE_MEMORY
 		return EXIT_FAILURE;
 	}
 
