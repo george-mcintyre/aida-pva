@@ -1,0 +1,268 @@
+!
+! **CMS**=SLCSHR_CONTROL
+!
+!
+! Name:  SLCSHR_CONTROL:CRRUTIL_XFR_ALPHA.OPT
+!
+! Abs:   Transfer-vector option file for Alpha link of CRRUTIL shareable image.
+!
+! ---------------------------------------------------------------------
+!
+symbol_vector = ( -
+     CRR_INIT                         = PROCEDURE -
+    ,CRR_ACQ_OK                       = PROCEDURE -
+    ,CRR_DATA_ACQ                     = PROCEDURE -
+    ,CRR_ETA_ACQ                      = PROCEDURE -
+    ,CRR_ETA_ANALYZE                  = PROCEDURE -
+    ,CRR_ETA_SETUP                    = PROCEDURE -
+    ,CRR_SAMPLES                      = PROCEDURE -
+    ,CRR_PUT_SAMPLES                  = PROCEDURE -
+    ,CRR_DEFINE_VAR                   = PROCEDURE -
+    ,CRR_GET_VAR                      = PROCEDURE -
+    ,CRR_RESET_VAR                    = PROCEDURE -
+    ,CRR_PUT_VAR                      = PROCEDURE -
+    ,CRR_PUT_VAR_PT                   = PROCEDURE -
+    ,CRR_GET_VAR_DEF                  = PROCEDURE -
+    ,CRR_GET_VAR_NAME                 = PROCEDURE -
+    ,CRR_PUT_ERR                      = PROCEDURE -
+    ,CRR_GET_ERR                      = PROCEDURE -
+    ,CRR_GET_RANGE                    = PROCEDURE -
+    ,CRR_GET_FIT                      = PROCEDURE -
+    ,CRR_GET_NVAR                     = PROCEDURE -
+    ,CRR_GET_STEP                     = PROCEDURE -
+    ,CRR_GET_SAMP_PARMS               = PROCEDURE -
+    ,CRR_GET_FIT_SETUP                = PROCEDURE -
+    ,CRR_SINE_FUNC                    = PROCEDURE -
+    ,CRR_FIT                          = PROCEDURE -
+    ,CRR_ROBUST_FIT                   = PROCEDURE -
+    ,CRR_PREP_USER_FIT                = PROCEDURE -
+    ,CRR_SEV_PLOT                     = PROCEDURE -
+    ,CRR_FILTER_RANGE                 = PROCEDURE -
+    ,CRR_FILTER_RESET                 = PROCEDURE -
+    ,CRR_FILTER_LIST                  = PROCEDURE -
+    ,CRR_GET_SV                       = PROCEDURE -
+    ,CRR_SET_APP                      = PROCEDURE -
+    ,CRR_SET_NVAR                     = PROCEDURE -
+    ,CRR_SET_STEP                     = PROCEDURE -
+    ,CRR_SET_FIT                      = PROCEDURE -
+    ,CRR_SET_SAMP_PARMS               = PROCEDURE -
+    ,CRR_SET_VAR_NAME                 = PROCEDURE -
+    ,CRR_PUT_TIMESTAMP                = PROCEDURE -
+    ,CRR_ENTER_STEP_RANGE             = PROCEDURE -
+    ,CRRSWITCH_OUTPUT                 = PROCEDURE -
+    ,CRR_SELECT_PLOT                  = PROCEDURE -
+    ,CRRPLOT                          = PROCEDURE -
+    ,CRR_SET_PLOT_TYPE                = PROCEDURE -
+    ,CRR_ERROR_CHARS                  = PROCEDURE -
+    ,CRR_MANUAL                       = PROCEDURE -
+    ,CRR_GET_PLOT                     = PROCEDURE -
+    ,CRR_GET_PLOT_TYPE                = PROCEDURE -
+    ,MKBDRVR                          = PROCEDURE -
+    ,MKB_CRRDRVR                      = PROCEDURE -
+    ,MKB_INITIALISE                   = PROCEDURE -
+    ,MKB_KNOBRESET                    = PROCEDURE -
+    ,MKBHST_GET_KNOBDEF               = PROCEDURE -
+    ,MKB_ENTER_VALUE                  = PROCEDURE -
+    ,MKB_DEVICE_LIST                  = PROCEDURE -
+    ,MKB_CHECK_FILE                   = PROCEDURE -
+    ,MKB_OPEN_USERFILE                = PROCEDURE -
+    ,MKB_CLOSE_USERFILE               = PROCEDURE -
+    ,MKB_WRITE_KNOBPARMS              = PROCEDURE -
+    ,MKB_WRITE_KNOBDEV                = PROCEDURE -
+    ,MKB_SET_KNOBFILE                 = PROCEDURE -
+    ,MKB_GET_CURR_FILENAME            = PROCEDURE -
+    ,MKB_WRITE_KNOBTYPE               = PROCEDURE -
+    ,CRR_SCALE                        = PROCEDURE -
+    ,WSOPT_EMIT_SETUP                 = PROCEDURE -
+    ,WSOPT_EMIT_CALC                  = PROCEDURE -
+    ,WSOPT_SKEW_CALC                  = PROCEDURE -
+    ,WSOPT_ESPD_SETUP                 = PROCEDURE -
+    ,WSOPT_ESPD_CALC                  = PROCEDURE -
+    ,WSOPT_EMIT_CALC_TYPE             = PROCEDURE -
+    ,WSOPT_EMIT_SCAN_TYPE             = PROCEDURE -
+    ,WSOPT_ETA_CALC                   = PROCEDURE -
+    ,WSOPT_ETA_SETUP                  = PROCEDURE -
+    ,WSOPT_EMIT_TWOBEAM_CALC          = PROCEDURE -
+    ,WSOPT_SKEW_TWOBEAM_CALC          = PROCEDURE -
+    ,FF_DO_SCAN                       = PROCEDURE -
+    ,FF_BB_FILTER                     = PROCEDURE -
+    ,WSOPT_EMIT_TIME_CHECK            = PROCEDURE -
+    ,WS_ORSAY_BSM                     = PROCEDURE -
+    ,FF_ZERO_DITHERS                  = PROCEDURE -
+    ,CRR_STEP_INFO                    = PROCEDURE -
+    ,CRR_FORMAT_VAL                   = PROCEDURE -
+    ,CRR_FIND_STAT                    = PROCEDURE -
+    ,CRR_FIND_COLOR                   = PROCEDURE -
+    ,CRR_INPUT_BUT                    = PROCEDURE -
+    ,CRR_SHOW_BUT                     = PROCEDURE -
+    ,CRR_SHOW_RANGE                   = PROCEDURE -
+    ,CRR_RESET_ALL                    = PROCEDURE -
+    ,CRR_GET_MKBFILE                  = PROCEDURE -
+    ,CRR_SET_MKBFILE                  = PROCEDURE -
+    ,CRR_GET_CONFIG_NR                = PROCEDURE -
+    ,CRR_FILE_ALIAS                   = PROCEDURE -
+    ,CRR_ALL_TO_FILE                  = PROCEDURE -
+    ,CRR_BEST_VALUE                   = PROCEDURE -
+    ,CRR_TRIM_STV                     = PROCEDURE -
+    ,CRR_BSCN_DISP                    = PROCEDURE -
+    ,AP_VALIDMICR                     = PROCEDURE -
+    ,AP_VALIDUNIT                     = PROCEDURE -
+    ,AP_DEV_TO_STR                    = PROCEDURE -
+    ,AP_DEV_TO_BUT                    = PROCEDURE -
+    ,AP_GET_ALIAS                     = PROCEDURE -
+    ,AP_SHOW_DB                       = PROCEDURE -
+    ,AP_SHOW_FDBK                     = PROCEDURE -
+    ,AP_VALID_FDBK_LOOP               = PROCEDURE -
+    ,AP_PHYS_DELTA_ENERGY             = PROCEDURE -
+    ,AP_PHYS_ENERGY_INIT              = PROCEDURE -
+    ,AP_SHOW_FBCK                     = PROCEDURE -
+    ,AP_VALID_FBCK_LOOP               = PROCEDURE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,CAU_PVNAMETOSLCNAME              = PROCEDURE -
+    ,CRR_RELOAD                       = PROCEDURE -
+    ,SPARE -
+    ,PR02_INIT_RESTORE                = PROCEDURE -
+    ,PEP_BSCN_GET_MEASDEFS            = PROCEDURE -
+    ,PEP_BSCN_TOGGLE_MEASDEFS         = PROCEDURE -
+    ,PEP_BSCN_WHICH_LUM               = PROCEDURE -
+    ,PEP_BSCN_WHICH_STP               = PROCEDURE -
+    ,PEP_BSCN_WHICH_TIME_RANGE        = PROCEDURE -
+    ,PEP_DBPUT_BEAM_MOTION            = PROCEDURE -
+    ,MKBTUN_PARSE_MKBFILES            = PROCEDURE -
+    ,MKBTUN_ENTER_VALUE               = PROCEDURE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+    ,SPARE -
+                )
