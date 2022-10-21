@@ -120,7 +120,7 @@ char global_micro[5] = "    ";
 char global_unit[5] = "    ";
 
 
-void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
+void JNI_ERR_KLYSTRANSLATE(const unsigned long int* errcode_p,
 		struct dsc$descriptor* msgdsc_ps);
 
 /*
@@ -903,7 +903,7 @@ egress:
 
 ==============================================================================*/
 
-int DPSLCKLYS_SETVALUES(int count, char *prim_list, char *micr_list, int *unit_list, int4u secn, float *set_values)
+int DPSLCKLYS_SETVALUES(int count, char* prim_list, char* micr_list, int* unit_list, int4u secn, float* set_values)
 {
 	vmsstat_t status;
 	int i;
@@ -1114,7 +1114,7 @@ void DPSLCKLYS_SETNAMESVALIDATE(int num_names, char* prim_list, char* micr_list,
 	}
 }
 
-void JNI_ERR_KLYSTRANSLATE (const unsigned long int* errcode_p,
+void JNI_ERR_KLYSTRANSLATE(const unsigned long int* errcode_p,
 		struct dsc$descriptor* msgdsc_ps)
 {
 	char* msg_p;
