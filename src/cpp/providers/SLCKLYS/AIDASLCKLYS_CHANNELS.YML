@@ -37,36 +37,6 @@ id: 162
 name: SLCKlys
 description: Klystron Server
 configurations:
-  - name: TACT Multi-PV Getter
-    getterConfig:
-      type: TABLE
-      arguments:
-        - BEAM
-        - DGRP
-        - DEVICES
-      fields:
-        - label: Device Name
-          name: name
-        - label: Operation Status
-          name: opstat
-        - label: Klystron Status
-          name: status
-        - label: Accellerate
-          name: accel
-        - label: Standby
-          name: standby
-        - label: Bad
-          name: bad
-        - label: Sled Tuned
-          name: sled
-        - label: Sleded
-          name: sleded
-        - label: Pampl
-          name: pampl
-        - label: pphas
-          name: pphas
-    channels:
-      - KLYSTRONGET:TACT
   - name: TACT Getter and Setter
     getterConfig:
       type: SCALAR
@@ -1182,6 +1152,36 @@ configurations:
       - SBST:LI31:1:PCON
       - SBST:LI32:1:PCON
       - SBST:RF00:1:PCON
+  - name: TACT Multi-PV Getter
+    getterConfig:
+      type: TABLE
+      arguments:
+        - BEAM
+        - DGRP
+        - DEVICES
+      fields:
+        - label: Device Name
+          name: name
+        - label: Operation Status
+          name: opstat
+        - label: Klystron Status
+          name: status
+        - label: Accellerate
+          name: accel
+        - label: Standby
+          name: standby
+        - label: Bad
+          name: bad
+        - label: Sled Tuned
+          name: sled
+        - label: Sleded
+          name: sleded
+        - label: Pampl
+          name: pampl
+        - label: pphas
+          name: pphas
+    channels:
+      - KLYSTRONGET:TACT
   - name: Subbooster secondary Multi-Setter
     getterConfig:
       type: NONE

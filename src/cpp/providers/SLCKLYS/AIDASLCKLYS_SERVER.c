@@ -162,87 +162,87 @@ char* aidaRequestString(JNIEnv* env, const char* uri, Arguments arguments)
  */
 Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 {
-	TRACK_ALLOCATED_MEMORY
+    TRACK_ALLOCATED_MEMORY
 
-	// Blank table
-	Table table;
-	table.columnCount = 0;
+    // Blank table
+    Table table;
+    table.columnCount = 0;
 
-	// Query parameters
-	char** devices;
-	int nDevices;
-	char* beam_c;
-	char* dgrp_c;
+    // Query parameters
+    char** devices;
+    int nDevices;
+    char* beam_c;
+    char* dgrp_c;
 
-	// Get the list of klystron devices to query
-	if (getDeviceList(env, uri, arguments, &devices, &nDevices)) {
-		return table;
-	}
-	TRACK_MEMORY(devices)
+    // Get the list of klystron devices to query
+    if (getDeviceList(env, uri, arguments, &devices, &nDevices)) {
+        return table;
+    }
+    TRACK_MEMORY(devices)
 
-	// Get the standard arguments
-	if (getStandardArgs(env, arguments, &beam_c, &dgrp_c)) {
-		ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
-	}
-	TRACK_MEMORY(beam_c)
-	TRACK_MEMORY(dgrp_c)
+    // Get the standard arguments
+    if (getStandardArgs(env, arguments, &beam_c, &dgrp_c)) {
+        ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
+    }
+    TRACK_MEMORY(beam_c)
+    TRACK_MEMORY(dgrp_c)
 
-	// Query results variables
-	short status[nDevices];
-	bool isSuccessFull[nDevices];
-	bool isInAccelerateState[nDevices];
-	bool isInStandByState[nDevices];
-	bool isInBadState[nDevices];
-	bool isSledTuned[nDevices];
-	bool isSleded[nDevices];
-	bool isPampl[nDevices];
-	bool isPphas[nDevices];
+    // Query results variables
+    short status[nDevices];
+    bool isSuccessFull[nDevices];
+    bool isInAccelerateState[nDevices];
+    bool isInStandByState[nDevices];
+    bool isInBadState[nDevices];
+    bool isSledTuned[nDevices];
+    bool isSleded[nDevices];
+    bool isPampl[nDevices];
+    bool isPphas[nDevices];
 
-	// Get the status for each klystron into the query results variables
-	if (getKlystronStatuses(env, devices, nDevices, beam_c, dgrp_c,
-			status, isSuccessFull, isInAccelerateState,
-			isInStandByState, isInBadState, isSledTuned, isSleded, isPampl, isPphas)) {
-		// Queries have failed for all klystron devices so raise an error
-		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to get any Klystron Device Statuses");
-		FREE_MEMORY
-		return table;
-	}
+    // Get the status for each klystron into the query results variables
+    if (getKlystronStatuses(env, devices, nDevices, beam_c, dgrp_c,
+            status, isSuccessFull, isInAccelerateState,
+            isInStandByState, isInBadState, isSledTuned, isSleded, isPampl, isPphas)) {
+        // Queries have failed for all klystron devices so raise an error
+        aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Failed to get any Klystron Device Statuses");
+        FREE_MEMORY
+        return table;
+    }
 
-	// Free up standard args (don't need them anymore)
-	FREE_TRACKED_MEMORY(beam_c);
-	FREE_TRACKED_MEMORY(dgrp_c);
+    // Free up standard args (don't need them anymore)
+    FREE_TRACKED_MEMORY(beam_c);
+    FREE_TRACKED_MEMORY(dgrp_c);
 
-	// Allocate a table of 10 columns
-	table = tableCreate(env, nDevices, 10);
-	ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
+    // Allocate a table of 10 columns
+    table = tableCreate(env, nDevices, 10);
+    ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
 
-	// Add the klystron names as the first column
-	tableAddStringColumn(env, &table, devices);
-	ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
+    // Add the klystron names as the first column
+    tableAddStringColumn(env, &table, devices);
+    ON_EXCEPTION_FREE_MEMORY_AND_RETURN_(table)
 
-	// Free all allocated memory
-	FREE_MEMORY
+    // Free all allocated memory
+    FREE_MEMORY
 
-	// Add remaining columns to table
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isSuccessFull, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_SHORT_TYPE, &status, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isInAccelerateState, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, isInStandByState, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isInBadState, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isSledTuned, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isSleded, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isPampl, false);
-	ON_EXCEPTION_RETURN_(table)
-	tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isPphas, false);
+    // Add remaining columns to table
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isSuccessFull, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_SHORT_TYPE, &status, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isInAccelerateState, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isInStandByState, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isInBadState, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isSledTuned, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isSleded, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isPampl, false);
+    ON_EXCEPTION_RETURN_(table)
+    tableAddColumn(env, &table, AIDA_BOOLEAN_TYPE, &isPphas, false);
 
-	return table;
+    return table;
 }
 
 /**
@@ -833,4 +833,3 @@ static void getInvalidNames(char* dst, int count, char* names[], const char* nam
 		}
 	}
 }
-
