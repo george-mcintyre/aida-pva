@@ -1504,3 +1504,20 @@ configurations:
       type: VOID
     channels:
       - FBCK:????:*:LOOP_STAT
+  - name: Correlation Plots
+    getterConfig:
+      type: TABLE
+      arguments:
+        - FILE
+        - PRIMSTV
+        - SECNSTV
+        - BPMD
+        - NRPOS
+        - DTIZAVG
+        - MAGFUNC
+      fields:
+        - label: Internal Error
+          name: primary
+          description: Provider should override these field names
+    channels:
+      - CORRPLOT:SCAN
