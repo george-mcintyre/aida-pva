@@ -29,6 +29,19 @@ extern "C" {
 void aidaServiceInit(JNIEnv* env);
 
 /**
+ * Function provided by all providers to give the version string.
+ * @return the version string
+ */
+char * getVersion();
+
+/**
+ * Use this macro to define the version of the provider
+ */
+#define VERSION(_version) char *getVersion() { \
+    return _version ; \
+}
+
+/**
  * Get a table of data.
  *
  * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()

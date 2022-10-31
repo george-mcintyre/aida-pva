@@ -11,6 +11,7 @@
  *  - Argument processing, except ascanf() and avscanf()
  *  - MACROS and functions to construct and decode URIs into their constituent parts
  */
+#include "apdesc.h"
 #include "aida_pva_server_helper.h"
 
 static json_value* navigateToArrayElement(json_value* jsonValue, int index);
@@ -33,11 +34,11 @@ static bool isOnlyNumbers(char* string);
  * @return status
  */
 unsigned long int STANDALONE_INIT(
-		const struct dsc$descriptor_s* name,
-		const long int* dbinit,
-		const struct msginit* msginit,
-		const long int* query,
-		const long int* set
+        const struct dsc$descriptor_s* name,
+        const long int* dbinit,
+        const struct msginit* msginit,
+        const long int* query,
+        const long int* set
 );
 
 /**
@@ -48,17 +49,17 @@ unsigned long int STANDALONE_INIT(
  */
 vmsstat_t init(const char* processName, bool initMessageServices)
 {
-	const struct msginit msg_init_s = { 1,      /* init msg service */
-										1 };    /* init slcnet */
+    const struct msginit msg_init_s = { 1,      /* init msg service */
+                                        1 };    /* init slcnet */
 
-	vmsstat_t status;
-	$DESCRIPTOR (PROCESS_NAME, processName);    // Ignored in standalone_init() call
+    vmsstat_t status;
+    $DESCRIPTOR (PROCESS_NAME, processName);    // Ignored in standalone_init() call
 
-	status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
+    status = STANDALONE_INIT(&PROCESS_NAME, &((long)(TRUE)),
 			initMessageServices ? &msg_init_s : NULL,
 			&((long)(FALSE)), &((long)(FALSE)));
 
-	return status;
+    return status;
 }
 
 /**
@@ -73,7 +74,7 @@ vmsstat_t init(const char* processName, bool initMessageServices)
  */
 void aidaThrowNonOsException(JNIEnv* env, char* exception, const char* message)
 {
-	aidaThrow(env, 1, exception, message);
+    aidaThrow(env, 1, exception, message);
 }
 
 /**
@@ -99,42 +100,42 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
 	$DESCRIPTOR(MESSAGE, vmsErrorMessage);
 	struct dsc$descriptor errorMessageDescriptor = { BUFSIZ, DSC$K_DTYPE_T, DSC$K_CLASS_S, (char*)&vmsErrorMessage };
 
-	//	Get the message text associated with the VMS message code. if the cause is an OS error
-	if (!SUCCESS(status)) {
-		ERRTRANSLATE(&status, &errorMessageDescriptor);
-		strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
-				MIN(strlen("; "), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
-	}
+    //	Get the message text associated with the VMS message code. if the cause is an OS error
+    if (!SUCCESS(status)) {
+        ERRTRANSLATE(&status, &errorMessageDescriptor);
+        strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
+                MIN(strlen("; "), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
+    }
 
-	// Add exception
-	strncat(errorMessageDescriptor.dsc$a_pointer, exception,
-			MIN(strlen(exception), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
+    // Add exception
+    strncat(errorMessageDescriptor.dsc$a_pointer, exception,
+            MIN(strlen(exception), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
 
-	// If a message is specified then append it to the vms message string
-	if (message) {
-		strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
-				MIN(strlen("; "), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
-		strncat(errorMessageDescriptor.dsc$a_pointer, message,
-				MIN(strlen(message), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
-	}
+    // If a message is specified then append it to the vms message string
+    if (message) {
+        strncat(errorMessageDescriptor.dsc$a_pointer, "; ",
+                MIN(strlen("; "), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
+        strncat(errorMessageDescriptor.dsc$a_pointer, message,
+                MIN(strlen(message), BUFSIZ - strlen(errorMessageDescriptor.dsc$a_pointer)));
+    }
 
-	fprintf(stderr, "AIDA Exception: %s: %s\n", exception, errorMessageDescriptor.dsc$a_pointer);
+    fprintf(stderr, "AIDA Exception: %s: %s\n", exception, errorMessageDescriptor.dsc$a_pointer);
 
-	// Create the fully qualified java class name of the exception to throw
-	char classToCreate[BUFSIZ] = "edu/stanford/slac/except/";
-	strcat (classToCreate, exception);
+    // Create the fully qualified java class name of the exception to throw
+    char classToCreate[BUFSIZ] = "edu/stanford/slac/except/";
+    strcat (classToCreate, exception);
 
-	// Create the java exception class
-	jclass exceptionClass;
-	exceptionClass = (*env)->FindClass(env, classToCreate);
-	if (!exceptionClass) {
-		fprintf(stderr, "FATAL: Failed to create object of class: %s\n", classToCreate);
-		exit((int)status);
-	}
+    // Create the java exception class
+    jclass exceptionClass;
+    exceptionClass = (*env)->FindClass(env, classToCreate);
+    if (!exceptionClass) {
+        fprintf(stderr, "FATAL: Failed to create object of class: %s\n", classToCreate);
+        exit((int)status);
+    }
 
-	// 	Throw the given exception to Java server code, giving the
-	//	VMS error text and supplied message as the exception text.
-	(*env)->ThrowNew(env, exceptionClass, errorMessageDescriptor.dsc$a_pointer);
+    // 	Throw the given exception to Java server code, giving the
+    //	VMS error text and supplied message as the exception text.
+    (*env)->ThrowNew(env, exceptionClass, errorMessageDescriptor.dsc$a_pointer);
 }
 
 /**
@@ -146,14 +147,14 @@ void aidaThrow(JNIEnv* env, vmsstat_t status, char* exception, const char* messa
  */
 int endsWith(const char* str, char* suffix)
 {
-	if (!str || !suffix) {
-		return false;
-	}
-	size_t lenstr = strlen(str);
-	size_t lenSuffix = strlen(suffix);
-	if (lenSuffix > lenstr)
-		return false;
-	return !strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix);
+    if (!str || !suffix) {
+        return false;
+    }
+    size_t lenstr = strlen(str);
+    size_t lenSuffix = strlen(suffix);
+    if (lenSuffix > lenstr)
+        return false;
+    return !strncasecmp(str + lenstr - lenSuffix, suffix, lenSuffix);
 }
 
 /**
@@ -164,14 +165,14 @@ int endsWith(const char* str, char* suffix)
  */
 int startsWith(const char* str, char* prefix)
 {
-	if (!str || !prefix) {
-		return false;
-	}
-	size_t lenstr = strlen(str);
-	size_t lenPrefix = strlen(prefix);
-	if (lenPrefix > lenstr)
-		return false;
-	return !strncasecmp(str, prefix, lenPrefix);
+    if (!str || !prefix) {
+        return false;
+    }
+    size_t lenstr = strlen(str);
+    size_t lenPrefix = strlen(prefix);
+    if (lenPrefix > lenstr)
+        return false;
+    return !strncasecmp(str, prefix, lenPrefix);
 }
 
 /**
@@ -182,18 +183,18 @@ int startsWith(const char* str, char* prefix)
  */
 Argument getArgument(Arguments arguments, char* name)
 {
-	Argument noArgument;
-	memset(&noArgument, 0, sizeof(Argument));
+    Argument noArgument;
+    memset(&noArgument, 0, sizeof(Argument));
 
-	for (int i = 0; i < arguments.argumentCount; i++) {
-		Argument argument = arguments.arguments[i];
-		if (!strcasecmp(argument.name, name)) {
-			if (strlen(argument.value) > 0) {
-				return argument;
-			}
-		}
-	}
-	return noArgument;
+    for (int i = 0; i < arguments.argumentCount; i++) {
+        Argument argument = arguments.arguments[i];
+        if (!strcasecmp(argument.name, name)) {
+            if (strlen(argument.value) > 0) {
+                return argument;
+            }
+        }
+    }
+    return noArgument;
 }
 
 /**
@@ -211,54 +212,54 @@ Argument getArgument(Arguments arguments, char* name)
  */
 static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, bool forArray)
 {
-	Value value;
-	value.type = AIDA_NO_TYPE;
+    Value value;
+    value.type = AIDA_NO_TYPE;
 
-	Argument valueArgument = getArgument(arguments, name);
-	if (valueArgument.name && valueArgument.value) {
-		// Get value to parse and trim leading space
-		char* valueToParse = valueArgument.value;
-		while (isspace(*valueToParse)) {
-			valueToParse++;
-		}
+    Argument valueArgument = getArgument(arguments, name);
+    if (valueArgument.name && valueArgument.value) {
+        // Get value to parse and trim leading space
+        char* valueToParse = valueArgument.value;
+        while (isspace(*valueToParse)) {
+            valueToParse++;
+        }
 
-		// Json arrays can only be parsed by this parser by wrapping them in a json object, so we always
-		// create {"_array": [ ... ]} and when pulling out values we always replace
-		// the element "_array" by its value
-		char arrayValueToParse[strlen(valueToParse) + 30];
+        // Json arrays can only be parsed by this parser by wrapping them in a json object, so we always
+        // create {"_array": [ ... ]} and when pulling out values we always replace
+        // the element "_array" by its value
+        char arrayValueToParse[strlen(valueToParse) + 30];
 
-		if (*valueToParse == '[') {
-			sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);
-			valueToParse = arrayValueToParse;
-		} else if (forArray) {
-			if (strstr(valueToParse, "\"") != NULL) {
-				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-						"Unable to parse supplied JSON value string");
-				return value;
-			} else if (isOnlyNumbers(valueToParse)) {
-				sprintf(arrayValueToParse, "{\"_array\": [%s]}", valueToParse);
-			} else {
-				sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", valueToParse);
-			}
-			valueToParse = arrayValueToParse;
-		}
+        if (*valueToParse == '[') {
+            sprintf(arrayValueToParse, "{\"_array\": %s}", valueToParse);
+            valueToParse = arrayValueToParse;
+        } else if (forArray) {
+            if (strstr(valueToParse, "\"") != NULL) {
+                aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+                        "Unable to parse supplied JSON value string");
+                return value;
+            } else if (isOnlyNumbers(valueToParse)) {
+                sprintf(arrayValueToParse, "{\"_array\": [%s]}", valueToParse);
+            } else {
+                sprintf(arrayValueToParse, "{\"_array\": [\"%s\"]}", valueToParse);
+            }
+            valueToParse = arrayValueToParse;
+        }
 
-		// If this is a json string then parse it otherwise just extract the string
-		if (*valueToParse == '{') {
-			value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
-			if (value.value.jsonValue) {
-				value.type = AIDA_JSON_TYPE;
-			} else {
-				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
-						"Unable to parse supplied JSON value string");
-			}
-		} else {
-			value.type = AIDA_STRING_TYPE;
-			value.value.stringValue = valueToParse;
-		}
-	}
+        // If this is a json string then parse it otherwise just extract the string
+        if (*valueToParse == '{') {
+            value.value.jsonValue = json_parse(valueToParse, strlen(valueToParse));
+            if (value.value.jsonValue) {
+                value.type = AIDA_JSON_TYPE;
+            } else {
+                aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+                        "Unable to parse supplied JSON value string");
+            }
+        } else {
+            value.type = AIDA_STRING_TYPE;
+            value.value.stringValue = valueToParse;
+        }
+    }
 
-	return value;
+    return value;
 }
 
 /**
@@ -268,46 +269,46 @@ static Value getNamedValueImpl(JNIEnv* env, Arguments arguments, char* name, boo
  */
 static bool isOnlyNumbers(char* string)
 {
-	if (string == NULL) {
-		return false;
-	}
-	bool isInNumber = true;
-	bool afterComma = false;
-	bool hasDecimalPoint = false;
-	int len = (int)strlen(string);
-	for (int i = 0; i < len; i++) {
-		// Digits (always ok)
-		if (isdigit(string[i])) {
-			// First digit clear comma and point flags
-			if (!isInNumber) {
-				afterComma = false;
-				hasDecimalPoint = false;
-				isInNumber = true;
-			}
-			continue;
-		} else if (string[i] == '.') {
-			// point is ok if this is in a number, and we've not had any other points in this number
-			if (!hasDecimalPoint && isInNumber) {
-				hasDecimalPoint = true;
-				continue;
-			}
-		} else if (string[i] == ',') {
-			// comma is ok except after comma
-			if (!afterComma) {
-				isInNumber = false;
-				afterComma = true;
-				continue;
-			}
-		} else if (isspace(string[i])) {
-			// Space is ok after a comma or digit
-			if (afterComma || isInNumber) {
-				isInNumber = false;
-				continue;
-			}
-		}
-		return false;
-	}
-	return true;
+    if (string == NULL) {
+        return false;
+    }
+    bool isInNumber = true;
+    bool afterComma = false;
+    bool hasDecimalPoint = false;
+    int len = (int)strlen(string);
+    for (int i = 0; i < len; i++) {
+        // Digits (always ok)
+        if (isdigit(string[i])) {
+            // First digit clear comma and point flags
+            if (!isInNumber) {
+                afterComma = false;
+                hasDecimalPoint = false;
+                isInNumber = true;
+            }
+            continue;
+        } else if (string[i] == '.') {
+            // point is ok if this is in a number, and we've not had any other points in this number
+            if (!hasDecimalPoint && isInNumber) {
+                hasDecimalPoint = true;
+                continue;
+            }
+        } else if (string[i] == ',') {
+            // comma is ok except after comma
+            if (!afterComma) {
+                isInNumber = false;
+                afterComma = true;
+                continue;
+            }
+        } else if (isspace(string[i])) {
+            // Space is ok after a comma or digit
+            if (afterComma || isInNumber) {
+                isInNumber = false;
+                continue;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -320,7 +321,7 @@ static bool isOnlyNumbers(char* string)
  */
 Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
 {
-	return getNamedValueImpl(env, arguments, name, false);
+    return getNamedValueImpl(env, arguments, name, false);
 }
 
 /**
@@ -333,7 +334,7 @@ Value getNamedValue(JNIEnv* env, Arguments arguments, char* name)
  */
 Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
 {
-	return getNamedValueImpl(env, arguments, name, true);
+    return getNamedValueImpl(env, arguments, name, true);
 }
 
 /**
@@ -345,50 +346,50 @@ Value getNamedArrayValue(JNIEnv* env, Arguments arguments, char* name)
  */
 json_value* getJsonValue(Value* value, char* passedInPath)
 {
-	if (value->type != AIDA_JSON_TYPE || !value->value.jsonValue) {
-		return NULL;
-	}
+    if (value->type != AIDA_JSON_TYPE || !value->value.jsonValue) {
+        return NULL;
+    }
 
-	json_value* jsonValue = getJsonRoot(value->value.jsonValue);
+    json_value* jsonValue = getJsonRoot(value->value.jsonValue);
 
-	// If there is no path then we already have the json value
-	if (!passedInPath || strlen(passedInPath) == 0) {
-		return jsonValue;
-	}
+    // If there is no path then we already have the json value
+    if (!passedInPath || strlen(passedInPath) == 0) {
+        return jsonValue;
+    }
 
-	// can't use const for strtok
-	char path[strlen(passedInPath) + 1];
-	strcpy(path, passedInPath);
+    // can't use const for strtok
+    char path[strlen(passedInPath) + 1];
+    strcpy(path, passedInPath);
 
-	int len;
-	char name[256];
-	char* arrayRef;
+    int len;
+    char name[256];
+    char* arrayRef;
 
-	// Extract the first token
-	char* token = strtok(path, ".");
+    // Extract the first token
+    char* token = strtok(path, ".");
 
-	while (token) {
-		if (*token == '[') {
-			// if array is at top level
-			jsonValue = processArrayReference(jsonValue, token);
-		} else if ((arrayRef = strstr(token, "["))) {
-			// element followed by array ref
-			len = (int)(arrayRef - token);
-			strncpy(name, token, len);
-			name[len] = 0x0;
-			jsonValue = navigateToObjectElement(jsonValue, name);
+    while (token) {
+        if (*token == '[') {
+            // if array is at top level
+            jsonValue = processArrayReference(jsonValue, token);
+        } else if ((arrayRef = strstr(token, "["))) {
+            // element followed by array ref
+            len = (int)(arrayRef - token);
+            strncpy(name, token, len);
+            name[len] = 0x0;
+            jsonValue = navigateToObjectElement(jsonValue, name);
 
-			jsonValue = processArrayReference(jsonValue, arrayRef);
-		} else {
-			// element only
-			jsonValue = navigateToObjectElement(jsonValue, token);
-		}
+            jsonValue = processArrayReference(jsonValue, arrayRef);
+        } else {
+            // element only
+            jsonValue = navigateToObjectElement(jsonValue, token);
+        }
 
-		// Next token
-		token = strtok(NULL, ".");
-	}
+        // Next token
+        token = strtok(NULL, ".");
+    }
 
-	return jsonValue;
+    return jsonValue;
 }
 
 /**
@@ -402,11 +403,11 @@ json_value* getJsonValue(Value* value, char* passedInPath)
  */
 json_value* getJsonRoot(json_value* jsonValue)
 {
-	if (jsonValue->type == json_object && jsonValue->u.object.length == 1
-			&& strcmp(jsonValue->u.object.values[0].name, "_array") == 0) {
-		jsonValue = jsonValue->u.object.values[0].value;
-	}
-	return jsonValue;
+    if (jsonValue->type == json_object && jsonValue->u.object.length == 1
+            && strcmp(jsonValue->u.object.values[0].name, "_array") == 0) {
+        jsonValue = jsonValue->u.object.values[0].value;
+    }
+    return jsonValue;
 }
 
 /**
@@ -418,13 +419,13 @@ json_value* getJsonRoot(json_value* jsonValue)
  */
 static json_value* processArrayReference(json_value* jsonValue, const char* arrayRef)
 {
-	int index[4];  // Up to 4 levels of array with no object
-	int count = sscanf(arrayRef, "[%d][%d][%d][%d]", &index[0], &index[1], &index[2], &index[3]);
+    int index[4];  // Up to 4 levels of array with no object
+    int count = sscanf(arrayRef, "[%d][%d][%d][%d]", &index[0], &index[1], &index[2], &index[3]);
 
-	while (count > 0) {
-		jsonValue = navigateToArrayElement(jsonValue, index[--count]);
-	}
-	return jsonValue;
+    while (count > 0) {
+        jsonValue = navigateToArrayElement(jsonValue, index[--count]);
+    }
+    return jsonValue;
 }
 
 /**
@@ -435,15 +436,15 @@ static json_value* processArrayReference(json_value* jsonValue, const char* arra
  */
 static json_value* navigateToObjectElement(json_value* jsonValue, const char* name)
 {
-	if (jsonValue->type == json_object) {
-		for (int i = 0; i < jsonValue->u.object.length; i++) {
-			if (strcasecmp(name, jsonValue->u.object.values[i].name) == 0) {
-				jsonValue = jsonValue->u.object.values[i].value;
-				break;
-			}
-		}
-	}
-	return jsonValue;
+    if (jsonValue->type == json_object) {
+        for (int i = 0; i < jsonValue->u.object.length; i++) {
+            if (strcasecmp(name, jsonValue->u.object.values[i].name) == 0) {
+                jsonValue = jsonValue->u.object.values[i].value;
+                break;
+            }
+        }
+    }
+    return jsonValue;
 }
 /**
  * Using the given index navigate to the zero based index'th element of the array at the current position
@@ -453,12 +454,12 @@ static json_value* navigateToObjectElement(json_value* jsonValue, const char* na
  */
 static json_value* navigateToArrayElement(json_value* jsonValue, int index)
 {
-	if (jsonValue->type == json_array) {
-		if (jsonValue->u.array.length > index) {
-			jsonValue = jsonValue->u.array.values[index];
-		}
-	}
-	return jsonValue;
+    if (jsonValue->type == json_array) {
+        if (jsonValue->u.array.length > index) {
+            jsonValue = jsonValue->u.array.values[index];
+        }
+    }
+    return jsonValue;
 }
 
 /**
@@ -470,12 +471,12 @@ static json_value* navigateToArrayElement(json_value* jsonValue, int index)
  */
 int groupNameFromUri(char groupName[], const char* uri)
 {
-	strcpy(groupName, uri);
-	char* groupNameEnd = strrchr(groupName, ':');
-	if (groupNameEnd) {
-		*groupNameEnd = 0x0;
-	}
-	return EXIT_SUCCESS;
+    strcpy(groupName, uri);
+    char* groupNameEnd = strrchr(groupName, ':');
+    if (groupNameEnd) {
+        *groupNameEnd = 0x0;
+    }
+    return EXIT_SUCCESS;
 }
 
 /**
@@ -487,15 +488,15 @@ int groupNameFromUri(char groupName[], const char* uri)
  */
 void secnFromUri(const char* uri, int4u* secn)
 {
-	char uriCopy[strlen(uri) + 1];
-	strcpy(uriCopy, uri);
-	char* secondary = strrchr(uriCopy, ':');
-	if (secondary) {
-		memcpy(secn, secondary + 1, sizeof(int4u));
-		return;
-	}
-	fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
-	*secn = 0;
+    char uriCopy[strlen(uri) + 1];
+    strcpy(uriCopy, uri);
+    char* secondary = strrchr(uriCopy, ':');
+    if (secondary) {
+        memcpy(secn, secondary + 1, sizeof(int4u));
+        return;
+    }
+    fprintf(stderr, "Warning: Found corrupt URI when trying to extract secn: %s\n", uri);
+    *secn = 0;
 }
 
 /**
@@ -505,12 +506,12 @@ void secnFromUri(const char* uri, int4u* secn)
  */
 const char* secondaryFromUri(const char* uri)
 {
-	char* secondary = strrchr(uri, ':');
-	if (!secondary) {
-		fprintf(stderr, "Warning: Secondary not found in uri: %s\n", uri);
-		return uri;
-	}
-	return secondary + 1;
+    char* secondary = strrchr(uri, ':');
+    if (!secondary) {
+        fprintf(stderr, "Warning: Secondary not found in uri: %s\n", uri);
+        return uri;
+    }
+    return secondary + 1;
 }
 
 /**
@@ -521,12 +522,12 @@ const char* secondaryFromUri(const char* uri)
  */
 void pmuStringFromUri(char* pmuString, const char* uri)
 {
-	unsigned long pmuEnd = strrchr(uri, ':') - uri;
-	if (pmuEnd >= MAX_URI_LEN) {
-		pmuEnd = MAX_URI_LEN - 1;
-	}
-	strncpy(pmuString, uri, pmuEnd);
-	pmuString[pmuEnd] = 0x0;
+    unsigned long pmuEnd = strrchr(uri, ':') - uri;
+    if (pmuEnd >= MAX_URI_LEN) {
+        pmuEnd = MAX_URI_LEN - 1;
+    }
+    strncpy(pmuString, uri, pmuEnd);
+    pmuString[pmuEnd] = 0x0;
 }
 
 /**
@@ -540,37 +541,37 @@ void pmuStringFromUri(char* pmuString, const char* uri)
  */
 int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int4u* unit)
 {
-	// Copy each part to the provided variables
-	char* nextPart = strtok(device, ":");
-	unsigned long len;
-	if (nextPart) {
-		len = strlen(nextPart);
-		if (len < 3 || len > 4) {
-			aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
-			return EXIT_FAILURE;
-		}
-		memcpy(primary, nextPart, PRIM_LEN);
-		nextPart = strtok(NULL, ":");
-		if (nextPart) {
-			len = strlen(nextPart);
-			if (len != 4 || !isdigit(nextPart[2]) || !isdigit(nextPart[3])) {
-				aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
-				return EXIT_FAILURE;
-			}
-			memcpy(micro, nextPart, MICRO_LEN);
-			nextPart = strtok(NULL, ":");
-			if (nextPart) {
-				len = strlen(nextPart);
-				if (len < 1 || len > 4 || !isdigit(nextPart[0]) || (len > 1 && !isdigit(nextPart[1]))
-						|| (len > 2 && !isdigit(nextPart[2])) || (len > 4 && !isdigit(nextPart[3]))) {
-					aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
-					return EXIT_FAILURE;
-				}
-				*unit = (int4u)atol(nextPart);
-			}
-		}
-	}
-	return EXIT_SUCCESS;
+    // Copy each part to the provided variables
+    char* nextPart = strtok(device, ":");
+    unsigned long len;
+    if (nextPart) {
+        len = strlen(nextPart);
+        if (len != 4) {
+            aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
+            return EXIT_FAILURE;
+        }
+        memcpy(primary, nextPart, PRIM_LEN);
+        nextPart = strtok(NULL, ":");
+        if (nextPart) {
+            len = strlen(nextPart);
+            if (len != 4 || !isdigit(nextPart[2]) || !isdigit(nextPart[3])) {
+                aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
+                return EXIT_FAILURE;
+            }
+            memcpy(micro, nextPart, MICRO_LEN);
+            nextPart = strtok(NULL, ":");
+            if (nextPart) {
+                len = strlen(nextPart);
+                if (len < 1 || len > 4 || !isdigit(nextPart[0]) || (len > 1 && !isdigit(nextPart[1]))
+                        || (len > 2 && !isdigit(nextPart[2])) || (len > 3 && !isdigit(nextPart[3]))) {
+                    aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION, "Device name is not valid");
+                    return EXIT_FAILURE;
+                }
+                *unit = (int4u)atol(nextPart);
+            }
+        }
+    }
+    return EXIT_SUCCESS;
 }
 
 /**
@@ -581,12 +582,12 @@ int pmuFromDeviceName(JNIEnv* env, char* device, char* primary, char* micro, int
  */
 void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
 {
-	char* separator = strrchr(uri, ':');
-	if (separator) {
-		memcpy(slcName, uri, separator - uri);
-		memcpy(slcName + (separator - uri), ".", 1);
-		strcpy(slcName + (separator - uri) + 1, separator + 1);
-	}
+    char* separator = strrchr(uri, ':');
+    if (separator) {
+        memcpy(slcName, uri, separator - uri);
+        memcpy(slcName + (separator - uri), ".", 1);
+        strcpy(slcName + (separator - uri) + 1, separator + 1);
+    }
 }
 
 /**
@@ -597,21 +598,21 @@ void uriToSlcName(char slcName[MAX_URI_LEN], const char* uri)
  */
 void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
 {
-	char* firstSeparator = strchr(uri, ':');
-	char* secondSeparator = strchr(firstSeparator + 1, ':');
-	char* lastSeparator = strrchr(uri, ':');
-	// See how many colons.  If only three then this is a pseudo and we need to separate after first
-	if (lastSeparator == secondSeparator) {
-		// This has only three parts so separate at first colon
-		memcpy(legacyName, uri, firstSeparator - uri);
-		memcpy(legacyName + (firstSeparator - uri), "//", 2);
-		strcpy(legacyName + (firstSeparator - uri) + 2, firstSeparator + 1);
-	} else {
-		// Normal URI separate at last colon
-		memcpy(legacyName, uri, lastSeparator - uri);
-		memcpy(legacyName + (lastSeparator - uri), "//", 2);
-		strcpy(legacyName + (lastSeparator - uri) + 2, lastSeparator + 1);
-	}
+    char* firstSeparator = strchr(uri, ':');
+    char* secondSeparator = strchr(firstSeparator + 1, ':');
+    char* lastSeparator = strrchr(uri, ':');
+    // See how many colons.  If only three then this is a pseudo and we need to separate after first
+    if (lastSeparator == secondSeparator) {
+        // This has only three parts so separate at first colon
+        memcpy(legacyName, uri, firstSeparator - uri);
+        memcpy(legacyName + (firstSeparator - uri), "//", 2);
+        strcpy(legacyName + (firstSeparator - uri) + 2, firstSeparator + 1);
+    } else {
+        // Normal URI separate at last colon
+        memcpy(legacyName, uri, lastSeparator - uri);
+        memcpy(legacyName + (lastSeparator - uri), "//", 2);
+        strcpy(legacyName + (lastSeparator - uri) + 2, lastSeparator + 1);
+    }
 }
 
 /**
@@ -627,18 +628,18 @@ void uriLegacyName(char legacyName[MAX_URI_LEN], const char* uri)
  */
 void* allocateMemory(JNIEnv* env, void* source, size_t size, bool nullTerminate, char* message)
 {
-	void* data = malloc(size);
-	if (!data) {
-		aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, message);
-		return NULL;
-	}
-	if (source) {
-		memcpy(data, source, size - (nullTerminate ? 1 : 0));
-		if (nullTerminate) {
-			*(char*)((char*)data + size - 1) = 0x0;
-		}
-	}
-	return data;
+    void* data = malloc(size);
+    if (!data) {
+        aidaThrowNonOsException(env, AIDA_INTERNAL_EXCEPTION, message);
+        return NULL;
+    }
+    if (source) {
+        memcpy(data, source, size - (nullTerminate ? 1 : 0));
+        if (nullTerminate) {
+            *(char*)((char*)data + size - 1) = 0x0;
+        }
+    }
+    return data;
 }
 
 

@@ -13,6 +13,7 @@
 #include "AIDASLCDB_SERVER.h"
 
 // API Stubs
+VERSION("1.0.0")
 SET_STUB_TABLE
 
 /**
@@ -27,7 +28,7 @@ void aidaServiceInit(JNIEnv* env)
 	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCDB", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Service");
 	} else {
-		printf("Aida SLC Database Service Initialised\n");
+		printf("AIDA-PVA SLC Database Provider\n");
 	}
 }
 

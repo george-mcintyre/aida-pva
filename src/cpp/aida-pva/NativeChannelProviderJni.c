@@ -17,7 +17,9 @@ static void (* aidaServiceInitFn)(JNIEnv* env);
 JNIEXPORT void
 JNICALL Java_slac_aida_NativeChannelProvider_aidaServiceInit(JNIEnv* env, jclass jclass)
 {
+	printf("\n\t");
 	aidaServiceInit(env);
+	printf("\tversion %s\n\tInitialised\n\n", getVersion());
 }
 
 /*

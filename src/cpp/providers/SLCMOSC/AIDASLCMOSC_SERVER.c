@@ -9,6 +9,7 @@
 static int getMoscArguments(JNIEnv* env, Arguments arguments, Value value, char** units, char** ring, float* floatValue);
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT
@@ -37,10 +38,9 @@ void aidaServiceInit(JNIEnv* env)
 
 	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCMOSC", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Master Oscillator Service");
-		return;
+	} else {
+		printf("AIDA-PVA Master Oscillator Provider\n");
 	}
-
-	printf("Aida Master Oscillator Service Initialised\n");
 }
 
 /**

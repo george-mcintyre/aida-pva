@@ -14,6 +14,7 @@ static int getBpmData(JNIEnv* env,
 static int endAcquireBpmData(JNIEnv* env);
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT
@@ -44,10 +45,9 @@ void aidaServiceInit(JNIEnv* env)
 
 	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCBPM", true))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC BPM Service");
-		return;
+	} else {
+		printf("AIDA-PVA BPM Provider\n");
 	}
-
-	printf("Aida BPM Service Initialised\n");
 }
 
 /**

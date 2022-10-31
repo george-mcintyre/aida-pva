@@ -18,6 +18,7 @@ static int endAcquireBuffAcq(JNIEnv* env);
 static int checkArguments(JNIEnv* env, int bpmd, int nrpos, int nDevices);
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT
@@ -53,7 +54,7 @@ void aidaServiceInit(JNIEnv* env)
 
 	DPSLCBUFF_SETMODE();
 
-	printf("Aida Buffered BPM Acquisition Service Initialised\n");
+	printf("AIDA-PVA Buffered BPM Acquisition Provider\n");
 }
 
 /**

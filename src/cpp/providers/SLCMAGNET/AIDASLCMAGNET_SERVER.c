@@ -19,6 +19,7 @@ static bool isAllValid(int count, const char* name_validity);
 static void getInvalidNames(char* dst, int count, char* names[], const char* name_validity);
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT
@@ -46,10 +47,9 @@ void aidaServiceInit(JNIEnv* env)
 	vmsstat_t status;
 	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCMAGNET", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising SLC Magnet Service");
-		return;
+	} else {
+		printf("AIDA-PVA Magnet Provider\n");
 	}
-
-	printf("Aida Magnet Service Initialised\n");
 }
 
 /**

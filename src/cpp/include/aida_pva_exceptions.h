@@ -265,6 +265,25 @@ extern "C" {
 }
 
 /**
+ * Format an error message, throw it in an exception, free any allocated memory and return the error code.
+ *
+ * @param _exception exception to raise (string)
+ * @param _status the OS status code to include in the message
+ * @param _errorText the text of the error to raise
+ * @param _ref a string that will be substituted in message with %s
+ * @param _r the specified return value
+ * @return This MACRO will return the specified return value from your function
+ */
+#define SPRINTF_ERROR_STATUS_FREE_MEMORY_AND_RETURN_(_status, _exception, _errorText, _ref, _r) \
+{ \
+    char error[MAX_ERROR_TEXT_LEN + strlen(_ref)]; \
+    sprintf(error, _errorText,  _ref); \
+	aidaThrow(env, _status, _exception, error); \
+    FREE_MEMORY \
+    return _r; \
+}
+
+/**
  * Throw error message in an exception, free any allocated memory and return the error code.
  *
  * @param _exception exception to raise (string)

@@ -51,6 +51,7 @@ static void getInvalidNames(char* dst, int count, char* names[], const char* nam
 #define STD_ATTRIBUTE_LEN strlen(STD_ATTRIBUTE)
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_INTEGER
@@ -76,10 +77,9 @@ void aidaServiceInit(JNIEnv* env)
 
 	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCKLYS", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Klystron Service");
-		return;
+	} else {
+		printf("AIDA-PVA Klystron Provider\n");
 	}
-
-	printf("Aida Klystron Service Initialised\n");
 }
 
 /**

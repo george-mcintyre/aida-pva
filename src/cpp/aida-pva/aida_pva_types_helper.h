@@ -91,7 +91,7 @@ extern "C" {
             if ( sscanf(jsonRoot->u.string.ptr, _format, ptr) == 0 ) {    \
                 SPRINTF_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument \"%s\" to " _typeName, jsonRoot->u.string.ptr, EXIT_FAILURE) \
             } \
-        } else { \
+        } else if (isRequired) { \
             PRINT_ERROR_FREE_MEMORY_AND_RETURN_(AIDA_INTERNAL_EXCEPTION, "can't convert argument to " _typeName ": <json>", EXIT_FAILURE) \
         }\
     }\

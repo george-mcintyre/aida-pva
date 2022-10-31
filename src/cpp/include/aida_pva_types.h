@@ -125,8 +125,8 @@ typedef struct
  */
 typedef struct
 {
-	int argumentCount;                                ///< The number of arguments sent with this request
-	int floatingPointValuesCount;                ///< The number of floating point numbers in the arguments of this request
+	int argumentCount;                              ///< The number of arguments sent with this request
+	int floatingPointValuesCount;                   ///< The number of floating point numbers in the arguments of this request
 	Argument* arguments;                            ///< The array of Arguments
 	FloatingPointValue* floatingPointValues;        ///< The array of FloatingPointValue
 } Arguments;
@@ -160,7 +160,11 @@ typedef struct
 	int rowCount;           ///<  number of rows in table
 	Type* types;            ///< the scalar type of each column, one of BOOLEAN, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, or STRING
 	void** ppData;          ///< the data.  an array of [rows][columns]
+	char** ppFields;        ///< the overridden field names.  if null, not overridden. If not null then array of pointers to allocated strings
+	char** ppLabels;        ///< the overridden label names.  if null, not overridden. If not null then array of pointers to allocated strings
 	int _currentColumn;     ///< For internal use by addColumn() etc
+	int _currentField;      ///< For internal use by addField() etc
+	int _currentLabel;      ///< For internal use by addLabel() etc
 } Table;
 
 /**

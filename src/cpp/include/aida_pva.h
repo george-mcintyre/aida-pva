@@ -249,18 +249,76 @@ void releaseValue(Value value);
  * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
  *
  * Table table = tableCreate(env, rows, columns);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * return table;
  * @endcode
  * @note
- * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
  * sure that no exception was raised.
  */
 Table tableCreate(JNIEnv* env, int rows, int columns);
+
+/**
+ * Make a Dynamic Table for return to client.  This is the first call that needs to be made to return a Dynamic Table.
+ * This will create a Table with the specified the number of rows and columns.
+ * You need to call tableAddColumn(), tableAddStringColumn(), tableAddField(), tableAddLabel(), or any of the
+ * other special `tableAdd` functions to add
+ * columns to the Table before returning it.  Calling tableAddField(), and tableAddLabel() are mandatory
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param rows           the number of rows to create the Table with.
+ * @param columns        the number of columns to create the Table with,
+ * @return the newly created Table
+ *
+ * @see
+ * tableAddColumn(),
+ * tableAddField(),
+ * tableAddLabel(),
+ * tableAddStringColumn()
+ * tableAddFixedWidthStringColumn(),
+ * tableAddSingleRowBooleanColumn(),
+ * tableAddSingleRowByteColumn(),
+ * tableAddSingleRowShortColumn(),
+ * tableAddSingleRowIntegerColumn(),
+ * tableAddSingleRowLongColumn(),
+ * tableAddSingleRowFloatColumn(),
+ * tableAddSingleRowDoubleColumn(),
+ * tableAddSingleRowStringColumn(),
+ *
+ * @paragraph Example
+ *
+ * Create a two column, two row Table, Set Field names, and labels, add data, and return.
+ * @code
+ * int rows = 2, columns = 2;
+ * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
+ * char *fields[columns] = { "field1", "field2" };
+ * char *labels[columns] = { "label1", "label2" };
+ *
+ * Table table = tableCreateDynamic(env, rows, columns);
+ * ON_EXCEPTION_RETURN_(table)
+ * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
+ * ON_EXCEPTION_RETURN_(table)
+ * tableAddField(env, &table, fields[0]);
+ * ON_EXCEPTION_RETURN_(table)
+ * tableAddLabel(env, &table, labels[0]);
+ * ON_EXCEPTION_RETURN_(table)
+ * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
+ * ON_EXCEPTION_RETURN_(table)
+ * tableAddField(env, &table, fields[1]);
+ * ON_EXCEPTION_RETURN_(table)
+ * tableAddLabel(env, &table, labels[1]);
+ * ON_EXCEPTION_RETURN_(table)
+ * return table;
+ * @endcode
+ * @note
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
+ * sure that no exception was raised.
+ */
+Table tableCreateDynamic(JNIEnv* env, int rows, int columns);
 
 /**
  * Add a column of arbitrary type to a Table.  Add the given data to the
@@ -303,18 +361,40 @@ Table tableCreate(JNIEnv* env, int rows, int columns);
  * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
  *
  * Table table = tableCreate(env, rows, columns);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * return table;
  * @endcode
  * @note
- * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
  * sure that no exception was raised.
  */
 void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat);
+
+/**
+ * Add a dynamic field to a table.
+ *
+ * @see tableCreateDynamic
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the column to.
+ * @param fieldName 	 The name of the field to add
+ */
+void tableAddField(JNIEnv* env, Table* table, char* fieldName);
+
+/**
+ * Add a dynamic column to a table
+ *
+ * @see tableCreateDynamic
+ *
+ * @param env            The JNI environment.  Used in all functions involving JNI.
+ * @param table          the Table to add the column to.
+ * @param labelName 	 the label name to add
+ */
+void tableAddLabel(JNIEnv* env, Table* table, char* labelName);
 
 /**
  * Add a String column to the given Table.
@@ -353,13 +433,13 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeF
  * namesData[0] = "NAME";
  *
  * Table table = tableCreate(env, rows, columns);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddStringColumn(env, &table, namesData);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * return table;
  * @endcode
  * @note
- * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
  * sure that no exception was raised.
  */
 void tableAddStringColumn(JNIEnv* env, Table* table, char** data);

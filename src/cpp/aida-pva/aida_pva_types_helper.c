@@ -658,15 +658,15 @@ static int vavscanf(JNIEnv* env, Arguments* arguments, Value* value, const char*
  * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
  *
  * Table table = tableCreate(env, rows, columns);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * return table;
  * @endcode
  * @note
- * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
  * sure that no exception was raised.
  */
 Table tableCreate(JNIEnv* env, int rows, int columns)
@@ -686,6 +686,17 @@ Table tableCreate(JNIEnv* env, int rows, int columns)
 	ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, table.types, columns * sizeof(Type*), "table column types", table)
 	table.rowCount = rows;
 	table.columnCount = columns;
+	return table;
+}
+
+Table tableCreateDynamic(JNIEnv* env, int rows, int columns) {
+	Table table = tableCreate(env, rows, columns);
+	ON_EXCEPTION_RETURN_(table);
+
+	table._currentField = 0;  // Reset current field so that any addField() calls are correct
+	ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, table.ppFields, columns * sizeof(char*), "table fields", table)
+	table._currentLabel = 0;  // Reset current label so that any addLabel() calls are correct
+	ALLOCATE_MEMORY_AND_ON_ERROR_RETURN_(env, table.ppLabels, columns * sizeof(char*), "table fields", table)
 	return table;
 }
 
@@ -730,21 +741,21 @@ Table tableCreate(JNIEnv* env, int rows, int columns)
  * float xData[rows] = { 1.0f, 2.0f }, yData[rows] = { 7.0f, 8.0f };
  *
  * Table table = tableCreate(env, rows, columns);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, xData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddColumn(env, &table, AIDA_FLOAT_TYPE, yData, true);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * return table;
  * @endcode
  * @note
- * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
  * sure that no exception was raised.
  */
 void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeFormat)
 {
 	// Table full?
-	if (table->_currentColumn == table->columnCount) {
+	if (table->_currentColumn >= table->columnCount) {
 		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
 				"Internal Error: more columns added than table size");
 		return;
@@ -814,6 +825,44 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeF
 	table->_currentColumn++;
 }
 
+void tableAddField(JNIEnv* env, Table* table, char* fieldName) {
+	// Table full?
+	if (table->_currentField >= table->columnCount) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Internal Error: more fields added than table size");
+		return;
+	}
+
+	// No Data supplied ?
+	if (!fieldName || !*fieldName) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Internal Error: Attempt to add empty field name");
+		return;
+	}
+
+	ALLOCATE_STRING_AND_ON_ERROR_RETURN_VOID(env, table->ppFields[table->_currentField], fieldName, "table field names")
+	table->_currentField++;
+}
+
+void tableAddLabel(JNIEnv* env, Table* table, char* labelName) {
+	// Table full?
+	if (table->_currentLabel >= table->columnCount) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Internal Error: more labels added than table size");
+		return;
+	}
+
+	// No Data supplied ?
+	if (!labelName || !*labelName) {
+		aidaThrowNonOsException(env, UNABLE_TO_GET_DATA_EXCEPTION,
+				"Internal Error: Attempt to add empty label name");
+		return;
+	}
+
+	ALLOCATE_STRING_AND_ON_ERROR_RETURN_VOID(env, table->ppLabels[table->_currentLabel], labelName, "table label names")
+	table->_currentLabel++;
+}
+
 /**
  * Add a String column to the given Table.
  * This reads data from a buffer that is itself a list of pointers to strings.
@@ -851,13 +900,13 @@ void tableAddColumn(JNIEnv* env, Table* table, Type type, void* data, bool ieeeF
  * namesData[0] = "NAME";
  *
  * Table table = tableCreate(env, rows, columns);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * tableAddStringColumn(env, &table, namesData);
- * ON_EXCEPTION_AND_RETURN_(table)
+ * ON_EXCEPTION_RETURN_(table)
  * return table;
  * @endcode
  * @note
- * You need to call ON_EXCEPTION_AND_RETURN_(table) after each call to make
+ * You need to call ON_EXCEPTION_RETURN_(table) after each call to make
  * sure that no exception was raised.
  */
 void tableAddStringColumn(JNIEnv* env, Table* table, char** data)
@@ -1420,8 +1469,8 @@ static void getJsonPathElements(char* fullJsonPath, char* variableName, char** p
 	}
 
 	char* relativeJsonPath = (firstDot == NULL || firstParen == NULL) ?
-							 MAX(firstDot, firstParen) :
-							 MIN(firstParen, firstDot);
+	                         MAX(firstDot, firstParen) :
+	                         MIN(firstParen, firstDot);
 	int lenRootArgument = (int)(relativeJsonPath - fullJsonPath);
 
 	if (*relativeJsonPath == '.') {

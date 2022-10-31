@@ -7,6 +7,7 @@
 #include "AIDASLCMODEL_SERVER.h"
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_SHORT
@@ -34,5 +35,5 @@ SET_STUB_TABLE
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	printf("Aida SLC Model Service Initialised\n");
+	printf("AIDA-PVA Model Provider\n");
 }

@@ -6,6 +6,8 @@
 #include "aida_pva.h"
 #include "AIDASLCREF_SERVER.h"
 
+VERSION("1.0.0")
+
 /**
  * Initialise the service
  * @param env to be used to throw exceptions using aidaThrow() and aidaThrowNonOsException()
@@ -13,7 +15,7 @@
  */
 void aidaServiceInit(JNIEnv* env)
 {
-	printf("Aida SLC Reference Service Initialised\n");
+	printf("AIDA-PVA Reference Provider\n");
 }
 
 /**
