@@ -226,7 +226,7 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately
   `remove this line for BUILDTEST /DEF`
 
 ```shell
-MCCDEV>  eve AIDAASLCBPM_GENERAL.OPT  
+MCCDEV>  eve AIDASLCBPM_GENERAL.OPT  
 MCCDEV>  eve AIDASLCBPMBUFF_GENERAL.OPT  
 MCCDEV>  eve AIDASLCDB_GENERAL.OPT  
 MCCDEV>  eve AIDASLCKLYS_GENERAL.OPT  
@@ -407,9 +407,9 @@ SlcCMS> set libr CMS_SLCTXT
 <td class="markdownTableBodyNone">
 
 ```shell
-SlcCMS> reserve AIDAASLCBPM_SERVER.C /nooutput 
-SlcCMS> reserve AIDAASLCBPM_SERVER.h /nooutput 
-SlcCMS> reserve AIDAASLCBPM_GENERAL.OPT /nooutput 
+SlcCMS> reserve AIDASLCBPM_SERVER.C /nooutput 
+SlcCMS> reserve AIDASLCBPM_SERVER.h /nooutput 
+SlcCMS> reserve AIDASLCBPM_GENERAL.OPT /nooutput 
 
 SlcCMS> reserve AIDASLCBPMBUFF_SERVER.C /nooutput 
 SlcCMS> reserve AIDASLCBPMBUFF_SERVER.h /nooutput 
@@ -463,9 +463,9 @@ SlcCMS> exit
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV>  cmp AIDAASLCBPM_SERVER.C  
-MCCDEV>  cmp AIDAASLCBPM_SERVER.h  
-MCCDEV>  cmp AIDAASLCBPM_GENERAL.OPT  
+MCCDEV>  cmp AIDASLCBPM_SERVER.C  
+MCCDEV>  cmp AIDASLCBPM_SERVER.h  
+MCCDEV>  cmp AIDASLCBPM_GENERAL.OPT  
 
 MCCDEV>  cmp AIDASLCBPMBUFF_SERVER.C  
 MCCDEV>  cmp AIDASLCBPMBUFF_SERVER.h  
@@ -780,7 +780,7 @@ SlcCMS> set libr CMS_SLCTXT
 <td class="markdownTableBodyNone">
 
 ```shell
-SlcCMS> reserve AIDAASLCBPM_CHANNELS.YML /nooutput
+SlcCMS> reserve AIDASLCBPM_CHANNELS.YML /nooutput
 SlcCMS> reserve AIDASLCBPMBUFF_CHANNELS.YML /nooutput
 SlcCMS> reserve AIDASLCDB_CHANNELS.YML /nooutput
 SlcCMS> reserve AIDASLCDB_CHANNELS.YAML /nooutput
@@ -821,7 +821,7 @@ SlcCMS> exit
 <td class="markdownTableBodyNone">
 
 ```shell
-MCCDEV>  cmp AIDAASLCBPM_CHANNELS.YML  
+MCCDEV>  cmp AIDASLCBPM_CHANNELS.YML  
 MCCDEV>  cmp AIDASLCBPMBUFF_CHANNELS.YML  
 MCCDEV>  cmp AIDASLCDB_CHANNELS.YML  
 MCCDEV>  cmp AIDASLCDB_CHANNELS.YAML  
@@ -1039,7 +1039,7 @@ Build and Test an `AIDA-PVA` Channel Provider Shareable Image privately using pr
   `remove this line for BUILDTEST /DEF`
 
 ```shell
-MCCDEV>  eve AIDAASLCBPM_GENERAL.OPT  
+MCCDEV>  eve AIDASLCBPM_GENERAL.OPT  
 MCCDEV>  eve AIDASLCBPMBUFF_GENERAL.OPT  
 MCCDEV>  eve AIDASLCDB_GENERAL.OPT  
 MCCDEV>  eve AIDASLCKLYS_GENERAL.OPT  
