@@ -11,6 +11,7 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 static short getTrigStatus(JNIEnv * env, const char* uri, Arguments arguments);
 
 // API Stubs
+VERSION("1.0.0")
 REQUEST_STUB_BOOLEAN
 REQUEST_STUB_BYTE
 REQUEST_STUB_INTEGER
@@ -36,10 +37,9 @@ void aidaServiceInit(JNIEnv* env)
 	vmsstat_t status;
 	if (!$VMS_STATUS_SUCCESS(status = init("AIDA_SLCUTIL", false))) {
 		aidaThrow(env, status, SERVER_INITIALISATION_EXCEPTION, "initialising Utility Service");
-		return;
+	} else {
+		printf("AIDA-PVA Utility Provider\n");
 	}
-
-	printf("Aida Utility Service Initialised\n");
 }
 
 /**
@@ -200,14 +200,11 @@ static Table setMkbValue(JNIEnv* env, const char* uri, Arguments arguments, Valu
 	FREE_MEMORY
 	if (!SUCCESS(status)) {
 		aidaThrow(env, status, UNABLE_TO_SET_DATA_EXCEPTION, "unable to set value");
-		DPSLCUTIL_MKB_GETCLEANUP();
 		RETURN_NULL_TABLE;
 	}
 
 	if ( DPSLCUTIL_MKB_GETABSFLAG() ) {
-		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION,
-				"Specified multiknob file is absolute, which is not permitted");
-		DPSLCUTIL_MKB_GETCLEANUP();
+		aidaThrowNonOsException(env, UNABLE_TO_SET_DATA_EXCEPTION, "Specified multiknob file is absolute, which is not permitted");
 		RETURN_NULL_TABLE;
 	}
 
