@@ -45,7 +45,7 @@ public class AidaProviderRunner {
         try {
             service = new AidaRPCService(aidaChannelProvider);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to create AIDA Service: " + e.getMessage());
+            logger.log(Level.SEVERE, "Failed to create AIDA-PVA Service: " + e.getMessage());
             return;
         }
         logger.info("Done");
@@ -64,7 +64,7 @@ public class AidaProviderRunner {
         // Run the server to start servicing requests
         try {
             server.printInfo();   // Print RPC service information
-            logger.info("Server Ready: " + elapsedTime());
+            logger.info("AIDA-PVA version " + System.getProperty("aida.pva.version", "-.-.-") + ":  Server Ready: " + elapsedTime());
             server.run(0);
         } catch (PVAException e) {
             e.printStackTrace();

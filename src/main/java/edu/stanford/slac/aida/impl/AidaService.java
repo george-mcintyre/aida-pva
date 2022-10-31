@@ -8,8 +8,13 @@ import edu.stanford.slac.aida.lib.AidaProviderRunner;
 import edu.stanford.slac.except.ServerInitialisationException;
 import org.joda.time.DateTime;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -58,9 +63,30 @@ public class AidaService {
 
         // Set default EPICS_PVA properties for AIDA_PVA server
         defaultEpicsPropertiesIfNotSet();
+        loadSystemProperties();
 
         // Load the Channel Provider library
         System.loadLibrary(aidaPvaLibName);
+    }
+
+    /**
+     * Load properties from resource file
+     */
+    private static void loadSystemProperties() {
+        Properties prop = new Properties();
+        try {
+            InputStream inputStream = AidaService.class.getResourceAsStream("/application.properties");
+            prop.load(inputStream);
+            Enumeration<?> it = prop.propertyNames();
+            while (it.hasMoreElements()) {
+                String name = (String) it.nextElement();
+                if ( System.getProperty(name) == null ) {
+                    System.setProperty(name, prop.getProperty(name));
+                }
+            }
+        } catch (FileNotFoundException ignored) {
+        } catch (IOException ignored) {
+        }
     }
 
     /**
