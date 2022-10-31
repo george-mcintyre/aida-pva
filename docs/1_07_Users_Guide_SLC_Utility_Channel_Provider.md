@@ -258,17 +258,25 @@ None
 ## 1.7.7. Execute correlation plots {#section177}
 
 - `CORRPLOT:SCAN`
-    - `FILE`* : _plot config button file_
-    - `PRIMSTV`* : _primary step variable structure_
+    - `FILE`* : _plot-config-button-file_
+    - `PRIMSTV`* : _primary-step-variable-structure_
         - `name`*: _device_
-        - `low`*: _low value_
-        - `high`*: _high value_
-        - `steps`*: _number of steps_
-    - `SECNSTV` : _secondary step variable structure_
+        - `low`*: _low-value_
+        - `high`*: _high-value_
+        - `steps`*: _number-of-steps_
+        - `settle`: _settle-time_
+        - `extrasettle`: _extra-settle-time_
+    - `SECNSTV` : _secondary-step-variable-structure_
         - `name`*: _device_
-        - `low`*: _low value_
-        - `high`*: _high value_
-        - `steps`*: _number of steps_
+        - `low`*: _low-value_
+        - `high`*: _high-value_
+        - `steps`*: _number-of-steps_
+        - `settle`: _settle-time_
+        - `extrasettle`: _extra-settle-time_
+    - `BPMD` : _measurement-definition-number_
+    - `BPMAVG`: _number-of-pulses-to-average_
+    - `DTIZAVG`: _dtiz-average_
+    - `MAGFUNC`: _trim-operation_
 
 Executes a correlation plot by loading the parameters from the given file and applying the specified
 primary step variable (and optionally secondary step variable). The function returns
@@ -286,48 +294,70 @@ to a button file.
 to [increase the timeout for a request](@ref increaseTimeoutUtil) when running this command.
 
 ### Arguments
+`FILE` and `PRIMSTV` are always needed.  The contents and value of these arguments determine the number and values of 
+the remaining parameters that will be required for a successful scan.  e.g. if the `PRIMSTV` parameter refers to a
+BPM reading then a BPM measurement definition (`BPMD`) argument is required.  Selecting and setting a coherent set of arguments 
+requires a lot of operator skill and domain knowledge.  Not for the faint hearted.
 
-| Argument Names | Argument Values            | Description                                                                                                                                   |
-|----------------|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `FILE`*        |                            | _string_<br/>Button file name including the "BTN" suffix.<br/>  The file must be in the standard button file directory<br/> `SLC_CRR_BUTTON:` |
-| `PRIMSTV`*     | `{name, low, high, steps}` | _structure_<br/>Specifies the primary step variable parameters                                                                                |
-|                | `name`*                    | _string_<br/>The name of the SLC data source to use                                                                                           |
-|                | `low`*                     | _float_<br/>The start value that the plot function will <br/>step the value of the source from                                                |
-|                | `high`*                    | _float_<br/>The end value that the plot function will <br/>step the value of the source to                                                    |
-|                | `steps`*                   | _integer_<br/>The number of steps that the plot function will<br/>take to scan from low to high                                               |
-| `SECNSTV`      | `{name, low, high, steps}` | _structure_<br/>Specifies the secondary step variable parameters                                                                              |
-|                | `name`*                    | _string_<br/>The name of the SLC data source to use                                                                                           |
-|                | `low`*                     | _float_<br/>The start value that the plot function will <br/>step the value of the source from                                                |
-|                | `high`*                    | _float_<br/>The end value that the plot function will <br/>step the value of the source to                                                    |
-|                | `steps`*                   | _integer_<br/>The number of steps that the plot function will<br/>take to scan from low to high                                               |
+| Argument Names | Argument Values                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|---------------|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FILE`*       | `<file-name>`                     | _string_<br/>Button file name including the "BTN" suffix.<br/>  The file must be in the standard button file directory<br/> `SLC_CRR_BUTTON:`                                                                                                                                                                                                                                                                                                                                                                                        |
+| `PRIMSTV`*    | `{name, low, high, steps}`        | _structure_<br/>Specifies the primary step variable parameters                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|               | `name: <step-source>`*            | _string_<br/>The name of the SLC data source to use                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+|               | `low: <start-value>`*             | _float_<br/>The start value that the plot function will <br/>step the value of the source from                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|               | `high: <end-value>`*              | _float_<br/>The end value that the plot function will <br/>step the value of the source to                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|               | `steps: <number-of-steps>`*       | _integer_<br/>The number of steps that the plot function will<br/>take to scan from low to high                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `SECNSTV`     | `{name, low, high, steps}`        | _structure_<br/>Specifies the secondary step variable parameters                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|               | `name: <step-source>`*            | _string_<br/>The name of the SLC data source to use                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+|               | `low: <start-value>`*             | _float_<br/>The start value that the plot function will <br/>step the value of the source from                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|               | `high: <end-value>`*              | _float_<br/>The end value that the plot function will <br/>step the value of the source to                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|               | `steps: <number-of-steps>`*       | _integer_<br/>The number of steps that the plot function will<br/>take to scan from low to high                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `BPMD`        | `<measurement-definition-number>` | _integer_<br/>This specifies the timing profile of the acquisition.<br />Each BPMD corresponds to exactly one DGRP. <br/><br/>To find likely BPMDs, go to the BPM Device panel<br/> of a SCP and hit the 'HELP' button.  <br/>Then select the button corresponding to <br/>the bpm orbit you would have wanted<br /> to see. <br/>The button name for that acquisition, as displayed<br /> in the help, is the BPMD for the selected orbit. Use<br /> that number for this parameter. <br/><br/>Eg, for 'HER Bunch train' `BPMD=38`. |
+| `NRPOS`       | `<number-of-pulses>`              | _positive integer_<br/>`1 =< N >= 10000`<br/>This is the number of pulses to average BPM readings over                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `DTIZAVG`     |                                   | Average DTIZ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `MAGFUNC`     | `<trim-operation>`                | Specifies trim operation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|               | `TRIM`                            | Perform a trim operation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|               | `PTRB`                            | Perform perturb operation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+|               | `NOFUNC`                          | Perform neither a trim or perturb operation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ### Return value
+Primary and secondary step variables will be returned in a table along with an arbitrary number of sample variable columns. Sample variable fields are named `sample<samp-number>`, e.g. `sample1`, `sample2`, `sample3` and so on with the table field label being the name of the sampled variable.
 
-| TYPE    | Return Column       | Column Type   | Description                                                                                                                                                                                                                                                                |
-|---------|---------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `TABLE` | `primary`           | `FLOAT_ARRAY` | value of the primary step variable for this step                                                                                                                                                                                                                           |
-|         | `secondary`         | `FLOAT_ARRAY` | value of the secondary step variable for this step.<br/>If no secondary step value is defined <br/>then this column will be omitted from the output table                                                                                                                  |
-|         | `samp<samp-number>` | `FLOAT_ARRAY` | Column names are created by concatenating "samp" <br/>with the _sample number_.  <br/>e.g. first non-`ZERO` sample variable will<br/> be called: `samp1` .<br/>The label of the field will be set to <br/>the sample SLC data source <br/>name. e.g. `BPMS:LI20:2445:TMIT` |
-|         | ...                 | ...           | Repeat for each sample variable                                                                                                                                                                                                                                            |
+If the field is not a `TIME`, `ATIME` (absolute time), or `SAMP` field, an extra `OK` and `Error` column will be returned.  The name of these fields will be constructed 
+by concatenating `OK` and `Error` to the respective field names. e.g. `sample1OK`, `sample3Error`, `primaryOK`, `secondaryError`.   The label names for these columns are appended with `" OK?"` and `" Error"` respectively.
+
+| TYPE    | Return Column / Label                                          | Column Type     | Description                                                                                                                                                                                                                                                                                                 |
+|---------|----------------------------------------------------------------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `TABLE` | `primary`/ `<name-of-primary-step-variable>`                   | `FLOAT_ARRAY`   | value of the primary <br/>step variable for <br/>this step                                                                                                                                                                                                                                                  |
+|         | `primaryOK` / `<name-of-primary-step-variable> OK?`            | `BOOLEAN_ARRAY` | If the primary step <br/>variable is not <br/>`TIME`, `ATIME`, or <br/>`SAMP`, this field is<br/>included and <br/>indicates whether <br/>the primary step <br/>variable was set <br/>correctly                                                                                                             |
+|         | `primaryError` /`<name-of-primary-step-variable> Error`        | `FLOAT_ARRAY`   | If the primary step <br/>variable is not <br/>`TIME`, `ATIME`, or <br/>`SAMP`, this field is<br/>included and <br/>indicates the error <br/>in the setting                                                                                                                                                  |
+|         | `secondary` /`<name-of-secondary-step-variable>`               | `FLOAT_ARRAY`   | value of the secondary <br/>step variable for <br/>this step. If no <br/>secondary step value<br/>is defined then this<br/>column will be <br/>omitted from the <br/>output table                                                                                                                           |
+|         | `secondaryOK` /`<name-of-secondary-step-variable> OK?`         | `BOOLEAN_ARRAY` | If the secondary step<br/>variable is not <br/>`TIME`, `ATIME`, or <br/>`SAMP`, this field is <br/>included and <br/>indicates whether the <br/>secondary step <br/>variable was set <br/>correctly                                                                                                         |
+|         | `secondaryError` /`<name-of-secondary-step-variable> Error`    | `FLOAT_ARRAY`   | If the secondary step<br/>variable is not <br/>`TIME`, `ATIME`, or <br/>`SAMP`, this field is <br/>included and <br/>indicates the error in<br/>the setting                                                                                                                                                 |
+|         | `sample<samp-number>` /`<name-of-sample-variable>`             | `FLOAT_ARRAY`   | Column names are <br/>created by <br/>concatenating <br/>"sample" with the <br/>_sample number_.  <br/>e.g. first non-`ZERO` <br/>sample variable will<br/> be called: `sample1` .<br/>The label of the <br/>field will be set to <br/>the sample SLC data <br/>source name. e.g.<br/>`BPMS:LI20:2445:TMIT` |
+|         | `sample<samp-number>OK` / `<name-of-sample-variable> OK?`      | `BOOLEAN_ARRAY` | If this sample <br/>variable is not <br/>`TIME`, `ATIME`, or <br/>`SAMP`, this field <br/>is included and <br/>indicates the <br/>whether the value<br/>was read correctly                                                                                                                                  |
+|         | `sample<samp-number>Error` / `<name-of-sample-variable> Error` | `FLOAT_ARRAY`   | If this sample <br/>variable is not <br/>`TIME`, `ATIME`, or <br/>`SAMP`, this field is <br/>included and <br/>indicates the error in the<br/> reading                                                                                                                                                      |
+|         | ...                                                            | ...             | Repeat for each <br/>sample variable                                                                                                                                                                                                                                                                        |
 
 ### Examples
 
 #### Operations
 
-- `CORRPLOT:SCAN FILE=FACET_BPMS.BTN PRIMSTV={"name": "KLYS:LI31:31:PDES", "low": 0.5, "high": 1.0, "steps": 6}`
+- `CORRPLOT:SCAN FILE=CRRSIMPL.BTN PRIMSTV={"name": "TIME", "low": 0.5, "high": 1.0, "steps": 10}`
+- `CORRPLOT:SCAN FILE=FACET_BPMS.BTN PRIMSTV={"name": "KLYS:LI31:31:PDES", "low": 0.5, "high": 1.0, "steps": 6} BPMD=57 NRPOS=1`
 
 #### Response
 
-| KLYS:LI31:31:PDES | BPMS:LI20:2445:X | BPMS:LI20:2445:Y | BPMS:LI20:2445:TMITS |
-|------------------:|-----------------:|-----------------:|---------------------:|
-|                   |                  |                  |                      |
-|         `primary` |          `samp1` |          `samp2` |              `samp3` |
-|             `0.5` |    `0.103910382` |   `0.9549588893` |       `0.0000000012` |
-|             `0.6` |    `0.103910383` |   `0.9549588892` |       `0.0000000013` |
-|             `0.7` |    `0.103910384` |   `0.9549588891` |       `0.0000000014` |
-|             `0.8` |    `0.103910385` |   `0.9549588880` |       `0.0000000015` |
-|             `0.9` |    `0.103910386` |   `0.9549588889` |       `0.0000000016` |
-|             `1.0` |    `0.103910387` |   `0.9549588888` |       `0.0000000017` |
+| KLYS:LI31:31:PDES | KLYS:LI31:31:PDES&nbsp;OK? | KLYS:LI31:31:PDES&nbsp;Error? | BPMS:LI20:2445:X | BPMS:LI20:2445:X&nbsp;OK? | BPMS:LI20:2445:X&nbsp;Error | BPMS:LI20:2445:Y | BPMS:LI20:2445:Y&nbsp;OK? | BPMS:LI20:2445:Y&nbsp;Error |
+|------------------:|-----------------------------|-------------------------:|-----------------:|---------------------|-----------------------:|-----------------:|---------------------|-----------------------:|
+|                   |                             |                          |                  |                     |                        |                  |                     |                        |
+|         `primary` | `primaryOK`                 |           `primaryError` |        `sample1` |          `sample1OK` |         `sample1Error` |        `sample2` |          `sample2OK` |         `sample2Error` |
+|             `0.5` | 1                           |                  0.00001 |    `0.103910382` |                  `1` |            `0.0000002` |   `0.9549588893` |                  `1` |            `0.0000009` |
+|             `0.6` | 1                           |                  0.00001 |    `0.103910383` |                  `1` |            `0.0000003` |   `0.9549588892` |                  `1` |            `0.0000009` |
+|             `0.7` | 1                           |                  0.00001 |    `0.103910384` |                  `1` |            `0.0000004` |   `0.9549588891` |                  `1` |            `0.0000009` |
+|             `0.8` | 1                           |                  0.00001 |    `0.103910385` |                  `1` |            `0.0000005` |   `0.9549588880` |                  `1` |            `0.0000008` |
+|             `0.9` | 1                           |                  0.00001 |    `0.103910386` |                  `1` |            `0.0000006` |   `0.9549588889` |                  `1` |            `0.0000008` |
+|             `1.0` | 1                           |                  0.00001 |    `0.103910387` |                  `1` |            `0.0000007` |   `0.9549588888` |                  `1` |            `0.0000008` |
 
 ## Increasing timeout for AIDA-PVA requests {#increaseTimeoutUtil}
 
