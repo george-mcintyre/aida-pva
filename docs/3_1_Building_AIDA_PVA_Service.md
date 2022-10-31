@@ -7,7 +7,16 @@ On Linux Machine
 git clone git@github.com:slaclab/aida-pva.git
 ```
 
-2. Run maven to create jar 
+2. If you've changed the JNI interface in any way rebuild header file
+
+```shell
+cd aida-pva
+javah -o src/cpp/slac_aida_NativeChannelProvider.h -classpath ./target/classes slac.aida.NativeChannelProvider
+# Manually update C_INC/slac_aida_NativeChannelProvider.h with changes in src/cpp/slac_aida_NativeChannelProvider.h
+# Commit to CMS
+```
+
+3. Run maven to create jar 
 ```shell
 cd aida-pva
 mvn install
@@ -198,7 +207,7 @@ Process finished with exit code 0
 
 ```
 
-3. Copy jar to VMS
+4. Copy jar to VMS
 ```shell
 cp /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0/aida-pva-3.0.0.jar aida-pva.jar
 sftp mccdev
@@ -208,7 +217,7 @@ sftp> mput aida-pva.jar
 
 ```
 
-4. Move code to SLCIMAGE
+5. Move code to SLCIMAGE
 On VMS
 ```shell
 MCCDEV> COPY AIDA-PVA.JAR SLCIMAGE:AIDA-PVA.JAR
