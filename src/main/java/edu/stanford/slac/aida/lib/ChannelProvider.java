@@ -75,9 +75,9 @@ public abstract class ChannelProvider extends NativeChannelProvider {
 
         // Call initialisation for the channel provider
         String providerName = getProviderName();
-        logger.info("Calling aidaServiceInit() for " + providerName + " ...");
+        logger.info("Calling Provider Initialisation for " + providerName + " ...");
         aidaServiceInit();
-        logger.info(providerName + " Service Initialized");
+        logger.info(providerName + " Provider Initialized");
     }
 
     /**

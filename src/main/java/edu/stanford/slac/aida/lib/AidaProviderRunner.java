@@ -64,7 +64,7 @@ public class AidaProviderRunner {
         // Run the server to start servicing requests
         try {
             server.printInfo();   // Print RPC service information
-            logger.info("AIDA-PVA version " + System.getProperty("aida.pva.version", "-.-.-") + ":  Server Ready: " + elapsedTime());
+            logger.info("\n\tAIDA-PVA Service\n\tversion " + System.getProperty("aida.pva.version", "-.-.-") + "\n\tReady: " + elapsedTime());
             server.run(0);
         } catch (PVAException e) {
             e.printStackTrace();
