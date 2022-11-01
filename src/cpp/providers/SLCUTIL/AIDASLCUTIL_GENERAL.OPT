@@ -11,3 +11,6 @@ SLCLIBS:AIDA_PVALIB.OLB/LIB
   AIDASHR/shareable
   SYSUTIL/shareable
   UTILSHR/shareable
+  FBCKUTIL/shareable
+  CRRUTIL/shareable
+  BPMUTIL/shareable

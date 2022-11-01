@@ -167,13 +167,13 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...)
  * @code
  *     json='{"foo": {"bar": 0}}}'
  * @endcode
- * You can specify the @p name as `"json.foo.bar"` to retrieve the `0` value.
+ * You can specify the @p name as "json.foo.bar" to retrieve the `0` value.
  * -# Also given a variable named `jsonArray` and presented as
  * @code
  *     jsonArray='[{"foo": 10}, {"bar": 20}]'
  * @endcode
- * You can specify the #p name as `"jsonArray[1].bar"` to retrieve the `20` value.
- * -# Finally if you use the @p name `"value"`, then the avscanf() function
+ * You can specify the #p name as "jsonArray[1].bar" to retrieve the `20` value.
+ * -# Finally if you use the @p name "value", then the avscanf() function
  * will use the supplied @p value parameter to get the data for that parameter
  * @code
  *     Arguments arguments;
@@ -215,7 +215,7 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...)
  *
  * @paragraph Prefixes
  * - **h** - `short *` - preceding **d** will retrieve a short e.g. "%hd".
- * - **l** - `long *`, double * - preceding **d** will retrieve a long eg. `"%ld"`; preceding **f** will retrieve a double eg. `"%lf"`.
+ * - **l** - `long *`, double * - preceding **d** will retrieve a long eg. "%ld"; preceding **f** will retrieve a double eg. "%lf".
  *
  * @paragraph Suffixes
  * - **a** - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it.
@@ -1213,7 +1213,7 @@ void tableAddSingleRowStringColumn(JNIEnv* env, Table* table, char* data)
  * @param arguments the arguments to scan for the float.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"json.foo.bar"`
+ *             e.g. "json.foo.bar"
  * @param target the place to store the float if found.
  * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
@@ -1233,7 +1233,7 @@ static int getFloatArgument(Arguments* arguments, char* path, float* target)
  * @param arguments the arguments to scan for the double.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"json.foo.bar"`
+ *             e.g. "json.foo.bar"
  * @param target the place to store the double.
  * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
@@ -1254,7 +1254,7 @@ static int getDoubleArgument(Arguments* arguments, char* path, double* target)
  * @param arguments the arguments to scan for the float array.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"jsonArray[1].bar"`
+ *             e.g. "jsonArray[1].bar"
  * @param target the place to store the float array.
  * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
@@ -1275,7 +1275,7 @@ static int getFloatArrayArgument(Arguments* arguments, char* path, float** targe
  * @param arguments the arguments to scan for the double array.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"jsonArray[1].bar"`
+ *             e.g. "jsonArray[1].bar"
  * @param target the place to store the double array.
  * @return `EXIT_SUCCESS` if found `EXIT_FAILURE` if not.
  */
@@ -1296,7 +1296,7 @@ static int getDoubleArrayArgument(Arguments* arguments, char* path, double** tar
  * @param arguments the arguments to scan for the floating point value.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"jsonArray[1].bar"`
+ *             e.g. "jsonArray[1].bar"
  * @return NULL of not found.
  */
 static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* path)
@@ -1316,7 +1316,7 @@ static FloatingPointValue* getFloatingPointValue(Arguments* arguments, char* pat
  * @param arguments the arguments to scan for the floating point array.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"jsonArray[1].bar"`
+ *             e.g. "jsonArray[1].bar"
  * @return NULL of not found.
  */
 static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elementCount)
@@ -1331,7 +1331,7 @@ static float* getFloatArray(Arguments* arguments, char* path, unsigned int* elem
  * @param arguments the arguments to scan for the double precision floating point array.
  * @param path path to look for in arguments. The path can be a simple path that is just the argument name.
  *             But it can also use dot notation to reference the value deep inside json.
- *             e.g. `"jsonArray[1].bar"`
+ *             e.g. "jsonArray[1].bar"
  * @return NULL of not found.
  */
 static double* getDoubleArray(Arguments* arguments, char* path, unsigned int* elementCount)

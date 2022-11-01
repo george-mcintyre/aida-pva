@@ -800,13 +800,13 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
  * @code
  *     json='{"foo": {"bar": 0}}}'
  * @endcode
- * You can specify the @p name as `"json.foo.bar"` to retrieve the `0` value.
+ * You can specify the @p name as "json.foo.bar" to retrieve the `0` value.
  * -# Also given a variable named `jsonArray` and presented as
  * @code
  *     jsonArray='[{"foo": 10}, {"bar": 20}]'
  * @endcode
- * You can specify the #p name as `"jsonArray[1].bar"` to retrieve the `20` value.
- * -# Finally if you use the @p name `"value"`, then the avscanf() function
+ * You can specify the #p name as "jsonArray[1].bar" to retrieve the `20` value.
+ * -# Finally if you use the @p name "value", then the avscanf() function
  * will use the supplied @p value parameter to get the data for that parameter
  * @code
  *     Arguments arguments;
@@ -824,18 +824,18 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
  *   - The following translate to `true`
  *     - not `0`  - integer, short, long,
  *     - not `0.0` - float, double
- *     - `“true”` - char string
- *     - `“t”`  - char string
- *     - `“yes”` - char string
- *     - `“y”`  - char string
+ *     - “true” - char string
+ *     - “t”  - char string
+ *     - “yes” - char string
+ *     - “y”  - char string
  *     - `!0` - short, int, long, float, or double
  *   - The following translate to `false`
  *     - `0`  - integer, short, long,
  *     - `0.0` - float, double
- *     - `“false”` - char string
- *     - `“f”`- char string
- *     - `“no”`- char string
- *     - `“n”`- char string
+ *     - “false” - char string
+ *     - “f”- char string
+ *     - “no”- char string
+ *     - “n”- char string
  *     - `0` - short, int, long, float, or double
  * - **c** : `char *` - extract a single character into the corresponding variable.
  * - **d** : `int *` - extract an integer into the corresponding variable (see **l** & **h** below).
@@ -848,7 +848,7 @@ int ascanf(JNIEnv* env, Arguments* arguments, const char* formatString, ...);
  *
  * @paragraph Prefixes
  * - **h** - `short *` - preceding **d** will retrieve a short e.g. "%hd".
- * - **l** - `long *`, double * - preceding **d** will retrieve a long eg. `"%ld"`; preceding **f** will retrieve a double eg. `"%lf"`.
+ * - **l** - `long *`, double * - preceding **d** will retrieve a long eg. "%ld"; preceding **f** will retrieve a double eg. "%lf".
  *
  * @paragraph Suffixes
  * - **a** - extract an array of the preceding type into a block of allocated space and point the corresponding variable to it.
