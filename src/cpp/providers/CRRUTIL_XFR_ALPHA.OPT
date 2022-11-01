@@ -132,11 +132,10 @@ symbol_vector = ( -
     ,PEP_DBPUT_BEAM_MOTION            = PROCEDURE -
     ,MKBTUN_PARSE_MKBFILES            = PROCEDURE -
     ,MKBTUN_ENTER_VALUE               = PROCEDURE -
-    ,SPARE -
-    ,SPARE -
-    ,SPARE -
-    ,SPARE -
-    ,SPARE -
+    ,CRR_DATA_ACQ_INIT                = PROCEDURE -
+    ,CRR_DATA_ACQ_DONE                = PROCEDURE -
+    ,CRR_RESTORE_BUTTON_FILE          = PROCEDURE -
+    ,CRR_SET_VAR_NAME_FREEFORM        = PROCEDURE -
     ,SPARE -
     ,SPARE -
     ,SPARE -
