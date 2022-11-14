@@ -2,6 +2,7 @@
 # @file
 # @brief Channels definition file for AIDA-PVA: SLC Utility provider
 #       **CMS**=SLCTXT
+#       **MEMBER**=NONE
 #
 # @section DML
 # @code

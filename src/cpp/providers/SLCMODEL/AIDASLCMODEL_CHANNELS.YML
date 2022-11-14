@@ -2,6 +2,7 @@
 # @file
 # @brief Channels definition file for AIDA-PVA: SLC SLC Modelling provider
 #       **CMS**=SLCTXT
+#       **MEMBER**=NONE
 #
 # @section d1 DML 1
 # @code

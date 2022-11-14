@@ -2,6 +2,7 @@
 # @file
 # @brief Channels definition file for AIDA-PVA: SLC Master Oscillator provider
 #       **CMS**=SLCTXT
+#       **MEMBER**=NONE
 #
 id: 142
 name: SLCMosc

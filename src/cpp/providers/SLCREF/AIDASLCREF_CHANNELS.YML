@@ -2,6 +2,7 @@
 # @file
 # @brief Channels definition file for AIDA-PVA: Reference provider
 #       **CMS**=SLCTXT
+#       **MEMBER**=NONE
 id: 0
 name: Sample
 description: Aida Sample Data Provider
