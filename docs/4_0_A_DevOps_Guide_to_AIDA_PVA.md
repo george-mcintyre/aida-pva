@@ -341,11 +341,11 @@ LENS:????:*//DVIC, ...]
   1. An Environment Variable `AIDA_PVA_CHANNELS_FILENAME` - (A global symbol in VMS terminology)
       * fully qualified path name of channels file or
       * channels file name to search for in the working directory
-      * e.g. `$ AIDA_PVA_CHANNELS_FILENAME == SLCTXT:AIDASLCDB_CHANNELS.YML`
+      * e.g. `$ AIDA_PVA_CHANNELS_FILENAME == SLCYML:AIDASLCDB_CHANNELS.YML`
   2. A property set on the launch commandline with the `-D` option named `aida.pva.channels.filename`
       * fully qualified path name of channels file or
       * channels file name to search in the working directory
-      * e.g. `-Daida.pva.channels.filename=/SLCTXT/AIDASLCDB_CHANNELS.YML`
+      * e.g. `-Daida.pva.channels.filename=/SLCYML/AIDASLCDB_CHANNELS.YML`
       * A file in the working directory called `CHANNELS.YML`
 
 ### 5 - The Channel Provider will load Legacy AIDA Modules in AIDASHR

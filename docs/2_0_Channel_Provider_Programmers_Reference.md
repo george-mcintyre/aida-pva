@@ -224,8 +224,8 @@ Table aidaRequestTable(JNIEnv* env, const char* uri, Arguments arguments)
 ```
 ## Comparison to legacy AIDA implementation
 - You should use the same Legacy AIDA Modules in AIDASHR to connect to the AIDA data sources so the data returned will be the same as before
-- Instead of CORBA you will use EPICs to transit your request from client to service - but the framework takes care of all of that so you don't need to code anything.  In fact if you're modifying Legacy AIDA data sources you'll need to remove code that handles JNI and CORBA.
-- You have a new AIDA-PVA Module in AIDA_PVALIB to do all of the boilerplate functionality that had to be coded in the Legacy AIDA data sources including JNI, Argument processing, exception handling, memory management, etc.
+- Instead of CORBA you will use EPICs to transit your request from client to service - but the framework takes care of all of that, so you don't need to code anything.  In fact if you're modifying Legacy AIDA data sources you'll need to remove code that handles JNI and CORBA.
+- You have a new AIDA-PVA Module in AIDA_PVALIB to do all the boilerplate functionality that had to be coded in the Legacy AIDA data sources including JNI, Argument processing, exception handling, memory management, etc.
 - There is a new CHANNELS.YML file that is used to specify the supported channels, arguments, and return types - these are no longer hard coded inside the datasource code.
 - Clients will use aida-pva-client instead of the legacy AIDA-Client library to facilitate access.  But now this is optional as they can code directly in EPICS PvAccess if they want. 
 

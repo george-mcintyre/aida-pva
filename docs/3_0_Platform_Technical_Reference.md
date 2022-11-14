@@ -21,7 +21,7 @@ path to load the Channel Provider image from.  In our SLAC environment this is a
 - It checks the value of a property (`aida.pva.lib.name`) or environment variable (`AIDA_PVA_LIB_NAME`) to determine which
 Channel Provider image to load.  e.g. `AIDASLCDB` to load the `AIDASLCDB.EXE` image.
 - It checks the value of a property (`aida.pva.channels.filename`) or environment variable (`AIDA_PVA_CHANNELS_FILENAME`) to determine which
-  Channel Configuration File to load. This can be a full path name.  e.g. `/SLCTXT/AIDASLCDB_CHANNELS.YML`
+  Channel Configuration File to load. This can be a full path name.  e.g. `/SLCYML/AIDASLCDB_CHANNELS.YML`
 - It reads configuration from the selected channel configuration file.
 
 This determines which channels the Channel Provider will support, and where it will find implementations for the endpoints required to service the supported channels. 
@@ -298,7 +298,7 @@ Markdown files to be edited directly in github and this documentation to be upda
 source file comment that is changed will automatically be updated in the documentation.
 
 At the time of writing the last step - pushing generated documentation to the web service in SLAC - is failing due to a
-permissions problem - Greg needs to fix this :)
+permissions' problem - Greg needs to fix this :)
 
 The workflows are defined [here for aida-pva](https://github.com/slaclab/aida-pva/blob/master/.github/workflows/ci-docs.yml) and
 [here for aida-pva-tests](https://github.com/slaclab/aida-pva-tests/blob/main/.github/workflows/ci-docs.yml).

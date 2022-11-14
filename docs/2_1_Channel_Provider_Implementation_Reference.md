@@ -14,7 +14,7 @@ unfamiliar with the YAML (Yet Another Markup Language) format you
 can [familiarise yourself with the syntax and format](https://www.redhat.com/sysadmin/yaml-beginners) before reading
 further.
 
-Please read [documentation on the Channel Configuration File](2_3_CHANNELS_YML_file.md) file for information on how to create one. An
+Please read [documentation on the Channel Configuration File](2_3_CHANNELS_YML_file.md) for information on how to create one. An
 example configuration file is shown below:
 
 ```yaml
