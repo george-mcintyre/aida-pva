@@ -435,8 +435,6 @@ MCCDEV::SLCSHR> logout
 
 ➍ 🔂 Run private Shareable Image
 
-@note to stop press `CTRL-Y` not `CTRL-C`. Pressing `CTRL-Y` this will prevent an automatic restart
-
 </td>
 <td class="markdownTableBodyNone">
 
@@ -883,7 +881,7 @@ Set logical so testing uses local Channel Config file
 ```shell
 MCCDEV> TESTYML AIDASLCBPM_CHANNELS.YML
 MCCDEV> TESTYML AIDASLCBPMBUFF_CHANNELS.YML
-MCCDEV> TESTYML AIDASLCDB_CHANNELS.YAMDEFAULT
+MCCDEV> TESTYML AIDASLCDB_CHANNELS.YAML
 MCCDEV> TESTYML AIDASLCKLYS_CHANNELS.YML
 MCCDEV> TESTYML AIDASLCMAGNET_CHANNELS.YML
 MCCDEV> TESTYML AIDASLCUTIL_CHANNELS.YML
@@ -903,7 +901,7 @@ MCCDEV> TESTYML AIDASLCUTIL_CHANNELS.YML
 ```shell
 MCCDEV> SHOWTESTYML AIDASLCBPM_CHANNELS.YML
 MCCDEV> SHOWTESTYML AIDASLCBPMBUFF_CHANNELS.YML
-MCCDEV> SHOWTESTYML AIDASLCDB_CHANNELS.YAMDEFAULT
+MCCDEV> SHOWTESTYML AIDASLCDB_CHANNELS.YAML
 MCCDEV> SHOWTESTYML AIDASLCKLYS_CHANNELS.YML
 MCCDEV> SHOWTESTYML AIDASLCMAGNET_CHANNELS.YML
 MCCDEV> SHOWTESTYML AIDASLCUTIL_CHANNELS.YML
@@ -972,8 +970,6 @@ MCCDEV> logout
 
 ➍ 🔂 Run private Shareable Image
 
-@note to stop press `CTRL-Y` not `CTRL-C`. Pressing `CTRL-Y` this will prevent an automatic restart
-
 </td>
 <td class="markdownTableBodyNone">
 
@@ -997,95 +993,14 @@ MCCDEV> @AIDA_SLCUTIL.SUBMIT
 
 Deploy appropriate Channel Config file to PROD
 
+@note Because of its large size, `AIDASLCDB_CHANNELS.YML` is treated as a special case and so is not copied to `SLCIMAGE` and `CMS_REPLACE` is used instead of `CMS_REPLACE/IF_CHANGED` when committing it to CMS.
+
 <table class="markdownTable">
 <tr class="markdownTableHead"><th class="markdownTableHeadNone">step</th><th class="markdownTableHeadNone">sub-step</th><th class="markdownTableHeadNone">procedure</th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
-➀ Reserve changed files in CMS
-
-</td>
-<td class="markdownTableBodyNone">
-
-➊ Enter CMS CLI
-
-</td>
-<td class="markdownTableBodyNone">
-
-```shell
-MCCDEV> slccms
-SlcCMS> set libr CMS_SLCTXT
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">
-</td>
-<td class="markdownTableBodyNone">
-
-➋ 🔂 Reserve changed file
-
-</td>
-<td class="markdownTableBodyNone">
-
-```shell
-SlcCMS> reserve AIDASLCBPM_CHANNELS.YML /nooutput
-SlcCMS> reserve AIDASLCBPMBUFF_CHANNELS.YML /nooutput
-SlcCMS> reserve AIDASLCDB_CHANNELS.YML /nooutput
-SlcCMS> reserve AIDASLCDB_CHANNELS.YAML /nooutput
-SlcCMS> reserve AIDASLCKLYS_CHANNELS.YML /nooutput
-SlcCMS> reserve AIDASLCMAGNET_CHANNELS.YML /nooutput
-SlcCMS> reserve AIDASLCUTIL_CHANNELS.YML /nooutput
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">
-</td>
-<td class="markdownTableBodyNone">
-
-➌ Exit CMS CLI
-
-</td>
-<td class="markdownTableBodyNone">
-
-```shell
-SlcCMS> exit 
-```
-
-</td>
-</tr>
-
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">
-
-➁ Commit changed file:
-
-</td>
-<td class="markdownTableBodyNone">
-➊ 🔂
-</td>
-<td class="markdownTableBodyNone">
-
-```shell
-MCCDEV>  cmp AIDASLCBPM_CHANNELS.YML  
-MCCDEV>  cmp AIDASLCBPMBUFF_CHANNELS.YML  
-MCCDEV>  cmp AIDASLCDB_CHANNELS.YML  
-MCCDEV>  cmp AIDASLCDB_CHANNELS.YAML  
-MCCDEV>  cmp AIDASLCKLYS_CHANNELS.YML  
-MCCDEV>  cmp AIDASLCMAGNET_CHANNELS.YML  
-MCCDEV>  cmp AIDASLCUTIL_CHANNELS.YML  
-```
-
-</td>
-</tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">
-
-➂ Set Config for use in DEV
+➀ Set Config for use in DEV and update in `CMS_SLCTXT`
 
 </td>
 <td class="markdownTableBodyNone">
@@ -1098,7 +1013,8 @@ MCCDEV>  cmp AIDASLCUTIL_CHANNELS.YML
 ```shell
 MCCDEV> DEVYML AIDASLCBPM_CHANNELS.YML
 MCCDEV> DEVYML AIDASLCBPMBUFF_CHANNELS.YML
-MCCDEV> DEVYML AIDASLCDB_CHANNELS.YAMDEFAULT
+MCCDEV> DEVYML AIDASLCDB_CHANNELS.YML
+MCCDEV> DEVYML AIDASLCDB_CHANNELS.YAML
 MCCDEV> DEVYML AIDASLCKLYS_CHANNELS.YML
 MCCDEV> DEVYML AIDASLCMAGNET_CHANNELS.YML
 MCCDEV> DEVYML AIDASLCUTIL_CHANNELS.YML
@@ -1109,7 +1025,7 @@ MCCDEV> DEVYML AIDASLCUTIL_CHANNELS.YML
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">
 
-➃ Load Config on DEV
+➁ Load Config on DEV
 
 </td>
 <td class="markdownTableBodyNone">
@@ -1185,7 +1101,7 @@ Deploy Channel Config file to PROD
 ```shell
 MCCDEV> NEWYML AIDASLCBPM_CHANNELS.YML
 MCCDEV> NEWYML AIDASLCBPMBUFF_CHANNELS.YML
-MCCDEV> NEWYML AIDASLCDB_CHANNELS.YAMDEFAULT
+MCCDEV> NEWYML AIDASLCDB_CHANNELS.YAML
 MCCDEV> NEWYML AIDASLCKLYS_CHANNELS.YML
 MCCDEV> NEWYML AIDASLCMAGNET_CHANNELS.YML
 MCCDEV> NEWYML AIDASLCUTIL_CHANNELS.YML
@@ -1493,8 +1409,6 @@ MCCDEV> logout
 <td class="markdownTableBodyNone">
 
 ➍ 🔂 Run private Shareable Image
-
-@note to stop press `CTRL-Y` not `CTRL-C`. Pressing `CTRL-Y` this will prevent an automatic restart
 
 </td>
 <td class="markdownTableBodyNone">
