@@ -1,13 +1,13 @@
 # 3.1 - Building AIDA-PVA Service
 
-1. Check out code from git repository
+## 3.1.1 Check out code from git repository
 
 On Linux Machine
 ```shell
 git clone git@github.com:slaclab/aida-pva.git
 ```
 
-2. If you've changed the JNI interface in any way rebuild header file
+## 3.1.2. If you've changed the JNI interface in any way rebuild header file
 
 ```shell
 cd aida-pva
@@ -16,7 +16,7 @@ javah -o src/cpp/slac_aida_NativeChannelProvider.h -classpath ./target/classes s
 # Commit to CMS
 ```
 
-3. Run maven to create jar 
+## 3.1.3. Run maven to create jar 
 ```shell
 cd aida-pva
 mvn install
@@ -207,7 +207,7 @@ Process finished with exit code 0
 
 ```
 
-4. Copy jar to VMS
+## 3.1.4. Copy jar to VMS
 ```shell
 cp /.m2/repository/edu/stanford/slac/aida/aida-pva/3.0.0/aida-pva-3.0.0.jar aida-pva.jar
 sftp mccdev
@@ -217,8 +217,76 @@ sftp> mput aida-pva.jar
 
 ```
 
-5. Move code to SLCIMAGE
-On VMS
+## 3.1.5. Use TESTJAR to test the new JAR file privately
+
+### Summary
+- Use   `TESTJAR <list of jar files>`   to supply .JAR file(-s) for testing
+- Use   `NOTESTJAR`                     to revert to the standard `JAVA$CLASSPATH` .JAR file list
+- Use   `SHOWTESTJAR`                   to display the test `JAVA$CLASSPATH` logical
+
+### More details:
+
+If you want to test a new version of a .JAR file that is already listed in the standard
+JOB table logical JAVA$CLASSPATH (or is INTENDED to be listed there) proceed as follows:
+
+   `$ TESTJAR <comma-separated list of .JAR files for testing>`
+
+### Examples:
 ```shell
-MCCDEV> COPY AIDA-PVA.JAR SLCIMAGE:AIDA-PVA.JAR
+$ TESTJAR []MYJAR.JAR
+$ TESTJAR [],UDSLC:[USER.DEVJAR]SOMEJAR.JAR;10  ! [] will find any CLASS files in default direc
+```
+
+### Details
+`TESTJAR` will define a PROCESS table logical name `JAVA$CLASSPATH` by prepending the specified
+list to the list of files defined in the standard JOB table `JAVA$CLASSPATH` logical name.
+Note that file names do not need to be fully qualified only if you maintain the same default directory
+while you do your testing.
+
+Test by running the java procedure that uses the new .JAR file(-s)
+
+When you are through testing, issue the command
+```shell
+$ NOTESTJAR
+```
+which simply DEASSIGNs your PROCESS table `JAVA$CLASSPATH` logical
+or, alternatively, just `LOGOUT`
+
+If you want to see the current test version of the test `JAVA$CLASSPATH` logical issue the command:
+```shell
+$ SHOWTESTJAR
+```
+
+To back out a .JAR file stored in SLCIMAGE:, see command BACKJAR.
+
+@note If you are testing a new .JAR file that is NOT already listed in the standard JOB table logical
+`JAVA$CLASSPATH`, that file must be included in the definition of `JAVA$CLASSPATH` (in file
+`SLCCOM:USERLOGIN.COM`) in the form `SLCIMAGE:xxx.JAR` before your new .JAR file is released
+to DEV and NEW.
+
+## 3.1.6. Create a Development JAR to deploy on MCCDEV for further testing
+Use command `DEVIMAGE` to move a .JAR file (that is to be stored in `SLCIMAGE`) into the DEV directory.
+
+### Example:
+```shell
+$ DEVIMAGE MYJAR.JAR
+```
+
+@note These SLCIMAGE: .JAR files should normally be listed in the logical name
+`JAVA$CLASSPATH` (which is defined in file `SLCCOM:USERLOGIN.COM`.)
+
+## 3.1.7. Move JAR to production
+Use command `NEWIMAGE` to move a .JAR file (that is stored in `SLCIMAGE`) from DEV to NEW.
+
+### Example:
+```shell
+$ NEWIMAGE MYJAR.JAR
+```
+
+## 3.1.8 To back out a jar stored in SLCIMAGE
+Use command `BACKIMAGE` to backout a .JAR file (that is stored in `SLCIMAGE`).
+
+### Example:
+```shell
+$ BACKIMAGE MYJAR.JAR
 ```
