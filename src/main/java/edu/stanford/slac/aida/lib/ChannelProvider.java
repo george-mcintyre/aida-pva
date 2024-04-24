@@ -289,6 +289,14 @@ public abstract class ChannelProvider extends NativeChannelProvider {
     }
 
     /**
+     * Gets the configured transpose method
+     * @return The configured transpose method
+     */
+    public final TransposeMethod getTransposeMethod() {
+        return this.aidaProvider.getTranspose();
+    }
+
+    /**
      * Log the list of channels being served
      */
     private void logHostedChannels() {

@@ -16,6 +16,7 @@
 # @endcode
 id: 262
 name: SLCBMagnet
+transpose: flip
 description: SLC Magnet Data
 configurations:
   - name: Get Secondary Values

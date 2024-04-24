@@ -110,7 +110,7 @@ public class AidaRPCService implements RPCService {
             // Make sure that only one request occurs at a time because
             // the implementations are not thread safe.
             synchronized (this) {
-                retVal = request(channelName, arguments);
+                retVal = request(TransposeHandler.transpose(channelName, aidaChannelProvider.getTransposeMethod()), arguments);
             }
         } catch (RPCRequestException e) {
             throw e;

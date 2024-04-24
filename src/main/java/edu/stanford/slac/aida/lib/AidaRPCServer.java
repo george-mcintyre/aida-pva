@@ -4,6 +4,7 @@
  */
 package edu.stanford.slac.aida.lib;
 
+import edu.stanford.slac.aida.lib.model.TransposeHandler;
 import org.epics.pvaccess.server.rpc.RPCServer;
 
 /**
@@ -43,8 +44,8 @@ public class AidaRPCServer extends RPCServer {
      * @param service the given service
      */
     public void registerServices(AidaRPCService service) {
-        for (String channelName : aidaChannelProvider.getChannelNames()) {
-            registerService(channelName, service);
+        for (final String channelName : aidaChannelProvider.getChannelNames()) {
+            registerService(TransposeHandler.transpose(channelName, aidaChannelProvider.getTransposeMethod()), service);
         }
     }
 }

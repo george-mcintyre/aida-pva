@@ -12,6 +12,8 @@ import org.epics.pvaccess.util.WildcardMatcher;
 
 import java.util.*;
 
+import static edu.stanford.slac.aida.lib.model.TransposeMethod.NONE;
+
 /**
  * This class captures the metadata associated with a Channel Provider.
  * This class encapsulates an AidaProvider.
@@ -46,6 +48,8 @@ public class AidaProvider {
      */
     private @NonNull String name;
 
+    private @NonNull TransposeMethod transpose = NONE;
+
     /**
      * The AidaProvider::getDescription() describes what the Channel Provider does.  By convention, we use the `AIDA_SERVICES.DESCRIPTION` from the
      * AIDA Oracle Database.
@@ -73,7 +77,7 @@ public class AidaProvider {
      * support both AIDA-PVA and legacy AIDA names for their channels.  The list
      * returned will contain both.
      *
-     * @return the list of supported channel names
+     * @return the set of supported channel names
      */
     public Set<String> getChannelNames() {
         loadChannelMapIfNotLoaded();
@@ -151,7 +155,7 @@ public class AidaProvider {
 
                             // If specified with new naming style then add an entry with the legacy separator for backwards compatibility
                         } else if (indexOfLastSeparator != -1) {
-                            String legacyStyle = null;
+                            String legacyStyle;
 
                             String[] parts = channelName.split(":");
                             int nParts = parts.length;

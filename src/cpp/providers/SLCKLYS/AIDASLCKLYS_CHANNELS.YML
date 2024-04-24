@@ -36,6 +36,7 @@
 # @endcode
 id: 162
 name: SLCKlys
+transpose: flip
 description: Klystron Server
 configurations:
   - name: TACT Getter and Setter
