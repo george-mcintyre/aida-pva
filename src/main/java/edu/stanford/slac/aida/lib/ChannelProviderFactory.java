@@ -36,11 +36,11 @@ public class ChannelProviderFactory {
      * @param channelProvider the channel provider
      * @return an AidaProvider object or null if there is a problem reading the configuration
      */
-    public static AidaProvider create(ChannelProvider channelProvider) {
+    public static AidaProvider create(final ChannelProvider channelProvider) {
         // Get service name and channel definitions for the server to publish.
         // Priority: max=properties, medium=environment, low=default
         String channelsFilename = System.getProperty("aida.pva.channels.filename", CHANNELS_FILENAME_DEFAULT);
-        String channelsFilenameFromEnv = System.getenv("AIDA_PVA_CHANNELS_FILENAME");
+        final String channelsFilenameFromEnv = System.getenv("AIDA_PVA_CHANNELS_FILENAME");
         if (channelsFilenameFromEnv != null) {
             channelsFilename = channelsFilenameFromEnv;
         }
@@ -49,7 +49,7 @@ public class ChannelProviderFactory {
         }
 
         // Set up the object mapper to read the channels
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
             File channelSource = new File(channelsFilename);
             AidaProvider aidaProvider;

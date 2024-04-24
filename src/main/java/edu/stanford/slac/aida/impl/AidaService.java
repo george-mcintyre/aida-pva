@@ -102,7 +102,7 @@ public class AidaService {
     private static void defaultEpicsPropertiesIfNotSet() {
         if (System.getenv("EPICS_PVA_ADDR_LIST") == null && System.getProperty("EPICS_PVA_ADDR_LIST") == null) {
             try {
-                String hostname = InetAddress.getLocalHost().getHostName();
+                final String hostname = InetAddress.getLocalHost().getHostName();
                 System.setProperty("EPICS_PVA_ADDR_LIST", hostname);
                 logger.info("Defaulting EPICS_PVA_ADDR_LIST to: " + hostname);
             } catch (UnknownHostException ignored) {
@@ -136,7 +136,7 @@ public class AidaService {
      */
     public static String elapsedTime() {
         // Get the time now
-        DateTime checkpoint = DateTime.now();
+        final DateTime checkpoint = DateTime.now();
 
         // Elapsed time is now minus start time
         long elapsedMs = checkpoint.minus(serviceStartTime.getMillis()).getMillis();

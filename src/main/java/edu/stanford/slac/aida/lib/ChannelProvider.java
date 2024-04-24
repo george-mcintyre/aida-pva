@@ -74,7 +74,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
         logHostedChannels();
 
         // Call initialisation for the channel provider
-        String providerName = getProviderName();
+        final String providerName = getProviderName();
         logger.info("Calling Provider Initialisation for " + providerName + " ...");
         aidaServiceInit();
         logger.info(providerName + " Provider Initialized");
@@ -89,7 +89,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param aidaType    the return type
      * @return object
      */
-    public Object requestScalar(String channelName, AidaArguments arguments, AidaType aidaType) {
+    final public Object requestScalar(String channelName, AidaArguments arguments, AidaType aidaType) {
         switch (aidaType) {
             case BOOLEAN:
                 return aidaRequestBoolean(channelName, arguments);
@@ -120,11 +120,11 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param aidaType    the scalar type underpinning this scalar array
      * @return List of scalar object
      */
-    public List<?> requestScalarArray(String channelName, AidaArguments arguments, AidaType aidaType) throws AidaInternalException {
+    final public List<?> requestScalarArray(final String channelName, final AidaArguments arguments, final AidaType aidaType) throws AidaInternalException {
         switch (aidaType) {
             case BOOLEAN_ARRAY:
-                List<Boolean> tList = new ArrayList<Boolean>();
-                boolean[] tArray = aidaRequestBooleanArray(channelName, arguments);
+                final List<Boolean> tList = new ArrayList<Boolean>();
+                final boolean[] tArray = aidaRequestBooleanArray(channelName, arguments);
                 if (tArray != null) {
                     for (Boolean t : tArray) {
                         tList.add(t);
@@ -133,8 +133,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case BYTE_ARRAY:
-                List<Byte> bList = new ArrayList<Byte>();
-                byte[] bArray = aidaRequestByteArray(channelName, arguments);
+                final List<Byte> bList = new ArrayList<Byte>();
+                final byte[] bArray = aidaRequestByteArray(channelName, arguments);
                 if (bArray != null) {
                     for (Byte b : bArray) {
                         bList.add(b);
@@ -143,8 +143,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case SHORT_ARRAY:
-                List<Short> sList = new ArrayList<Short>();
-                short[] sArray = aidaRequestShortArray(channelName, arguments);
+                final List<Short> sList = new ArrayList<Short>();
+                final short[] sArray = aidaRequestShortArray(channelName, arguments);
                 if (sArray != null) {
                     for (Short s : sArray) {
                         sList.add(s);
@@ -153,8 +153,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case INTEGER_ARRAY:
-                List<Integer> iList = new ArrayList<Integer>();
-                int[] iArray = aidaRequestIntegerArray(channelName, arguments);
+                final List<Integer> iList = new ArrayList<Integer>();
+                final int[] iArray = aidaRequestIntegerArray(channelName, arguments);
                 if (iArray != null) {
                     for (Integer i : iArray) {
                         iList.add(i);
@@ -163,8 +163,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case LONG_ARRAY:
-                List<Long> lList = new ArrayList<Long>();
-                long[] lArray = aidaRequestLongArray(channelName, arguments);
+                final List<Long> lList = new ArrayList<Long>();
+                final long[] lArray = aidaRequestLongArray(channelName, arguments);
                 if (lArray != null) {
                     for (Long l : lArray) {
                         lList.add(l);
@@ -173,8 +173,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case FLOAT_ARRAY:
-                List<Float> fList = new ArrayList<Float>();
-                float[] fArray = aidaRequestFloatArray(channelName, arguments);
+                final List<Float> fList = new ArrayList<Float>();
+                final float[] fArray = aidaRequestFloatArray(channelName, arguments);
                 if (fArray != null) {
                     for (Float f : fArray) {
                         fList.add(f);
@@ -183,8 +183,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case DOUBLE_ARRAY:
-                List<Double> dList = new ArrayList<Double>();
-                double[] dArray = aidaRequestDoubleArray(channelName, arguments);
+                final List<Double> dList = new ArrayList<Double>();
+                final double[] dArray = aidaRequestDoubleArray(channelName, arguments);
                 if (dArray != null) {
                     for (Double d : dArray) {
                         dList.add(d);
@@ -193,7 +193,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
                 }
                 break;
             case STRING_ARRAY:
-                String[] stringArray = aidaRequestStringArray(channelName, arguments);
+                final String[] stringArray = aidaRequestStringArray(channelName, arguments);
                 if (stringArray != null) {
                     return Arrays.asList(stringArray);
                 }
@@ -211,8 +211,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   arguments
      * @return return AidaTable
      */
-    public AidaTable requestTable(String channelName, AidaArguments arguments) throws AidaInternalException {
-        AidaTable table = aidaRequestTable(channelName, arguments);
+    final public AidaTable requestTable(final String channelName, final AidaArguments arguments) throws AidaInternalException {
+        final AidaTable table = aidaRequestTable(channelName, arguments);
         if ( table == null ) {
             logger.warning("Received null result when requesting a table");
             throw new AidaInternalException("Received null result when requesting a table");
@@ -227,7 +227,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param arguments   arguments
      *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
      */
-    public void setValue(String channelName, AidaArguments arguments) {
+    public void setValue(final String channelName, final AidaArguments arguments) {
         aidaSetValue(channelName, arguments);
     }
 
@@ -239,8 +239,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *                    contains {@code value} that specifies the value as a literal string or in json if it is a table
      * @return return AidaTable
      */
-    public AidaTable setValueWithResponse(String channelName, AidaArguments arguments) throws AidaInternalException {
-        AidaTable table = aidaSetValueWithResponse(channelName, arguments);
+    final public AidaTable setValueWithResponse(final String channelName, final AidaArguments arguments) throws AidaInternalException {
+        final AidaTable table = aidaSetValueWithResponse(channelName, arguments);
         if ( table == null ) {
             logger.warning("Received null result when expecting a table");
             throw new AidaInternalException("Received null result when expecting a table");
@@ -254,8 +254,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param channelName the channel name to retrieve configuration
      * @return the configuration
      */
-    public AidaChannelOperationConfig getSetterConfig(String channelName) {
-        AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
+    final public AidaChannelOperationConfig getSetterConfig(final String channelName) {
+        final AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
         return (channel == null) ? null : channel.getSetterConfig();
     }
 
@@ -265,8 +265,8 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      * @param channelName the channel name to retrieve configuration
      * @return the configuration
      */
-    public AidaChannelOperationConfig getGetterConfig(String channelName) {
-        AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
+    final public AidaChannelOperationConfig getGetterConfig(final String channelName) {
+        final AidaChannel channel = this.aidaProvider.getAidaChannel(channelName);
         return (channel == null) ? null : channel.getGetterConfig();
     }
 
@@ -275,7 +275,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *
      * @return name of channel provider
      */
-    public String getProviderName() {
+    final public String getProviderName() {
         return this.aidaProvider.getName();
     }
 
@@ -284,7 +284,7 @@ public abstract class ChannelProvider extends NativeChannelProvider {
      *
      * @return channel names
      */
-    public Set<String> getChannelNames() {
+    final public Set<String> getChannelNames() {
         return this.aidaProvider.getChannelNames();
     }
 

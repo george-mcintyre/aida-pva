@@ -6,6 +6,9 @@ package edu.stanford.slac.aida.lib;
 
 import org.epics.pvaccess.PVAException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,10 +67,17 @@ public class AidaProviderRunner {
         // Run the server to start servicing requests
         try {
             server.printInfo();   // Print RPC service information
-            logger.info("\n\tAIDA-PVA Service\n\tversion " + System.getProperty("aida.pva.version", "-.-.-") + "\n\tReady: " + elapsedTime());
+            Properties prop = new Properties();
+            InputStream input = AidaProviderRunner.class.getClassLoader().getResourceAsStream("application.properties");
+            prop.load(input);
+            String buildTimestamp = prop.getProperty("aida.pva.build.timestamp");
+
+            logger.info("\n\tAIDA-PVA Service\n\tversion " + System.getProperty("aida.pva.version", "-.-.-") + "." + buildTimestamp + "\n\tReady: " + elapsedTime());
             server.run(0);
         } catch (PVAException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

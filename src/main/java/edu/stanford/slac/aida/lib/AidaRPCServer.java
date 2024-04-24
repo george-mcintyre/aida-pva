@@ -17,7 +17,7 @@ public class AidaRPCServer extends RPCServer {
      *
      * @param aidaChannelProvider to handle requests on this server
      */
-    public AidaRPCServer(ChannelProvider aidaChannelProvider) {
+    public AidaRPCServer(final ChannelProvider aidaChannelProvider) {
         this.aidaChannelProvider = aidaChannelProvider;
     }
     /**
@@ -27,7 +27,7 @@ public class AidaRPCServer extends RPCServer {
      * @param queueSize           the size of the queueNative
      * @param aidaChannelProvider to handle requests on this server
      */
-    public AidaRPCServer(int threads, int queueSize, ChannelProvider aidaChannelProvider) {
+    public AidaRPCServer(final int threads, final int queueSize, final ChannelProvider aidaChannelProvider) {
         super(threads, queueSize);
         this.aidaChannelProvider = aidaChannelProvider;
     }
@@ -42,8 +42,8 @@ public class AidaRPCServer extends RPCServer {
      *
      * @param service the given service
      */
-    public void registerServices(AidaRPCService service) {
-        for (String channelName : aidaChannelProvider.getChannelNames()) {
+    public void registerServices(final AidaRPCService service) {
+        for (final String channelName : aidaChannelProvider.getChannelNames()) {
             registerService(channelName, service);
         }
     }
