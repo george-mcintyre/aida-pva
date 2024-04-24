@@ -4,7 +4,7 @@
 
     <groupId>edu.stanford.slac.aida</groupId>
     <artifactId>aida-pva</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 
     <name>Aida PVA</name>
     <url>https://github.com/george-mcintyre/aida-pva</url>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+            <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
@@ -87,17 +87,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.1.5</version>
+            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.1.6-SNAPSHOT</version>
+            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20210307</version>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
