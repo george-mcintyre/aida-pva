@@ -1,6 +1,6 @@
 /*
  * @file
- * To handle transposition within PV name strings by selected methods.
+ * To handle transcoding within PV name strings by selected methods.
  */
 package edu.stanford.slac.aida.lib.model;
 
@@ -9,51 +9,51 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static edu.stanford.slac.aida.lib.model.TransposeMethod.NONE;
-import static edu.stanford.slac.aida.lib.model.TransposeMethod.FLIP;
+import static edu.stanford.slac.aida.lib.model.TranscodingMethod.NONE;
+import static edu.stanford.slac.aida.lib.model.TranscodingMethod.FLIP;
 
 /**
- * This class handles the transposition of PV strings based on the given transpose method.
+ * This class handles the transcoding of PV strings based on the given transcoding method.
  */
-public class TransposeHandler {
+public class TranscodeHandler {
     /**
-     * This interface represents a transposer, which is responsible for transposing PV
-     * strings based on a specific transpose method.
+     * This interface represents a transcoder, which is responsible for transcoding PV
+     * strings based on a specific transcoding method.
      */
-    public interface Transposer {
+    public interface Transcoder {
         String apply(final String pvName);
     }
 
     /**
-     * Represents a map that associates each TransposeMethod with a corresponding Transposer.
+     * Represents a map that associates each TranscodingMethod with a corresponding Transcoder.
      */
-    private static final Map<TransposeMethod, Transposer> transposeMethodTransposerMap = createMap();
+    private static final Map<TranscodingMethod, Transcoder> transcodingMethodTranscoderMap = createMap();
 
     /**
-     * This method creates a map that associates each TransposeMethod with a corresponding Transposer.
+     * This method creates a map that associates each TranscodingMethod with a corresponding Transcoder.
      *
-     * @return A map that associates each TransposeMethod with a corresponding Transposer.
+     * @return A map that associates each TranscodingMethod with a corresponding Transcoder.
      */
-    private static Map<TransposeMethod, Transposer> createMap() {
-        final Map<TransposeMethod, Transposer> transposeMethodTransposerMap = new HashMap<TransposeMethod, Transposer>();
+    private static Map<TranscodingMethod, Transcoder> createMap() {
+        final Map<TranscodingMethod, Transcoder> transcodingMethodTranscoderMap = new HashMap<TranscodingMethod, Transcoder>();
 
-        // The null transpose method that does no transposition at all, final should make optimiser create a noop
-        transposeMethodTransposerMap.put(NONE, new Transposer() {
+        // The null transcoding method that does no transcoding at all, final should make optimiser create a noop
+        transcodingMethodTranscoderMap.put(NONE, new Transcoder() {
             public String apply(final String pvName) {
                 return pvName;
             }
         });
 
         // The flip transformation method.  This is an involution function, in that it can be called to make the
-        // transposition in both directions.  i.e. when registering the names and when handling requests, call the same
+        // transcoding in both directions.  i.e. when registering the names and when handling requests, call the same
         // function.
         //
         // 1. If the given pvName does not contain the pattern `{primary}:{micro}:{unit}` then return pvName unchanged
         // 2. If the string starts with the pattern `{prefix}::` then return that part of the string unchanged
-        //    but continue with the remaining transposition on the rest of the string.
+        //    but continue with the remaining transcoding on the rest of the string.
         // 3. Extract the {primary} and {micro} parts of the string and transpose their positions to create a
         //    new string and return this string, prepended by the prefix pattern if one was found.
-        transposeMethodTransposerMap.put(FLIP, new Transposer() {
+        transcodingMethodTranscoderMap.put(FLIP, new Transcoder() {
             public String apply(final String pvName) {
 
                     // Pattern for matching {prefix}::{primary}:{micro}:{unit} or {prefix}::{primary}:{micro}:{unit} followed by any characters
@@ -68,7 +68,7 @@ public class TransposeHandler {
                         final String unit = matcher.group(4); // group 4 is the unit
                         final String remainder = matcher.group(5) != null ? matcher.group(5) : ""; // group 5 is the remainder of the pv name
 
-                        // Create the new transposed string
+                        // Create the new transcoded string
                         return prefix + micro + ":" + primary + ":" + unit + remainder;
                     } else {
                         // If pvName does not match the patterns, return it unchanged.
@@ -77,10 +77,10 @@ public class TransposeHandler {
                 }
         });
 
-        return transposeMethodTransposerMap;
+        return transcodingMethodTranscoderMap;
     }
 
-    public static String transpose(String pvName, TransposeMethod method) {
-        return transposeMethodTransposerMap.get(method).apply(pvName);
+    public static String transcode(String pvName, TranscodingMethod method) {
+        return transcodingMethodTranscoderMap.get(method).apply(pvName);
     }
 }

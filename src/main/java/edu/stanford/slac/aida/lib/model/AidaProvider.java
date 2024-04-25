@@ -12,7 +12,7 @@ import org.epics.pvaccess.util.WildcardMatcher;
 
 import java.util.*;
 
-import static edu.stanford.slac.aida.lib.model.TransposeMethod.NONE;
+import static edu.stanford.slac.aida.lib.model.TranscodingMethod.NONE;
 
 /**
  * This class captures the metadata associated with a Channel Provider.
@@ -48,7 +48,10 @@ public class AidaProvider {
      */
     private @NonNull String name;
 
-    private @NonNull TransposeMethod transpose = NONE;
+    /**
+     * The AidaProvider::getTranscode() is the type of transcoding to apply to pv names for this provider
+     */
+    private @NonNull TranscodingMethod transcode = NONE;
 
     /**
      * The AidaProvider::getDescription() describes what the Channel Provider does.  By convention, we use the `AIDA_SERVICES.DESCRIPTION` from the
